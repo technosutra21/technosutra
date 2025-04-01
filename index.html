@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador 3D - Onça</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        model-viewer {
+            width: 100%;
+            height: 100vh;
+            --poster-color: transparent;
+        }
+    </style>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+</head>
+<body>
+    <video id="camera-feed" autoplay playsinline style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;"></video>
+    
+    <model-viewer
+        id="modelViewer"
+        alt="Modelo 3D"
+        camera-controls
+        touch-action="pan-y"
+        style="width: 100%; height: 100vh;"
+        auto-rotate
+        rotation-per-second="30deg">
+    </model-viewer>
+
+    <script>
+        const cameraFeed = document.getElementById('camera-feed');
+        const modelViewer = document.querySelector('#modelViewer');
+        
+        // Obter e validar ID do modelo da URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const modelId = Math.max(1, Math.min(54,
+            parseInt(urlParams.get('model')) || 1));
+        
+        // Carregar modelo dinamicamente
+        modelViewer.src = `modelo${modelId}.glb`;
+
+        async function startCamera() {
+            try {
+                // Solicita acesso à câmera traseira (environment)
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'environment',
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
+                    }
+                });
+                cameraFeed.srcObject = stream;
+                
+                // Ajusta o estilo do model-viewer para melhor visibilidade
+                modelViewer.style.backgroundColor = 'transparent';
+                modelViewer.style.mixBlendMode = 'luminosity';
+            } catch (error) {
+                console.error('Erro ao acessar câmera:', error);
+                // Fallback para cor sólida se a câmera falhar
+                document.body.style.background = 'linear-gradient(45deg, #222, #444)';
+            }
+        }
+
+        // Inicia a câmera quando a página carregar
+        window.addEventListener('load', startCamera);
+
+        async function testCameraAccess() {
+            try {
+                statusDiv.textContent = 'Testando acesso à câmera...';
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const cameras = devices.filter(device => device.kind === 'videoinput');
+                
+                if (cameras.length === 0) {
+                    throw new Error('Nenhuma câmera detectada');
+                }
+
+                statusDiv.textContent += `\nCâmeras encontradas: ${cameras.length}`;
+                
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    }
+                });
+                
+                statusDiv.textContent += '\nPermissão concedida';
+                stream.getTracks().forEach(track => track.stop());
+                return true;
+            } catch (error) {
+                statusDiv.textContent += `\nErro na câmera: ${error.message}`;
+                console.error('Camera Test Error:', error);
+                return false;
+            }
+        }
+
+        async function testWebXR() {
+            try {
+                statusDiv.textContent += '\nTestando WebXR...';
+                
+                if (!navigator.xr) {
+                    throw new Error('API WebXR não disponível');
+                }
+
+                // Verifica diferentes tipos de sessão AR
+                const immersiveAR = await navigator.xr.isSessionSupported('immersive-ar');
+                const inlineAR = await navigator.xr.isSessionSupported('inline');
+                
+                if (!immersiveAR && !inlineAR) {
+                    throw new Error('Nenhum modo AR suportado');
+                }
+
+                if (immersiveAR) {
+                    statusDiv.textContent += '\nAR imersivo disponível';
+                    return {supported: true, type: 'immersive-ar'};
+                } else {
+                    statusDiv.textContent += '\nUsando AR básico (inline)';
+                    return {supported: true, type: 'inline'};
+                }
+            } catch (error) {
+                statusDiv.textContent += `\nErro WebXR: ${error.message}`;
+                console.error('WebXR Test Error:', error);
+                return {supported: false, error: error.message};
+            }
+        }
+
+        async function initXR(sessionType) {
+            try {
+                const session = await navigator.xr.requestSession(sessionType, {
+                    requiredFeatures: sessionType === 'immersive-ar' ?
+                        ['local-floor', 'hit-test'] : []
+                });
+                return true;
+            } catch (error) {
+                console.error('XR Session Error:', error);
+                return false;
+            }
+        }
+
+        async function initAR() {
+            const cameraOk = await testCameraAccess();
+            const {supported, type, error} = await testWebXR();
+            
+            if (!cameraOk || !supported) {
+                arButton.disabled = true;
+                arButton.textContent = error || 'AR não disponível';
+                return false;
+            }
+
+            try {
+                // Configura model-viewer para o tipo de AR suportado
+                modelViewer.ar = {
+                    placement: 'floor',
+                    interactionMode: 'screen',
+                    cameraPosition: 'back',
+                    arModes: type === 'immersive-ar' ?
+                        'webxr scene-viewer quick-look' : 'quick-look'
+                };
+
+                // Inicia sessão XR
+                const xrStarted = await initXR(type);
+                if (!xrStarted) {
+                    throw new Error('Falha ao iniciar sessão XR');
+                }
+
+                return true;
+            } catch (error) {
+                console.error('AR Config Error:', error);
+                statusDiv.textContent += `\nErro AR: ${error.message}`;
+                return false;
+            }
+        }
+
+        arButton.addEventListener('click', async () => {
+            statusDiv.textContent = 'Iniciando AR...';
+            const ready = await initAR();
+            if (ready) {
+                modelViewer.activateAR();
+            }
+        });
+
+        // Teste inicial
+        window.addEventListener('load', async () => {
+            await initAR();
+        });
+    </script>
+</body>
+</html>
