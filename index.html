@@ -177,10 +177,12 @@
         }
 
         
-        const ready = await initAR();
-        if (ready) {
-            modelViewer.activateAR();
-        }
+        arButton.addEventListener('click', async () => {
+             statusDiv.textContent = 'Iniciando AR...';
+             const ready = await initAR();
+             if (ready) {
+                 modelViewer.activateAR();
+             }
         });
 
         // Teste inicial
