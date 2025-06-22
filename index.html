@@ -3,192 +3,299 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Techno Sutra</title>
+    <title>Techno Sutra AR</title>
     <style>
         body {
             margin: 0;
             padding: 0;
             overflow: hidden;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: Arial, sans-serif;
         }
+        
         model-viewer {
             width: 100%;
             height: 100vh;
             --poster-color: transparent;
+            --progress-bar-color: #4285f4;
+        }
+
+        #ar-prompt {
+            position: absolute;
+            left: 50%;
+            bottom: 175px;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 20px;
+            font-size: 16px;
+            display: none;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        model-viewer[ar-status="session-started"] > #ar-prompt {
+            display: block;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; transform: translateX(-50%) scale(1); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+            100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
+        }
+
+        #ar-failure {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 0, 0, 0.9);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            display: none;
+            z-index: 1000;
+        }
+
+        model-viewer[ar-tracking="not-tracking"] > #ar-failure {
+            display: block;
+        }
+
+        .ar-button {
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTMgNEgxNVY2SDNWNFpNMyA4SDE1VjEwSDNWOFpNMyAxMkgxNVYxNEgzVjEyWk0xNyAxNkwyMSAxMkgxOVYxMEgxNVYxMkgxN1YxNloiIGZpbGw9IiM0Mjg1ZjQiLz4KPC9zdmc+');
+            background-repeat: no-repeat;
+            background-size: 20px 20px;
+            background-position: 12px 50%;
+            background-color: #fff;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 32px;
+            padding: 12px 16px 12px 40px;
+            font-family: 'Roboto', Arial, sans-serif;
+            font-size: 14px;
+            color: #4285f4;
+            height: 36px;
+            line-height: 36px;
+            border-radius: 18px;
+            border: 1px solid #DADCE0;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+        }
+
+        .ar-button:hover {
+            background-color: #f8f9fa;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .ar-button:active {
+            background-color: #E8EAED;
+        }
+
+        .ar-button:focus {
+            outline: none;
+        }
+
+        .ar-button:focus-visible {
+            outline: 2px solid #4285f4;
+        }
+
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4285f4;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 </head>
 <body>
-    <video id="camera-feed" autoplay playsinline style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;"></video>
-    
     <model-viewer
         id="modelViewer"
-        alt="Modelo 3D"
+        alt="Modelo 3D Interativo"
         camera-controls
         touch-action="pan-y"
-        style="width: 100%; height: 100vh;"
+        ar
+        ar-modes="webxr scene-viewer quick-look"
+        ar-scale="auto"
+        ar-placement="floor"
         auto-rotate
-        rotation-per-second="7deg">
+        environment-image="neutral"
+        shadow-intensity="1"
+        exposure="1"
+        interaction-policy="always-allow"
+        style="width: 100%; height: 100vh; background-color: transparent;"
+    >
+        <!-- Custom AR Button -->
+        <button slot="ar-button" class="ar-button">
+            Ver em AR
+        </button>
+
+        <!-- AR Prompts and Status -->
+        <div id="ar-prompt">
+            🤚 Mova o telefone para encontrar uma superfície, depois toque para posicionar
+        </div>
+
+        <div id="ar-failure">
+            ❌ AR não está rastreando! Tente mover o dispositivo lentamente
+        </div>
+
+        <div id="loading">
+            <div class="spinner"></div>
+            <div>Carregando modelo...</div>
+        </div>
     </model-viewer>
 
     <script>
-        const cameraFeed = document.getElementById('camera-feed');
         const modelViewer = document.querySelector('#modelViewer');
+        const loadingDiv = document.getElementById('loading');
         
-        // Obter e validar ID do modelo da URL
+        // Get and validate model ID from URL
         const urlParams = new URLSearchParams(window.location.search);
-        const modelId = Math.max(1, Math.min(54,
-            parseInt(urlParams.get('model')) || 1));
+        const modelId = Math.max(1, Math.min(54, parseInt(urlParams.get('model')) || 1));
         
-        // Carregar modelo dinamicamente
-        modelViewer.src = `modelo${modelId}.glb`;
+        // Set model source dynamically
+        const modelSrc = `modelo${modelId}.glb`;
+        modelViewer.src = modelSrc;
 
-        async function startCamera() {
-            try {
-                // Solicita acesso à câmera traseira (environment)
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: 'environment',
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 }
-                    }
-                });
-                cameraFeed.srcObject = stream;
-                
-                // Ajusta o estilo do model-viewer para melhor visibilidade
-                modelViewer.style.backgroundColor = 'transparent';
-                modelViewer.style.mixBlendMode = 'luminosity';
-            } catch (error) {
-                console.error('Erro ao acessar câmera:', error);
-                // Fallback para cor sólida se a câmera falhar
-                document.body.style.background = 'linear-gradient(45deg, #222, #444)';
-            }
-        }
+        // Show loading indicator
+        loadingDiv.style.display = 'block';
 
-        // Inicia a câmera quando a página carregar
-        window.addEventListener('load', startCamera);
+        // Model loading events
+        modelViewer.addEventListener('load', () => {
+            console.log('Modelo carregado com sucesso');
+            loadingDiv.style.display = 'none';
+        });
 
-        async function testCameraAccess() {
-            try {
-                statusDiv.textContent = 'Testando acesso à câmera...';
-                const devices = await navigator.mediaDevices.enumerateDevices();
-                const cameras = devices.filter(device => device.kind === 'videoinput');
-                
-                if (cameras.length === 0) {
-                    throw new Error('Nenhuma câmera detectada');
-                }
+        modelViewer.addEventListener('error', (event) => {
+            console.error('Erro ao carregar modelo:', event.detail);
+            loadingDiv.innerHTML = '<div>❌ Erro ao carregar modelo</div>';
+            setTimeout(() => {
+                loadingDiv.style.display = 'none';
+            }, 3000);
+        });
 
-                statusDiv.textContent += `\nCâmeras encontradas: ${cameras.length}`;
-                
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: 'environment',
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
-                    }
-                });
-                
-                statusDiv.textContent += '\nPermissão concedida';
-                stream.getTracks().forEach(track => track.stop());
-                return true;
-            } catch (error) {
-                statusDiv.textContent += `\nErro na câmera: ${error.message}`;
-                console.error('Camera Test Error:', error);
-                return false;
-            }
-        }
-
-        async function testWebXR() {
-            try {
-                statusDiv.textContent += '\nTestando WebXR...';
-                
-                if (!navigator.xr) {
-                    throw new Error('API WebXR não disponível');
-                }
-
-                // Verifica diferentes tipos de sessão AR
-                const immersiveAR = await navigator.xr.isSessionSupported('immersive-ar');
-                const inlineAR = await navigator.xr.isSessionSupported('inline');
-                
-                if (!immersiveAR && !inlineAR) {
-                    throw new Error('Nenhum modo AR suportado');
-                }
-
-                if (immersiveAR) {
-                    statusDiv.textContent += '\nAR imersivo disponível';
-                    return {supported: true, type: 'immersive-ar'};
-                } else {
-                    statusDiv.textContent += '\nUsando AR básico (inline)';
-                    return {supported: true, type: 'inline'};
-                }
-            } catch (error) {
-                statusDiv.textContent += `\nErro WebXR: ${error.message}`;
-                console.error('WebXR Test Error:', error);
-                return {supported: false, error: error.message};
-            }
-        }
-
-        async function initXR(sessionType) {
-            try {
-                const session = await navigator.xr.requestSession(sessionType, {
-                    requiredFeatures: sessionType === 'immersive-ar' ?
-                        ['local-floor', 'hit-test'] : []
-                });
-                return true;
-            } catch (error) {
-                console.error('XR Session Error:', error);
-                return false;
-            }
-        }
-
-        async function initAR() {
-            const cameraOk = await testCameraAccess();
-            const {supported, type, error} = await testWebXR();
+        // AR Session Events
+        modelViewer.addEventListener('ar-status', (event) => {
+            console.log('AR Status:', event.detail.status);
             
-            if (!cameraOk || !supported) {
-                arButton.disabled = true;
-                arButton.textContent = error || 'AR não disponível';
-                return false;
+            switch(event.detail.status) {
+                case 'session-started':
+                    console.log('Sessão AR iniciada');
+                    break;
+                case 'object-placed':
+                    console.log('Objeto posicionado no AR');
+                    break;
+                case 'failed':
+                    console.log('AR falhou:', event.detail.message);
+                    showARError('AR não está disponível neste dispositivo');
+                    break;
+                case 'not-presenting':
+                    console.log('Saiu do modo AR');
+                    break;
             }
+        });
 
+        // AR Tracking Events
+        modelViewer.addEventListener('ar-tracking', (event) => {
+            console.log('AR Tracking:', event.detail.status);
+        });
+
+        // Camera controls optimization for AR
+        modelViewer.addEventListener('camera-change', (event) => {
+            // Optimize camera for better AR experience
+            if (modelViewer.arStatus === 'session-started') {
+                // AR mode is active
+                console.log('Camera adjusted for AR mode');
+            }
+        });
+
+        // Error handling function
+        function showARError(message) {
+            const errorDiv = document.getElementById('ar-failure');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Check AR support on page load
+        async function checkARSupport() {
             try {
-                // Configura model-viewer para o tipo de AR suportado
-                modelViewer.ar = {
-                    placement: 'floor',
-                    interactionMode: 'screen',
-                    cameraPosition: 'back',
-                    arModes: type === 'immersive-ar' ?
-                        'webxr scene-viewer quick-look' : 'quick-look'
-                };
-
-                // Inicia sessão XR
-                const xrStarted = await initXR(type);
-                if (!xrStarted) {
-                    throw new Error('Falha ao iniciar sessão XR');
+                if ('xr' in navigator) {
+                    const supported = await navigator.xr.isSessionSupported('immersive-ar');
+                    console.log('WebXR AR Support:', supported);
+                    
+                    if (!supported) {
+                        console.log('WebXR não suportado, usando Scene Viewer como fallback');
+                    }
+                } else {
+                    console.log('WebXR não disponível, usando Scene Viewer como fallback');
                 }
-
-                return true;
             } catch (error) {
-                console.error('AR Config Error:', error);
-                statusDiv.textContent += `\nErro AR: ${error.message}`;
-                return false;
+                console.log('Erro verificando suporte AR:', error);
             }
         }
 
+        // Enhanced touch handling for AR placement
+        let isARActive = false;
         
-        arButton.addEventListener('click', async () => {
-             statusDiv.textContent = 'Iniciando AR...';
-             const ready = await initAR();
-             if (ready) {
-                 modelViewer.activateAR();
-             }
+        modelViewer.addEventListener('ar-status', (event) => {
+            isARActive = (event.detail.status === 'session-started');
         });
 
-        // Teste inicial
-        window.addEventListener('load', async () => {
-            await initAR();
+        // Optimize model for AR
+        modelViewer.addEventListener('before-render', () => {
+            if (isARActive) {
+                // Optimize rendering for AR mode
+                modelViewer.exposure = 1;
+                modelViewer.shadowIntensity = 0.5;
+            }
         });
+
+        // Initialize when page loads
+        window.addEventListener('load', () => {
+            checkARSupport();
+            console.log('App inicializada para modelo:', modelId);
+        });
+
+        // Performance optimization
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(() => {
+                console.log('Service Worker registration failed');
+            });
+        }
+
+        // Handle AR button customization
+        const arButton = modelViewer.querySelector('[slot="ar-button"]');
+        if (arButton) {
+            arButton.addEventListener('click', () => {
+                console.log('Botão AR clicado');
+                // The model-viewer will handle the AR activation
+            });
+        }
     </script>
 </body>
 </html>
