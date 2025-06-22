@@ -9,8 +9,19 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: #000;
             font-family: Arial, sans-serif;
+        }
+        
+        /* Camera feed always as background */
+        #camera-feed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
         }
         
         model-viewer {
@@ -18,6 +29,7 @@
             height: 100vh;
             --poster-color: transparent;
             --progress-bar-color: #4285f4;
+            background-color: transparent !important;
         }
 
         #ar-prompt {
@@ -32,6 +44,7 @@
             font-size: 16px;
             display: none;
             animation: pulse 2s infinite ease-in-out;
+            z-index: 100;
         }
 
         model-viewer[ar-status="session-started"] > #ar-prompt {
@@ -61,12 +74,13 @@
             display: block;
         }
 
+        /* Custom AR button styling for all platforms */
         .ar-button {
             background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTMgNEgxNVY2SDNWNFpNMyA4SDE1VjEwSDNWOFpNMyAxMkgxNVYxNEgzVjEyWk0xNyAxNkwyMSAxMkgxOVYxMEgxNVYxMkgxN1YxNloiIGZpbGw9IiM0Mjg1ZjQiLz4KPC9zdmc+');
             background-repeat: no-repeat;
             background-size: 20px 20px;
             background-position: 12px 50%;
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.95);
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
@@ -80,25 +94,19 @@
             border-radius: 18px;
             border: 1px solid #DADCE0;
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
             transition: all 0.2s ease;
+            z-index: 100;
+            backdrop-filter: blur(10px);
         }
 
         .ar-button:hover {
-            background-color: #f8f9fa;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            background-color: rgba(248, 249, 250, 0.95);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
         }
 
         .ar-button:active {
-            background-color: #E8EAED;
-        }
-
-        .ar-button:focus {
-            outline: none;
-        }
-
-        .ar-button:focus-visible {
-            outline: 2px solid #4285f4;
+            background-color: rgba(232, 234, 237, 0.95);
         }
 
         #loading {
@@ -110,6 +118,7 @@
             padding: 20px;
             border-radius: 8px;
             display: none;
+            z-index: 1000;
         }
 
         .spinner {
@@ -126,10 +135,26 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Ensure camera feed is always visible */
+        .camera-active {
+            background: transparent !important;
+        }
+
+        /* iOS Safari specific fixes */
+        @supports (-webkit-appearance: none) {
+            model-viewer {
+                --poster-color: transparent;
+                background: transparent !important;
+            }
+        }
     </style>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 </head>
 <body>
+    <!-- Camera feed always visible as background -->
+    <video id="camera-feed" autoplay playsinline muted></video>
+    
     <model-viewer
         id="modelViewer"
         alt="Modelo 3D Interativo"
@@ -141,14 +166,14 @@
         ar-placement="floor"
         auto-rotate
         environment-image="neutral"
-        shadow-intensity="1"
+        shadow-intensity="0.3"
         exposure="1"
         interaction-policy="always-allow"
-        style="width: 100%; height: 100vh; background-color: transparent;"
+        style="background-color: transparent;"
     >
-        <!-- Custom AR Button -->
+        <!-- Custom AR button that works on all platforms -->
         <button slot="ar-button" class="ar-button">
-            Ver em AR
+            🔍 Ver em AR
         </button>
 
         <!-- AR Prompts and Status -->
@@ -168,15 +193,87 @@
 
     <script>
         const modelViewer = document.querySelector('#modelViewer');
+        const cameraFeed = document.getElementById('camera-feed');
         const loadingDiv = document.getElementById('loading');
         
         // Get and validate model ID from URL
         const urlParams = new URLSearchParams(window.location.search);
         const modelId = Math.max(1, Math.min(54, parseInt(urlParams.get('model')) || 1));
         
-        // Set model source dynamically
+        // Set model sources dynamically
         const modelSrc = `modelo${modelId}.glb`;
+        const iosModelSrc = `modelo${modelId}.usdz`; // USDZ for iOS
+        
         modelViewer.src = modelSrc;
+        
+        // Critical: Set ios-src for Safari AR button to appear
+        modelViewer.setAttribute('ios-src', iosModelSrc);
+
+        // Start camera immediately and keep it always active
+        async function startCamera() {
+            try {
+                console.log('Iniciando câmera...');
+                
+                // Get all available video devices
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                
+                console.log('Câmeras encontradas:', videoDevices.length);
+                
+                // Try to get back camera first, then any camera
+                let stream;
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            facingMode: 'environment', // Back camera
+                            width: { ideal: 1920, min: 1280 },
+                            height: { ideal: 1080, min: 720 }
+                        }
+                    });
+                } catch (error) {
+                    console.log('Câmera traseira não disponível, tentando frontal...');
+                    stream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            facingMode: 'user', // Front camera
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 }
+                        }
+                    });
+                }
+                
+                cameraFeed.srcObject = stream;
+                document.body.classList.add('camera-active');
+                
+                // Ensure camera feed stays visible
+                cameraFeed.style.display = 'block';
+                
+                console.log('Câmera iniciada com sucesso');
+                
+                return true;
+            } catch (error) {
+                console.error('Erro ao acessar câmera:', error);
+                
+                // Fallback to dark background if camera fails
+                document.body.style.background = 'linear-gradient(45deg, #1a1a1a, #333)';
+                return false;
+            }
+        }
+
+        // Keep camera always active
+        function maintainCameraFeed() {
+            if (cameraFeed.srcObject) {
+                const tracks = cameraFeed.srcObject.getTracks();
+                tracks.forEach(track => {
+                    if (track.readyState === 'ended') {
+                        console.log('Câmera desconectada, tentando reconectar...');
+                        startCamera();
+                    }
+                });
+            }
+        }
+
+        // Check camera status every 2 seconds
+        setInterval(maintainCameraFeed, 2000);
 
         // Show loading indicator
         loadingDiv.style.display = 'block';
@@ -202,6 +299,7 @@
             switch(event.detail.status) {
                 case 'session-started':
                     console.log('Sessão AR iniciada');
+                    // Keep camera running even in AR mode
                     break;
                 case 'object-placed':
                     console.log('Objeto posicionado no AR');
@@ -212,21 +310,11 @@
                     break;
                 case 'not-presenting':
                     console.log('Saiu do modo AR');
+                    // Ensure camera is still running
+                    if (!cameraFeed.srcObject) {
+                        startCamera();
+                    }
                     break;
-            }
-        });
-
-        // AR Tracking Events
-        modelViewer.addEventListener('ar-tracking', (event) => {
-            console.log('AR Tracking:', event.detail.status);
-        });
-
-        // Camera controls optimization for AR
-        modelViewer.addEventListener('camera-change', (event) => {
-            // Optimize camera for better AR experience
-            if (modelViewer.arStatus === 'session-started') {
-                // AR mode is active
-                console.log('Camera adjusted for AR mode');
             }
         });
 
@@ -241,61 +329,80 @@
             }, 5000);
         }
 
-        // Check AR support on page load
-        async function checkARSupport() {
-            try {
-                if ('xr' in navigator) {
-                    const supported = await navigator.xr.isSessionSupported('immersive-ar');
-                    console.log('WebXR AR Support:', supported);
-                    
-                    if (!supported) {
-                        console.log('WebXR não suportado, usando Scene Viewer como fallback');
-                    }
-                } else {
-                    console.log('WebXR não disponível, usando Scene Viewer como fallback');
-                }
-            } catch (error) {
-                console.log('Erro verificando suporte AR:', error);
-            }
+        // Detect iOS Safari and apply specific fixes
+        function isIOSSafari() {
+            const ua = navigator.userAgent;
+            const iOS = /iPad|iPhone|iPod/.test(ua);
+            const webkit = /WebKit/.test(ua);
+            return iOS && webkit && !/(CriOS|FxiOS|OPiOS|mercury)/.test(ua);
         }
 
-        // Enhanced touch handling for AR placement
-        let isARActive = false;
-        
-        modelViewer.addEventListener('ar-status', (event) => {
-            isARActive = (event.detail.status === 'session-started');
-        });
+        // iOS Safari specific setup
+        if (isIOSSafari()) {
+            console.log('iOS Safari detectado - aplicando correções específicas');
+            
+            // Ensure USDZ file exists or auto-generation will be used
+            // For iOS Safari AR button to appear, either ios-src must be set or auto USDZ generation will be used 
+            
+            // Force transparent background for iOS
+            modelViewer.style.backgroundColor = 'transparent';
+            modelViewer.style.background = 'transparent';
+        }
 
-        // Optimize model for AR
-        modelViewer.addEventListener('before-render', () => {
-            if (isARActive) {
-                // Optimize rendering for AR mode
-                modelViewer.exposure = 1;
-                modelViewer.shadowIntensity = 0.5;
-            }
-        });
-
-        // Initialize when page loads
-        window.addEventListener('load', () => {
-            checkARSupport();
+        // Initialize everything when page loads
+        window.addEventListener('load', async () => {
             console.log('App inicializada para modelo:', modelId);
+            
+            // Start camera immediately
+            await startCamera();
+            
+            // iOS Safari may need a delay
+            if (isIOSSafari()) {
+                setTimeout(() => {
+                    console.log('Verificando botão AR no iOS...');
+                    const arButton = modelViewer.querySelector('[slot="ar-button"]');
+                    if (arButton && arButton.style.display === 'none') {
+                        arButton.style.display = 'block';
+                    }
+                }, 1000);
+            }
         });
 
-        // Performance optimization
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').catch(() => {
-                console.log('Service Worker registration failed');
-            });
-        }
+        // Handle visibility changes to maintain camera
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && !cameraFeed.srcObject) {
+                console.log('Página visível novamente - reiniciando câmera');
+                startCamera();
+            }
+        });
 
-        // Handle AR button customization
-        const arButton = modelViewer.querySelector('[slot="ar-button"]');
-        if (arButton) {
-            arButton.addEventListener('click', () => {
-                console.log('Botão AR clicado');
-                // The model-viewer will handle the AR activation
+        // Prevent camera from being hidden
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.target === cameraFeed && 
+                    (cameraFeed.style.display === 'none' || cameraFeed.style.visibility === 'hidden')) {
+                    cameraFeed.style.display = 'block';
+                    cameraFeed.style.visibility = 'visible';
+                }
             });
-        }
+        });
+
+        observer.observe(cameraFeed, { 
+            attributes: true, 
+            attributeFilter: ['style'] 
+        });
+
+        // Force transparent background on model-viewer
+        const modelObserver = new MutationObserver(() => {
+            if (modelViewer.style.backgroundColor !== 'transparent') {
+                modelViewer.style.backgroundColor = 'transparent';
+            }
+        });
+
+        modelObserver.observe(modelViewer, { 
+            attributes: true, 
+            attributeFilter: ['style'] 
+        });
     </script>
 </body>
 </html>
