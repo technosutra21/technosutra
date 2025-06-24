@@ -74,26 +74,182 @@
             100% { left: 100%; }
         }
 
-        .header h1 {
-            font-size: 3rem;
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(120, 119, 198, 0.08);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, rgba(120, 119, 198, 0.2), rgba(120, 119, 198, 0.1));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            border: 1px solid rgba(120, 119, 198, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .header-logo-text {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #f3f4f6;
+            letter-spacing: 0.025em;
+        }
+
+        .header-nav-items {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .header-nav-item {
+            color: #9ca3af;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 400;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .header-nav-item:hover {
+            color: #f3f4f6;
+            background: rgba(120, 119, 198, 0.1);
+            border-color: rgba(120, 119, 198, 0.2);
+        }
+
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 0.85rem;
+        }
+
+        .header-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #9ca3af;
+        }
+
+        .header-stat-value {
+            color: #7877c6;
+            font-weight: 500;
+        }
+
+        .header-hero {
+            text-align: center;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+
+        .header-hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(120, 119, 198, 0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: heroGlow 6s ease-in-out infinite;
+        }
+
+        @keyframes heroGlow {
+            0%, 100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.3; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.6; }
+        }
+
+        .header-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
             font-weight: 200;
             margin-bottom: 24px;
-            text-shadow: 0 0 30px rgba(120, 119, 198, 0.3);
-            background: linear-gradient(135deg, #ffffff 0%, #7877c6 100%);
+            background: linear-gradient(135deg, #ffffff 0%, #7877c6 50%, #ffffff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.02em;
+            position: relative;
+            z-index: 10;
+            text-shadow: 0 0 40px rgba(120, 119, 198, 0.2);
         }
 
-        .header p {
-            font-size: 1.1rem;
-            opacity: 0.7;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.8;
-            font-weight: 300;
+        .header-subtitle {
+            font-size: 1.2rem;
             color: #9ca3af;
+            font-weight: 300;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-quick-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-quick-stat {
+            text-align: center;
+            padding: 20px;
+            background: rgba(15, 15, 15, 0.6);
+            border-radius: 12px;
+            border: 1px solid rgba(120, 119, 198, 0.1);
+            backdrop-filter: blur(20px);
+            min-width: 120px;
+            transition: all 0.3s ease;
+        }
+
+        .header-quick-stat:hover {
+            border-color: rgba(120, 119, 198, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(120, 119, 198, 0.1);
+        }
+
+        .header-quick-stat-number {
+            font-size: 2rem;
+            font-weight: 200;
+            background: linear-gradient(135deg, #7877c6 0%, #ffffff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .header-quick-stat-label {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 400;
         }
 
         .gallery-container {
@@ -417,13 +573,26 @@
         }
 
         #search-input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(156, 163, 175, 0.6);
         }
 
         #search-input:focus {
             outline: none;
-            border-color: rgba(255, 255, 255, 0.5);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            border-color: rgba(120, 119, 198, 0.5);
+            box-shadow: 0 0 20px rgba(120, 119, 198, 0.2);
+            background: rgba(15, 15, 15, 0.9);
+        }
+
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Enhanced transitions */
+        * {
+            transition-property: transform, opacity, background-color, border-color, box-shadow;
+            transition-duration: 0.3s;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .model-card.hidden {
@@ -431,40 +600,145 @@
         }
 
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2rem;
+            .header-nav {
+                flex-direction: column;
+                gap: 16px;
+                padding: 16px 0;
             }
-            
+
+            .header-nav-items {
+                gap: 16px;
+            }
+
+            .header-stats {
+                gap: 12px;
+                font-size: 0.8rem;
+            }
+
+            .header-hero {
+                padding: 40px 0 60px;
+            }
+
+            .header-title {
+                font-size: 2.5rem;
+                margin-bottom: 20px;
+            }
+
+            .header-subtitle {
+                font-size: 1rem;
+                margin-bottom: 30px;
+            }
+
+            .header-quick-stats {
+                flex-direction: column;
+                gap: 16px;
+                align-items: center;
+            }
+
+            .header-quick-stat {
+                min-width: 200px;
+            }
+
             .gallery-grid {
                 grid-template-columns: 1fr;
                 gap: 20px;
             }
-            
+
             .model-viewer-container {
                 height: 200px;
+            }
+
+            .controls {
+                margin-bottom: 20px !important;
+            }
+
+            .controls > div:first-child {
+                flex-direction: column;
+                gap: 12px !important;
+            }
+
+            .filter-btn {
+                padding: 10px 16px;
+                font-size: 0.8rem;
             }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>🏛️ Galeria Techno Sutra AR</h1>
-        <p>Explore os 56 capítulos do Avatamsaka Sutra através de modelos 3D interativos. Uma jornada visual pela sabedoria budista ancestral.</p>
+        <div class="header-container">
+            <!-- Navigation Bar -->
+            <nav class="header-nav">
+                <div class="header-logo">
+                    <div class="header-logo-icon">🏛️</div>
+                    <div class="header-logo-text">Techno Sutra AR</div>
+                </div>
+                <div class="header-nav-items">
+                    <div class="header-stats">
+                        <div class="header-stat">
+                            <span>📊</span>
+                            <span class="header-stat-value" id="header-available-count">0</span>
+                            <span>disponíveis</span>
+                        </div>
+                        <div class="header-stat">
+                            <span>🎯</span>
+                            <span class="header-stat-value" id="header-completion-rate">0%</span>
+                            <span>completo</span>
+                        </div>
+                        <div class="header-stat">
+                            <span>⏱️</span>
+                            <span class="header-stat-value" id="header-last-updated">Carregando...</span>
+                        </div>
+                    </div>
+                    <a href="index.html" class="header-nav-item">🚀 Visualizador AR</a>
+                    <a href="#gallery" class="header-nav-item">📚 Galeria</a>
+                </div>
+            </nav>
+
+            <!-- Hero Section -->
+            <div class="header-hero">
+                <h1 class="header-title">Galeria Avatamsaka Sutra</h1>
+                <p class="header-subtitle">
+                    Explore os 56 capítulos sagrados através de modelos 3D interativos.
+                    Uma jornada visual pela sabedoria budista ancestral em realidade aumentada.
+                </p>
+
+                <!-- Quick Stats -->
+                <div class="header-quick-stats">
+                    <div class="header-quick-stat">
+                        <span class="header-quick-stat-number" id="quick-stat-total">56</span>
+                        <span class="header-quick-stat-label">Capítulos</span>
+                    </div>
+                    <div class="header-quick-stat">
+                        <span class="header-quick-stat-number" id="quick-stat-available">0</span>
+                        <span class="header-quick-stat-label">Disponíveis</span>
+                    </div>
+                    <div class="header-quick-stat">
+                        <span class="header-quick-stat-number" id="quick-stat-progress">0%</span>
+                        <span class="header-quick-stat-label">Progresso</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="gallery-container">
-        <!-- Filtros e busca -->
-        <div class="controls" style="margin-bottom: 30px; text-align: center;">
-            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px;">
+    <div class="gallery-container" id="gallery">
+        <!-- Enhanced Filtros e busca -->
+        <div class="controls" style="margin-bottom: 40px; text-align: center;">
+            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px;">
                 <button class="filter-btn active" data-filter="all">Todos (56)</button>
                 <button class="filter-btn" data-filter="available">Disponíveis</button>
                 <button class="filter-btn" data-filter="unavailable">Em Breve</button>
                 <button class="filter-btn" data-filter="stages">Estágios (27-36)</button>
+                <button class="filter-btn" data-filter="bodhisattvas">Bodhisattvas</button>
             </div>
-            <div style="max-width: 400px; margin: 0 auto;">
-                <input type="text" id="search-input" placeholder="🔍 Buscar por capítulo ou título..."
-                       style="width: 100%; padding: 12px 16px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.3);
-                              background: rgba(255,255,255,0.1); color: white; font-size: 16px; backdrop-filter: blur(10px);">
+            <div style="max-width: 500px; margin: 0 auto; position: relative;">
+                <input type="text" id="search-input" placeholder="🔍 Buscar por nome, título, ocupação ou localização..."
+                       style="width: 100%; padding: 16px 20px; border-radius: 12px; border: 1px solid rgba(120,119,198,0.2);
+                              background: rgba(15,15,15,0.8); color: #e5e7eb; font-size: 16px; backdrop-filter: blur(20px);
+                              transition: all 0.3s ease; outline: none;">
+                <div id="search-results-count" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+                     color: #7877c6; font-size: 0.9rem; pointer-events: none;"></div>
             </div>
         </div>
 
@@ -700,9 +974,14 @@
 
                 // Atualizar estatísticas
                 const availableCount = availableModels.length;
-                availableCountEl.textContent = availableCount;
                 const completionRate = Math.round((availableCount / 56) * 100);
+
+                // Atualizar elementos principais
+                availableCountEl.textContent = availableCount;
                 completionRateEl.textContent = `${completionRate}%`;
+
+                // Atualizar header stats
+                updateHeaderStats(availableCount, completionRate);
 
                 // Atualizar contadores nos filtros
                 updateFilterCounts();
@@ -735,11 +1014,77 @@
                     case 'stages':
                         count = availableModels.filter(id => id >= 27 && id <= 36).length;
                         break;
+                    case 'bodhisattvas':
+                        count = chapters.filter(ch => ch.occupation.toLowerCase().includes('bodhisattva')).length;
+                        break;
                 }
 
                 const originalText = btn.textContent.split(' (')[0];
                 btn.textContent = `${originalText} (${count})`;
             });
+        }
+
+        // Função para atualizar estatísticas do header
+        function updateHeaderStats(availableCount, completionRate) {
+            // Header nav stats
+            const headerAvailableCount = document.getElementById('header-available-count');
+            const headerCompletionRate = document.getElementById('header-completion-rate');
+            const headerLastUpdated = document.getElementById('header-last-updated');
+
+            if (headerAvailableCount) headerAvailableCount.textContent = availableCount;
+            if (headerCompletionRate) headerCompletionRate.textContent = `${completionRate}%`;
+            if (headerLastUpdated) {
+                const now = new Date();
+                headerLastUpdated.textContent = now.toLocaleTimeString('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+
+            // Quick stats
+            const quickStatAvailable = document.getElementById('quick-stat-available');
+            const quickStatProgress = document.getElementById('quick-stat-progress');
+
+            if (quickStatAvailable) {
+                quickStatAvailable.textContent = availableCount;
+                // Animate the number change
+                quickStatAvailable.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    quickStatAvailable.style.transform = 'scale(1)';
+                }, 200);
+            }
+
+            if (quickStatProgress) {
+                quickStatProgress.textContent = `${completionRate}%`;
+                // Animate the number change
+                quickStatProgress.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    quickStatProgress.style.transform = 'scale(1)';
+                }, 200);
+            }
+        }
+
+        // Função para smooth scroll
+        function smoothScrollTo(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
+
+        // Função para atualizar contador de resultados de busca
+        function updateSearchResultsCount(visibleCount, totalCount) {
+            const searchResultsCount = document.getElementById('search-results-count');
+            if (searchResultsCount) {
+                if (visibleCount === totalCount) {
+                    searchResultsCount.textContent = '';
+                } else {
+                    searchResultsCount.textContent = `${visibleCount}/${totalCount}`;
+                }
+            }
         }
 
         // Funcionalidade de filtros
@@ -769,6 +1114,7 @@
         function filterModels(filter, searchTerm = '') {
             const cards = document.querySelectorAll('.model-card');
             let visibleCount = 0;
+            let totalFilteredCount = 0;
 
             cards.forEach((card, index) => {
                 const chapterId = index + 1;
@@ -788,11 +1134,16 @@
                     case 'stages':
                         shouldShow = chapterId >= 27 && chapterId <= 36;
                         break;
+                    case 'bodhisattvas':
+                        shouldShow = chapter.occupation.toLowerCase().includes('bodhisattva');
+                        break;
                     case 'all':
                     default:
                         shouldShow = true;
                         break;
                 }
+
+                if (shouldShow) totalFilteredCount++;
 
                 // Aplicar filtro de busca
                 if (shouldShow && searchTerm) {
@@ -818,6 +1169,9 @@
             const activeBtn = document.querySelector('.filter-btn.active');
             const originalText = activeBtn.textContent.split(' (')[0];
             activeBtn.textContent = `${originalText} (${visibleCount})`;
+
+            // Atualizar contador de resultados de busca
+            updateSearchResultsCount(visibleCount, totalFilteredCount);
         }
 
         // Função para abrir modelo em AR
@@ -884,10 +1238,68 @@
             });
         }
 
+        // Configurar navegação suave
+        function setupSmoothNavigation() {
+            // Smooth scroll para links internos
+            document.querySelectorAll('a[href^="#"]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    smoothScrollTo(targetId);
+                });
+            });
+
+            // Parallax effect no header
+            let ticking = false;
+            function updateParallax() {
+                const scrolled = window.pageYOffset;
+                const parallaxElements = document.querySelectorAll('.header-hero::before');
+
+                parallaxElements.forEach(element => {
+                    const speed = 0.5;
+                    element.style.transform = `translate(-50%, -50%) translateY(${scrolled * speed}px)`;
+                });
+
+                ticking = false;
+            }
+
+            window.addEventListener('scroll', () => {
+                if (!ticking) {
+                    requestAnimationFrame(updateParallax);
+                    ticking = true;
+                }
+            });
+        }
+
         // Carregar galeria quando a página estiver pronta
         document.addEventListener('DOMContentLoaded', () => {
             loadGallery();
             setupFilters();
+            setupSmoothNavigation();
+
+            // Adicionar efeito de digitação no placeholder
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                const originalPlaceholder = searchInput.placeholder;
+                let isTyping = false;
+
+                searchInput.addEventListener('focus', () => {
+                    if (!isTyping && !searchInput.value) {
+                        isTyping = true;
+                        searchInput.placeholder = '';
+                        let i = 0;
+                        const typeInterval = setInterval(() => {
+                            if (i < originalPlaceholder.length) {
+                                searchInput.placeholder += originalPlaceholder.charAt(i);
+                                i++;
+                            } else {
+                                clearInterval(typeInterval);
+                                isTyping = false;
+                            }
+                        }, 50);
+                    }
+                });
+            }
         });
     </script>
 </body>
