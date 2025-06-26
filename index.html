@@ -35,8 +35,6 @@
             background-color: transparent;
             z-index: 2;
             pointer-events: auto;
-            --min-hotspot-opacity: 0;
-            --max-hotspot-opacity: 1;
         }
         
         /* AR Status-based styling seguindo padrões oficiais */
@@ -144,7 +142,7 @@
         /* AR Button seguindo padrões oficiais do model-viewer */
         .ar-button {
             position: absolute;
-            bottom: 55px;
+            bottom: 32px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.8);
@@ -201,7 +199,7 @@
         }
         
         .ar-button::before {
-            content: "�";
+            content: " ";
             font-size: 20px;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
         }
@@ -438,7 +436,7 @@
 
     <!-- AR Prompt -->
     <div class="ar-prompt">
-        � Mova o dispositivo lentamente para encontrar uma superfície
+          Mova o dispositivo lentamente para encontrar uma superfície
     </div>
     
     <!-- Visualizador 3D com melhorias AR seguindo padrões oficiais -->
@@ -458,11 +456,6 @@
         reveal="auto"
         environment-image="neutral"
         shadow-intensity="1"
-        scale="3 3 3"
-        min-camera-orbit="auto auto 2m"
-        max-camera-orbit="auto auto 8m"
-        camera-orbit="0deg 75deg 4m"
-        field-of-view="45deg"
         style="background-color: transparent;">
 
         <!-- Botão AR customizado seguindo padrões oficiais -->
