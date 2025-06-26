@@ -586,6 +586,222 @@
             background: rgba(15, 15, 15, 0.9);
         }
 
+        /* Tooltips interativos */
+        .tooltip {
+            position: relative;
+            cursor: help;
+        }
+
+        .tooltip::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 15, 15, 0.95);
+            color: #e5e7eb;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 400;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(120, 119, 198, 0.3);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: 115%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: rgba(120, 119, 198, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .tooltip:hover::before,
+        .tooltip:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Efeitos de hover melhorados */
+        .model-card {
+            transform: translateY(0);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .model-card:hover {
+            transform: translateY(-12px) scale(1.02);
+        }
+
+        .model-card:hover model-viewer {
+            filter: brightness(1.1) contrast(1.05);
+        }
+
+        /* Animações de carregamento aprimoradas */
+        .model-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .model-card:nth-child(even) {
+            animation-delay: 0.1s;
+        }
+
+        .model-card:nth-child(3n) {
+            animation-delay: 0.2s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Botão de tema */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(15, 15, 15, 0.8);
+            border: 1px solid rgba(120, 119, 198, 0.3);
+            color: #e5e7eb;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(120, 119, 198, 0.2);
+            border-color: rgba(120, 119, 198, 0.5);
+            transform: rotate(180deg) scale(1.1);
+        }
+
+        /* Modo claro */
+        body.light-mode {
+            background: #f8fafc;
+            background-image:
+                radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(99, 102, 241, 0.02) 0%, transparent 50%);
+            color: #1f2937;
+        }
+
+        body.light-mode .header {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+        }
+
+        body.light-mode .model-card {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(99, 102, 241, 0.1);
+            color: #1f2937;
+        }
+
+        body.light-mode .model-title {
+            color: #111827;
+        }
+
+        body.light-mode .model-subtitle {
+            color: #6b7280;
+        }
+
+        /* Loading skeleton */
+        .skeleton {
+            background: linear-gradient(90deg,
+                rgba(120, 119, 198, 0.1) 25%,
+                rgba(120, 119, 198, 0.2) 50%,
+                rgba(120, 119, 198, 0.1) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Melhorias no model-viewer */
+        model-viewer {
+            transition: all 0.3s ease;
+        }
+
+        model-viewer:hover {
+            filter: brightness(1.05) saturate(1.1);
+        }
+
+        /* Quick actions bar */
+        .quick-actions {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 1000;
+        }
+
+        .quick-action-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(15, 15, 15, 0.9);
+            border: 1px solid rgba(120, 119, 198, 0.3);
+            color: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px);
+            font-size: 1.1rem;
+        }
+
+        .quick-action-btn:hover {
+            background: rgba(120, 119, 198, 0.2);
+            border-color: rgba(120, 119, 198, 0.5);
+            transform: scale(1.1);
+        }
+
+        /* Contador de progresso visual */
+        .progress-ring {
+            position: relative;
+            width: 60px;
+            height: 60px;
+        }
+
+        .progress-ring circle {
+            fill: none;
+            stroke: rgba(120, 119, 198, 0.2);
+            stroke-width: 3;
+        }
+
+        .progress-ring .progress {
+            stroke: #7877c6;
+            stroke-linecap: round;
+            transition: stroke-dasharray 1s ease;
+        }
+
         /* Smooth scroll behavior */
         html {
             scroll-behavior: smooth;
@@ -668,6 +884,23 @@
     </style>
 </head>
 <body>
+    <!-- Botão de alternância de tema -->
+    <button class="theme-toggle tooltip" data-tooltip="Alternar tema claro/escuro" onclick="toggleTheme()">
+        🌙
+    </button>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <button class="quick-action-btn tooltip" data-tooltip="Voltar ao topo" onclick="scrollToTop()">
+            ↑
+        </button>
+        <button class="quick-action-btn tooltip" data-tooltip="Estatísticas" onclick="showStats()">
+            📊
+        </button>
+        <button class="quick-action-btn tooltip" data-tooltip="Compartilhar" onclick="shareGallery()">
+            📤
+        </button>
+    </div>
     <div class="header">
         <div class="header-container">
             <!-- Navigation Bar -->
@@ -708,15 +941,22 @@
 
                 <!-- Quick Stats -->
                 <div class="header-quick-stats">
-                    <div class="header-quick-stat">
+                    <div class="header-quick-stat tooltip" data-tooltip="Total de capítulos do Avatamsaka Sutra">
                         <span class="header-quick-stat-number" id="quick-stat-total">56</span>
                         <span class="header-quick-stat-label">Capítulos</span>
                     </div>
-                    <div class="header-quick-stat">
+                    <div class="header-quick-stat tooltip" data-tooltip="Modelos 3D prontos para visualização">
                         <span class="header-quick-stat-number" id="quick-stat-available">0</span>
                         <span class="header-quick-stat-label">Disponíveis</span>
+                        <div class="progress-ring">
+                            <svg viewBox="0 0 36 36">
+                                <circle cx="18" cy="18" r="16" stroke="rgba(120, 119, 198, 0.2)" stroke-width="3" fill="none"></circle>
+                                <circle cx="18" cy="18" r="16" stroke="#7877c6" stroke-width="3" fill="none" 
+                                        stroke-dasharray="0 100" stroke-linecap="round" class="progress" id="progress-circle"></circle>
+                            </svg>
+                        </div>
                     </div>
-                    <div class="header-quick-stat">
+                    <div class="header-quick-stat tooltip" data-tooltip="Percentual de conclusão da coleção">
                         <span class="header-quick-stat-number" id="quick-stat-progress">0%</span>
                         <span class="header-quick-stat-label">Progresso</span>
                     </div>
@@ -788,7 +1028,7 @@
             { id: 12, name: "Jayoṣmāyatana", title: "Lugar da Vitória e do Brilho", location: "Jayoṣmāyatana (cidade)", occupation: "Brâmane" },
             { id: 13, name: "Maitrayaṇī", title: "Amizade Feminina", location: "Siṃhavijṛmbhita (cidade)", occupation: "Menina" },
             { id: 14, name: "Sudarśana", title: "Bonito, de Boa Visão", location: "Trinayana (cidade)", occupation: "Mendicante" },
-            { id: 15, name: "Indriyeśvara", title: "Senhor dos Sentidos", location: "Sumukha (cidade)", occupation: "Menino" },
+            { id: 15, name: "Indriyeśvara", title: "Senhor das Faculdades", location: "Sumukha (cidade)", occupation: "Menino" },
             { id: 16, name: "Prabhūtā", title: "Abundante", location: "Samudrapratiṣṭhāna (cidade)", occupation: "Mulher leiga" },
             { id: 17, name: "Vidvān", title: "Sábio", location: "Mahāsaṃbhava (cidade)", occupation: "Chefe de família" },
             { id: 18, name: "Ratnacūḍa", title: "Coroa de Jóias", location: "Siṃhapota (cidade)", occupation: "Chefe de família" },
@@ -798,14 +1038,14 @@
             { id: 22, name: "Acalā", title: "Imóvel, Firme", location: "Sthira (cidade)", occupation: "Mulher leiga" },
             { id: 23, name: "Sarvagamin", title: "Aquele que Vai a Todos os Lugares", location: "Tosala (cidade)", occupation: "Mendicante" },
             { id: 24, name: "Utpalabhūti", title: "Flores de Lótus", location: "Pṛthurāṣṭra (cidade)", occupation: "Perfumista" },
-            { id: 25, name: "Vaira", title: "Diamante", location: "Kuṭagāra (cidade)", occupation: "Marinheiro" },
+            { id: 25, name: "Vaira", title: "Diamante", location: "Kuṭagāra ()", occupation: "Marinheiro" },
             { id: 26, name: "Jayottama", title: "Glória da Vitória", location: "Nandiḥāra (cidade)", occupation: "Ancião da cidade" },
             { id: 27, name: "Siṃhavijṛmbhitā", title: "Cheia de Força de Leão", location: "Kaliṅgavana (floresta)", occupation: "Freira" },
             { id: 28, name: "Vasumitrā", title: "Amiga da Terra", location: "Ratnavyūha (cidade)", occupation: "Cortesã" },
             { id: 29, name: "Veṣṭhila", title: "Chefe de família", location: "Śubhaparaṃgama (cidade)", occupation: "Chefe de família" },
             { id: 30, name: "Avalokiteśvara", title: "Senhor que Ouve os Clamores do Mundo", location: "Monte Potalaka (montanha)", occupation: "Bodhisattva" },
             { id: 31, name: "Ananyagāmin", title: "Aquele que Vai Sem Obstáculos", location: "Reino oriental", occupation: "Viajante universal" },
-            { id: 32, name: "Mahādeva", title: "Grande Deus", location: "Dvāravatī (cidade)", occupation: "Deva (divindade)" },
+            { id: 32, name: "Mahādeva", title: "Grande Deva", location: "Dvāravatī (cidade)", occupation: "Deva (divindade)" },
             { id: 33, name: "Sthāvarā", title: "A Terra", location: "Bodhimaṇḍa em Magadha", occupation: "Deusa da Terra" },
             { id: 34, name: "Vāsantī", title: "Deusa da Noite", location: "Kapilavastu", occupation: "Deusa da Noite" },
             { id: 35, name: "Samantagambhīraśrīvimalaprabhā", title: "Glória Profunda Universal Imaculada", location: "Bodhimaṇḍa", occupation: "Deusa da Noite" },
@@ -884,12 +1124,12 @@
 
             card.innerHTML = `
                 <div class="model-header">
-                    <div class="model-number">Capítulo ${chapter.id}</div>
-                    <div class="model-title">${chapter.name}</div>
-                    <div class="model-subtitle">${chapter.title}</div>
+                    <div class="model-number tooltip" data-tooltip="Posição no Avatamsaka Sutra">Capítulo ${chapter.id}</div>
+                    <div class="model-title tooltip" data-tooltip="Nome do professor espiritual">${chapter.name}</div>
+                    <div class="model-subtitle tooltip" data-tooltip="Significado e características">${chapter.title}</div>
                     <div class="model-meta">
-                        <span class="model-occupation">${chapter.occupation}</span>
-                        <span class="model-location">${chapter.location}</span>
+                        <span class="model-occupation tooltip" data-tooltip="Ocupação ou tipo">${chapter.occupation}</span>
+                        <span class="model-location tooltip" data-tooltip="Local de ensino">${chapter.location}</span>
                     </div>
                 </div>
                 <div class="model-viewer-container">
@@ -904,10 +1144,10 @@
                             reveal="auto"
                             environment-image="neutral"
                             shadow-intensity="0.5"
-                            scale="2.5 2.5 2.5"
-                            min-camera-orbit="auto auto 1.5m"
-                            max-camera-orbit="auto auto 6m"
-                            camera-orbit="0deg 75deg 3m"
+                            scale="2.0 2.0 2.0"
+                            min-camera-orbit="auto auto 1.2m"
+                            max-camera-orbit="auto auto 5m"
+                            camera-orbit="0deg 70deg 2.5m"
                             field-of-view="45deg"
                             style="background-color: transparent;">
                         </model-viewer>
@@ -924,7 +1164,7 @@
                 <div class="model-actions">
                     ${isAvailable ? `
                         <button class="action-btn primary" onclick="openInAR(${chapter.id})">
-                            � Ver em AR
+                              Ver em AR
                         </button>
                         <button class="action-btn" onclick="viewFullscreen(${chapter.id})">
                             🔍 Ampliar
@@ -1069,6 +1309,9 @@
                 setTimeout(() => {
                     quickStatProgress.style.transform = 'scale(1)';
                 }, 200);
+                
+                // Atualizar círculo de progresso
+                updateProgressCircle(completionRate);
             }
         }
 
@@ -1217,10 +1460,10 @@
                             camera-controls
                             environment-image="neutral"
                             shadow-intensity="0.5"
-                            scale="3 3 3"
-                            min-camera-orbit="auto auto 2m"
-                            max-camera-orbit="auto auto 8m"
-                            camera-orbit="0deg 75deg 4m"
+                            scale="2.5 2.5 2.5"
+                            min-camera-orbit="auto auto 1.5m"
+                            max-camera-orbit="auto auto 6m"
+                            camera-orbit="0deg 70deg 3.5m"
                             field-of-view="45deg"
                             style="width: 100%; height: 100%; background: transparent;">
                         </model-viewer>
@@ -1313,6 +1556,133 @@
                     }
                 });
             }
+        });
+
+        // Função para alternar tema
+        function toggleTheme() {
+            const body = document.body;
+            const themeBtn = document.querySelector('.theme-toggle');
+            
+            body.classList.toggle('light-mode');
+            
+            if (body.classList.contains('light-mode')) {
+                themeBtn.textContent = '☀️';
+                themeBtn.setAttribute('data-tooltip', 'Alternar para tema escuro');
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeBtn.textContent = '🌙';
+                themeBtn.setAttribute('data-tooltip', 'Alternar para tema claro');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Função para voltar ao topo
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Função para mostrar estatísticas detalhadas
+        function showStats() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.8); z-index: 2000; display: flex;
+                align-items: center; justify-content: center; backdrop-filter: blur(20px);
+            `;
+
+            const availableCount = availableModels.length;
+            const completionRate = Math.round((availableCount / 56) * 100);
+            const bodhisattvaCount = chapters.filter(ch => ch.occupation.toLowerCase().includes('bodhisattva')).length;
+            const stagesCount = chapters.filter((ch, index) => (index + 1) >= 27 && (index + 1) <= 36).length;
+
+            modal.innerHTML = `
+                <div style="background: rgba(15,15,15,0.95); padding: 30px; border-radius: 16px; 
+                           border: 1px solid rgba(120,119,198,0.3); max-width: 500px; width: 90%;
+                           backdrop-filter: blur(20px);">
+                    <h3 style="color: #f3f4f6; margin: 0 0 20px 0; text-align: center; font-size: 1.5rem;">📊 Estatísticas da Galeria</h3>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                        <div style="text-align: center; padding: 20px; background: rgba(120,119,198,0.1); border-radius: 12px;">
+                            <div style="font-size: 2rem; color: #7877c6; margin-bottom: 8px;">${availableCount}</div>
+                            <div style="color: #9ca3af; font-size: 0.9rem;">Modelos Disponíveis</div>
+                        </div>
+                        <div style="text-align: center; padding: 20px; background: rgba(120,119,198,0.1); border-radius: 12px;">
+                            <div style="font-size: 2rem; color: #7877c6; margin-bottom: 8px;">${completionRate}%</div>
+                            <div style="color: #9ca3af; font-size: 0.9rem;">Completude</div>
+                        </div>
+                        <div style="text-align: center; padding: 20px; background: rgba(120,119,198,0.1); border-radius: 12px;">
+                            <div style="font-size: 2rem; color: #7877c6; margin-bottom: 8px;">${bodhisattvaCount}</div>
+                            <div style="color: #9ca3af; font-size: 0.9rem;">Bodhisattvas</div>
+                        </div>
+                        <div style="text-align: center; padding: 20px; background: rgba(120,119,198,0.1); border-radius: 12px;">
+                            <div style="font-size: 2rem; color: #7877c6; margin-bottom: 8px;">${stagesCount}</div>
+                            <div style="color: #9ca3af; font-size: 0.9rem;">Estágios (27-36)</div>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <button onclick="this.closest('div').parentElement.remove()" 
+                                style="background: rgba(120,119,198,0.2); border: 1px solid rgba(120,119,198,0.4);
+                                       color: #e5e7eb; padding: 12px 24px; border-radius: 8px; cursor: pointer;
+                                       transition: all 0.3s ease;">Fechar</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+
+        // Função para compartilhar galeria
+        function shareGallery() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Galeria Techno Sutra AR',
+                    text: `Explore os ${availableModels.length} modelos 3D dos 56 capítulos do Avatamsaka Sutra em realidade aumentada!`,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback para navegadores que não suportam Web Share API
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+                        background: rgba(120,119,198,0.9); color: white; padding: 12px 24px;
+                        border-radius: 8px; z-index: 3000; backdrop-filter: blur(20px);
+                    `;
+                    toast.textContent = '📋 Link copiado para a área de transferência!';
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                });
+            }
+        }
+
+        // Atualizar círculo de progresso
+        function updateProgressCircle(percentage) {
+            const circle = document.getElementById('progress-circle');
+            if (circle) {
+                const circumference = 2 * Math.PI * 16; // r=16
+                const strokeDasharray = (percentage / 100) * circumference;
+                circle.style.strokeDasharray = `${strokeDasharray} ${circumference}`;
+            }
+        }
+
+        // Carregar tema salvo
+        function loadSavedTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                toggleTheme();
+            }
+        }
+
+        // Inicializar tema ao carregar
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSavedTheme();
         });
     </script>
 </body>
