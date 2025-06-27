@@ -1,0 +1,55 @@
+{
+  "titulo_principal": "PERFIL DE PERSONAGEM - CAPÍTULO 25",
+  "conteudo_completo": "═══════════════════════════════════════════════════════════════════════════════  \n                            PERFIL DE PERSONAGEM - CAPÍTULO 25  \n═══════════════════════════════════════════════════════════════════════════════\n\nNOME DO PERSONAGEM: Vaira\n\nINFORMAÇÕES BÁSICAS\n\n- Nome e Tradução: Vaira\n- Tipo: Mariner (Navegador)\n- Localização: Cidade de Kūṭāgāra, à beira-mar\n- Status: Mestre espiritual ensinando sobre o oceano das qualidades dos budas\n\nDESCRIÇÃO FÍSICA\n\n- Aparência Visual:\n  - Cor do Corpo: Não especificada\n  - Cabelo: Não especificado\n  - Olhos: Não especificado\n  - Beleza Geral: Descrito como uma presença que atrai centenas de milhares de pessoas\n  - Adornos: Não especificado\n  - Vestimentas: Não especificado\n\nCARACTERÍSTICAS ESPIRITUAIS DISTINTIVAS\n\n- Experiência Mística Central: Purificador da conduta bodhisattva, conhecido como a bandeira da grande compaixão. Ensina os seres a entrar no oceano de onisciência e oferece ensinamentos que eliminam o medo de afundar no oceano de saṃsāra.\n\nLOCALIZAÇÃO E CONTEXTO\n\n- Vaira reside na cidade de Kūṭāgāra, na costa, onde narra contos do mar que educam sobre qualidades espirituais. Ele guia mercadores em jornadas seguras e os ensina o Dharma durante suas viagens.\n\n",
+  "dados_estruturados": {
+    "informacoes_basicas": {
+      "-_nome_e_traducao": "Vaira",
+      "-_tipo": "Mariner (Navegador)",
+      "-_localizacao": "Cidade de Kūṭāgāra, à beira-mar",
+      "-_status": "Mestre espiritual ensinando sobre o oceano das qualidades dos budas"
+    },
+    "descricao_fisica": {
+      "aparencia_visual": [
+        "- Cor do Corpo: Não especificada",
+        "- Cabelo: Não especificado",
+        "- Olhos: Não especificado",
+        "- Beleza Geral: Descrito como uma presença que atrai centenas de milhares de pessoas",
+        "- Adornos: Não especificado",
+        "- Vestimentas: Não especificado"
+      ]
+    },
+    "localizacao_contexto": "- Vaira reside na cidade de Kūṭāgāra, na costa, onde narra contos do mar que educam sobre qualidades espirituais. Ele guia mercadores em jornadas seguras e os ensina o Dharma durante suas viagens."
+  },
+  "secoes_organizadas": [
+    {
+      "titulo": "INFORMAÇÕES BÁSICAS",
+      "linhas": [
+        "- Nome e Tradução: Vaira",
+        "- Tipo: Mariner (Navegador)",
+        "- Localização: Cidade de Kūṭāgāra, à beira-mar",
+        "- Status: Mestre espiritual ensinando sobre o oceano das qualidades dos budas"
+      ],
+      "conteudo": "- Nome e Tradução: Vaira\n- Tipo: Mariner (Navegador)\n- Localização: Cidade de Kūṭāgāra, à beira-mar\n- Status: Mestre espiritual ensinando sobre o oceano das qualidades dos budas"
+    },
+    {
+      "titulo": "DESCRIÇÃO FÍSICA",
+      "linhas": [
+        "- Aparência Visual:",
+        "  - Cor do Corpo: Não especificada",
+        "  - Cabelo: Não especificado",
+        "  - Olhos: Não especificado",
+        "  - Beleza Geral: Descrito como uma presença que atrai centenas de milhares de pessoas",
+        "  - Adornos: Não especificado",
+        "  - Vestimentas: Não especificado"
+      ],
+      "conteudo": "- Aparência Visual:\n  - Cor do Corpo: Não especificada\n  - Cabelo: Não especificado\n  - Olhos: Não especificado\n  - Beleza Geral: Descrito como uma presença que atrai centenas de milhares de pessoas\n  - Adornos: Não especificado\n  - Vestimentas: Não especificado"
+    },
+    {
+      "titulo": "LOCALIZAÇÃO E CONTEXTO",
+      "linhas": [
+        "- Vaira reside na cidade de Kūṭāgāra, na costa, onde narra contos do mar que educam sobre qualidades espirituais. Ele guia mercadores em jornadas seguras e os ensina o Dharma durante suas viagens."
+      ],
+      "conteudo": "- Vaira reside na cidade de Kūṭāgāra, na costa, onde narra contos do mar que educam sobre qualidades espirituais. Ele guia mercadores em jornadas seguras e os ensina o Dharma durante suas viagens."
+    }
+  ]
+}
