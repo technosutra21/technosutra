@@ -40,6 +40,11 @@
             background-color: transparent;
             z-index: 2;
             pointer-events: auto;
+            /* Iluminação aprimorada */
+            --min-camera-orbit: auto auto 5%;
+            --max-camera-orbit: auto auto 100%;
+            --camera-orbit: 0deg 75deg 1.5m;
+            --field-of-view: 30deg;
         }
         
         /* AR Status-based styling seguindo padrões oficiais */
@@ -147,7 +152,7 @@
         /* AR Button seguindo padrões oficiais do model-viewer */
         .ar-button {
             position: absolute;
-            bottom: 32px;
+            bottom: 80px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.8);
@@ -235,7 +240,7 @@
         /* Model controls overlay */
         .model-controls {
             position: absolute;
-            bottom: 120px;
+            bottom: 160px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -461,7 +466,11 @@
         reveal="auto"
         environment-image="neutral"
         shadow-intensity="1"
-        style="background-color: transparent;">
+        exposure="1"
+        shadow-softness="0.25"
+        tone-mapping="aces"
+        scale="1.6 1.6 1.6"
+        style="background-color: transparent; --environment-image: neutral;">
 
         <!-- Botão AR customizado seguindo padrões oficiais -->
         <button slot="ar-button" class="ar-button" id="ar-button">
