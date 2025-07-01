@@ -3,11 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://ajax.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https:; worker-src 'self'; media-src 'self' blob:; object-src 'none'; frame-ancestors 'none';">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
-    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <title>Techno Sutra AR</title>
     <style>
         body {
@@ -147,7 +142,7 @@
         /* AR Button seguindo padrões oficiais do model-viewer */
         .ar-button {
             position: absolute;
-            bottom: 80px;
+            bottom: 32px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.8);
@@ -235,7 +230,7 @@
         /* Model controls overlay */
         .model-controls {
             position: absolute;
-            bottom: 160px;
+            bottom: 120px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -461,7 +456,6 @@
         reveal="auto"
         environment-image="neutral"
         shadow-intensity="1"
-        scale="1.6 1.6 1.6"
         style="background-color: transparent;">
 
         <!-- Botão AR customizado seguindo padrões oficiais -->
@@ -518,36 +512,9 @@
         let modelLoaded = false;
         let arReady = false;
         
-        // Configuração do modelo com validação de entrada
+        // Configuração do modelo
         const urlParams = new URLSearchParams(window.location.search);
-        const rawModelId = urlParams.get('model');
-        
-        // Validação rigorosa de entrada
-        function validateModelId(input) {
-            if (!input) return 1; // Valor padrão
-            
-            // Remove caracteres não numéricos
-            const cleanInput = String(input).replace(/[^0-9]/g, '');
-            
-            if (!cleanInput) return 1;
-            
-            const parsed = parseInt(cleanInput, 10);
-            
-            // Validar range
-            if (isNaN(parsed) || parsed < 1 || parsed > 56) {
-                console.warn(`[Security] Invalid model ID attempted: ${input}. Using default.`);
-                return 1;
-            }
-            
-            return parsed;
-        }
-        
-        const modelId = validateModelId(rawModelId);
-        
-        // Log de segurança para tentativas suspeitas
-        if (rawModelId && rawModelId !== String(modelId)) {
-            console.warn(`[Security] Potentially malicious input sanitized: '${rawModelId}' -> ${modelId}`);
-        }
+        const modelId = Math.max(1, Math.min(54, parseInt(urlParams.get('model')) || 1));
         
         // Production logging - console only
         function logStatus(message) {
@@ -693,7 +660,6 @@
             } catch (error) {
                 logStatus(`Erro ao carregar modelo: ${error.message}`);
                 showStatus('Erro ao carregar modelo 3D', 'error');
-                displayNotFoundMessage();
                 modelLoaded = false;
                 updateARButtonState();
                 return false;
@@ -759,7 +725,7 @@
             }
         }
         
-        // Enhanced AR support detection with comprehensive fallbacks
+        // FIXED: Teste de suporte AR com melhor detecção
         async function testARSupport() {
             try {
                 logStatus('Verificando suporte AR...');
@@ -767,88 +733,37 @@
                 const results = {
                     webxr: false,
                     sceneViewer: isAndroidDevice(),
-                    quickLook: isIOSDevice(),
-                    deviceInfo: {
-                        userAgent: navigator.userAgent,
-                        platform: navigator.platform,
-                        touchSupport: 'ontouchstart' in window,
-                        orientationSupport: 'DeviceOrientationEvent' in window,
-                        accelerometerSupport: 'DeviceMotionEvent' in window
-                    }
+                    quickLook: isIOSDevice()
                 };
                 
-                // Enhanced device detection
-                const isAndroid = /Android/i.test(navigator.userAgent);
-                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-                const isChrome = /Chrome/i.test(navigator.userAgent) && !/Edge/i.test(navigator.userAgent);
-                const isFirefox = /Firefox/i.test(navigator.userAgent);
-                const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome/i.test(navigator.userAgent);
-                
-                // Detailed platform support
-                results.sceneViewer = isAndroid && isChrome;
-                results.quickLook = isIOS && (isSafari || isChrome);
-                
-                // Test WebXR with comprehensive error handling
+                // Teste WebXR com timeout
                 if (navigator.xr) {
                     try {
                         const webxrPromise = navigator.xr.isSessionSupported('immersive-ar');
                         const timeoutPromise = new Promise((_, reject) => 
-                            setTimeout(() => reject(new Error('WebXR timeout')), 5000)
+                            setTimeout(() => reject(new Error('WebXR timeout')), 3000)
                         );
                         
                         results.webxr = await Promise.race([webxrPromise, timeoutPromise]);
                         logStatus(`WebXR AR: ${results.webxr ? 'Suportado' : 'Não suportado'}`);
-                        
-                        // Additional WebXR capabilities check
-                        if (results.webxr) {
-                            results.webxrFeatures = {
-                                handTracking: await navigator.xr.isSessionSupported('immersive-ar', { optionalFeatures: ['hand-tracking'] }).catch(() => false),
-                                hitTest: await navigator.xr.isSessionSupported('immersive-ar', { requiredFeatures: ['hit-test'] }).catch(() => false),
-                                planeDetection: await navigator.xr.isSessionSupported('immersive-ar', { optionalFeatures: ['plane-detection'] }).catch(() => false)
-                            };
-                        }
                     } catch (e) {
                         logStatus(`WebXR teste falhou: ${e.message}`);
-                        results.webxrError = e.message;
-                    }
-                } else {
-                    logStatus('WebXR API não disponível');
-                    results.webxrError = 'WebXR API not available';
-                }
-                
-                // Fallback detection for older devices
-                if (!results.webxr && !results.sceneViewer && !results.quickLook) {
-                    // Check for legacy AR support
-                    if (window.DeviceOrientationEvent && window.DeviceMotionEvent) {
-                        results.legacyAR = true;
-                        logStatus('🔄 Suporte AR básico disponível (orientação + movimento)');
-                    }
-                    
-                    // Check for camera API as minimum requirement
-                    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                        results.cameraAPI = true;
-                        logStatus('📷 API de câmera disponível');
                     }
                 }
                 
-                const supported = results.webxr || results.sceneViewer || results.quickLook || results.legacyAR;
+                const supported = results.webxr || results.sceneViewer || results.quickLook;
                 
                 if (supported) {
                     const modes = [];
                     if (results.webxr) modes.push('WebXR');
-                    if (results.sceneViewer) modes.push('Scene Viewer (Android)');
-                    if (results.quickLook) modes.push('AR Quick Look (iOS)');
-                    if (results.legacyAR) modes.push('AR Básico');
+                    if (results.sceneViewer) modes.push('Scene Viewer');
+                    if (results.quickLook) modes.push('Quick Look');
                     
                     logStatus(`✅ AR disponível via: ${modes.join(', ')}`);
                     arReady = true;
-                    
-                    // Show appropriate AR button text based on platform
-                    updateARButtonForPlatform(results);
                 } else {
                     logStatus('❌ AR não disponível neste dispositivo');
                     arReady = false;
-                    showARUnavailableMessage(results);
                 }
                 
                 updateARButtonState();
@@ -860,64 +775,6 @@
                 updateARButtonState();
                 return { supported: false, error: error.message };
             }
-        }
-        
-        // Update AR button text based on detected platform
-        function updateARButtonForPlatform(results) {
-            if (!arButton) return;
-            
-            const arText = arButton.querySelector('.ar-text');
-            if (!arText) return;
-            
-            if (results.webxr) {
-                arText.textContent = 'Ver em AR (WebXR)';
-            } else if (results.sceneViewer) {
-                arText.textContent = 'Ver em AR (Android)';
-            } else if (results.quickLook) {
-                arText.textContent = 'Ver em AR (iOS)';
-            } else if (results.legacyAR) {
-                arText.textContent = 'Visualização 3D+';
-            }
-        }
-        
-        // Show AR unavailable message with helpful information
-        function showARUnavailableMessage(results) {
-            const message = document.createElement('div');
-            message.style.cssText = `
-                position: fixed;
-                bottom: 150px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: rgba(0, 0, 0, 0.9);
-                color: white;
-                padding: 20px;
-                border-radius: 12px;
-                text-align: center;
-                max-width: 350px;
-                z-index: 150;
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                backdrop-filter: blur(20px);
-            `;
-            
-            let content = '<div style="font-weight: 600; margin-bottom: 10px;">AR não disponível</div>';
-            
-            if (results.deviceInfo.touchSupport) {
-                content += '<div style="font-size: 14px; opacity: 0.8; margin-bottom: 8px;">💡 Dica: Tente usar o Chrome no Android ou Safari no iOS</div>';
-            }
-            
-            if (results.cameraAPI) {
-                content += '<div style="font-size: 12px; color: #7877c6;">📷 Visualização 3D com câmera disponível</div>';
-            }
-            
-            message.innerHTML = content;
-            document.body.appendChild(message);
-            
-            // Auto-remove after 5 seconds
-            setTimeout(() => {
-                if (document.body.contains(message)) {
-                    document.body.removeChild(message);
-                }
-            }, 5000);
         }
         
         // Event listeners do model-viewer
@@ -945,176 +802,6 @@
                     }
                 }
             });
-
-            // Função para exibir mensagem estilizada quando o modelo não é encontrado
-            function displayNotFoundMessage() {
-                const body = document.body;
-                
-                // Create overlay
-                const overlay = document.createElement('div');
-                overlay.style.cssText = `
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0, 0, 0, 0.8);
-                    backdrop-filter: blur(10px);
-                    z-index: 2000;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    animation: fadeIn 0.5s ease-in-out;
-                `;
-                
-                // Create main message container
-                const notFoundMessage = document.createElement('div');
-                notFoundMessage.style.cssText = `
-                    position: relative;
-                    padding: 60px 80px;
-                    background: linear-gradient(135deg, rgba(235, 68, 90, 0.95), rgba(190, 24, 93, 0.95));
-                    color: white;
-                    font-size: 48px;
-                    font-weight: 900;
-                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-                    border-radius: 20px;
-                    text-align: center;
-                    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-                    border: 2px solid rgba(255, 255, 255, 0.2);
-                    letter-spacing: 2px;
-                    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-                    animation: pulseMessage 2s ease-in-out infinite;
-                `;
-                
-                // Create glow effect
-                const glowElement = document.createElement('div');
-                glowElement.style.cssText = `
-                    position: absolute;
-                    top: -10px;
-                    left: -10px;
-                    right: -10px;
-                    bottom: -10px;
-                    border-radius: 25px;
-                    background: linear-gradient(135deg, rgba(235, 68, 90, 0.4), rgba(190, 24, 93, 0.4));
-                    z-index: -1;
-                    animation: glow 3s ease-in-out infinite;
-                `;
-                
-                // Create title
-                const titleElement = document.createElement('div');
-                titleElement.style.cssText = `
-                    margin-bottom: 20px;
-                    font-size: 56px;
-                    animation: textGlow 2s ease-in-out infinite;
-                `;
-                titleElement.textContent = 'VOCÊ ESTÁ PRONTO?';
-                
-                // Create subtitle
-                const subtitleElement = document.createElement('div');
-                subtitleElement.style.cssText = `
-                    font-size: 18px;
-                    font-weight: 400;
-                    opacity: 0.9;
-                    margin-top: 15px;
-                    letter-spacing: 1px;
-                `;
-                subtitleElement.textContent = 'Modelo não encontrado (404)';
-                
-                // Create button
-                const closeButton = document.createElement('button');
-                closeButton.style.cssText = `
-                    margin-top: 30px;
-                    padding: 15px 40px;
-                    background: rgba(255, 255, 255, 0.2);
-                    border: 2px solid rgba(255, 255, 255, 0.3);
-                    color: white;
-                    border-radius: 50px;
-                    font-size: 16px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                `;
-                closeButton.textContent = 'Fechar';
-                
-                // Add hover effects to button
-                closeButton.addEventListener('mouseenter', () => {
-                    closeButton.style.background = 'rgba(255, 255, 255, 0.3)';
-                    closeButton.style.borderColor = 'rgba(255, 255, 255, 0.5)';
-                    closeButton.style.transform = 'scale(1.05)';
-                });
-                
-                closeButton.addEventListener('mouseleave', () => {
-                    closeButton.style.background = 'rgba(255, 255, 255, 0.2)';
-                    closeButton.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-                    closeButton.style.transform = 'scale(1)';
-                });
-                
-                // Close function
-                const closeMessage = () => {
-                    overlay.style.animation = 'fadeOut 0.5s ease-in-out';
-                    setTimeout(() => {
-                        if (body.contains(overlay)) {
-                            body.removeChild(overlay);
-                        }
-                    }, 500);
-                };
-                
-                closeButton.addEventListener('click', closeMessage);
-                overlay.addEventListener('click', (e) => {
-                    if (e.target === overlay) closeMessage();
-                });
-                
-                // Assemble elements
-                notFoundMessage.appendChild(glowElement);
-                notFoundMessage.appendChild(titleElement);
-                notFoundMessage.appendChild(subtitleElement);
-                notFoundMessage.appendChild(closeButton);
-                overlay.appendChild(notFoundMessage);
-                
-                // Add CSS animations
-                const style = document.createElement('style');
-                style.textContent = `
-                    @keyframes fadeIn {
-                        from { opacity: 0; }
-                        to { opacity: 1; }
-                    }
-                    @keyframes fadeOut {
-                        from { opacity: 1; }
-                        to { opacity: 0; }
-                    }
-                    @keyframes pulseMessage {
-                        0%, 100% { transform: scale(1); }
-                        50% { transform: scale(1.02); }
-                    }
-                    @keyframes glow {
-                        0%, 100% { 
-                            opacity: 0.5;
-                            transform: scale(1);
-                        }
-                        50% { 
-                            opacity: 0.8;
-                            transform: scale(1.05);
-                        }
-                    }
-                    @keyframes textGlow {
-                        0%, 100% { 
-                            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-                        }
-                        50% { 
-                            text-shadow: 
-                                0 2px 10px rgba(0, 0, 0, 0.5),
-                                0 0 20px rgba(255, 255, 255, 0.3),
-                                0 0 40px rgba(235, 68, 90, 0.4);
-                        }
-                    }
-                `;
-                document.head.appendChild(style);
-                
-                body.appendChild(overlay);
-                
-                // Auto-close after 8 seconds
-                setTimeout(closeMessage, 8000);
-            }
 
             modelViewer.addEventListener('ar-status', (event) => {
                 const status = event.detail?.status || 'unknown';
