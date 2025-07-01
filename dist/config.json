@@ -1,0 +1,124 @@
+{
+  "project": {
+    "name": "Techno Sutra AR",
+    "version": "1.2.0",
+    "description": "AR experience for the 56 chapters of the Avatamsaka Sutra",
+    "author": "Techno Sutra Team",
+    "license": "MIT"
+  },
+  "models": {
+    "total_chapters": 56,
+    "model_prefix": "modelo",
+    "model_extension": ".glb",
+    "cache_duration_hours": 24,
+    "batch_detection_size": 8,
+    "detection_timeout_ms": 5000
+  },
+  "api": {
+    "model_viewer_version": "4.0.0",
+    "model_viewer_url": "https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"
+  },
+  "ar": {
+    "default_scale": "2.0 2.0 2.0",
+    "camera_orbit": "0deg 70deg 2.5m",
+    "field_of_view": "45deg",
+    "min_camera_orbit": "auto auto 1.2m",
+    "max_camera_orbit": "auto auto 5m",
+    "rotation_speed": "30deg",
+    "shadow_intensity": "1",
+    "environment": "neutral"
+  },
+  "ui": {
+    "theme": {
+      "primary_color": "#7877c6",
+      "background_dark": "#000000",
+      "background_light": "#f8fafc",
+      "text_primary": "#e5e7eb",
+      "text_secondary": "#9ca3af",
+      "border_color": "rgba(120, 119, 198, 0.1)"
+    },
+    "animations": {
+      "transition_duration": "0.3s",
+      "transition_timing": "cubic-bezier(0.4, 0, 0.2, 1)",
+      "hover_scale": "1.02",
+      "button_hover_translate": "-2px"
+    }
+  },
+  "cache": {
+    "service_worker": {
+      "static_cache": "techno-sutra-static-v1.2",
+      "dynamic_cache": "techno-sutra-dynamic-v1.2",
+      "app_cache": "techno-sutra-ar-v1.2"
+    },
+    "local_storage": {
+      "model_list_key": "technosutra_available_models",
+      "theme_key": "theme",
+      "user_preferences_key": "technosutra_preferences"
+    }
+  },
+  "performance": {
+    "lazy_loading": true,
+    "progressive_loading": true,
+    "image_optimization": true,
+    "compression": true,
+    "minification": true
+  },
+  "security": {
+    "content_security_policy": {
+      "default_src": "'self'",
+      "script_src": "'self' 'unsafe-inline' https://ajax.googleapis.com",
+      "style_src": "'self' 'unsafe-inline'",
+      "img_src": "'self' data: blob:",
+      "connect_src": "'self' https:",
+      "worker_src": "'self'"
+    },
+    "cors": {
+      "allowed_origins": ["*"],
+      "allowed_methods": ["GET", "HEAD", "OPTIONS"],
+      "allowed_headers": ["Content-Type", "Authorization"]
+    }
+  },
+  "wix_integration": {
+    "collection_name": "Personagens",
+    "api_base_url": "https://www.wixapis.com/wix-data/v2",
+    "rate_limits": {
+      "requests_per_minute": 500,
+      "requests_per_site_minute": 100,
+      "burst_limit_per_second": 10
+    },
+    "field_mappings": {
+      "title": "Nome do personagem",
+      "slug": "URL slug único",
+      "category": "Categoria do personagem",
+      "chapter": "Número do capítulo",
+      "description": "Descrição curta",
+      "content": "Conteúdo principal",
+      "location": "Localização",
+      "type": "Tipo de personagem"
+    }
+  },
+  "development": {
+    "debug": false,
+    "logging_level": "info",
+    "source_maps": false,
+    "hot_reload": false
+  },
+  "build": {
+    "output_dir": "dist",
+    "source_dir": "src",
+    "assets_dir": "assets",
+    "minify_html": true,
+    "minify_css": true,
+    "minify_js": true,
+    "optimize_images": true,
+    "generate_source_maps": false
+  },
+  "paths": {
+    "characters": "characters",
+    "models": ".",
+    "qr_codes": "qr_codes",
+    "chapters": "chapters",
+    "summaries": "summaries",
+    "assets": "assets"
+  }
+}

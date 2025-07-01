@@ -12,18 +12,23 @@ const STATIC_ASSETS = [
     // External dependencies will be cached dynamically
 ];
 
-// GLB models that exist in the project
+// GLB models that exist in the project (auto-updated)
 const AVAILABLE_MODELS = [
+    '/modelo1.glb',
+    '/modelo2.glb',
+    '/modelo4.glb',
     '/modelo8.glb',
-    '/modelo9.glb', 
+    '/modelo9.glb',
+    '/modelo11.glb',
     '/modelo21.glb',
     '/modelo27.glb',
     '/modelo28.glb',
-    '/modelo29.glb',
     '/modelo30.glb',
     '/modelo31.glb',
     '/modelo32.glb',
     '/modelo33.glb',
+    '/modelo34.glb',
+    '/modelo51.glb',
     '/modelo56.glb',
     '/modelo-dragao.glb'
 ];
