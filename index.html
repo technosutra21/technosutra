@@ -40,14 +40,6 @@
             background-color: transparent;
             z-index: 2;
             pointer-events: auto;
-            /* Configuração de iluminação corrigida */
-            --min-camera-orbit: auto auto 5%;
-            --max-camera-orbit: auto auto 100%;
-            --camera-orbit: 0deg 75deg 1.5m;
-            --field-of-view: 30deg;
-            /* Forçar preservação de materiais */
-            --environment-image: legacy;
-            --neutral-lighting: hdr;
         }
         
         /* AR Status-based styling seguindo padrões oficiais */
@@ -467,14 +459,9 @@
         rotation-per-second="30deg"
         loading="eager"
         reveal="auto"
-        environment-image="legacy"
-        shadow-intensity="0.7"
-        exposure="0.8"
-        shadow-softness="0.8"
-        tone-mapping="neutral"
+        environment-image="neutral"
+        shadow-intensity="1"
         scale="1.6 1.6 1.6"
-        disable-zoom
-        interpolation-decay="200"
         style="background-color: transparent;">
 
         <!-- Botão AR customizado seguindo padrões oficiais -->
