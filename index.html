@@ -37,6 +37,73 @@
             pointer-events: auto;
         }
         
+        /* AR Scale Enhancement - 160% */
+        model-viewer[ar-status="session-started"] {
+            --ar-scale: 1.6;
+        }
+        
+        /* Error 404 overlay */
+        .error-404 {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .error-404.hidden {
+            display: none;
+        }
+        
+        .error-icon {
+            font-size: 120px;
+            margin-bottom: 24px;
+            opacity: 0.9;
+            animation: errorPulse 2s ease-in-out infinite;
+        }
+        
+        .error-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .error-message {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 32px;
+            opacity: 0.9;
+        }
+        
+        .error-subtitle {
+            font-size: 16px;
+            opacity: 0.7;
+            max-width: 400px;
+            line-height: 1.5;
+        }
+        
+        @keyframes errorPulse {
+            0%, 100% {
+                opacity: 0.8;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+        
         /* AR Status-based styling seguindo padrões oficiais */
         model-viewer[ar-status="session-started"] {
             --progress-bar-color: #4285f4;
@@ -408,6 +475,16 @@
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 </head>
 <body>
+    <!-- Error 404 overlay -->
+    <div class="error-404 hidden" id="error-404">
+        <div class="error-icon">🤖</div>
+        <div class="error-title">404</div>
+        <div class="error-message">Você está pronto?</div>
+        <div class="error-subtitle">
+            O modelo solicitado não foi encontrado. Retornando ao modelo padrão...
+        </div>
+    </div>
+
     <!-- Camera permission overlay -->
     <div class="camera-permission hidden" id="camera-permission">
         <div class="camera-icon">📷</div>
@@ -447,7 +524,7 @@
         touch-action="pan-y"
         ar
         ar-modes="webxr scene-viewer quick-look"
-        ar-scale="fixed"
+        ar-scale="auto"
         ar-placement="floor"
         xr-environment
         auto-rotate
@@ -456,7 +533,7 @@
         reveal="auto"
         environment-image="neutral"
         shadow-intensity="1"
-        style="background-color: transparent;">
+        style="background-color: transparent; --ar-scale: 1.6;">
 
         <!-- Botão AR customizado seguindo padrões oficiais -->
         <button slot="ar-button" class="ar-button" id="ar-button">
@@ -498,6 +575,7 @@
         const modelControls = document.getElementById('model-controls');
         const resetCameraBtn = document.getElementById('reset-camera');
         const toggleRotateBtn = document.getElementById('toggle-rotate');
+        const error404 = document.getElementById('error-404');
         
         // Verificar se elementos existem
         if (!modelViewer || !statusDiv || !arButton) {
@@ -511,6 +589,8 @@
         let statusHideTimer = null;
         let modelLoaded = false;
         let arReady = false;
+        let autoARAttempted = false;
+        let is404Error = false;
         
         // Configuração do modelo
         const urlParams = new URLSearchParams(window.location.search);
@@ -562,6 +642,21 @@
         function hideCameraPermission() {
             if (cameraPermission) {
                 cameraPermission.classList.add('hidden');
+            }
+        }
+        
+        // Show 404 error with redirect
+        function show404Error() {
+            if (error404) {
+                error404.classList.remove('hidden');
+                is404Error = true;
+                
+                // Auto redirect to model 1 after 3 seconds
+                setTimeout(() => {
+                    error404.classList.add('hidden');
+                    is404Error = false;
+                    window.location.href = window.location.pathname + '?model=1';
+                }, 3000);
             }
         }
         
@@ -645,6 +740,8 @@
             try {
                 const exists = await checkModelExists(modelSrc);
                 if (!exists) {
+                    // Modelo não encontrado - mostrar erro 404
+                    show404Error();
                     throw new Error(`Modelo ${modelId} não encontrado`);
                 }
 
@@ -653,13 +750,17 @@
                 }
 
                 modelViewer.src = modelSrc;
-                logStatus('Modelo GLB configurado para todas as plataformas');
+                // Definir escala AR para 160%
+                modelViewer.style.setProperty('--ar-scale', '1.6');
+                logStatus('Modelo GLB configurado para todas as plataformas com escala AR 160%');
 
                 return true;
 
             } catch (error) {
                 logStatus(`Erro ao carregar modelo: ${error.message}`);
-                showStatus('Erro ao carregar modelo 3D', 'error');
+                if (!is404Error) {
+                    showStatus('Erro ao carregar modelo 3D', 'error');
+                }
                 modelLoaded = false;
                 updateARButtonState();
                 return false;
@@ -879,10 +980,18 @@
                 // 3. Tentar iniciar câmera automaticamente
                 const cameraStarted = await startCamera();
 
-                // 4. Finalizar inicialização
+                // 4. Tentar iniciar AR automaticamente se disponível
+                if (modelLoaded && arReady && !autoARAttempted) {
+                    autoARAttempted = true;
+                    setTimeout(() => {
+                        tryAutoAR();
+                    }, 2000); // Aguardar 2 segundos após carregamento
+                }
+
+                // 5. Finalizar inicialização
                 if (modelLoaded && arReady && cameraStarted) {
                     logStatus('Sistema pronto para AR com câmera!');
-                    showStatus('AR pronto!', 'success', 2000);
+                    showStatus('AR iniciando automaticamente...', 'success', 2000);
                 } else if (modelLoaded && cameraStarted) {
                     logStatus('Modelo e câmera carregados');
                     showStatus('Visualização 3D com câmera', 'success', 2000);
@@ -915,6 +1024,40 @@
                     showStatus('Erro ao ativar câmera', 'error', 3000);
                 }
             });
+        }
+        
+        // Função para tentar iniciar AR automaticamente
+        function tryAutoAR() {
+            if (!modelViewer || !arReady || !modelLoaded || arSessionActive) {
+                return;
+            }
+            
+            try {
+                logStatus('Tentando iniciar AR automaticamente...');
+                
+                // Simular clique no botão AR
+                if (arButton && !arButton.disabled) {
+                    arButton.click();
+                    logStatus('AR iniciado automaticamente');
+                } else {
+                    // Tentar ativar AR diretamente via model-viewer
+                    if (modelViewer.activateAR) {
+                        modelViewer.activateAR();
+                        logStatus('AR ativado via model-viewer');
+                    }
+                }
+            } catch (error) {
+                logStatus(`Erro ao iniciar AR automaticamente: ${error.message}`);
+                // Se falhar, garantir que a câmera está ativa como fallback
+                if (!cameraStream) {
+                    startCamera().then(success => {
+                        if (success) {
+                            logStatus('Câmera ativada como fallback');
+                            showStatus('Usando câmera como visualização', 'info', 2000);
+                        }
+                    });
+                }
+            }
         }
         
         // Event listeners de página
