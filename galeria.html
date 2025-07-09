@@ -1209,10 +1209,21 @@
                         <model-viewer
                             src="modelo${chapter.id}.glb"
                             alt="Modelo 3D - ${chapter.name}: ${chapter.title}"
-                            auto-rotate
+                            id="modelViewer${chapter.id}"
                             camera-controls
-                            rotation-per-second="10deg"
-                            style="background-color: transparent;">
+                            touch-action="pan-y"
+                            ar
+                            ar-modes="webxr scene-viewer quick-look"
+                            ar-scale="auto"
+                            ar-placement="floor"
+                            xr-environment
+                            auto-rotate
+                            rotation-per-second="30deg"
+                            loading="eager"
+                            reveal="auto"
+                            environment-image="neutral"
+                            shadow-intensity="1"
+                            style="background-color: transparent; --ar-scale: 1.6;">
                         </model-viewer>
                     ` : `
                         <div class="unavailable-overlay">
