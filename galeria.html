@@ -407,6 +407,10 @@
             --max-hotspot-opacity: 1;
             --progress-bar-color: #7877c6;
             --default-ar-scale: 1.6;
+            /* Forçar iluminação adequada */
+            --neutral-color: #ffffff;
+            --default-neutral-softness: 0.5;
+            --default-neutral-exposure: 1.0;
         }
 
         .model-actions {
@@ -1237,10 +1241,12 @@
                             rotation-per-second="30deg"
                             loading="eager"
                             reveal="auto"
+                            skybox-image="neutral"
                             environment-image="neutral"
-                            exposure="1"
-                            shadow-intensity="1"
-                            shadow-softness="1"
+                            exposure="1.2"
+                            shadow-intensity="0.3"
+                            shadow-softness="0.8"
+                            tone-mapping="neutral"
                             style="background-color: transparent; --poster-color: transparent;">
                         </model-viewer>
                     ` : `
@@ -1560,10 +1566,12 @@
                             rotation-per-second="30deg"
                             loading="eager"
                             reveal="auto"
+                            skybox-image="neutral"
                             environment-image="neutral"
-                            exposure="1"
-                            shadow-intensity="1"
-                            shadow-softness="1"
+                            exposure="1.2"
+                            shadow-intensity="0.3"
+                            shadow-softness="0.8"
+                            tone-mapping="neutral"
                             style="background-color: transparent; --poster-color: transparent;">
                         </model-viewer>
                     </div>
