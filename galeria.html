@@ -390,10 +390,12 @@
             height: 280px;
             border-radius: 12px;
             overflow: hidden;
-            background: rgba(0, 0, 0, 0.4);
+            background: linear-gradient(to bottom, rgba(20, 20, 20, 0.8), rgba(0, 0, 0, 0.8));
             margin-bottom: 20px;
             position: relative;
             border: 1px solid rgba(120, 119, 198, 0.08);
+            /* Adicionar contexto de iluminação */
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         model-viewer {
@@ -404,6 +406,7 @@
             --min-hotspot-opacity: 0;
             --max-hotspot-opacity: 1;
             --progress-bar-color: #7877c6;
+            --default-ar-scale: 1.6;
         }
 
         .model-actions {
@@ -749,10 +752,23 @@
         /* Melhorias no model-viewer */
         model-viewer {
             transition: all 0.3s ease;
+            /* Forçar renderização correta */
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+            will-change: transform;
         }
 
         model-viewer:hover {
-            filter: brightness(1.05) saturate(1.1);
+            filter: brightness(1.1) contrast(1.05);
+        }
+        
+        /* Garantir que o modelo seja visível */
+        model-viewer::part(default-progress-bar) {
+            background-color: #7877c6;
+        }
+        
+        model-viewer::part(default-ar-button) {
+            background-color: rgba(120, 119, 198, 0.8);
         }
 
         /* Quick actions bar */
@@ -1222,8 +1238,10 @@
                             loading="eager"
                             reveal="auto"
                             environment-image="neutral"
+                            exposure="1"
                             shadow-intensity="1"
-                            style="background-color: transparent; --ar-scale: 1.6;">
+                            shadow-softness="1"
+                            style="background-color: transparent; --poster-color: transparent;">
                         </model-viewer>
                     ` : `
                         <div class="unavailable-overlay">
@@ -1543,8 +1561,10 @@
                             loading="eager"
                             reveal="auto"
                             environment-image="neutral"
+                            exposure="1"
                             shadow-intensity="1"
-                            style="background-color: transparent; --ar-scale: 1.6;">
+                            shadow-softness="1"
+                            style="background-color: transparent; --poster-color: transparent;">
                         </model-viewer>
                     </div>
                     <button onclick="this.parentElement.parentElement.remove()"
