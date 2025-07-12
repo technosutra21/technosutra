@@ -3,11 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://ajax.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https:; worker-src 'self'; media-src 'self' blob:; object-src 'none'; frame-ancestors 'none';">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
-    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <title>Galeria Techno Sutra AR - 56 Capítulos do Avatamsaka Sutra</title>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
     <style>
@@ -399,16 +394,19 @@
         model-viewer {
             width: 100%;
             height: 100%;
+            background-color: transparent;
             --poster-color: transparent;
+            --min-hotspot-opacity: 0;
+            --max-hotspot-opacity: 1;
             --progress-bar-color: #7877c6;
         }
-        
+
         .model-actions {
             display: flex;
             gap: 12px;
             justify-content: center;
         }
-        
+
         .action-btn {
             background: rgba(15, 15, 15, 0.8);
             border: 1px solid rgba(120, 119, 198, 0.2);
@@ -1087,102 +1085,35 @@
             }
         }
 
-        // Cache para evitar verificações repetidas
-        let modelDetectionCache = null;
-        const MODEL_CACHE_KEY = 'technosutra_available_models';
-        const MODEL_CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 horas
-
         // Função para detectar dinamicamente todos os modelos disponíveis
         async function detectAvailableModels() {
-            // Verificar cache primeiro
-            const cachedResult = getCachedModelList();
-            if (cachedResult) {
-                console.log('📋 Usando lista de modelos em cache');
-                availableModels = cachedResult;
-                return availableModels;
-            }
-
             console.log('🔍 Detectando modelos disponíveis...');
             const detectedModels = [];
 
-            // Verificação em lotes para melhor performance
-            const batchSize = 8;
-            const totalModels = 56;
-            
-            for (let start = 1; start <= totalModels; start += batchSize) {
-                const end = Math.min(start + batchSize - 1, totalModels);
-                console.log(`🔍 Verificando modelos ${start}-${end}...`);
-                
-                const batchPromises = [];
-                for (let i = start; i <= end; i++) {
-                    batchPromises.push(
-                        checkModelExists(i).then(exists => {
-                            if (exists) {
-                                detectedModels.push(i);
-                                console.log(`✅ Modelo ${i} encontrado`);
-                            }
-                            return { id: i, exists };
-                        }).catch(error => {
-                            console.log(`❌ Erro verificando modelo ${i}:`, error);
-                            return { id: i, exists: false };
-                        })
-                    );
-                }
-
-                // Aguardar lote atual
-                await Promise.allSettled(batchPromises);
-                
-                // Pequena pausa entre lotes para não sobrecarregar
-                if (end < totalModels) {
-                    await new Promise(resolve => setTimeout(resolve, 100));
-                }
+            // Verificar todos os 56 capítulos
+            const checkPromises = [];
+            for (let i = 1; i <= 56; i++) {
+                checkPromises.push(
+                    checkModelExists(i).then(exists => {
+                        if (exists) {
+                            detectedModels.push(i);
+                            console.log(`✅ Modelo ${i} encontrado`);
+                        }
+                        return { id: i, exists };
+                    })
+                );
             }
+
+            // Aguardar todas as verificações
+            await Promise.all(checkPromises);
 
             // Ordenar os modelos encontrados
             availableModels = detectedModels.sort((a, b) => a - b);
-
-            // Salvar no cache
-            cacheModelList(availableModels);
 
             console.log(`📊 Total de modelos encontrados: ${availableModels.length}/56`);
             console.log(`📋 Modelos disponíveis: [${availableModels.join(', ')}]`);
 
             return availableModels;
-        }
-
-        // Função para obter lista em cache
-        function getCachedModelList() {
-            try {
-                const cached = localStorage.getItem(MODEL_CACHE_KEY);
-                if (cached) {
-                    const { models, timestamp } = JSON.parse(cached);
-                    const now = Date.now();
-                    
-                    if (now - timestamp < MODEL_CACHE_DURATION) {
-                        return models;
-                    } else {
-                        localStorage.removeItem(MODEL_CACHE_KEY);
-                    }
-                }
-            } catch (error) {
-                console.log('❌ Erro ao ler cache de modelos:', error);
-                localStorage.removeItem(MODEL_CACHE_KEY);
-            }
-            return null;
-        }
-
-        // Função para salvar lista no cache
-        function cacheModelList(models) {
-            try {
-                const cacheData = {
-                    models: models,
-                    timestamp: Date.now()
-                };
-                localStorage.setItem(MODEL_CACHE_KEY, JSON.stringify(cacheData));
-                console.log('💾 Lista de modelos salva no cache');
-            } catch (error) {
-                console.log('❌ Erro ao salvar cache de modelos:', error);
-            }
         }
 
         // Função para criar um card de modelo com dados autênticos
@@ -1206,12 +1137,19 @@
                         <model-viewer
                             src="modelo${chapter.id}.glb"
                             alt="Modelo 3D - ${chapter.name}: ${chapter.title}"
-                            id="modelViewer${chapter.id}"
-                            camera-controls
-                            ar
                             auto-rotate
-                            shadow-intensity="1"
-                            exposure="1">
+                            camera-controls
+                            rotation-per-second="20deg"
+                            loading="eager"
+                            reveal="auto"
+                            environment-image="neutral"
+                            shadow-intensity="0.5"
+                            scale="2.0 2.0 2.0"
+                            min-camera-orbit="auto auto 1.2m"
+                            max-camera-orbit="auto auto 5m"
+                            camera-orbit="0deg 70deg 2.5m"
+                            field-of-view="45deg"
+                            style="background-color: transparent;">
                         </model-viewer>
                     ` : `
                         <div class="unavailable-overlay">
