@@ -27,8 +27,7 @@
 
         .header {
             position: relative;
-            background: linear-gradient(180deg, rgba(0, 0, 0, 0.98) 0%, rgba(0, 0, 0, 0.95) 100%);
-            backdrop-filter: blur(30px);
+            background: rgba(0, 0, 0, 0.95);
             border-bottom: 1px solid rgba(120, 119, 198, 0.1);
             overflow: hidden;
             z-index: 100;
@@ -65,8 +64,8 @@
         }
 
         @keyframes headerGlow {
-            0%, 100% { opacity: 0.5; transform: scaleX(0.8); }
-            50% { opacity: 1; transform: scaleX(1); }
+            0%, 100% { opacity: 0.5; transform: scaleX(0.8) translateZ(0); }
+            50% { opacity: 1; transform: scaleX(1) translateZ(0); }
         }
 
         @keyframes headerSweep {
@@ -269,14 +268,13 @@
             background: rgba(15, 15, 15, 0.8);
             border-radius: 16px;
             padding: 24px;
-            backdrop-filter: blur(20px);
             border: 1px solid rgba(120, 119, 198, 0.1);
-            box-shadow:
-                0 8px 32px rgba(0, 0, 0, 0.6),
-                inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
             overflow: hidden;
+            will-change: transform;
+            contain: layout style paint;
         }
 
         .model-card::before {
@@ -293,10 +291,7 @@
 
         .model-card:hover {
             transform: translateY(-8px);
-            box-shadow:
-                0 20px 60px rgba(0, 0, 0, 0.8),
-                0 0 40px rgba(120, 119, 198, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
             border-color: rgba(120, 119, 198, 0.3);
         }
 
@@ -530,8 +525,8 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% { transform: rotate(0deg) translateZ(0); }
+            100% { transform: rotate(360deg) translateZ(0); }
         }
 
         .footer {
@@ -639,7 +634,7 @@
         }
 
         .model-card:hover {
-            transform: translateY(-12px) scale(1.02);
+            transform: translateY(-8px);
         }
 
         .model-card:hover model-viewer {
@@ -807,11 +802,11 @@
             scroll-behavior: smooth;
         }
 
-        /* Enhanced transitions */
-        * {
-            transition-property: transform, opacity, background-color, border-color, box-shadow;
-            transition-duration: 0.3s;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        /* Enhanced transitions - only for interactive elements */
+        .action-btn, .filter-btn, .model-card, .quick-action-btn, .theme-toggle {
+            transition-property: transform, opacity, background-color, border-color;
+            transition-duration: 0.2s;
+            transition-timing-function: ease-out;
         }
 
         .model-card.hidden {
@@ -839,13 +834,14 @@
             }
 
             .header-title {
-                font-size: 2.5rem;
+                font-size: 2rem;
                 margin-bottom: 20px;
             }
 
             .header-subtitle {
                 font-size: 1rem;
                 margin-bottom: 30px;
+                padding: 0 16px;
             }
 
             .header-quick-stats {
@@ -855,7 +851,7 @@
             }
 
             .header-quick-stat {
-                min-width: 200px;
+                min-width: 150px;
             }
 
             .gallery-grid {
@@ -879,6 +875,40 @@
             .filter-btn {
                 padding: 10px 16px;
                 font-size: 0.8rem;
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .model-card {
+                padding: 16px;
+            }
+            
+            .model-actions {
+                flex-wrap: wrap;
+            }
+            
+            .action-btn {
+                flex: 1;
+                min-width: 100px;
+                font-size: 0.75rem;
+                padding: 8px 12px;
+            }
+            
+            .quick-actions {
+                bottom: 20px;
+                right: 20px;
+            }
+            
+            .quick-action-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 0.9rem;
+            }
+            
+            .theme-toggle {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
             }
         }
     </style>
@@ -1090,22 +1120,30 @@
             console.log('🔍 Detectando modelos disponíveis...');
             const detectedModels = [];
 
-            // Verificar todos os 56 capítulos
-            const checkPromises = [];
-            for (let i = 1; i <= 56; i++) {
-                checkPromises.push(
-                    checkModelExists(i).then(exists => {
-                        if (exists) {
-                            detectedModels.push(i);
-                            console.log(`✅ Modelo ${i} encontrado`);
-                        }
-                        return { id: i, exists };
-                    })
-                );
+            // Batch requests for better performance
+            const batchSize = 10;
+            const batches = [];
+            
+            for (let i = 0; i < 56; i += batchSize) {
+                const batch = [];
+                for (let j = i + 1; j <= Math.min(i + batchSize, 56); j++) {
+                    batch.push(
+                        checkModelExists(j).then(exists => {
+                            if (exists) {
+                                detectedModels.push(j);
+                                console.log(`✅ Modelo ${j} encontrado`);
+                            }
+                            return { id: j, exists };
+                        })
+                    );
+                }
+                batches.push(Promise.all(batch));
             }
 
-            // Aguardar todas as verificações
-            await Promise.all(checkPromises);
+            // Process batches sequentially to avoid overloading
+            for (const batch of batches) {
+                await batch;
+            }
 
             // Ordenar os modelos encontrados
             availableModels = detectedModels.sort((a, b) => a - b);
@@ -1139,9 +1177,9 @@
                             alt="Modelo 3D - ${chapter.name}: ${chapter.title}"
                             auto-rotate
                             camera-controls
-                            rotation-per-second="20deg"
-                            loading="eager"
-                            reveal="auto"
+                            rotation-per-second="30deg"
+                            loading="lazy"
+                            reveal="manual"
                             environment-image="neutral"
                             shadow-intensity="0.5"
                             scale="2.0 2.0 2.0"
@@ -1218,6 +1256,14 @@
                     const isAvailable = availableModels.includes(i);
                     const card = createModelCard(chapter, isAvailable);
                     galleryGrid.appendChild(card);
+                    
+                    // Observe model viewers for lazy loading
+                    if (isAvailable) {
+                        const modelViewer = card.querySelector('model-viewer');
+                        if (modelViewer && lazyLoadObserver) {
+                            lazyLoadObserver.observe(modelViewer);
+                        }
+                    }
                 }
 
                 // Atualizar estatísticas
@@ -1315,6 +1361,9 @@
             }
         }
 
+        // Lazy loading observer (initialized later)
+        let lazyLoadObserver;
+
         // Função para smooth scroll
         function smoothScrollTo(elementId) {
             const element = document.getElementById(elementId);
@@ -1338,6 +1387,19 @@
             }
         }
 
+        // Debounce function for search
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
         // Funcionalidade de filtros
         function setupFilters() {
             const filterBtns = document.querySelectorAll('.filter-btn');
@@ -1355,9 +1417,14 @@
                 });
             });
 
-            searchInput.addEventListener('input', (e) => {
+            // Debounced search for better performance
+            const debouncedSearch = debounce((value) => {
                 const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
-                filterModels(activeFilter, e.target.value);
+                filterModels(activeFilter, value);
+            }, 300);
+
+            searchInput.addEventListener('input', (e) => {
+                debouncedSearch(e.target.value);
             });
         }
 
@@ -1507,55 +1574,61 @@
 
             // Parallax effect no header
             let ticking = false;
-            function updateParallax() {
+function updateParallax() {
                 const scrolled = window.pageYOffset;
                 const parallaxElements = document.querySelectorAll('.header-hero::before');
 
                 parallaxElements.forEach(element => {
                     const speed = 0.5;
-                    element.style.transform = `translate(-50%, -50%) translateY(${scrolled * speed}px)`;
+                    element.style.transform = `translate3d(-50%, -50%, 0) translateY(${scrolled * speed}px)`;
                 });
 
                 ticking = false;
             }
 
-            window.addEventListener('scroll', () => {
-                if (!ticking) {
+        // Throttled scroll event
+        let scrollTimeout;
+        window.addEventListener('scroll', () => {
+            if (!ticking && !scrollTimeout) {
+                scrollTimeout = setTimeout(() => {
                     requestAnimationFrame(updateParallax);
                     ticking = true;
-                }
-            });
+                    scrollTimeout = null;
+                }, 100);
+            }
+        }, { passive: true });
+        }
+
+        // Setup lazy loading observer
+        function setupLazyLoading() {
+            const lazyLoadOptions = {
+                root: null,
+                rootMargin: "50px",
+                threshold: 0.01
+            };
+
+            const lazyLoadCallback = (entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const modelViewer = entry.target;
+                        modelViewer.setAttribute('reveal', 'auto');
+                        observer.unobserve(modelViewer);
+                    }
+                });
+            };
+
+            lazyLoadObserver = new IntersectionObserver(lazyLoadCallback, lazyLoadOptions);
         }
 
         // Carregar galeria quando a página estiver pronta
         document.addEventListener('DOMContentLoaded', () => {
+            setupLazyLoading();
             loadGallery();
             setupFilters();
             setupSmoothNavigation();
 
-            // Adicionar efeito de digitação no placeholder
-            const searchInput = document.getElementById('search-input');
-            if (searchInput) {
-                const originalPlaceholder = searchInput.placeholder;
-                let isTyping = false;
-
-                searchInput.addEventListener('focus', () => {
-                    if (!isTyping && !searchInput.value) {
-                        isTyping = true;
-                        searchInput.placeholder = '';
-                        let i = 0;
-                        const typeInterval = setInterval(() => {
-                            if (i < originalPlaceholder.length) {
-                                searchInput.placeholder += originalPlaceholder.charAt(i);
-                                i++;
-                            } else {
-                                clearInterval(typeInterval);
-                                isTyping = false;
-                            }
-                        }, 50);
-                    }
-                });
-            }
+            // Remove typing effect for better performance
+            // Focus on functionality instead of effects
         });
 
         // Função para alternar tema
