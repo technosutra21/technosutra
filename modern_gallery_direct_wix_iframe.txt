@@ -1,0 +1,452 @@
+<iframe 
+    srcdoc="<!DOCTYPE html>
+<html lang=&quot;pt-BR&quot;>
+<head>
+    <meta charset=&quot;UTF-8&quot;>
+    <meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+    <title>Modern Gallery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+            transition: background 0.3s ease;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.4);
+        }
+        
+        body {
+            background: transparent;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        
+        .gallery-wrapper {
+            width: 100%;
+            padding: 0;
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 3px;
+            animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .image-item {
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 1;
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #f0f0f0;
+        }
+        
+        .image-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, transparent 70%, rgba(0,0,0,0.3) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .image-item:hover {
+            transform: scale(0.98);
+        }
+        
+        .image-item:hover::before {
+            opacity: 1;
+        }
+        
+        .image-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .image-item img.loaded {
+            opacity: 1;
+        }
+        
+        /* Lightbox modal ultra moderno */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            animation: lightboxFadeIn 0.3s ease;
+        }
+        
+        @keyframes lightboxFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .lightbox-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 90vw;
+            max-height: 90vh;
+            animation: lightboxZoom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes lightboxZoom {
+            from {
+                transform: translate(-50%, -50%) scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .lightbox-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+        
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+            z-index: 10000;
+        }
+        
+        .lightbox-close:hover {
+            opacity: 1;
+        }
+        
+        .lightbox-close::before,
+        .lightbox-close::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 24px;
+            height: 2px;
+            background: white;
+            border-radius: 1px;
+        }
+        
+        .lightbox-close::before {
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+        
+        .lightbox-close::after {
+            transform: translate(-50%, -50%) rotate(-45deg);
+        }
+        
+        /* Navigation arrows */
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+            z-index: 10000;
+        }
+        
+        .nav-arrow:hover {
+            opacity: 1;
+        }
+        
+        .nav-arrow::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 2px solid white;
+            border-right: none;
+            border-bottom: none;
+        }
+        
+        .nav-prev {
+            left: 20px;
+        }
+        
+        .nav-prev::before {
+            transform: translate(-30%, -50%) rotate(-45deg);
+        }
+        
+        .nav-next {
+            right: 20px;
+        }
+        
+        .nav-next::before {
+            transform: translate(-70%, -50%) rotate(135deg);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 2px;
+            }
+            
+            .lightbox-close {
+                top: 10px;
+                right: 10px;
+                width: 35px;
+                height: 35px;
+            }
+            
+            .nav-arrow {
+                width: 40px;
+                height: 40px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .gallery-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class=&quot;gallery-wrapper&quot;>
+        <div class=&quot;gallery-grid&quot;></div>
+    </div>
+    
+    <div class=&quot;lightbox&quot;>
+        <div class=&quot;lightbox-close&quot;></div>
+        <div class=&quot;nav-arrow nav-prev&quot;></div>
+        <div class=&quot;nav-arrow nav-next&quot;></div>
+        <div class=&quot;lightbox-content&quot;>
+            <img src=&quot;&quot; alt=&quot;&quot;>
+        </div>
+    </div>
+
+    <script>
+        // Base URL for images
+        const BASE_URL = 'https://raw.githubusercontent.com/technosutra21/technosutra/master/teachers-resource/imagens/';
+        
+        // List of image filenames - update this list as needed
+        // You can add more images to this array
+        const imageFiles = [
+            'image1.jpg',
+            'image2.jpg',
+            'image3.jpg',
+            'image4.jpg',
+            'image5.jpg',
+            'image6.jpg',
+            'image7.jpg',
+            'image8.jpg',
+            'image9.jpg',
+            'image10.jpg',
+            'image11.jpg',
+            'image12.jpg',
+            'image13.jpg',
+            'image14.jpg',
+            'image15.jpg',
+            'image16.jpg',
+            'image17.jpg',
+            'image18.jpg',
+            'image19.jpg',
+            'image20.jpg'
+        ];
+        
+        // Alternative: Try to load images with pattern
+        const images = [];
+        const gallery = document.querySelector('.gallery-grid');
+        const lightbox = document.querySelector('.lightbox');
+        const lightboxImg = document.querySelector('.lightbox-content img');
+        const closeBtn = document.querySelector('.lightbox-close');
+        const prevBtn = document.querySelector('.nav-prev');
+        const nextBtn = document.querySelector('.nav-next');
+        
+        let currentIndex = 0;
+        let loadedImages = [];
+        
+        // Function to check if image exists
+        function checkImage(url, index) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve({url, index, exists: true});
+                img.onerror = () => resolve({url, index, exists: false});
+                img.src = url;
+            });
+        }
+        
+        // Try to load images with different patterns
+        async function discoverImages() {
+            const patterns = [
+                // Try numbered patterns
+                ...Array.from({length: 50}, (_, i) => `image${i + 1}.jpg`),
+                ...Array.from({length: 50}, (_, i) => `image${i + 1}.png`),
+                ...Array.from({length: 50}, (_, i) => `img${i + 1}.jpg`),
+                ...Array.from({length: 50}, (_, i) => `img${i + 1}.png`),
+                ...Array.from({length: 50}, (_, i) => `photo${i + 1}.jpg`),
+                ...Array.from({length: 50}, (_, i) => `photo${i + 1}.png`),
+                // Try specific names
+                ...imageFiles
+            ];
+            
+            const uniquePatterns = [...new Set(patterns)];
+            const imagePromises = uniquePatterns.map((pattern, index) => 
+                checkImage(BASE_URL + pattern, index)
+            );
+            
+            const results = await Promise.all(imagePromises);
+            const existingImages = results
+                .filter(result => result.exists)
+                .map(result => result.url);
+            
+            if (existingImages.length > 0) {
+                loadedImages = existingImages;
+                renderGallery();
+            } else {
+                // Fallback: just try to load the specified images
+                loadedImages = imageFiles.map(file => BASE_URL + file);
+                renderGallery();
+            }
+        }
+        
+        function renderGallery() {
+            gallery.innerHTML = '';
+            
+            loadedImages.forEach((imageUrl, index) => {
+                const item = document.createElement('div');
+                item.className = 'image-item';
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.alt = '';
+                img.loading = 'lazy';
+                img.onload = function() {
+                    this.classList.add('loaded');
+                };
+                img.onerror = function() {
+                    this.parentElement.style.display = 'none';
+                };
+                item.appendChild(img);
+                item.addEventListener('click', () => openLightbox(index));
+                gallery.appendChild(item);
+            });
+        }
+        
+        function openLightbox(index) {
+            currentIndex = index;
+            updateLightboxImage();
+            lightbox.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeLightbox() {
+            lightbox.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        function updateLightboxImage() {
+            lightboxImg.src = loadedImages[currentIndex];
+            prevBtn.style.display = currentIndex > 0 ? 'block' : 'none';
+            nextBtn.style.display = currentIndex < loadedImages.length - 1 ? 'block' : 'none';
+        }
+        
+        function navigateLightbox(direction) {
+            if (direction === 'prev' && currentIndex > 0) {
+                currentIndex--;
+            } else if (direction === 'next' && currentIndex < loadedImages.length - 1) {
+                currentIndex++;
+            }
+            updateLightboxImage();
+        }
+        
+        // Event listeners
+        closeBtn.addEventListener('click', closeLightbox);
+        prevBtn.addEventListener('click', () => navigateLightbox('prev'));
+        nextBtn.addEventListener('click', () => navigateLightbox('next'));
+        
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) closeLightbox();
+        });
+        
+        document.addEventListener('keydown', (e) => {
+            if (lightbox.style.display === 'block') {
+                if (e.key === 'Escape') closeLightbox();
+                else if (e.key === 'ArrowLeft') navigateLightbox('prev');
+                else if (e.key === 'ArrowRight') navigateLightbox('next');
+            }
+        });
+        
+        // Touch gestures for mobile
+        let touchStartX = 0;
+        lightbox.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        });
+        
+        lightbox.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].clientX;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) navigateLightbox('next');
+                else navigateLightbox('prev');
+            }
+        });
+        
+        // Initialize - try to discover images
+        discoverImages();
+    </script>
+</body>
+</html>" 
+    style="width: 100%; height: 600px; border: none; display: block;"
+    allowfullscreen>
+</iframe>
