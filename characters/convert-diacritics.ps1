@@ -1,15 +1,21 @@
-# Script to convert Sanskrit diacritical marks to ASCII equivalents in filenames
-# This script handles common Sanskrit diacritics like Ṇ→N, Ḍ→D, Ś→S, etc.
+# Enhanced Script to convert Sanskrit diacritical marks to ASCII equivalents in filenames
+# This script handles common Sanskrit diacritics and Unicode normalization
+# Specifically designed for Avatamsaka Sutra character files
 
 param(
     [string]$Path = ".",
-    [switch]$WhatIf = $false
+    [switch]$WhatIf = $false,
+    [switch]$Backup = $true,
+    [switch]$Verbose = $false
 )
 
 function Convert-DiacriticalMarks {
     param([string]$text)
     
-    # Define replacements in order of application
+    # First, normalize Unicode to ensure consistent character representation
+    $normalizedText = $text.Normalize([System.Text.NormalizationForm]::FormD)
+    
+    # Define comprehensive replacements in order of application
     $replacements = @(
         # Retroflex consonants  
         @{ from = "Ṇ"; to = "N" }
@@ -61,7 +67,7 @@ function Convert-DiacriticalMarks {
         @{ from = "Ḥ"; to = "H" }
         @{ from = "ḥ"; to = "h" }
         
-        # Less common diacritics  
+        # Additional Sanskrit diacritics found in character files
         @{ from = "Ḻ"; to = "L" }
         @{ from = "ḻ"; to = "l" }
         @{ from = "Ṟ"; to = "R" }
@@ -88,12 +94,100 @@ function Convert-DiacriticalMarks {
         @{ from = "ẏ"; to = "y" }
         @{ from = "Ż"; to = "Z" }
         @{ from = "ż"; to = "z" }
+        
+        # Additional Unicode characters specific to your files
+        @{ from = "Ṭ"; to = "T" }
+        @{ from = "ṭ"; to = "t" }
+        @{ from = "Ḍ"; to = "D" }
+        @{ from = "ḍ"; to = "d" }
+        @{ from = "Ṇ"; to = "N" }
+        @{ from = "ṇ"; to = "n" }
+        @{ from = "Ś"; to = "S" }
+        @{ from = "ś"; to = "s" }
+        @{ from = "Ṣ"; to = "S" }
+        @{ from = "ṣ"; to = "s" }
+        
+        # Handle combining diacritical marks (Unicode combining characters)
+        @{ from = [char]0x0300; to = "" }  # Combining grave accent
+        @{ from = [char]0x0301; to = "" }  # Combining acute accent
+        @{ from = [char]0x0302; to = "" }  # Combining circumflex accent
+        @{ from = [char]0x0303; to = "" }  # Combining tilde
+        @{ from = [char]0x0304; to = "" }  # Combining macron
+        @{ from = [char]0x0305; to = "" }  # Combining overline
+        @{ from = [char]0x0306; to = "" }  # Combining breve
+        @{ from = [char]0x0307; to = "" }  # Combining dot above
+        @{ from = [char]0x0308; to = "" }  # Combining diaeresis
+        @{ from = [char]0x0309; to = "" }  # Combining hook above
+        @{ from = [char]0x030A; to = "" }  # Combining ring above
+        @{ from = [char]0x030B; to = "" }  # Combining double acute accent
+        @{ from = [char]0x030C; to = "" }  # Combining caron
+        @{ from = [char]0x030D; to = "" }  # Combining vertical line above
+        @{ from = [char]0x030E; to = "" }  # Combining double vertical line above
+        @{ from = [char]0x030F; to = "" }  # Combining double grave accent
+        @{ from = [char]0x0310; to = "" }  # Combining candrabindu
+        @{ from = [char]0x0311; to = "" }  # Combining inverted breve
+        @{ from = [char]0x0312; to = "" }  # Combining turned comma above
+        @{ from = [char]0x0313; to = "" }  # Combining comma above
+        @{ from = [char]0x0314; to = "" }  # Combining reversed comma above
+        @{ from = [char]0x0315; to = "" }  # Combining comma above right
+        @{ from = [char]0x0316; to = "" }  # Combining grave accent below
+        @{ from = [char]0x0317; to = "" }  # Combining acute accent below
+        @{ from = [char]0x0318; to = "" }  # Combining left tack below
+        @{ from = [char]0x0319; to = "" }  # Combining right tack below
+        @{ from = [char]0x031A; to = "" }  # Combining left angle above
+        @{ from = [char]0x031B; to = "" }  # Combining horn
+        @{ from = [char]0x031C; to = "" }  # Combining left half ring below
+        @{ from = [char]0x031D; to = "" }  # Combining up tack below
+        @{ from = [char]0x031E; to = "" }  # Combining down tack below
+        @{ from = [char]0x031F; to = "" }  # Combining plus sign below
+        @{ from = [char]0x0320; to = "" }  # Combining minus sign below
+        @{ from = [char]0x0321; to = "" }  # Combining palatalized hook below
+        @{ from = [char]0x0322; to = "" }  # Combining retroflex hook below
+        @{ from = [char]0x0323; to = "" }  # Combining dot below
+        @{ from = [char]0x0324; to = "" }  # Combining diaeresis below
+        @{ from = [char]0x0325; to = "" }  # Combining ring below
+        @{ from = [char]0x0326; to = "" }  # Combining comma below
+        @{ from = [char]0x0327; to = "" }  # Combining cedilla
+        @{ from = [char]0x0328; to = "" }  # Combining ogonek
+        @{ from = [char]0x0329; to = "" }  # Combining vertical line below
+        @{ from = [char]0x032A; to = "" }  # Combining bridge below
+        @{ from = [char]0x032B; to = "" }  # Combining inverted double arch below
+        @{ from = [char]0x032C; to = "" }  # Combining caron below
+        @{ from = [char]0x032D; to = "" }  # Combining circumflex accent below
+        @{ from = [char]0x032E; to = "" }  # Combining breve below
+        @{ from = [char]0x032F; to = "" }  # Combining inverted breve below
+        @{ from = [char]0x0330; to = "" }  # Combining tilde below
+        @{ from = [char]0x0331; to = "" }  # Combining macron below
+        @{ from = [char]0x0332; to = "" }  # Combining low line
+        @{ from = [char]0x0333; to = "" }  # Combining double low line
+        @{ from = [char]0x0334; to = "" }  # Combining tilde overlay
+        @{ from = [char]0x0335; to = "" }  # Combining short stroke overlay
+        @{ from = [char]0x0336; to = "" }  # Combining long stroke overlay
+        @{ from = [char]0x0337; to = "" }  # Combining short solidus overlay
+        @{ from = [char]0x0338; to = "" }  # Combining long solidus overlay
+        @{ from = [char]0x0339; to = "" }  # Combining right half ring below
+        @{ from = [char]0x033A; to = "" }  # Combining inverted bridge below
+        @{ from = [char]0x033B; to = "" }  # Combining square below
+        @{ from = [char]0x033C; to = "" }  # Combining seagull below
+        @{ from = [char]0x033D; to = "" }  # Combining x above
+        @{ from = [char]0x033E; to = "" }  # Combining vertical tilde
+        @{ from = [char]0x033F; to = "" }  # Combining double overline
     )
     
-    $result = $text
+    $result = $normalizedText
     foreach ($replacement in $replacements) {
-        $result = $result.Replace($replacement.from, $replacement.to)
+        # Convert to string to ensure we use String.Replace(string, string) overload
+        $fromStr = $replacement.from.ToString()
+        $toStr = $replacement.to.ToString()
+        $result = $result.Replace($fromStr, $toStr)
     }
+    
+    # Final cleanup - remove any remaining non-ASCII characters that might be problematic for filenames
+    $result = $result -replace '[^\x00-\x7F]', ''
+    
+    # Clean up multiple underscores or spaces that might result from replacements
+    $result = $result -replace '_{2,}', '_'
+    $result = $result -replace '\s{2,}', ' '
     
     return $result
 }

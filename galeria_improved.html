@@ -10,14 +10,14 @@
         :root {
             --primary-gold: #d4af37;
             --primary-purple: #7877c6;
-            --dark-bg: #0a0a0a;
-            --card-bg: rgba(15, 15, 15, 0.95);
+            --dark-bg: #000000;
+            --card-bg: rgba(15, 15, 15, 0.8);
             --border-light: rgba(120, 119, 198, 0.1);
-            --border-hover: rgba(212, 175, 55, 0.3);
-            --text-primary: #f3f4f6;
+            --border-hover: rgba(120, 119, 198, 0.3);
+            --text-primary: #e5e7eb;
             --text-secondary: #d1d5db;
             --text-muted: #9ca3af;
-            --accent-glow: rgba(212, 175, 55, 0.1);
+            --accent-glow: rgba(120, 119, 198, 0.1);
             --gradient-bg: linear-gradient(135deg, 
                 rgba(120, 119, 198, 0.08) 0%, 
                 rgba(212, 175, 55, 0.04) 50%, 
@@ -494,38 +494,108 @@
     </style>
 </head>
 <body>
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle tooltip" data-tooltip="Alternar tema claro/escuro" onclick="toggleTheme()">
+        🌙
+    </button>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <button class="quick-action-btn tooltip" data-tooltip="Voltar ao topo" onclick="scrollToTop()">
+            ↑
+        </button>
+        <button class="quick-action-btn tooltip" data-tooltip="Estatísticas" onclick="showStats()">
+            📊
+        </button>
+        <button class="quick-action-btn tooltip" data-tooltip="Compartilhar" onclick="shareGallery()">
+            📤
+        </button>
+    </div>
+
     <div class="loading-overlay" id="loading-overlay">
         <div class="loading-spinner"></div>
     </div>
 
-    <div class="gallery-header">
-        <h1 class="gallery-title">Avatamsaka Sutra</h1>
-        <p class="gallery-subtitle">Galeria Interativa dos 56 Capítulos do Sutra da Guirlanda de Flores - Personagens Bodhisattva em Realidade Aumentada</p>
-        <div class="gallery-stats">
-            <div class="stat-item">
-                <span class="stat-number" id="total-characters">0</span>
-                <span class="stat-label">Personagens</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-number" id="loaded-characters">0</span>
-                <span class="stat-label">Carregados</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-number" id="visible-characters">0</span>
-                <span class="stat-label">Visíveis</span>
+    <div class="header">
+        <div class="header-container">
+            <!-- Navigation Bar -->
+            <nav class="header-nav">
+                <div class="header-logo">
+                    <div class="header-logo-icon">🏛️</div>
+                    <div class="header-logo-text">Techno Sutra AR</div>
+                </div>
+                <div class="header-nav-items">
+                    <div class="header-stats">
+                        <div class="header-stat">
+                            <span>📊</span>
+                            <span class="header-stat-value" id="header-available-count">0</span>
+                            <span>disponíveis</span>
+                        </div>
+                        <div class="header-stat">
+                            <span>🎯</span>
+                            <span class="header-stat-value" id="header-completion-rate">0%</span>
+                            <span>completo</span>
+                        </div>
+                        <div class="header-stat">
+                            <span>⏱️</span>
+                            <span class="header-stat-value" id="header-last-updated">Carregando...</span>
+                        </div>
+                    </div>
+                    <a href="index.html" class="header-nav-item">🚀 Visualizador AR</a>
+                    <a href="#gallery" class="header-nav-item">📚 Galeria</a>
+                </div>
+            </nav>
+
+            <!-- Hero Section -->
+            <div class="header-hero">
+                <h1 class="header-title">Galeria Avatamsaka Sutra</h1>
+                <p class="header-subtitle">
+                    Explore os 56 capítulos sagrados através de modelos 3D interativos.
+                    Uma jornada visual pela sabedoria budista ancestral em realidade aumentada.
+                </p>
+
+                <!-- Quick Stats -->
+                <div class="header-quick-stats">
+                    <div class="header-quick-stat tooltip" data-tooltip="Total de capítulos do Avatamsaka Sutra">
+                        <span class="header-quick-stat-number" id="quick-stat-total">56</span>
+                        <span class="header-quick-stat-label">Capítulos</span>
+                    </div>
+                    <div class="header-quick-stat tooltip" data-tooltip="Modelos 3D prontos para visualização">
+                        <span class="header-quick-stat-number" id="quick-stat-available">0</span>
+                        <span class="header-quick-stat-label">Disponíveis</span>
+                        <div class="progress-ring">
+                            <svg viewBox="0 0 36 36">
+                                <circle cx="18" cy="18" r="16" stroke="rgba(120, 119, 198, 0.2)" stroke-width="3" fill="none"></circle>
+                                <circle cx="18" cy="18" r="16" stroke="#7877c6" stroke-width="3" fill="none" 
+                                        stroke-dasharray="0 100" stroke-linecap="round" class="progress" id="progress-circle"></circle>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="header-quick-stat tooltip" data-tooltip="Percentual de conclusão da coleção">
+                        <span class="header-quick-stat-number" id="quick-stat-progress">0%</span>
+                        <span class="header-quick-stat-label">Progresso</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="gallery-container">
-        <div class="gallery-controls">
-            <div class="search-container">
-                <span class="search-icon">🔍</span>
-                <input type="text" class="search-input" placeholder="Buscar personagens..." id="search-input">
+    <div class="gallery-container" id="gallery">
+        <!-- Enhanced Filters and Search -->
+        <div class="controls" style="margin-bottom: 40px; text-align: center;">
+            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px;">
+                <button class="filter-btn active" data-filter="all">Todos (56)</button>
+                <button class="filter-btn" data-filter="available">Disponíveis</button>
+                <button class="filter-btn" data-filter="unavailable">Em Breve</button>
+                <button class="filter-btn" data-filter="bodhisattvas">Bodhisattvas</button>
             </div>
-            <div class="view-toggle">
-                <button class="view-btn active" data-view="grid">Grade</button>
-                <button class="view-btn" data-view="compact">Compacto</button>
+            <div style="max-width: 500px; margin: 0 auto; position: relative;">
+                <input type="text" id="search-input" placeholder="🔍 Buscar por nome, título, ocupação ou localização..."
+                       style="width: 100%; padding: 16px 20px; border-radius: 12px; border: 1px solid rgba(120,119,198,0.2);
+                              background: rgba(15,15,15,0.8); color: #e5e7eb; font-size: 16px; backdrop-filter: blur(20px);
+                              transition: all 0.3s ease; outline: none;">
+                <div id="search-results-count" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+                     color: #7877c6; font-size: 0.9rem; pointer-events: none;"></div>
             </div>
         </div>
         
@@ -567,24 +637,64 @@
             }
 
             async loadCharacterList() {
-                // Dynamically discover available character files
+                // Character files ordered according to galeria.html reference
                 const predefinedFiles = [
-                    'Acala_Perfil.txt', 'Ajitasena_Perfil.txt', 'Anala_Perfil.txt',
-                    'Ananyagamin_Perfil.txt', 'Avalokitesvara_Perfil.txt', 'Bhadrottama_Perfil.txt',
-                    'Budha_Perfil.txt', 'Jayottama_Perfil.txt', 'Mahadeva_Perfil.txt',
-                    'Mahaprabha_Perfil.txt', 'Maitreya_Perfil.txt', 'Manjusri_Perfil.txt',
-                    'Megha_Dravidian_Perfil.txt', 'Muktaka_Perfil.txt', 'Muktasara_Perfil.txt',
-                    'PramuditanayanaJagadVirocana_Perfil.txt', 'Prasantarutasagaravati_Perfil.txt',
-                    'Ratnacuda_Perfil.txt', 'SamantaSattvaTranoja_Sri_Perfil.txt',
-                    'Samantabhadra_Perfil.txt', 'Samantagambhirasrivimalapraba_Perfil.txt',
-                    'Samantanetra_Perfil.txt', 'SarvaNagaraRaksaSambhavaTejas_Sri_Perfil.txt',
-                    'Sarva_Jagad_Raksa_Pranidhana_Virya_Prabha_Perfil.txt',
-                    'Sarva_Vrkspraphullana_Sukha_Samvasa_Perfil.txt', 'Sarvagamin_Perfil.txt',
-                    'Silpabhijna_Perfil.txt', 'Simhavijrmbhita_Perfil.txt',
-                    'Srisambhava_e_Srimati_Perfil.txt', 'Sthavara_Perfil.txt',
-                    'Sucandra_Perfil.txt', 'Utpalabhuti_Perfil.txt', 'Vaira_Perfil.txt',
-                    'Vasanti_Perfil.txt', 'Vasumitra_Perfil.txt', 'Vesthila_Perfil.txt',
-                    'Visvamitra_Perfil.txt'
+                    'Budha_Perfil.txt',                                          // 1 - Buda Śākyamuni
+                    'Samantabhadra_Perfil.txt',                                  // 2 - Samantabhadra
+                    'Manjusri_Perfil.txt',                                       // 3 - Manjushri
+                    'Meghasri_Perfil.txt',                                       // 4 - Meghaśrī
+                    'Sagara_megha_Perfil.txt',                                   // 5 - Sāgaramegha
+                    'Supratisthita_Perfil.txt',                                 // 6 - Supratiṣṭhita
+                    'Megha_Dravidian_Perfil.txt',                               // 7 - Megha
+                    'Muktaka_Perfil.txt',                                       // 8 - Muktaka
+                    'Sagara_dhvaja_Perfil.txt',                                 // 9 - Sāgaradhvaja
+                    'Asa_Perfil.txt',                                           // 10 - Āśā
+                    'Bhismottara_nirghosa_Perfil.txt',                          // 11 - Bhīṣmottaranirghoṣa
+                    'Jayosmayatana_Perfil.txt',                                 // 12 - Jayoṣmāyatana
+                    'Maitrayani_Perfil.txt',                                    // 13 - Maitrayaṇī
+                    'Sudarsana_Perfil.txt',                                     // 14 - Sudarśana
+                    'Indriyesvara_Perfil.txt',                                  // 15 - Indriyeśvara
+                    'Prabhuta_Perfil.txt',                                      // 16 - Prabhūtā
+                    'Vidvan_Perfil.txt',                                        // 17 - Vidvān
+                    'Ratnacuda_Perfil.txt',                                     // 18 - Ratnacūḍa
+                    'Samantanetra_Perfil.txt',                                  // 19 - Samantanetra
+                    'Anala_Perfil.txt',                                         // 20 - Anala
+                    'Mahaprabha_Perfil.txt',                                    // 21 - Mahāprabha
+                    'Acala_Perfil.txt',                                         // 22 - Acalā
+                    'Sarvagamin_Perfil.txt',                                    // 23 - Sarvagamin
+                    'Utpalabhuti_Perfil.txt',                                   // 24 - Utpalabhūti
+                    'Vaira_Perfil.txt',                                         // 25 - Vaira
+                    'Jayottama_Perfil.txt',                                     // 26 - Jayottama
+                    'Simhavijrmbhita_Perfil.txt',                               // 27 - Siṃhavijṛmbhitā
+                    'Vasumitra_Perfil.txt',                                     // 28 - Vasumitrā
+                    'Vesthila_Perfil.txt',                                      // 29 - Veṣṭhila
+                    'Avalokitesvara_Perfil.txt',                                // 30 - Avalokiteśvara
+                    'Ananyagamin_Perfil.txt',                                   // 31 - Ananyagāmin
+                    'Mahadeva_Perfil.txt',                                      // 32 - Mahādeva
+                    'Sthavara_Perfil.txt',                                      // 33 - Sthāvarā
+                    'Vasanti_Perfil.txt',                                       // 34 - Vāsantī
+                    'Samantagambhirasrivimalapraba_Perfil.txt',                 // 35 - Samantagambhīraśrīvimalaprabhā
+                    'PramuditanayanaJagadVirocana_Perfil.txt',                  // 36 - Pramuditanayanajagadvirocanā
+                    'SamantaSattvaTranoja_Sri_Perfil.txt',                      // 37 - Samantasattvatrāṇojaḥśrī
+                    'Prasantarutasagaravati_Perfil.txt',                        // 38 - Praśantarutasāgaravatī
+                    'SarvaNagaraRaksaSambhavaTejas_Sri_Perfil.txt',             // 39 - Sarvanagararakṣāsaṃbhavatejaḥśrī
+                    'Sarva_Vrkspraphullana_Sukha_Samvasa_Perfil.txt',          // 40 - Sarvavṛkṣpraphullanasukhasaṃvāsā
+                    'Sarva_Jagad_Raksa_Pranidhana_Virya_Prabha_Perfil.txt',   // 41 - Sarvajagadrakṣāpraṇidhānavīryaprabhā
+                    'Sutejomandala_Rati_Sri_Perfil.txt',                       // 42 - Sutejomaṇḍalaratiśrī
+                    'Gopa_Perfil.txt',                                          // 43 - Gopā
+                    'Mayadevi_Perfil.txt',                                      // 44 - Māyādevī
+                    'Surendrabha_Perfil.txt',                                   // 45 - Surendrābhā
+                    'Visvamitra_Perfil.txt',                                    // 46 - Viśvāmitra
+                    'Silpabhijna_Perfil.txt',                                   // 47 - Śilpābhijña
+                    'Bhadrottama_Perfil.txt',                                   // 48 - Bhadrottamā
+                    'Muktasara_Perfil.txt',                                     // 49 - Muktāsāra
+                    'Sucandra_Perfil.txt',                                      // 50 - Sucandra
+                    'Ajitasena_Perfil.txt',                                     // 51 - Ajitasena
+                    'Sivaragra_Perfil.txt',                                     // 52 - Śivarāgra
+                    'Srisambhava_e_Srimati_Perfil.txt',                        // 53 - Śrīsaṃbhava & Śrīmati
+                    'Maitreya_Perfil.txt',                                      // 54 - Maitreya
+                    'Manjusri_Perfil.txt',                                      // 55 - Manjushri (duplicate)
+                    'Samantabhadra_Perfil.txt'                                  // 56 - Samantabhadra (duplicate)
                 ];
 
                 this.characters = predefinedFiles.map((filename, index) => {
