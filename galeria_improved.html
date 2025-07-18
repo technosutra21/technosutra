@@ -101,25 +101,58 @@
     </div>
 </div>
 <script>
-async function fetchChapters() {
-        const response = await fetch('characters');
-        if (!response.ok) {
-            console.error('Failed to fetch character data');
-            return [];
-        }
-        const textFiles = await response.text();
-        const filenames = textFiles.split('\n').filter(name => name.trim().endsWith('_Perfil.txt'));
-        
-        return filenames.map(filename => {
+// Predefined character list based on available txt files
+    const characterFiles = [
+        'Acala_Perfil.txt',
+        'Ajitasena_Perfil.txt',
+        'Anala_Perfil.txt',
+        'Ananyagamin_Perfil.txt',
+        'Avalokitesvara_Perfil.txt',
+        'Bhadrottama_Perfil.txt',
+        'Budha_Perfil.txt',
+        'Jayottama_Perfil.txt',
+        'Mahadeva_Perfil.txt',
+        'Mahaprabha_Perfil.txt',
+        'Maitreya_Perfil.txt',
+        'Manjusri_Perfil.txt',
+        'Megha_Dravidian_Perfil.txt',
+        'Muktaka_Perfil.txt',
+        'Muktasara_Perfil.txt',
+        'PramuditanayanaJagadVirocana_Perfil.txt',
+        'Prasantarutasagaravati_Perfil.txt',
+        'Ratnacuda_Perfil.txt',
+        'SamantaSattvaTranoja_Sri_Perfil.txt',
+        'Samantabhadra_Perfil.txt',
+        'Samantagambhirasrivimalapraba_Perfil.txt',
+        'Samantanetra_Perfil.txt',
+        'SarvaNagaraRaksaSambhavaTejas_Sri_Perfil.txt',
+        'Sarva_Jagad_Raksa_Pranidhana_Virya_Prabha_Perfil.txt',
+        'Sarva_Vrkspraphullana_Sukha_Samvasa_Perfil.txt',
+        'Sarvagamin_Perfil.txt',
+        'Silpabhijna_Perfil.txt',
+        'Simhavijrmbhita_Perfil.txt',
+        'Srisambhava_e_Srimati_Perfil.txt',
+        'Sthavara_Perfil.txt',
+        'Sucandra_Perfil.txt',
+        'Utpalabhuti_Perfil.txt',
+        'Vaira_Perfil.txt',
+        'Vasanti_Perfil.txt',
+        'Vasumitra_Perfil.txt',
+        'Vesthila_Perfil.txt',
+        'Visvamitra_Perfil.txt'
+    ];
+
+    function getChapters() {
+        return characterFiles.map((filename, index) => {
             const name = filename.replace('_Perfil.txt', '').replace(/_/g, ' ');
-            const title = "O Iluminado"; // Default title or extract from file content
+            const title = "Bodhisattva"; // Default title
             const modelName = filename.replace('_Perfil.txt', '');
             return {
                 id: modelName,
                 name: name,
                 title: title,
                 filename: filename,
-                modelUrl: `${modelName}.glb`,
+                modelUrl: `modelo${index + 1}.glb`,
             };
         });
     }
@@ -143,7 +176,7 @@ async function fetchChapters() {
         const galleryGrid = document.getElementById('gallery-grid');
         galleryGrid.innerHTML = '';
 
-        const chapters = await fetchChapters();
+        const chapters = getChapters();
 
         for (const chapter of chapters) {
             const content = await loadCharacterContent(chapter.filename);
@@ -165,7 +198,7 @@ async function fetchChapters() {
                     ></model-viewer>
                 </div>
                 <div class="model-content">
-                    <p>${content || 'Descrição indisponível.'}</p>
+                    <p>${content ? content.substring(0, 200) + '...' : 'Descrição indisponível.'}</p>
                 </div>
                 <div class="model-actions">
                     <button class="action-btn">Veja em Tela Cheia</button>
