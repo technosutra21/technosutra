@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeria Techno Sutra AR - 56 Capítulos do Avatamsaka Sutra</title>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Cinzel:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gold: #f4d03f;
+            --primary-purple: #8b7cf6;
+            --accent-blue: #60a5fa;
+            --dark-bg: #0a0a0b;
+            --card-bg: rgba(15, 15, 15, 0.4);
+            --glass-bg: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --border-light: rgba(139, 124, 246, 0.15);
+            --border-hover: rgba(139, 124, 246, 0.4);
+            --text-primary: #f8fafc;
+            --text-secondary: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent-glow: rgba(139, 124, 246, 0.2);
+            --gradient-primary: linear-gradient(135deg, 
+                rgba(139, 124, 246, 0.1) 0%, 
+                rgba(244, 208, 63, 0.05) 50%, 
+                rgba(96, 165, 250, 0.1) 100%);
+            --gradient-card: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.03) 0%, 
+                rgba(255, 255, 255, 0.01) 100%);
+            --shadow-glow: 0 0 40px rgba(139, 124, 246, 0.15);
+            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 16px 64px rgba(139, 124, 246, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: var(--dark-bg);
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(139, 124, 246, 0.15) 0%, transparent 60%),
+                radial-gradient(circle at 80% 70%, rgba(244, 208, 63, 0.08) 0%, transparent 60%),
+                radial-gradient(circle at 50% 50%, rgba(96, 165, 250, 0.05) 0%, transparent 60%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-primary);
+            letter-spacing: 0.015em;
+            font-weight: 300;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background particles */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="20" cy="20" r="1" fill="rgba(139,124,246,0.1)"/><circle cx="80" cy="40" r="0.5" fill="rgba(244,208,63,0.1)"/><circle cx="40" cy="80" r="0.8" fill="rgba(96,165,250,0.1)"/></svg>');
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, rgba(10, 10, 11, 0.95) 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+            backdrop-filter: blur(20px);
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid var(--glass-border);
+            border-top: 3px solid var(--primary-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite, pulse 2s ease-in-out infinite;
+            box-shadow: var(--shadow-glow);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .header {
+            position: relative;
+            background: linear-gradient(135deg, 
+                rgba(0, 0, 0, 0.6) 0%, 
+                rgba(15, 15, 15, 0.4) 100%);
+            border-bottom: 1px solid var(--glass-border);
+            backdrop-filter: blur(30px);
+            overflow: hidden;
+            z-index: 100;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(139, 124, 246, 0.4) 20%,
+                rgba(244, 208, 63, 0.6) 50%,
+                rgba(96, 165, 250, 0.4) 80%,
+                transparent 100%);
+            animation: headerGlow 6s ease-in-out infinite;
+        }
+
+        @keyframes headerGlow {
+            0%, 100% { 
+                opacity: 0.3; 
+                transform: translateX(-50%) scaleX(0.8); 
+            }
+            50% { 
+                opacity: 1; 
+                transform: translateX(0%) scaleX(1); 
+            }
+        }
+
+        .header-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .header-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .header-logo-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-card);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            box-shadow: var(--shadow-card);
+            transition: all 0.3s ease;
+        }
+
+        .header-logo-icon:hover {
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 30px rgba(244, 208, 63, 0.3);
+        }
+
+        .header-logo-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: 0.02em;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-nav-items {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .header-nav-item {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .header-nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradient-card);
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .header-nav-item:hover::before {
+            opacity: 1;
+        }
+
+        .header-nav-item:hover {
+            color: var(--text-primary);
+            border-color: var(--glass-border);
+            transform: translateY(-2px);
+        }
+
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            font-size: 0.85rem;
+        }
+
+        .header-stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            padding: 8px 16px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .header-stat:hover {
+            border-color: var(--primary-purple);
+            transform: translateY(-1px);
+        }
+
+        .header-stat-value {
+            color: var(--primary-purple);
+            font-weight: 600;
+        }
+
+        .header-hero {
+            text-align: center;
+            padding: 80px 0 100px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(139, 124, 246, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: heroGlow 8s ease-in-out infinite;
+        }
+
+        @keyframes heroGlow {
+            0%, 100% { 
+                transform: translate(-50%, -50%) scale(0.8); 
+                opacity: 0.3; 
+            }
+            50% { 
+                transform: translate(-50%, -50%) scale(1.2); 
+                opacity: 0.8; 
+            }
+        }
+
+        .header-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 800;
+            margin-bottom: 32px;
+            background: linear-gradient(135deg, 
+                var(--text-primary) 0%, 
+                var(--primary-gold) 30%, 
+                var(--primary-purple) 60%, 
+                var(--accent-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 0.01em;
+            position: relative;
+            z-index: 10;
+            text-shadow: 0 0 60px rgba(139, 124, 246, 0.3);
+            animation: titleFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes titleFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .header-subtitle {
+            font-size: 1.4rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            max-width: 800px;
+            margin: 0 auto 48px;
+            line-height: 1.7;
+            position: relative;
+            z-index: 10;
+            opacity: 0.9;
+        }
+
+        .header-quick-stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin-top: 48px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-quick-stat {
+            text-align: center;
+            padding: 28px 24px;
+            background: var(--glass-bg);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(30px);
+            min-width: 140px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-quick-stat::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(139, 124, 246, 0.1) 50%, 
+                transparent 100%);
+            transition: left 0.5s ease;
+        }
+
+        .header-quick-stat:hover::before {
+            left: 100%;
+        }
+
+        .header-quick-stat:hover {
+            border-color: var(--primary-purple);
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .header-quick-stat-number {
+            font-size: 2.5rem;
+            font-weight: 200;
+            background: linear-gradient(135deg, 
+                var(--primary-purple) 0%, 
+                var(--primary-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .header-quick-stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 500;
+        }
+
+        .gallery-container {
+            padding: 60px 24px;
+            max-width: 1800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .controls {
+            margin-bottom: 60px;
+            text-align: center;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+        }
+
+        .filter-btn {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+            letter-spacing: 0.02em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filter-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .filter-btn:hover::before {
+            opacity: 0.3;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary-purple);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(139, 124, 246, 0.2);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, 
+                rgba(139, 124, 246, 0.3) 0%, 
+                rgba(244, 208, 63, 0.2) 100%);
+            border-color: var(--primary-purple);
+            box-shadow: 0 8px 32px rgba(139, 124, 246, 0.3);
+            color: var(--text-primary);
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 20px 24px 20px 60px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(30px);
+            box-shadow: var(--shadow-card);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 0 3px rgba(244, 208, 63, 0.1), var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-results-count {
+            position: absolute;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-purple);
+            font-size: 0.9rem;
+            font-weight: 600;
+            pointer-events: none;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .model-card {
+            background: var(--glass-bg);
+            border-radius: 20px;
+            padding: 32px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(30px);
+            box-shadow: var(--shadow-card);
+        }
+
+        .model-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                var(--primary-gold) 0%, 
+                var(--primary-purple) 50%, 
+                var(--accent-blue) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .model-card:hover::before {
+            opacity: 1;
+        }
+
+        .model-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            border-color: var(--primary-purple);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .model-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .model-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            line-height: 1.3;
+            background: linear-gradient(135deg, 
+                var(--text-primary) 0%, 
+                var(--primary-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .model-subtitle {
+            font-size: 1rem;
+            color: var(--primary-purple);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.9;
+        }
+
+        .model-viewer-container {
+            height: 320px;
+            border-radius: 16px;
+            overflow: hidden;
+            background: linear-gradient(135deg, 
+                rgba(0, 0, 0, 0.6) 0%, 
+                rgba(15, 15, 15, 0.4) 100%);
+            margin-bottom: 24px;
+            position: relative;
+            border: 1px solid var(--glass-border);
+            transition: all 0.4s ease;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .model-viewer-container:hover {
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 30px rgba(244, 208, 63, 0.2);
+        }
+
+        .model-viewer-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, 
+                transparent 30%, 
+                rgba(139, 124, 246, 0.1) 50%, 
+                transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .model-viewer-container:hover::before {
+            opacity: 1;
+        }
+
+        model-viewer {
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            z-index: 2;
+        }
+
+        .model-content {
+            margin-bottom: 24px;
+        }
+
+        .model-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .model-tag {
+            background: linear-gradient(135deg, 
+                rgba(139, 124, 246, 0.2) 0%, 
+                rgba(244, 208, 63, 0.1) 100%);
+            color: var(--primary-purple);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .model-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 124, 246, 0.2);
+        }
+
+        .model-description {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 16px;
+            opacity: 0.9;
+        }
+
+        .model-actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 14px 22px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.4s ease;
+            flex: 1;
+            justify-content: center;
+            min-width: 140px;
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(244, 208, 63, 0.2) 50%, 
+                transparent 100%);
+            transition: left 0.5s ease;
+        }
+
+        .action-btn:hover::before {
+            left: 100%;
+        }
+
+        .action-btn:hover {
+            border-color: var(--primary-gold);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(244, 208, 63, 0.2);
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, 
+                var(--primary-gold) 0%, 
+                var(--primary-purple) 100%);
+            color: var(--dark-bg);
+            border-color: var(--primary-gold);
+        }
+
+        .action-btn.primary:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(244, 208, 63, 0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--glass-bg);
+            border-radius: 24px;
+            padding: 48px;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow: auto;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(30px);
+            box-shadow: var(--shadow-hover);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from { 
+                transform: translate(-50%, -60%);
+                opacity: 0;
+            }
+            to { 
+                transform: translate(-50%, -50%);
+                opacity: 1;
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+            border-color: var(--primary-gold);
+            transform: scale(1.1);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.4rem;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(30px);
+            z-index: 1000;
+            box-shadow: var(--shadow-card);
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary-purple);
+            border-color: var(--primary-purple);
+            transform: rotate(180deg) scale(1.1);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .quick-actions {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            z-index: 1000;
+        }
+
+        .quick-action-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(30px);
+            font-size: 1.2rem;
+            box-shadow: var(--shadow-card);
+        }
+
+        .quick-action-btn:hover {
+            background: var(--primary-gold);
+            border-color: var(--primary-gold);
+            color: var(--dark-bg);
+            transform: scale(1.15);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .tooltip {
+            position: relative;
+            cursor: help;
+        }
+
+        .tooltip::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(30px);
+            z-index: 1000;
+            box-shadow: var(--shadow-card);
+        }
+
+        .tooltip:hover::before {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-4px);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--text-muted);
+            background: var(--glass-bg);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(30px);
+            margin: 40px 0;
+        }
+
+        .no-results-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.6;
+        }
+
+        .no-results-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .no-results-subtext {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .error-card {
+            background: linear-gradient(135deg, 
+                rgba(220, 38, 38, 0.1) 0%, 
+                rgba(220, 38, 38, 0.05) 100%);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            color: #fca5a5;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+        }
+
+        .error-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .error-message {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .progress-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            opacity: 0.3;
+        }
+
+        .progress-ring circle {
+            fill: none;
+            stroke: var(--glass-border);
+            stroke-width: 2;
+        }
+
+        .progress-ring .progress {
+            stroke: var(--primary-purple);
+            stroke-linecap: round;
+            transition: stroke-dasharray 1.5s ease;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-nav {
+                flex-direction: column;
+                gap: 20px;
+                padding: 20px 0;
+            }
+
+            .header-nav-items {
+                gap: 20px;
+            }
+
+            .header-stats {
+                gap: 16px;
+                font-size: 0.8rem;
+            }
+
+            .header-hero {
+                padding: 60px 0 80px;
+            }
+
+            .header-title {
+                font-size: 2.5rem;
+                margin-bottom: 24px;
+            }
+
+            .header-subtitle {
+                font-size: 1.1rem;
+                margin-bottom: 36px;
+                padding: 0 20px;
+            }
+
+            .header-quick-stats {
+                flex-direction: column;
+                gap: 20px;
+                align-items: center;
+            }
+
+            .header-quick-stat {
+                min-width: 160px;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .model-card {
+                padding: 24px;
+            }
+
+            .model-actions {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                min-width: auto;
+            }
+
+            .modal-content {
+                padding: 32px;
+                margin: 20px;
+            }
+
+            .filter-buttons {
+                flex-direction: column;
+                gap: 12px;
+                align-items: center;
+            }
+
+            .filter-btn {
+                padding: 12px 24px;
+                font-size: 0.85rem;
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .quick-actions {
+                bottom: 24px;
+                right: 24px;
+            }
+
+            .quick-action-btn {
+                width: 48px;
+                height: 48px;
+                font-size: 1rem;
+            }
+
+            .theme-toggle {
+                width: 48px;
+                height: 48px;
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Enhanced scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-purple);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-gold);
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle tooltip" data-tooltip="Alternar tema claro/escuro" onclick="toggleTheme()">
+        🌙
+    </button>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <button class="quick-action-btn tooltip" data-tooltip="Voltar ao topo" onclick="scrollToTop()">
+            ↑
+        </button>
+        <button class="quick-action-btn tooltip" data-tooltip="Estatísticas" onclick="showStats()">
+            📊
+        </button>
+        <button class="quick-action-btn tooltip" data-tooltip="Compartilhar" onclick="shareGallery()">
+            📤
+        </button>
+    </div>
+
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <div class="header">
+        <div class="header-container">
+            <!-- Navigation Bar -->
+            <nav class="header-nav">
+                <div class="header-logo">
+                    <div class="header-logo-icon">🏛️</div>
+                    <div class="header-logo-text">Techno Sutra AR</div>
+                </div>
+                <div class="header-nav-items">
+                    <div class="header-stats">
+                        <div class="header-stat">
+                            <span>📊</span>
+                            <span class="header-stat-value" id="header-available-count">0</span>
+                            <span>disponíveis</span>
+                        </div>
+                        <div class="header-stat">
+                            <span>🎯</span>
+                            <span class="header-stat-value" id="header-completion-rate">0%</span>
+                            <span>completo</span>
+                        </div>
+                        <div class="header-stat">
+                            <span>⏱️</span>
+                            <span class="header-stat-value" id="header-last-updated">Carregando...</span>
+                        </div>
+                    </div>
+                    <a href="index.html" class="header-nav-item">🚀 Visualizador AR</a>
+                    <a href="#gallery" class="header-nav-item">📚 Galeria</a>
+                </div>
+            </nav>
+
+            <!-- Hero Section -->
+            <div class="header-hero">
+                <h1 class="header-title">Galeria Avatamsaka Sutra</h1>
+                <p class="header-subtitle">
+                    Explore os 56 capítulos sagrados através de modelos 3D interativos em uma experiência visual transcendente.
+                    Uma jornada pela sabedoria budista ancestral reimaginada através da tecnologia moderna.
+                </p>
+
+                <!-- Quick Stats -->
+                <div class="header-quick-stats">
+                    <div class="header-quick-stat tooltip" data-tooltip="Total de capítulos do Avatamsaka Sutra">
+                        <span class="header-quick-stat-number" id="quick-stat-total">56</span>
+                        <span class="header-quick-stat-label">Capítulos</span>
+                    </div>
+                    <div class="header-quick-stat tooltip" data-tooltip="Modelos 3D prontos para visualização">
+                        <span class="header-quick-stat-number" id="quick-stat-available">0</span>
+                        <span class="header-quick-stat-label">Disponíveis</span>
+                        <div class="progress-ring">
+                            <svg viewBox="0 0 36 36">
+                                <circle cx="18" cy="18" r="16" stroke="rgba(139, 124, 246, 0.2)" stroke-width="2" fill="none"></circle>
+                                <circle cx="18" cy="18" r="16" stroke="#8b7cf6" stroke-width="2" fill="none" 
+                                        stroke-dasharray="0 100" stroke-linecap="round" class="progress" id="progress-circle"></circle>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="header-quick-stat tooltip" data-tooltip="Percentual de conclusão da coleção">
+                        <span class="header-quick-stat-number" id="quick-stat-progress">0%</span>
+                        <span class="header-quick-stat-label">Progresso</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="gallery-container" id="gallery">
+        <!-- Enhanced Filters and Search -->
+        <div class="controls">
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">✨ Todos (56)</button>
+                <button class="filter-btn" data-filter="available">🎯 Disponíveis</button>
+                <button class="filter-btn" data-filter="unavailable">⏳ Em Breve</button>
+                <button class="filter-btn" data-filter="bodhisattvas">🧘 Bodhisattvas</button>
+            </div>
+            <div class="search-container">
+                <input type="text" 
+                       class="search-input" 
+                       id="search-input" 
+                       placeholder="✨ Descobrir personagens por nome, título ou essência...">
+                <div id="search-results-count" class="search-results-count"></div>
+            </div>
+        </div>
+        
+        <div class="gallery-grid" id="gallery-grid">
+            <!-- Models will be dynamically generated by JavaScript -->
+        </div>
+
+        <div class="no-results" id="no-results" style="display: none;">
+            <div class="no-results-icon">🔍</div>
+            <div class="no-results-text">Nenhum personagem encontrado</div>
+            <div class="no-results-subtext">Tente refinar sua busca ou explore diferentes categorias</div>
+        </div>
+    </div>
+
+    <div class="modal" id="character-modal">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">×</button>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced character management with robust error handling
+        class CharacterGallery {
+            constructor() {
+                this.characters = [];
+                this.filteredCharacters = [];
+                this.loadedCount = 0;
+                this.currentView = 'grid';
+                this.searchTerm = '';
+                this.currentFilter = 'all';
+                this.init();
+            }
+
+            async init() {
+                await this.loadCharacterList();
+                this.setupEventListeners();
+                await this.loadGallery();
+                this.hideLoading();
+            }
+
+            async loadCharacterList() {
+                // Character files ordered according to galeria.html reference
+                const predefinedFiles = [
+                    'Budha_Perfil.txt',                                          // 1 - Buda Śākyamuni
+                    'Samantabhadra_Perfil.txt',                                  // 2 - Samantabhadra
+                    'Manjusri_Perfil.txt',                                       // 3 - Manjushri
+                    'Meghasri_Perfil.txt',                                       // 4 - Meghaśrī
+                    'Sagara_megha_Perfil.txt',                                   // 5 - Sāgaramegha
+                    'Supratisthita_Perfil.txt',                                 // 6 - Supratiṣṭhita
+                    'Megha_Dravidian_Perfil.txt',                               // 7 - Megha
+                    'Muktaka_Perfil.txt',                                       // 8 - Muktaka
+                    'Sagara_dhvaja_Perfil.txt',                                 // 9 - Sāgaradhvaja
+                    'Asa_Perfil.txt',                                           // 10 - Āśā
+                    'Bhismottara_nirghosa_Perfil.txt',                          // 11 - Bhīṣmottaranirghoṣa
+                    'Jayosmayatana_Perfil.txt',                                 // 12 - Jayoṣmāyatana
+                    'Maitrayani_Perfil.txt',                                    // 13 - Maitrayaṇī
+                    'Sudarsana_Perfil.txt',                                     // 14 - Sudarśana
+                    'Indriyesvara_Perfil.txt',                                  // 15 - Indriyeśvara
+                    'Prabhuta_Perfil.txt',                                      // 16 - Prabhūtā
+                    'Vidvan_Perfil.txt',                                        // 17 - Vidvān
+                    'Ratnacuda_Perfil.txt',                                     // 18 - Ratnacūḍa
+                    'Samantanetra_Perfil.txt',                                  // 19 - Samantanetra
+                    'Anala_Perfil.txt',                                         // 20 - Anala
+                    'Mahaprabha_Perfil.txt',                                    // 21 - Mahāprabha
+                    'Acala_Perfil.txt',                                         // 22 - Acalā
+                    'Sarvagamin_Perfil.txt',                                    // 23 - Sarvagamin
+                    'Utpalabhuti_Perfil.txt',                                   // 24 - Utpalabhūti
+                    'Vaira_Perfil.txt',                                         // 25 - Vaira
+                    'Jayottama_Perfil.txt',                                     // 26 - Jayottama
+                    'Simhavijrmbhita_Perfil.txt',                               // 27 - Siṃhavijṛmbhitā
+                    'Vasumitra_Perfil.txt',                                     // 28 - Vasumitrā
+                    'Vesthila_Perfil.txt',                                      // 29 - Veṣṭhila
+                    'Avalokitesvara_Perfil.txt',                                // 30 - Avalokiteśvara
+                    'Ananyagamin_Perfil.txt',                                   // 31 - Ananyagāmin
+                    'Mahadeva_Perfil.txt',                                      // 32 - Mahādeva
+                    'Sthavara_Perfil.txt',                                      // 33 - Sthāvarā
+                    'Vasanti_Perfil.txt',                                       // 34 - Vāsantī
+                    'Samantagambhirasrivimalapraba_Perfil.txt',                 // 35 - Samantagambhīraśrīvimalaprabhā
+                    'PramuditanayanaJagadVirocana_Perfil.txt',                  // 36 - Pramuditanayanajagadvirocanā
+                    'SamantaSattvaTranoja_Sri_Perfil.txt',                      // 37 - Samantasattvatrāṇojaḥśrī
+                    'Prasantarutasagaravati_Perfil.txt',                        // 38 - Praśantarutasāgaravatī
+                    'SarvaNagaraRaksaSambhavaTejas_Sri_Perfil.txt',             // 39 - Sarvanagararakṣāsaṃbhavatejaḥśrī
+                    'Sarva_Vrkspraphullana_Sukha_Samvasa_Perfil.txt',          // 40 - Sarvavṛkṣpraphullanasukhasaṃvāsā
+                    'Sarva_Jagad_Raksa_Pranidhana_Virya_Prabha_Perfil.txt',   // 41 - Sarvajagadrakṣāpraṇidhānavīryaprabhā
+                    'Sutejomandala_Rati_Sri_Perfil.txt',                       // 42 - Sutejomaṇḍalaratiśrī
+                    'Gopa_Perfil.txt',                                          // 43 - Gopā
+                    'Mayadevi_Perfil.txt',                                      // 44 - Māyādevī
+                    'Surendrabha_Perfil.txt',                                   // 45 - Surendrābhā
+                    'Visvamitra_Perfil.txt',                                    // 46 - Viśvāmitra
+                    'Silpabhijna_Perfil.txt',                                   // 47 - Śilpābhijña
+                    'Bhadrottama_Perfil.txt',                                   // 48 - Bhadrottamā
+                    'Muktasara_Perfil.txt',                                     // 49 - Muktāsāra
+                    'Sucandra_Perfil.txt',                                      // 50 - Sucandra
+                    'Ajitasena_Perfil.txt',                                     // 51 - Ajitasena
+                    'Sivaragra_Perfil.txt',                                     // 52 - Śivarāgra
+                    'Srisambhava_e_Srimati_Perfil.txt',                        // 53 - Śrīsaṃbhava & Śrīmati
+                    'Maitreya_Perfil.txt',                                      // 54 - Maitreya
+                    'Manjusri_Perfil.txt',                                      // 55 - Manjushri (duplicate)
+                    'Samantabhadra_Perfil.txt'                                  // 56 - Samantabhadra (duplicate)
+                ];
+
+                this.characters = predefinedFiles.map((filename, index) => {
+                    const baseName = filename.replace('_Perfil.txt', '');
+                    const displayName = this.formatCharacterName(baseName);
+                    
+                    return {
+                        id: baseName,
+                        name: displayName,
+                        filename: filename,
+                        modelUrl: `modelo${index + 1}.glb`,
+                        content: null,
+                        loaded: false,
+                        error: null,
+                        tags: this.generateTags(baseName),
+                        chapter: index + 1
+                    };
+                });
+
+                this.filteredCharacters = [...this.characters];
+                this.updateStats();
+            }
+
+            formatCharacterName(baseName) {
+                return baseName
+                    .replace(/_/g, ' ')
+                    .replace(/([a-z])([A-Z])/g, '$1 $2')
+                    .replace(/\\b\\w/g, l => l.toUpperCase());
+            }
+
+            generateTags(baseName) {
+                const tags = ['Bodhisattva'];
+                
+                if (baseName.includes('Sri')) tags.push('Nobre');
+                if (baseName.includes('Megha')) tags.push('Dravidiano');
+                if (baseName.includes('Sarva')) tags.push('Universal');
+                if (baseName.includes('Samanta')) tags.push('Onipresente');
+                if (baseName.includes('Prabha')) tags.push('Luminoso');
+                if (baseName.includes('Raksa')) tags.push('Protetor');
+                if (baseName.includes('Budha')) tags.push('Fundador');
+                if (baseName.includes('Maitreya')) tags.push('Futuro');
+                if (baseName.includes('Avalokitesvara')) tags.push('Compaixão');
+                
+                return tags;
+            }
+
+            async validateFileExists(filename) {
+                try {
+                    const response = await fetch(`characters/${filename}`, { method: 'HEAD' });
+                    return response.ok;
+                } catch (error) {
+                    return false;
+                }
+            }
+
+            async loadCharacterContent(character) {
+                try {
+                    const fileExists = await this.validateFileExists(character.filename);
+                    if (!fileExists) {
+                        throw new Error(`Arquivo ${character.filename} não encontrado`);
+                    }
+
+                    const response = await fetch(`characters/${character.filename}`);
+                    if (!response.ok) {
+                        throw new Error(`Erro HTTP: ${response.status}`);
+                    }
+
+                    const content = await response.text();
+                    character.content = content;
+                    character.loaded = true;
+                    character.error = null;
+                    
+                    // Extract character type from content
+                    const typeMatch = content.match(/Tipo:\\s*([^\
+\
+]+)/);
+                    if (typeMatch) {
+                        character.type = typeMatch[1].trim();
+                    }
+                    
+                    return content;
+                } catch (error) {
+                    console.error(`Erro ao carregar ${character.filename}:`, error);
+                    character.error = error.message;
+                    character.loaded = false;
+                    return null;
+                }
+            }
+
+            async loadGallery() {
+                const galleryGrid = document.getElementById('gallery-grid');
+                galleryGrid.innerHTML = '';
+
+                // Load characters in batches for better performance
+                const batchSize = 8;
+                for (let i = 0; i < this.characters.length; i += batchSize) {
+                    const batch = this.characters.slice(i, i + batchSize);
+                    const promises = batch.map(character => this.loadCharacterContent(character));
+                    
+                    await Promise.all(promises);
+                    
+                    batch.forEach(character => {
+                        const card = this.createCharacterCard(character);
+                        galleryGrid.appendChild(card);
+                        this.loadedCount++;
+                    });
+                    
+                    this.updateStats();
+                    
+                    // Small delay between batches to prevent overwhelming the browser
+                    await new Promise(resolve => setTimeout(resolve, 150));
+                }
+            }
+
+            createCharacterCard(character) {
+                const card = document.createElement('div');
+                card.className = 'model-card';
+                card.dataset.characterId = character.id;
+
+                if (character.error) {
+                    card.innerHTML = this.createErrorCard(character);
+                } else {
+                    card.innerHTML = this.createSuccessCard(character);
+                }
+
+                return card;
+            }
+
+            createErrorCard(character) {
+                return `
+                    <div class="error-card">
+                        <div class="error-title">${character.name}</div>
+                        <div class="error-message">${character.error}</div>
+                    </div>
+                `;
+            }
+
+            createSuccessCard(character) {
+                const description = character.content ? 
+                    this.extractDescription(character.content) : 
+                    'Explore os mistérios e sabedoria deste personagem sagrado através de sua representação 3D interativa.';
+                
+                const tags = character.tags.map(tag => 
+                    `<span class="model-tag">${tag}</span>`
+                ).join('');
+
+                return `
+                    <div class="model-header">
+                        <div class="model-title">${character.name}</div>
+                        <div class="model-subtitle">${character.type || 'Bodhisattva'}</div>
+                    </div>
+                    <div class="model-viewer-container">
+                        <model-viewer
+                            src="${character.modelUrl}"
+                            alt="Modelo 3D - ${character.name}"
+                            auto-rotate
+                            camera-controls
+                            loading="lazy"
+                            style="background-color: transparent;"
+                            poster="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM4YjdjZjY7c3RvcC1vcGFjaXR5OjAuMSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6I2Y0ZDA5ZjtzdG9wLW9wYWNpdHk6MC4wNSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2dyYWQpIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJjZW50cmFsIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iSW50ZXIiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiNmNGQwM2YiIGZvbnQtd2VpZ2h0PSI1MDAiPkNhcnJlZ2FuZG8uLi48L3RleHQ+PC9zdmc+"
+                        ></model-viewer>
+                    </div>
+                    <div class="model-content">
+                        <div class="model-tags">${tags}</div>
+                        <div class="model-description">${description}</div>
+                    </div>
+                    <div class="model-actions">
+                        <button class="action-btn primary" onclick="gallery.openCharacterModal('${character.id}')">
+                            <span>📖</span> Explorar Perfil
+                        </button>
+                        <button class="action-btn" onclick="gallery.openFullscreen('${character.id}')">
+                            <span>⛶</span> Tela Cheia
+                        </button>
+                        <button class="action-btn" onclick="gallery.downloadModel('${character.id}')">
+                            <span>⬇</span> Baixar Modelo
+                        </button>
+                    </div>
+                `;
+            }
+
+            extractDescription(content) {
+                // Try to extract a meaningful description from the content
+                const lines = content.split('\
+').filter(line => line.trim());
+                
+                // Look for description sections
+                const descriptionPatterns = [
+                    /CARACTERÍSTICAS ESPIRITUAIS DISTINTIVAS/,
+                    /DESCRIÇÃO FÍSICA/,
+                    /INFORMAÇÕES BÁSICAS/,
+                    /EXPERIÊNCIA MÍSTICA/,
+                    /ASPECTOS ÚNICOS/
+                ];
+                
+                for (const pattern of descriptionPatterns) {
+                    const sectionIndex = lines.findIndex(line => pattern.test(line));
+                    if (sectionIndex !== -1 && sectionIndex + 1 < lines.length) {
+                        const nextLines = lines.slice(sectionIndex + 1, sectionIndex + 4)
+                            .filter(line => line.trim() && !line.startsWith('---') && !line.startsWith('==='))
+                            .join(' ');
+                        if (nextLines.length > 50) {
+                            return nextLines.substring(0, 200) + '...';
+                        }
+                    }
+                }
+                
+                // Fallback to first meaningful content
+                const meaningfulLines = lines.filter(line => 
+                    line.length > 30 && 
+                    !line.includes('===') && 
+                    !line.includes('---') &&
+                    !line.startsWith('NOME DO PERSONAGEM') &&
+                    !line.startsWith('TIPO:') &&
+                    !line.startsWith('CAPÍTULO:')
+                );
+                
+                if (meaningfulLines.length > 0) {
+                    return meaningfulLines[0].substring(0, 200) + '...';
+                }
+                
+                return 'Descubra os mistérios e ensinamentos sagrados através desta representação 3D interativa, explorando a profunda sabedoria espiritual do Avatamsaka Sutra.';
+            }
+
+            setupEventListeners() {
+                // Search functionality
+                const searchInput = document.getElementById('search-input');
+                searchInput.addEventListener('input', (e) => {
+                    this.searchTerm = e.target.value.toLowerCase();
+                    this.filterCharacters();
+                });
+
+                // Filter buttons
+                const filterBtns = document.querySelectorAll('.filter-btn');
+                filterBtns.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        filterBtns.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        this.currentFilter = btn.dataset.filter;
+                        this.filterCharacters();
+                    });
+                });
+
+                // Modal functionality
+                const modal = document.getElementById('character-modal');
+                const modalClose = document.getElementById('modal-close');
+                
+                modalClose.addEventListener('click', () => {
+                    modal.style.display = 'none';
+                });
+
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        modal.style.display = 'none';
+                    }
+                    if (e.key === '/' && e.ctrlKey) {
+                        e.preventDefault();
+                        searchInput.focus();
+                    }
+                });
+            }
+
+            filterCharacters() {
+                this.filteredCharacters = this.characters.filter(character => {
+                    // Search filter
+                    const searchableText = (
+                        character.name + ' ' + 
+                        (character.type || '') + ' ' + 
+                        character.tags.join(' ') + ' ' +
+                        (character.content || '')
+                    ).toLowerCase();
+                    
+                    const matchesSearch = searchableText.includes(this.searchTerm);
+                    
+                    // Category filter
+                    let matchesFilter = true;
+                    switch (this.currentFilter) {
+                        case 'available':
+                            matchesFilter = character.loaded && !character.error;
+                            break;
+                        case 'unavailable':
+                            matchesFilter = !character.loaded || character.error;
+                            break;
+                        case 'bodhisattvas':
+                            matchesFilter = character.tags.includes('Bodhisattva');
+                            break;
+                        case 'all':
+                        default:
+                            matchesFilter = true;
+                    }
+                    
+                    return matchesSearch && matchesFilter;
+                });
+
+                this.renderFilteredResults();
+                this.updateSearchResultsCount();
+            }
+
+            renderFilteredResults() {
+                const galleryGrid = document.getElementById('gallery-grid');
+                const noResults = document.getElementById('no-results');
+                
+                if (this.filteredCharacters.length === 0) {
+                    galleryGrid.style.display = 'none';
+                    noResults.style.display = 'block';
+                } else {
+                    galleryGrid.style.display = 'grid';
+                    noResults.style.display = 'none';
+                    
+                    // Hide all cards first
+                    const allCards = galleryGrid.querySelectorAll('.model-card');
+                    allCards.forEach(card => card.style.display = 'none');
+                    
+                    // Show matching cards with staggered animation
+                    this.filteredCharacters.forEach((character, index) => {
+                        const card = galleryGrid.querySelector(`[data-character-id="${character.id}"]`);
+                        if (card) {
+                            card.style.display = 'block';
+                            card.style.animation = `none`;
+                            card.offsetHeight; // Trigger reflow
+                            card.style.animation = `fadeInUp 0.6s ease ${index * 0.1}s both`;
+                        }
+                    });
+                }
+            }
+
+            updateSearchResultsCount() {
+                const searchResultsCount = document.getElementById('search-results-count');
+                if (this.searchTerm) {
+                    searchResultsCount.textContent = `${this.filteredCharacters.length} encontrados`;
+                } else {
+                    searchResultsCount.textContent = '';
+                }
+            }
+
+            updateStats() {
+                // Update header stats
+                const headerAvailableCount = document.getElementById('header-available-count');
+                const headerCompletionRate = document.getElementById('header-completion-rate');
+                const headerLastUpdated = document.getElementById('header-last-updated');
+                const quickStatAvailable = document.getElementById('quick-stat-available');
+                const quickStatProgress = document.getElementById('quick-stat-progress');
+
+                const availableCount = this.characters.filter(c => c.loaded && !c.error).length;
+                const completionRate = Math.round((availableCount / this.characters.length) * 100);
+
+                if (headerAvailableCount) headerAvailableCount.textContent = availableCount;
+                if (headerCompletionRate) headerCompletionRate.textContent = `${completionRate}%`;
+                if (headerLastUpdated) {
+                    const now = new Date();
+                    headerLastUpdated.textContent = now.toLocaleTimeString('pt-BR', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                }
+                if (quickStatAvailable) quickStatAvailable.textContent = availableCount;
+                if (quickStatProgress) quickStatProgress.textContent = `${completionRate}%`;
+
+                // Update progress circle
+                this.updateProgressCircle(completionRate);
+            }
+
+            updateProgressCircle(percentage) {
+                const circle = document.getElementById('progress-circle');
+                if (circle) {
+                    const circumference = 2 * Math.PI * 16; // r=16
+                    const strokeDasharray = (percentage / 100) * circumference;
+                    circle.style.strokeDasharray = `${strokeDasharray} ${circumference}`;
+                }
+            }
+
+            hideLoading() {
+                const loadingOverlay = document.getElementById('loading-overlay');
+                loadingOverlay.style.opacity = '0';
+                loadingOverlay.style.visibility = 'hidden';
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                }, 800);
+            }
+
+            openCharacterModal(characterId) {
+                const character = this.characters.find(c => c.id === characterId);
+                if (!character || !character.content) return;
+
+                const modal = document.getElementById('character-modal');
+                const modalBody = document.getElementById('modal-body');
+                
+                modalBody.innerHTML = `
+                    <div style="text-align: center; margin-bottom: 32px;">
+                        <h2 style="color: var(--primary-gold); margin-bottom: 16px; font-size: 2.2rem; font-family: 'Playfair Display', serif; font-weight: 700;">${character.name}</h2>
+                        <div style="color: var(--primary-purple); font-size: 1.1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;">${character.type || 'Bodhisattva'}</div>
+                    </div>
+                    <div style="white-space: pre-wrap; line-height: 1.8; color: var(--text-secondary); font-size: 1rem; max-height: 60vh; overflow-y: auto; padding: 24px; background: var(--glass-bg); border-radius: 16px; border: 1px solid var(--glass-border);">${character.content}</div>
+                `;
+                
+                modal.style.display = 'block';
+            }
+
+            openFullscreen(characterId) {
+                const character = this.characters.find(c => c.id === characterId);
+                if (!character) return;
+
+                // Create fullscreen modal for 3D model
+                const fullscreenModal = document.createElement('div');
+                fullscreenModal.style.cssText = `
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                    background: rgba(0,0,0,0.95); z-index: 20000; display: flex;
+                    align-items: center; justify-content: center; backdrop-filter: blur(20px);
+                `;
+
+                fullscreenModal.innerHTML = `
+                    <div style="width: 90%; height: 90%; max-width: 1200px; max-height: 800px; position: relative;">
+                        <model-viewer
+                            src="${character.modelUrl}"
+                            alt="Modelo 3D - ${character.name}"
+                            auto-rotate
+                            camera-controls
+                            style="width: 100%; height: 100%; background: transparent;"
+                        ></model-viewer>
+                        <button onclick="this.closest('div').remove()" 
+                                style="position: absolute; top: 20px; right: 20px; background: var(--glass-bg);
+                                       border: 1px solid var(--glass-border); color: var(--text-primary);
+                                       padding: 12px; border-radius: 8px; cursor: pointer; font-size: 1.5rem;
+                                       backdrop-filter: blur(30px); transition: all 0.3s ease;">×</button>
+                    </div>
+                `;
+
+                document.body.appendChild(fullscreenModal);
+                fullscreenModal.addEventListener('click', (e) => {
+                    if (e.target === fullscreenModal) fullscreenModal.remove();
+                });
+            }
+
+            downloadModel(characterId) {
+                const character = this.characters.find(c => c.id === characterId);
+                if (!character) return;
+
+                // Create download link
+                const link = document.createElement('a');
+                link.href = character.modelUrl;
+                link.download = `${character.name.replace(/\\s+/g, '_')}_3D_Model.glb`;
+                link.click();
+            }
+        }
+
+        // CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Helper functions for UI actions
+        function toggleTheme() {
+            const body = document.body;
+            const themeBtn = document.querySelector('.theme-toggle');
+            
+            // Simple theme toggle - could be expanded for light mode
+            if (body.style.filter === 'invert(1)') {
+                body.style.filter = 'none';
+                themeBtn.textContent = '🌙';
+                themeBtn.setAttribute('data-tooltip', 'Alternar para tema claro');
+            } else {
+                body.style.filter = 'invert(1)';
+                themeBtn.textContent = '☀️';
+                themeBtn.setAttribute('data-tooltip', 'Alternar para tema escuro');
+            }
+        }
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        function showStats() {
+            if (!gallery || !gallery.characters) return;
+            
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.8); z-index: 2000; display: flex;
+                align-items: center; justify-content: center; backdrop-filter: blur(30px);
+            `;
+
+            const availableCount = gallery.characters.filter(c => c.loaded && !c.error).length;
+            const completionRate = Math.round((availableCount / gallery.characters.length) * 100);
+            const bodhisattvaCount = gallery.characters.filter(c => c.tags.includes('Bodhisattva')).length;
+            const nobleCount = gallery.characters.filter(c => c.tags.includes('Nobre')).length;
+            const protectorCount = gallery.characters.filter(c => c.tags.includes('Protetor')).length;
+            const luminousCount = gallery.characters.filter(c => c.tags.includes('Luminoso')).length;
+
+            modal.innerHTML = `
+                <div style="background: var(--glass-bg); padding: 40px; border-radius: 24px; 
+                           border: 1px solid var(--glass-border); max-width: 600px; width: 90%;
+                           backdrop-filter: blur(30px); box-shadow: var(--shadow-hover);">
+                    <h3 style="color: var(--text-primary); margin: 0 0 32px 0; text-align: center; 
+                              font-size: 2rem; font-family: 'Playfair Display', serif; font-weight: 700;">
+                        ✨ Estatísticas da Galeria Sagrada
+                    </h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+                               gap: 24px; margin-bottom: 32px;">
+                        <div style="text-align: center; padding: 24px; background: var(--glass-bg); 
+                                   border-radius: 16px; border: 1px solid var(--glass-border);">
+                            <div style="font-size: 2.5rem; color: var(--primary-purple); margin-bottom: 12px; font-weight: 200;">${availableCount}</div>
+                            <div style="color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em;">Disponíveis</div>
+                        </div>
+                        <div style="text-align: center; padding: 24px; background: var(--glass-bg); 
+                                   border-radius: 16px; border: 1px solid var(--glass-border);">
+                            <div style="font-size: 2.5rem; color: var(--primary-gold); margin-bottom: 12px; font-weight: 200;">${completionRate}%</div>
+                            <div style="color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em;">Completude</div>
+                        </div>
+                        <div style="text-align: center; padding: 24px; background: var(--glass-bg); 
+                                   border-radius: 16px; border: 1px solid var(--glass-border);">
+                            <div style="font-size: 2.5rem; color: var(--accent-blue); margin-bottom: 12px; font-weight: 200;">${bodhisattvaCount}</div>
+                            <div style="color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em;">Bodhisattvas</div>
+                        </div>
+                        <div style="text-align: center; padding: 24px; background: var(--glass-bg); 
+                                   border-radius: 16px; border: 1px solid var(--glass-border);">
+                            <div style="font-size: 2.5rem; color: var(--primary-purple); margin-bottom: 12px; font-weight: 200;">${nobleCount}</div>
+                            <div style="color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em;">Nobres</div>
+                        </div>
+                        <div style="text-align: center; padding: 24px; background: var(--glass-bg); 
+                                   border-radius: 16px; border: 1px solid var(--glass-border);">
+                            <div style="font-size: 2.5rem; color: var(--primary-gold); margin-bottom: 12px; font-weight: 200;">${protectorCount}</div>
+                            <div style="color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em;">Protetores</div>
+                        </div>
+                        <div style="text-align: center; padding: 24px; background: var(--glass-bg); 
+                                   border-radius: 16px; border: 1px solid var(--glass-border);">
+                            <div style="font-size: 2.5rem; color: var(--accent-blue); margin-bottom: 12px; font-weight: 200;">${luminousCount}</div>
+                            <div style="color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em;">Luminosos</div>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <button onclick="this.closest('div').parentElement.remove()" 
+                                style="background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-gold) 100%); 
+                                       border: none; color: var(--dark-bg); padding: 16px 32px; border-radius: 12px; 
+                                       cursor: pointer; font-size: 1rem; font-weight: 600; transition: all 0.3s ease;
+                                       text-transform: uppercase; letter-spacing: 0.05em;">
+                            Fechar
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+
+        function shareGallery() {
+            if (navigator.share) {
+                const availableCount = gallery ? gallery.characters.filter(c => c.loaded && !c.error).length : 0;
+                navigator.share({
+                    title: 'Galeria Techno Sutra AR ✨',
+                    text: `Explore os ${availableCount} modelos 3D interativos dos 56 capítulos sagrados do Avatamsaka Sutra em uma experiência transcendente!`,
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+                        background: var(--glass-bg); color: var(--text-primary); padding: 16px 24px;
+                        border-radius: 12px; z-index: 3000; backdrop-filter: blur(30px);
+                        border: 1px solid var(--glass-border); box-shadow: var(--shadow-hover);
+                        font-weight: 600; animation: slideInUp 0.3s ease;
+                    `;
+                    toast.innerHTML = '✨ Link copiado para a área de transferência!';
+                    document.body.appendChild(toast);
+                    setTimeout(() => {
+                        toast.style.animation = 'slideOutDown 0.3s ease';
+                        setTimeout(() => toast.remove(), 300);
+                    }, 3000);
+                });
+            }
+        }
+
+        // Initialize the gallery
+        let gallery;
+        document.addEventListener('DOMContentLoaded', () => {
+            gallery = new CharacterGallery();
+        });
+
+        // Add slide animations
+        const slideAnimations = `
+            @keyframes slideInUp {
+                from { transform: translateX(-50%) translateY(100%); opacity: 0; }
+                to { transform: translateX(-50%) translateY(0); opacity: 1; }
+            }
+            @keyframes slideOutDown {
+                from { transform: translateX(-50%) translateY(0); opacity: 1; }
+                to { transform: translateX(-50%) translateY(100%); opacity: 0; }
+            }
+        `;
+        const slideStyle = document.createElement('style');
+        slideStyle.textContent = slideAnimations;
+        document.head.appendChild(slideStyle);
+    </script>
+</body>
+</html>
