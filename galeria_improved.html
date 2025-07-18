@@ -1017,15 +1017,25 @@
 
     <script>
         // Enhanced character management with robust error handling
-        class CharacterGallery {
-            constructor() {
-                this.characters = [];
-                this.filteredCharacters = [];
-                this.loadedCount = 0;
-                this.currentView = 'grid';
-                this.searchTerm = '';
-                this.init();
+class CharacterGallery {
+    constructor() {
+        this.characters = [];
+        this.filteredCharacters = [];
+        this.loadedCount = 0;
+        this.currentView = 'grid';
+        this.searchTerm = '';
+        this.init();
+        // Apply lazy loading for smoother performance
+        this.observer = new IntersectionObserver(this.onIntersection);
+    }
+
+    onIntersection(entries) {
+        for (const entry of entries) {
+            if (entry.isIntersecting) {
+                setTimeout(() => entry.target.classList.add('visible'), 100);
             }
+        }
+    }
 
             async init() {
                 await this.loadCharacterList();
