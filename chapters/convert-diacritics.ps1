@@ -6,94 +6,95 @@ param(
     [switch]$WhatIf = $false
 )
 
-# Define the diacritical mark mappings
-$diacriticalMap = @{
-    # Retroflex consonants
-    'Ṇ' = 'N'
-    'ṇ' = 'n'
-    'Ḍ' = 'D'
-    'ḍ' = 'd'
-    'Ṭ' = 'T'
-    'ṭ' = 't'
-    'Ṛ' = 'R'
-    'ṛ' = 'r'
-    'Ṝ' = 'R'
-    'ṝ' = 'r'
-    'Ḷ' = 'L'
-    'ḷ' = 'l'
-    'Ḹ' = 'L'
-    'ḹ' = 'l'
-    
-    # Sibilants
-    'Ś' = 'S'
-    'ś' = 's'
-    'Ṣ' = 'S'
-    'ṣ' = 's'
-    
-    # Vowels with macrons
-    'Ā' = 'A'
-    'ā' = 'a'
-    'Ī' = 'I'
-    'ī' = 'i'
-    'Ū' = 'U'
-    'ū' = 'u'
-    'Ē' = 'E'
-    'ē' = 'e'
-    'Ō' = 'O'
-    'ō' = 'o'
-    
-    # Nasals and other marks
-    'Ṃ' = 'M'
-    'ṃ' = 'm'
-    'Ṁ' = 'M'
-    'ṁ' = 'm'
-    'Ṅ' = 'N'
-    'ṅ' = 'n'
-    'Ñ' = 'N'
-    'ñ' = 'n'
-    'Ṉ' = 'N'
-    'ṉ' = 'n'
-    
-    # Visarga and other diacritics
-    'Ḥ' = 'H'
-    'ḥ' = 'h'
-    
-    # Less common diacritics
-    'Ḻ' = 'L'
-    'ḻ' = 'l'
-    'Ṟ' = 'R'
-    'ṟ' = 'r'
-    'Ḵ' = 'K'
-    'ḵ' = 'k'
-    'Ṯ' = 'T'
-    'ṯ' = 't'
-    'Ḏ' = 'D'
-    'ḏ' = 'd'
-    'Ḇ' = 'B'
-    'ḇ' = 'b'
-    'Ḡ' = 'G'
-    'ḡ' = 'g'
-    'Ṗ' = 'P'
-    'ṗ' = 'p'
-    'Ṿ' = 'V'
-    'ṿ' = 'v'
-    'Ẇ' = 'W'
-    'ẇ' = 'w'
-    'Ẋ' = 'X'
-    'ẋ' = 'x'
-    'Ẏ' = 'Y'
-    'ẏ' = 'y'
-    'Ż' = 'Z'
-    'ż' = 'z'
-}
-
 function Convert-DiacriticalMarks {
     param([string]$text)
     
+    # Define replacements in order of application
+    $replacements = @(
+        # Retroflex consonants  
+        @{ from = "Ṇ"; to = "N" }
+        @{ from = "ṇ"; to = "n" }
+        @{ from = "Ḍ"; to = "D" }
+        @{ from = "ḍ"; to = "d" }
+        @{ from = "Ṭ"; to = "T" }
+        @{ from = "ṭ"; to = "t" }
+        @{ from = "Ṛ"; to = "R" }
+        @{ from = "ṛ"; to = "r" }
+        @{ from = "Ṝ"; to = "R" }
+        @{ from = "ṝ"; to = "r" }
+        @{ from = "Ḷ"; to = "L" }
+        @{ from = "ḷ"; to = "l" }
+        @{ from = "Ḹ"; to = "L" }
+        @{ from = "ḹ"; to = "l" }
+        
+        # Sibilants
+        @{ from = "Ś"; to = "S" }
+        @{ from = "ś"; to = "s" }
+        @{ from = "Ṣ"; to = "S" }
+        @{ from = "ṣ"; to = "s" }
+        
+        # Vowels with macrons
+        @{ from = "Ā"; to = "A" }
+        @{ from = "ā"; to = "a" }
+        @{ from = "Ī"; to = "I" }
+        @{ from = "ī"; to = "i" }
+        @{ from = "Ū"; to = "U" }
+        @{ from = "ū"; to = "u" }
+        @{ from = "Ē"; to = "E" }
+        @{ from = "ē"; to = "e" }
+        @{ from = "Ō"; to = "O" }
+        @{ from = "ō"; to = "o" }
+        
+        # Nasals and other marks
+        @{ from = "Ṃ"; to = "M" }
+        @{ from = "ṃ"; to = "m" }
+        @{ from = "Ṁ"; to = "M" }
+        @{ from = "ṁ"; to = "m" }
+        @{ from = "Ṅ"; to = "N" }
+        @{ from = "ṅ"; to = "n" }
+        @{ from = "Ñ"; to = "N" }
+        @{ from = "ñ"; to = "n" }
+        @{ from = "Ṉ"; to = "N" }
+        @{ from = "ṉ"; to = "n" }
+        
+        # Visarga and other diacritics
+        @{ from = "Ḥ"; to = "H" }
+        @{ from = "ḥ"; to = "h" }
+        
+        # Less common diacritics  
+        @{ from = "Ḻ"; to = "L" }
+        @{ from = "ḻ"; to = "l" }
+        @{ from = "Ṟ"; to = "R" }
+        @{ from = "ṟ"; to = "r" }
+        @{ from = "Ḵ"; to = "K" }
+        @{ from = "ḵ"; to = "k" }
+        @{ from = "Ṯ"; to = "T" }
+        @{ from = "ṯ"; to = "t" }
+        @{ from = "Ḏ"; to = "D" }
+        @{ from = "ḏ"; to = "d" }
+        @{ from = "Ḇ"; to = "B" }
+        @{ from = "ḇ"; to = "b" }
+        @{ from = "Ḡ"; to = "G" }
+        @{ from = "ḡ"; to = "g" }
+        @{ from = "Ṗ"; to = "P" }
+        @{ from = "ṗ"; to = "p" }
+        @{ from = "Ṿ"; to = "V" }
+        @{ from = "ṿ"; to = "v" }
+        @{ from = "Ẇ"; to = "W" }
+        @{ from = "ẇ"; to = "w" }
+        @{ from = "Ẋ"; to = "X" }
+        @{ from = "ẋ"; to = "x" }
+        @{ from = "Ẏ"; to = "Y" }
+        @{ from = "ẏ"; to = "y" }
+        @{ from = "Ż"; to = "Z" }
+        @{ from = "ż"; to = "z" }
+    )
+    
     $result = $text
-    foreach ($key in $diacriticalMap.Keys) {
-        $result = $result.Replace($key, $diacriticalMap[$key])
+    foreach ($replacement in $replacements) {
+        $result = $result.Replace($replacement.from, $replacement.to)
     }
+    
     return $result
 }
 
@@ -158,7 +159,7 @@ function Rename-FilesWithDiacritics {
     if ($WhatIf -and $renamedCount -gt 0) {
         Write-Host ""
         Write-Host "To actually rename the files, run the script again without the -WhatIf parameter:" -ForegroundColor Yellow
-        Write-Host "  .\convert-diacritics.ps1" -ForegroundColor White
+        Write-Host "  .\convert-diacritics-simple.ps1" -ForegroundColor White
     }
 }
 
