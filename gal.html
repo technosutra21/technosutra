@@ -1375,9 +1375,7 @@
                     character.error = null;
                     
                     // Extract character type from content
-                    const typeMatch = content.match(/Tipo:\\s*([^\
-\
-]+)/);
+                    const typeMatch = content.match(/Tipo:\s*([^\r\n]+)/);
                     if (typeMatch) {
                         character.type = typeMatch[1].trim();
                     }
@@ -1484,8 +1482,7 @@
 
             extractDescription(content) {
                 // Try to extract a meaningful description from the content
-                const lines = content.split('\
-').filter(line => line.trim());
+                const lines = content.split('\n').filter(line => line.trim());
                 
                 // Look for description sections
                 const descriptionPatterns = [
@@ -1748,7 +1745,7 @@
                 // Create download link
                 const link = document.createElement('a');
                 link.href = character.modelUrl;
-                link.download = `${character.name.replace(/\\s+/g, '_')}_3D_Model.glb`;
+                link.download = `${character.name.replace(/\s+/g, '_')}_3D_Model.glb`;
                 link.click();
             }
         }
