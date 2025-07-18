@@ -78,7 +78,7 @@ HABILIDADES ESPECÍFICAS MENCIONADAS
 - Interpretação do zodíaco, presságios, sinais terrestres e celestiais
 - Predição de terremotos, céus vermelhos, estrelas cadentes, fome e colheita
 
-{PROMPT PARA IA GENERATIVA DE 3D CHARACTER: 
+{SÍNTESE DESCRITIVA: 
 Create a learned young merchant's son named Śilpābhijña, master of all arts and 
 knowledge. He should appear scholarly yet prosperous, with the bearing of nobility 
 from merchant lineage. Include subtle indications of his mastery - perhaps holding 

@@ -58,6 +58,6 @@ Assembleia: Rodeado por 5.000 bodhisattvas mahāsattvas de reinos infinitos e 50
 
 
 
-{PROMPT PARA IA GENERATIVA DE 3D CHARACTER}:
+{SÍNTESE DESCRITIVA}:
 
 "Crie um Buddha em meditação profunda, sentado em posição de lótus, com aparência serena e majestosa. Pele dourada radiante emitindo luz suave, feições perfeitamente proporcionadas com expressão de compaixão infinita e sabedoria. Vestes monásticas tradicionais alaranjadas/safron fluindo naturalmente. Olhos semi-fechados em meditação profunda, emanando paz transcendental. Aura de luz dourada envolvendo toda a figura. Postura perfeitamente ereta demonstrando estabilidade e presença espiritual suprema. Fundo neutro/branco para destacar a figura central. Estilo realista com toque espiritual/transcendental."

@@ -25,8 +25,8 @@ def limpar_e_atualizar_json(arquivo_path: str):
             if isinstance(obj, dict):
                 for key, value in obj.items():
                     if isinstance(value, str):
-                        obj[key] = value.replace('PROMPT PARA IA GENERATIVA DE 3D CHARACTER', 'DESCRIÇÃO GENERATIVA')
-                        obj[key] = obj[key].replace('{PROMPT PARA IA GENERATIVA DE 3D CHARACTER:', 'DESCRIÇÃO GENERATIVA:')
+                        obj[key] = value.replace('SÍNTESE DESCRITIVA', 'DESCRIÇÃO GENERATIVA')
+                        obj[key] = obj[key].replace('{SÍNTESE DESCRITIVA:', 'DESCRIÇÃO GENERATIVA:')
                     else:
                         atualizar_textos(value)
             elif isinstance(obj, list):

@@ -51,5 +51,5 @@ RELEVÂNCIA PARA O BUDDHISMO
 
 Maitreya é emblemático não apenas para o Sutra, mas para todo o Budismo como o **próximo Buddha**, que trará um novo caminho iluminado para o mundo.
 
-{PROMPT PARA IA GENERATIVA DE 3D CHARACTER: 
+{SÍNTESE DESCRITIVA: 
 Create an enlightened Bodhisattva named Maitreya, the "Loving Friend", who is destined to become the next Buddha. He should embody qualities of infinite compassion and wisdom, with a benevolent appearance reflecting serenity and enlightenment. Position him within an ethereal and richly adorned setting representative of the Vairocana vyūhālaṃkāra garbha Kūṭāgāra, with subtle yet powerful symbols indicating his future role as Buddha. His expression should convey both accessibility as a guide and deep realization. Blank background.}

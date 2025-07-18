@@ -118,7 +118,7 @@ Deve-se aproximar com mente como:
 - Cavalo puro-sangue (sem indisciplina)
 - Elefante domesticado (bem treinado)
 
-{PROMPT PARA IA GENERATIVA DE 3D CHARACTER: 
+{SÍNTESE DESCRITIVA: 
 Create two young spiritual teachers: Śrīsaṃbhava (a wise boy) and Śrīmati 
 (a wise girl), both representing "Glory" and "Prosperity". They should appear 
 as enlightened children or young teenagers with an aura of profound wisdom 

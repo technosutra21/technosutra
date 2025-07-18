@@ -108,7 +108,7 @@ Mañjuśrī é tradicionalmente venerado como:
 - Mestre da palavra sagrada
 - Inspirador de todas as tradições de estudo budista
 
-{PROMPT PARA IA GENERATIVA DE 3D CHARACTER: 
+{SÍNTESE DESCRITIVA: 
 Create the primordial Bodhisattva Mañjuśrī Kumāra bhūta, the "Sweet Glory Youth Prince", 
 embodying transcendent wisdom. He should appear as a youthful yet eternal figure 
 radiating divine wisdom and compassion, with an expression conveying both infinite 

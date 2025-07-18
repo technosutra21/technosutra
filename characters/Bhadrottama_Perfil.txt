@@ -90,7 +90,7 @@ PODERES ESPECÍFICOS MANIFESTADOS
 - Consciência mental onisciente sem obstruções
 - Capacidade de iluminar seres através de sua presença
 
-{PROMPT PARA IA GENERATIVA DE 3D CHARACTER: 
+{SÍNTESE DESCRITIVA: 
 Create a serene and powerful female spiritual teacher named Bhadrottamā, 
 representing "Supreme Virtue". She should appear as a dignified kalyāṇamitra 
 (spiritual friend) with an aura of deep meditative accomplishment. Her expression 

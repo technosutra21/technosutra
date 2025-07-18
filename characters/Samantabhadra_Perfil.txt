@@ -143,7 +143,7 @@ Aqueles que recitam sua oração:
 - Serão invencíveis a māras e tīrthikas
 - Alcançarão a árvore Bodhi e a iluminação
 
-{PROMPT PARA IA GENERATIVA DE 3D CHARACTER: 
+{SÍNTESE DESCRITIVA: 
 Create the cosmic Bodhisattva Samantabhadra, "Universally Good", representing 
 the ultimate embodiment of compassionate action. He should appear as a 
 magnificent figure seated on a great jeweled lotus throne, radiating infinite 

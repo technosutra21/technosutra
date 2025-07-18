@@ -75,7 +75,7 @@ A casa "continuamente brilhante" de Sucandra representa:
 - Demonstração de que a vida laica pode ser completamente espiritualizada
 - Luz que nunca se apaga, simbolizando permanência da realização
 
-{PROMPT PARA IA GENERATIVA DE 3D CHARACTER: 
+{SÍNTESE DESCRITIVA: 
 Create a serene and wise householder named Sucandra, meaning "Excellent Moon". 
 He should appear as a dignified family man with an aura of luminous wisdom, 
 reflecting his mastery of "stainless light of wisdom". His appearance should 
