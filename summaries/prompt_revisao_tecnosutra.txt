@@ -1,0 +1,81 @@
+PRIMEIRA COISA, LEIA O status_revisao.txt para saber quais já foram revisados, e quais você precisa revisar
+
+
+MANTENHA A FORMATAÇÃO/ESTILO DE CAPITULOS.TXT, com plain texts
+
+
+NUNCA JAMAIS APAGUE QUALQUER ARQUIVO, DE QUALQUER FORMA, APENAS MELHORE, MODIFIQUE. NUNCA APAGUE PARA COMEÇAR NOVAMENTE, NEM UTILIZE • OU * 
+
+- Revise completamente o resumo encontrado em CAPITULOS.txt.
+- Revise as informações, se as descrições estão realmente certas.
+- Os resumos foram feitos a partir dos .MDs em ../chapters/mds.
+- Releia todos os capítulos, releia os resumos, compare, reflita e melhore.
+- Atualize o arquivo de status para os capítulos (revisados vs. não revisados) status revisao.txt 
+
+
+
+PROCURE FAZER AS EXTRAÇÕES DE INFORMAÇÃO BASEADAS NESSE MODELO, MAS MANTENDO A ESTRUTURA DE TEXTO (TOPICO: CONTEUDO):
+
+Capítulo,PERSONAGEM CENTRAL,LOCALIZAÇÃO,CONTEXTO,ENSINAMENTO PRINCIPAL,MANIFESTAÇÕES MIRACULOSAS,DIÁLOGO PRINCIPAL,ASSEMBLEIA PRESENTE,PROGRESSÃO ESPIRITUAL,TRANSIÇÃO,ELEMENTOS ÚNICOS
+	
+
+
+
+ls chapters/ md/ folder:
+
+          86526 01 THE SETTING Stem Array.md
+          43866 02 SAMANTABHADRA Stem Array.md
+          34603 03 MANJUSRI Stem Array.md
+          12223 04 MEGHASRI Stem Array.md
+          15234 05 SAGARAMEGHA Stem Array.md
+          13989 06 SUPRATISTHITA Stem Array.md
+          14086 07 MEGHA Stem Array.md
+          22466 08 MUKTAKA Stem Array.md
+          48747 09 SAGARADHVAJA Stem Array.md
+          36576 10 ASA Stem Array.md
+          13691 11 BHISMOTTARANIRGHOSA Stem Array.md
+          22595 12 JAYOSMAYATANA Stem Array.md
+          13967 13 MAITRAYANI Stem Array.md
+          14699 14 SUDARSANA Stem Array.md
+          16352 15 INDRIYESVARA Stem Array.md
+          18532 16 PRABHUTA Stem Array.md
+          17163 17 VIDVAN Stem Array.md
+          10153 18 RATNACUDA Stem Array.md
+          11072 19 SAMANTANETRA Stem Array.md
+          17202 20 ANALA Stem Array.md
+          30633 21 MAHAPRABHA Stem Array.md
+          25646 22 ACALA Stem Array.md
+           9607 23 SARVAGAMIN Stem Array.md
+           9985 24 UTPALABHUTI Stem Array.md
+           9147 25 VAIRA Stem Array.md
+          10034 26 JAYOTTAMA Stem Array.md
+          26625 27 SIMHAVIJRMBHITA Stem Array.md
+          12350 28 VASUMITRA Stem Array.md
+           9847 29 VESTHILA Stem Array.md
+          17482 30 AVALOKITESVARA Stem Array.md
+           5287 31 ANANYAGAMIN Stem Array.md
+           6777 32 MAHADEVA Stem Array.md
+           6194 33 STHAVARA Stem Array.md
+          38281 34 VASANTI Stem Array.md
+          14171 35 SAMANTAGAMBHIRASRIVIMALAPRABHA Stem Array.md
+          55063 36 PRAMUDITANAYANAJAGADVIROCANA Stem Array.md
+          67227 37 SAMANTASATTVATRANOJAHSRI Stem Array.md
+          47408 38 PRASANTARUTASAGARAVATI Stem Array.md
+          36337 39 SARVANAGARARAKSASAMBHAVATEJAHSRI Stem Array.md
+          72740 40 SARVAVRKSPRAPHULLANASUKHASAMVASA Stem Array.md
+          71738 41 SARVAJAGADRAKSAPRANIDHANAVIRYAPRABHA Stem Array.md
+          55172 42 SUTEJOMANDALARATISRI Stem Array.md
+          35011 43 GOPA Stem Array.md
+          50668 44 MAYADEVI Stem Array.md
+ 	  5187 45 SURENDRABHA Stem Array.md
+           1316 46 VISVAMITRA Stem Array.md
+           9834 47 SILPABHIJNA Stem Array.md
+           2270 48 BHADROTTAMA.md
+           1836 49 MUKTASARA Stem Array.md
+           1517 50 SUCANDRA Stem Array.md
+           1425 51 AJITASENA Stem Array.md
+           1884 52 SIVARAGRA Stem Array.md
+          30097 53 SRISAMBHAVA AND SRIMATI Stem Array.md
+         191873 54 MAITREYA Stem Array.md
+           1791 55 MANJUSRI Stem Array.md
+          53641 56 SAMANTABHADRA AND “THE PRAYER FOR Stem Array.md

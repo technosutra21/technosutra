@@ -41,7 +41,12 @@ def extrair_secoes_otimizado(texto: str) -> List[Dict[str, Any]]:
         'SIMBOLISMO',
         'TESOURO',
         'MÉTODOS DE ENSINO',
-        'PROMPT PARA IA'
+        'PROMPT PARA IA',
+        'SÍNTESE DESCRITIVA',
+        'BÊNÇÃOS FINAIS',
+        'SIMBOLISMO DO RETORNO',
+        'SIGNIFICADO COSMOLÓGICO',
+        'IMPORTÂNCIA NO BUDISMO'
     ]
     
     for i, linha in enumerate(linhas):
@@ -200,7 +205,7 @@ def parser_otimizado(arquivo_path: str) -> Dict[str, Any]:
 
 def processar_todos_otimizado():
     """Processa todos os arquivos com o parser otimizado"""
-    pasta_atual = Path(__file__).parent
+    pasta_atual = Path(__file__).parent.parent
     pasta_resultados = pasta_atual / "resultados_otimizados"
     pasta_resultados.mkdir(exist_ok=True)
     

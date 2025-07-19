@@ -1,0 +1,134 @@
+{
+  "titulo_principal": "PERFIL DE PERSONAGEM - PERFUMEIRO UTPALABHŪTI",
+  "conteudo_completo": "PERFIL DE PERSONAGEM - PERFUMEIRO UTPALABHŪTI\n=============================================\n\nNOME DO PERSONAGEM: PERFUMEIRO UTPALABHŪTI\n\nINFORMAÇÕES BÁSICAS\n-------------------\nNome e Tradução: Utpalabhūti (उत्पलभूति) - \"Aquele que Possui o Lótus\"\nTipo: Chefe de Mercadores de Perfumes e Kalyāṇamitra (Amigo Espiritual)\nLocalização: Terra de Pṛthurāṣṭra\nStatus: Mestre supremo dos perfumes sagrados que nutrem a mente e o corpo\n\nDESCRIÇÃO FÍSICA\n----------------\nAparência Visual:\n- Comum, adequado ao papel de chefe dos mercadores\n- Não há descrição elaborada das características físicas específicas\n\nCor do Corpo: Não especificado detalhadamente\nCabelo: Não especificado detalhadamente\nOlhos: Não especificado detalhadamente\nBeleza Geral: Simples, refinado\nAdornos: Não especificados\nVestimentas: Roupas de chefe de mercador, adequadas para a profissão\n\nCARACTERÍSTICAS ESPIRITUAIS DISTINTIVAS\n---------------------------------------\n1. MESTRE DOS PERFUMES SAGRADOS:\n   - Conhece todas as combinações de perfumes, incensos, e unguentos\n   - Consegue criar perfumes que curam doenças, eliminam kleśas, e promovem felicidade\n   - Conhece perfumes para deuses, nāgas, humanos e outros\n\n2. TRANSFORMADOR DE EMOÇÕES:\n   - Usa perfumes para criar estados de alegria, paz e aspiração espiritual\n   - Perfumes podem enfeitiçar e curar tanto mentalmente quanto fisicamente\n\n3. GUIA ESPIRITUAL:\n   - Usa o conhecimento dos perfumes para ensinar o Dharma e guiar seres ao caminho da iluminação\n   - Perfumes podem induzir samādhis poderosos e criar fenômenos místicos\n\n4. ALQUIMISTA SACRALIZADO:\n   - Conhece a origem, criação, combinação e uso de todos os perfumes\n   - Pode transformar percepções e estados mentais através de fragrâncias\n\nEXPERIÊNCIA MÍSTICA CENTRAL\n---------------------------\n\"Saiba que não posso descrever a conduta dos bodhisattvas que transcenderam desejos e são livres de falhas.\"\n- Concentra-se em perfumes que imbuem sabedoria, cura e benevolência\n- Capaz de purificar pensamentos e guiar para a iluminação através de aromas\n\nLOCALIZAÇÃO E CONTEXTO\n---------------------\n- Atua na terra de Pṛthurāṣṭra, perfumando todo o distrito com fragrâncias especiais\n- Oferece perfumes que causam alegria e eliminam sofrimento\n- Ensina o Dharma através do uso mágico de perfumes\n\nSÍNTESE DESCRITIVA\n=========================================\nCrie um personagem masculino de aparência comum com roupas de mercador, cercado por frascos de perfumes exóticos e incensos. Ele possui um ar de calma e sabedoria, refletindo sua mestria em fragrâncias sagradas. O ambiente ao redor deve transmitir uma sensação de tranquilidade e revitalização, com nuvens sutis de aroma mágico permeando o local. expressão serena, de paz profunda e conhecimento alquímico. Blank background.\n",
+  "dados_estruturados": {
+    "informacoes_basicas": {
+      "nome_e_traducao": "Utpalabhūti (उत्पलभूति) - \"Aquele que Possui o Lótus\"",
+      "tipo": "Chefe de Mercadores de Perfumes e Kalyāṇamitra (Amigo Espiritual)",
+      "localizacao": "Terra de Pṛthurāṣṭra",
+      "status": "Mestre supremo dos perfumes sagrados que nutrem a mente e o corpo"
+    },
+    "descricao_fisica": {
+      "aparencia_visual": [
+        "- Comum, adequado ao papel de chefe dos mercadores",
+        "- Não há descrição elaborada das características físicas específicas"
+      ],
+      "cor_do_corpo": "Não especificado detalhadamente",
+      "cabelo": "Não especificado detalhadamente",
+      "olhos": "Não especificado detalhadamente",
+      "beleza_geral": "Simples, refinado",
+      "adornos": "Não especificados",
+      "vestimentas": "Roupas de chefe de mercador, adequadas para a profissão"
+    },
+    "caracteristicas_espirituais": [
+      "---------------------------------------",
+      "1. MESTRE DOS PERFUMES SAGRADOS:",
+      "   - Conhece todas as combinações de perfumes, incensos, e unguentos",
+      "   - Consegue criar perfumes que curam doenças, eliminam kleśas, e promovem felicidade",
+      "   - Conhece perfumes para deuses, nāgas, humanos e outros",
+      "",
+      "2. TRANSFORMADOR DE EMOÇÕES:",
+      "   - Usa perfumes para criar estados de alegria, paz e aspiração espiritual",
+      "   - Perfumes podem enfeitiçar e curar tanto mentalmente quanto fisicamente",
+      "",
+      "3. GUIA ESPIRITUAL:",
+      "   - Usa o conhecimento dos perfumes para ensinar o Dharma e guiar seres ao caminho da iluminação",
+      "   - Perfumes podem induzir samādhis poderosos e criar fenômenos místicos",
+      "",
+      "4. ALQUIMISTA SACRALIZADO:",
+      "   - Conhece a origem, criação, combinação e uso de todos os perfumes",
+      "   - Pode transformar percepções e estados mentais através de fragrâncias"
+    ],
+    "experiencia_mistica": "---------------------------\n\"Saiba que não posso descrever a conduta dos bodhisattvas que transcenderam desejos e são livres de falhas.\"\n- Concentra-se em perfumes que imbuem sabedoria, cura e benevolência\n- Capaz de purificar pensamentos e guiar para a iluminação através de aromas",
+    "localizacao_contexto": "---------------------\n- Atua na terra de Pṛthurāṣṭra, perfumando todo o distrito com fragrâncias especiais\n- Oferece perfumes que causam alegria e eliminam sofrimento\n- Ensina o Dharma através do uso mágico de perfumes"
+  },
+  "secoes_organizadas": [
+    {
+      "titulo": "INFORMAÇÕES BÁSICAS",
+      "linhas": [
+        "-------------------",
+        "Nome e Tradução: Utpalabhūti (उत्पलभूति) - \"Aquele que Possui o Lótus\"",
+        "Tipo: Chefe de Mercadores de Perfumes e Kalyāṇamitra (Amigo Espiritual)",
+        "Localização: Terra de Pṛthurāṣṭra",
+        "Status: Mestre supremo dos perfumes sagrados que nutrem a mente e o corpo"
+      ],
+      "conteudo": "-------------------\nNome e Tradução: Utpalabhūti (उत्पलभूति) - \"Aquele que Possui o Lótus\"\nTipo: Chefe de Mercadores de Perfumes e Kalyāṇamitra (Amigo Espiritual)\nLocalização: Terra de Pṛthurāṣṭra\nStatus: Mestre supremo dos perfumes sagrados que nutrem a mente e o corpo"
+    },
+    {
+      "titulo": "DESCRIÇÃO FÍSICA",
+      "linhas": [
+        "----------------",
+        "Aparência Visual:",
+        "- Comum, adequado ao papel de chefe dos mercadores",
+        "- Não há descrição elaborada das características físicas específicas",
+        "",
+        "Cor do Corpo: Não especificado detalhadamente",
+        "Cabelo: Não especificado detalhadamente",
+        "Olhos: Não especificado detalhadamente",
+        "Beleza Geral: Simples, refinado",
+        "Adornos: Não especificados",
+        "Vestimentas: Roupas de chefe de mercador, adequadas para a profissão"
+      ],
+      "conteudo": "----------------\nAparência Visual:\n- Comum, adequado ao papel de chefe dos mercadores\n- Não há descrição elaborada das características físicas específicas\n\nCor do Corpo: Não especificado detalhadamente\nCabelo: Não especificado detalhadamente\nOlhos: Não especificado detalhadamente\nBeleza Geral: Simples, refinado\nAdornos: Não especificados\nVestimentas: Roupas de chefe de mercador, adequadas para a profissão"
+    },
+    {
+      "titulo": "CARACTERÍSTICAS ESPIRITUAIS DISTINTIVAS",
+      "linhas": [
+        "---------------------------------------",
+        "1. MESTRE DOS PERFUMES SAGRADOS:",
+        "   - Conhece todas as combinações de perfumes, incensos, e unguentos",
+        "   - Consegue criar perfumes que curam doenças, eliminam kleśas, e promovem felicidade",
+        "   - Conhece perfumes para deuses, nāgas, humanos e outros",
+        "",
+        "2. TRANSFORMADOR DE EMOÇÕES:",
+        "   - Usa perfumes para criar estados de alegria, paz e aspiração espiritual",
+        "   - Perfumes podem enfeitiçar e curar tanto mentalmente quanto fisicamente",
+        "",
+        "3. GUIA ESPIRITUAL:",
+        "   - Usa o conhecimento dos perfumes para ensinar o Dharma e guiar seres ao caminho da iluminação",
+        "   - Perfumes podem induzir samādhis poderosos e criar fenômenos místicos",
+        "",
+        "4. ALQUIMISTA SACRALIZADO:",
+        "   - Conhece a origem, criação, combinação e uso de todos os perfumes",
+        "   - Pode transformar percepções e estados mentais através de fragrâncias"
+      ],
+      "conteudo": "---------------------------------------\n1. MESTRE DOS PERFUMES SAGRADOS:\n   - Conhece todas as combinações de perfumes, incensos, e unguentos\n   - Consegue criar perfumes que curam doenças, eliminam kleśas, e promovem felicidade\n   - Conhece perfumes para deuses, nāgas, humanos e outros\n\n2. TRANSFORMADOR DE EMOÇÕES:\n   - Usa perfumes para criar estados de alegria, paz e aspiração espiritual\n   - Perfumes podem enfeitiçar e curar tanto mentalmente quanto fisicamente\n\n3. GUIA ESPIRITUAL:\n   - Usa o conhecimento dos perfumes para ensinar o Dharma e guiar seres ao caminho da iluminação\n   - Perfumes podem induzir samādhis poderosos e criar fenômenos místicos\n\n4. ALQUIMISTA SACRALIZADO:\n   - Conhece a origem, criação, combinação e uso de todos os perfumes\n   - Pode transformar percepções e estados mentais através de fragrâncias"
+    },
+    {
+      "titulo": "EXPERIÊNCIA MÍSTICA CENTRAL",
+      "linhas": [
+        "---------------------------",
+        "\"Saiba que não posso descrever a conduta dos bodhisattvas que transcenderam desejos e são livres de falhas.\"",
+        "- Concentra-se em perfumes que imbuem sabedoria, cura e benevolência",
+        "- Capaz de purificar pensamentos e guiar para a iluminação através de aromas"
+      ],
+      "conteudo": "---------------------------\n\"Saiba que não posso descrever a conduta dos bodhisattvas que transcenderam desejos e são livres de falhas.\"\n- Concentra-se em perfumes que imbuem sabedoria, cura e benevolência\n- Capaz de purificar pensamentos e guiar para a iluminação através de aromas"
+    },
+    {
+      "titulo": "LOCALIZAÇÃO E CONTEXTO",
+      "linhas": [
+        "---------------------",
+        "- Atua na terra de Pṛthurāṣṭra, perfumando todo o distrito com fragrâncias especiais",
+        "- Oferece perfumes que causam alegria e eliminam sofrimento",
+        "- Ensina o Dharma através do uso mágico de perfumes"
+      ],
+      "conteudo": "---------------------\n- Atua na terra de Pṛthurāṣṭra, perfumando todo o distrito com fragrâncias especiais\n- Oferece perfumes que causam alegria e eliminam sofrimento\n- Ensina o Dharma através do uso mágico de perfumes"
+    },
+    {
+      "titulo": "SÍNTESE DESCRITIVA",
+      "linhas": [
+        "=========================================",
+        "Crie um personagem masculino de aparência comum com roupas de mercador, cercado por frascos de perfumes exóticos e incensos. Ele possui um ar de calma e sabedoria, refletindo sua mestria em fragrâncias sagradas. O ambiente ao redor deve transmitir uma sensação de tranquilidade e revitalização, com nuvens sutis de aroma mágico permeando o local. expressão serena, de paz profunda e conhecimento alquímico. Blank background."
+      ],
+      "conteudo": "=========================================\nCrie um personagem masculino de aparência comum com roupas de mercador, cercado por frascos de perfumes exóticos e incensos. Ele possui um ar de calma e sabedoria, refletindo sua mestria em fragrâncias sagradas. O ambiente ao redor deve transmitir uma sensação de tranquilidade e revitalização, com nuvens sutis de aroma mágico permeando o local. expressão serena, de paz profunda e conhecimento alquímico. Blank background."
+    }
+  ],
+  "metadados": {
+    "total_linhas": 60,
+    "total_caracteres": 2773,
+    "secoes_encontradas": 6,
+    "dados_estruturados_extraidos": 5
+  },
+  "arquivo_origem": "Utpalabhuti_Perfil.txt",
+  "caminho_completo": "C:\\Users\\rouxy\\TECHNOSUTRA1\\technosutra\\characters\\Utpalabhuti_Perfil.txt"
+}
