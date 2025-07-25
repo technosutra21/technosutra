@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Experiência imersiva em realidade aumentada dos 56 capítulos do Avatamsaka Sutra com modelos 3D interativos">
+    <title>Techno Sutra AR - Experiência Imersiva em Realidade Aumentada</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            position: relative;
+        }
+        
+        #camera-feed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: 1;
+            background: #000;
+        }
+        
+        model-viewer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            --poster-color: transparent;
+            background-color: transparent;
+            z-index: 2;
+            pointer-events: auto;
+        }
+        
+        /* AR Scale Enhancement - 160% */
+        model-viewer[ar-status="session-started"] {
+            --ar-scale: 1.6;
+        }
+        
+        /* Error 404 overlay */
+        .error-404 {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .error-404.hidden {
+            display: none;
+        }
+        
+        .error-icon {
+            font-size: 120px;
+            margin-bottom: 24px;
+            opacity: 0.9;
+            animation: errorPulse 2s ease-in-out infinite;
+        }
+        
+        .error-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .error-message {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 32px;
+            opacity: 0.9;
+        }
+        
+        .error-subtitle {
+            font-size: 16px;
+            opacity: 0.7;
+            max-width: 400px;
+            line-height: 1.5;
+        }
+        
+        @keyframes errorPulse {
+            0%, 100% {
+                opacity: 0.8;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+        
+        /* AR Status-based styling seguindo padrões oficiais */
+        model-viewer[ar-status="session-started"] {
+            --progress-bar-color: #4285f4;
+        }
+
+        model-viewer[ar-status="object-placed"] .ar-prompt-official {
+            display: none;
+        }
+
+        model-viewer[ar-status="failed"] .ar-prompt-official {
+            display: none;
+        }
+
+        /* AR Prompt oficial */
+        .ar-prompt-official {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 24px 32px;
+            border-radius: 16px;
+            text-align: center;
+            display: none;
+            z-index: 200;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            animation: arPromptPulse 2s ease-in-out infinite;
+        }
+
+        model-viewer[ar-status="session-started"] .ar-prompt-official {
+            display: block;
+        }
+
+        .ar-prompt-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .ar-prompt-icon {
+            font-size: 32px;
+            opacity: 0.9;
+        }
+
+        .ar-prompt-text {
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 1.4;
+            max-width: 280px;
+        }
+
+        @keyframes arPromptPulse {
+            0%, 100% {
+                opacity: 0.9;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.02);
+            }
+        }
+        
+        #status {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: center;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        #status.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #status.success {
+            background: rgba(34, 197, 94, 0.9);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        #status.error {
+            background: rgba(239, 68, 68, 0.9);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+        
+        /* AR Button seguindo padrões oficiais do model-viewer */
+        .ar-button {
+            position: absolute;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 16px 24px;
+            border-radius: 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 140px;
+            justify-content: center;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .ar-icon {
+            font-size: 18px;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+        }
+
+        .ar-text {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            letter-spacing: 0.5px;
+        }
+        
+        .ar-button:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateX(-50%) translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .ar-button:active {
+            transform: translateX(-50%) translateY(0px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .ar-button:disabled {
+            background: rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 255, 255, 0.1);
+            cursor: not-allowed;
+            transform: translateX(-50%);
+            opacity: 0.6;
+        }
+
+        .ar-button:disabled .ar-icon {
+            animation: spin 2s linear infinite;
+        }
+        
+        .ar-button::before {
+            content: " ";
+            font-size: 20px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .ar-button:disabled::before {
+            content: "⏳";
+            animation: spin 2s linear infinite;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+
+        /* Accessibility enhancements */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Focus indicators */
+        button:focus,
+        .ar-button:focus,
+        .control-button:focus,
+        .camera-button:focus {
+            outline: 3px solid #4285f4;
+            outline-offset: 2px;
+        }
+
+        /* Skip navigation */
+        .skip-nav {
+            position: absolute;
+            top: -40px;
+            left: 8px;
+            z-index: 10001;
+            background: #4285f4;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: top 0.3s ease;
+        }
+
+        .skip-nav:focus {
+            top: 8px;
+        }
+        
+        .loading-spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid white;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Model controls overlay */
+        .model-controls {
+            position: absolute;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 16px;
+            z-index: 50;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .model-controls.show {
+            opacity: 1;
+        }
+
+        .control-button {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 50%;
+            cursor: pointer;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .control-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .control-button:active {
+            transform: translateY(0);
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: all 0.5s ease;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+
+        .loading-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .loading-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 32px;
+        }
+
+        /* Camera permission overlay */
+        .camera-permission {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .camera-permission.hidden {
+            display: none;
+        }
+
+        .camera-icon {
+            font-size: 64px;
+            margin-bottom: 24px;
+            opacity: 0.8;
+        }
+
+        .camera-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .camera-description {
+            font-size: 16px;
+            opacity: 0.8;
+            margin-bottom: 32px;
+            max-width: 400px;
+            line-height: 1.5;
+        }
+
+        .camera-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .camera-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        /* Progress bar oficial seguindo padrões model-viewer */
+        .progress-bar {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4285f4, #34a853);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* Animação de loading */
+        .progress-bar-fill.loading {
+            animation: progressPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes progressPulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+    </style>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+    
+    <!-- Security Scripts -->
+    <script src="security/security-config.js"></script>
+    <script src="security/csp-nonce.js"></script>
+    <script src="security/input-validation.js"></script>
+    <script src="security/iframe-security.js"></script>
+    <script src="security/file-access-security.js"></script>
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://ajax.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https:; font-src 'self'; object-src 'none'; media-src 'self'; frame-src 'self'; worker-src 'self'; manifest-src 'self'; form-action 'self'; frame-ancestors 'self'; base-uri 'self';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+</head>
+<body>
+    <!-- Skip navigation -->
+    <a href="#main-content" class="skip-nav">Pular para o conteúdo principal</a>
+
+    <!-- Main content -->
+    <main id="main-content">
+        <!-- Live region for status announcements -->
+        <div id="live-region" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+
+        <!-- Error 404 overlay -->
+        <section class="error-404 hidden" id="error-404" role="alert" aria-labelledby="error-title">
+            <div class="error-icon" aria-hidden="true">🤖</div>
+            <h1 class="error-title" id="error-title">404</h1>
+            <div class="error-message">Você está pronto?</div>
+            <div class="error-subtitle">
+                O modelo solicitado não foi encontrado. Retornando ao modelo padrão...
+            </div>
+        </section>
+
+        <!-- Camera permission overlay -->
+        <section class="camera-permission hidden" id="camera-permission" role="dialog" aria-labelledby="camera-title" aria-describedby="camera-description">
+            <div class="camera-icon" aria-hidden="true">📷</div>
+            <h2 class="camera-title" id="camera-title">Acesso à Câmera Necessário</h2>
+            <div class="camera-description" id="camera-description">
+                Para uma experiência AR completa, precisamos acessar sua câmera.
+                Isso permite ver o mundo real como fundo para os modelos 3D.
+            </div>
+            <button class="camera-button" id="camera-button" aria-describedby="camera-description">Permitir Câmera</button>
+        </section>
+
+        <!-- Loading overlay -->
+        <section class="loading-overlay" id="loading-overlay" aria-labelledby="loading-title">
+            <div class="loading-content">
+                <h2 class="loading-title" id="loading-title">Techno Sutra AR</h2>
+                <div class="loading-subtitle">Preparando experiência imersiva...</div>
+                <div class="loading-spinner" role="progressbar" aria-label="Carregando modelo 3D"></div>
+            </div>
+        </section>
+
+        <!-- Status (hidden by default, only for critical messages) -->
+        <div id="status" class="hidden" role="status" aria-live="polite"></div>
+
+        <!-- Feed da câmera -->
+        <video id="camera-feed" autoplay playsinline muted aria-label="Feed da câmera para realidade aumentada"></video>
+
+        <!-- AR Prompt -->
+        <div class="ar-prompt" aria-live="polite">
+              Mova o dispositivo lentamente para encontrar uma superfície
+        </div>
+        
+        <!-- Visualizador 3D com melhorias AR seguindo padrões oficiais -->
+        <section aria-labelledby="model-section-title">
+            <h2 id="model-section-title" class="sr-only">Visualizador de Modelo 3D em Realidade Aumentada</h2>
+            <model-viewer
+                id="modelViewer"
+                alt="Modelo 3D Interativo do Capítulo do Avatamsaka Sutra em Realidade Aumentada"
+                camera-controls
+                touch-action="pan-y"
+                ar
+                ar-modes="webxr scene-viewer quick-look"
+                ar-scale="fixed"
+                ar-placement="floor"
+                auto-rotate
+                rotation-per-second="30deg"
+                loading="eager"
+                reveal="auto"	
+                skybox-image="https://modelviewer.dev/shared-assets/environments/spruit_sunrise_1k_HDR.jpg"
+                skybox-height="2m"
+                style="background-color: transparent; --ar-scale: 2.5;"
+                aria-describedby="model-instructions">
+
+                <!-- Botão AR customizado seguindo padrões oficiais -->
+                <button slot="ar-button" class="ar-button" id="ar-button" 
+                        aria-label="Visualizar modelo em realidade aumentada" 
+                        aria-describedby="ar-button-description">
+                    <span class="ar-icon" aria-hidden="true">📱</span>
+                    <span class="ar-text">Ver em AR</span>
+                </button>
+
+                <!-- Progress bar customizado -->
+                <div slot="progress-bar" class="progress-bar" id="progress-bar" role="progressbar" aria-label="Progresso do carregamento do modelo">
+                    <div class="progress-bar-fill"></div>
+                </div>
+
+                <!-- AR prompt seguindo padrões oficiais -->
+                <div slot="ar-prompt" class="ar-prompt-official" aria-live="polite">
+                    <div class="ar-prompt-content">
+                        <div class="ar-prompt-icon" aria-hidden="true">📱</div>
+                        <div class="ar-prompt-text">Mova o dispositivo para encontrar uma superfície</div>
+                    </div>
+                </div>
+            </model-viewer>
+            
+            <!-- Instruções para screen readers -->
+            <div id="model-instructions" class="sr-only">
+                Use os controles de rotação para explorar o modelo 3D. Toque ou clique para interagir. 
+                Use o botão "Ver em AR" para experiência em realidade aumentada.
+            </div>
+            <div id="ar-button-description" class="sr-only">
+                Abre o modelo em realidade aumentada usando a câmera do dispositivo
+            </div>
+        </section>
+        
+        <!-- Controles do modelo -->
+        <nav class="model-controls hidden" id="model-controls" role="toolbar" aria-label="Controles do modelo 3D">
+            <button class="control-button" id="reset-camera" 
+                    aria-label="Resetar posição da câmera do modelo"
+                    title="Resetar câmera">
+                <span aria-hidden="true">🔄</span>
+                <span class="sr-only">Resetar câmera</span>
+            </button>
+            <button class="control-button" id="toggle-rotate" 
+                    aria-label="Alternar rotação automática do modelo"
+                    title="Alternar rotação">
+                <span aria-hidden="true">⏸️</span>
+                <span class="sr-only">Pausar rotação</span>
+            </button>
+        </nav>
+    </main>
+
+    <script>
+        // Elementos DOM com verificação de existência
+        const cameraFeed = document.getElementById('camera-feed');
+        const modelViewer = document.querySelector('#modelViewer');
+        const statusDiv = document.getElementById('status');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const cameraPermission = document.getElementById('camera-permission');
+        const cameraButton = document.getElementById('camera-button');
+        const arButton = document.getElementById('ar-button');
+        const progressBar = document.getElementById('progress-bar');
+        const progressBarFill = progressBar?.querySelector('.progress-bar-fill');
+        const modelControls = document.getElementById('model-controls');
+        const resetCameraBtn = document.getElementById('reset-camera');
+        const toggleRotateBtn = document.getElementById('toggle-rotate');
+        const error404 = document.getElementById('error-404');
+        
+        // Verificar se elementos existem
+        if (!modelViewer || !statusDiv || !arButton) {
+            // Critical DOM elements not found - exit gracefully
+            return;
+        }
+        
+        // Estado da aplicação
+        let isRotating = true;
+        let arSessionActive = false;
+        let cameraStream = null;
+        let statusHideTimer = null;
+        let modelLoaded = false;
+        let arReady = false;
+        let autoARAttempted = false;
+        let is404Error = false;
+        
+        // Configuração do modelo com validação de segurança
+        const urlValidation = window.InputValidator ? 
+            window.InputValidator.validateURLParameters() : 
+            { sanitized: { model: 1 }, warnings: [] };
+        
+        const modelId = urlValidation.sanitized.model;
+        
+        // Log security warnings
+        if (urlValidation.warnings.length > 0 && window.SecurityLogger) {
+            urlValidation.warnings.forEach(warning => {
+                window.SecurityLogger.log('warning', warning);
+            });
+        }
+        
+        // Production logging - silent operation
+        function logStatus(message) {
+            // Silent in production - dev: console.log(`[Techno Sutra AR] ${message}`);
+        }
+
+        // Show critical status messages only
+        function showStatus(message, type = 'info', duration = 3000) {
+            if (!statusDiv) return;
+
+            statusDiv.textContent = message;
+            statusDiv.className = `show ${type}`;
+
+            // Also announce to screen readers
+            const liveRegion = document.getElementById('live-region');
+            if (liveRegion) {
+                liveRegion.textContent = message;
+            }
+
+            if (statusHideTimer) {
+                clearTimeout(statusHideTimer);
+            }
+
+            statusHideTimer = setTimeout(() => {
+                statusDiv.classList.remove('show');
+                if (liveRegion) {
+                    liveRegion.textContent = '';
+                }
+            }, duration);
+        }
+
+        // Hide loading overlay
+        function hideLoading() {
+            if (loadingOverlay) {
+                loadingOverlay.classList.add('hidden');
+            }
+        }
+
+        // Show model controls
+        function showControls() {
+            if (modelControls) {
+                modelControls.classList.add('show');
+            }
+        }
+
+        // Show camera permission request
+        function showCameraPermission() {
+            if (cameraPermission) {
+                cameraPermission.classList.remove('hidden');
+            }
+        }
+
+        // Hide camera permission request
+        function hideCameraPermission() {
+            if (cameraPermission) {
+                cameraPermission.classList.add('hidden');
+            }
+        }
+        
+        // Show 404 error with redirect
+        function show404Error() {
+            if (error404) {
+                error404.classList.remove('hidden');
+                is404Error = true;
+                
+                // Auto redirect to model 1 after 3 seconds
+                setTimeout(() => {
+                    error404.classList.add('hidden');
+                    is404Error = false;
+                    window.location.href = window.location.pathname + '?model=1';
+                }, 3000);
+            }
+        }
+        
+        // Função para limpar recursos
+        function cleanup() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+                logStatus('Câmera desligada');
+            }
+
+            if (statusHideTimer) {
+                clearTimeout(statusHideTimer);
+                statusHideTimer = null;
+            }
+        }
+        
+        // Verificação segura de modelo com validação de arquivo
+        async function checkModelExists(modelSrc, timeout = 5000) {
+            try {
+                // Validar caminho do arquivo primeiro
+                if (window.fileAccessSecurity) {
+                    const pathValidation = window.fileAccessSecurity.validateFilePath(modelSrc);
+                    if (!pathValidation.valid) {
+                        logStatus(`Caminho de arquivo inválido: ${pathValidation.error}`);
+                        return false;
+                    }
+                }
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), timeout);
+                
+                const response = await fetch(modelSrc, { 
+                    method: 'HEAD',
+                    signal: controller.signal,
+                    cache: 'no-cache'
+                });
+                
+                clearTimeout(timeoutId);
+                
+                // Log acesso ao arquivo
+                if (window.fileAccessSecurity) {
+                    window.fileAccessSecurity.logFileAccess(modelSrc, response.ok ? 'exists' : 'not_found');
+                }
+                
+                return response.ok;
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    logStatus(`Timeout verificando modelo: ${modelSrc}`);
+                } else {
+                    logStatus(`Erro verificando modelo: ${error.message}`);
+                }
+                
+                // Log falha de acesso
+                if (window.fileAccessSecurity) {
+                    window.fileAccessSecurity.logFileAccess(modelSrc, 'check_failed', { error: error.message });
+                }
+                
+                return false;
+            }
+        }
+        
+        // Gerenciamento de estado do botão AR seguindo padrões oficiais
+        function updateARButtonState() {
+            if (!arButton) return;
+
+            const arIcon = arButton.querySelector('.ar-icon');
+            const arText = arButton.querySelector('.ar-text');
+
+            if (!modelLoaded) {
+                arButton.disabled = true;
+                if (arIcon) arIcon.textContent = '⏳';
+                if (arText) arText.textContent = 'Carregando...';
+            } else if (!arReady) {
+                arButton.disabled = true;
+                if (arIcon) arIcon.textContent = '❌';
+                if (arText) arText.textContent = 'AR indisponível';
+            } else {
+                arButton.disabled = false;
+                if (arIcon) arIcon.textContent = '📱';
+                if (arText) arText.textContent = 'Ver em AR';
+            }
+        }
+
+        // Atualizar progress bar
+        function updateProgressBar(progress) {
+            if (progressBarFill) {
+                progressBarFill.style.width = `${progress}%`;
+                if (progress < 100) {
+                    progressBarFill.classList.add('loading');
+                } else {
+                    progressBarFill.classList.remove('loading');
+                }
+            }
+        }
+        
+        // Carregar modelo
+        async function loadModel() {
+            const modelSrc = `modelo${modelId}.glb`;
+            const usdzSrc = `modelo${modelId}.usdz`;
+            logStatus(`Carregando modelo: ${modelSrc}`);
+
+            try {
+                const exists = await checkModelExists(modelSrc);
+                if (!exists) {
+                    // Modelo não encontrado - mostrar erro 404
+                    show404Error();
+                    throw new Error(`Modelo ${modelId} não encontrado`);
+                }
+
+                if (!modelViewer) {
+                    throw new Error('Model viewer não inicializado');
+                }
+
+                modelViewer.src = modelSrc;
+                
+                // Verificar se existe arquivo USDZ específico para iOS
+                const usdzExists = await checkModelExists(usdzSrc);
+                if (usdzExists) {
+                    modelViewer.setAttribute('ios-src', usdzSrc);
+                    logStatus(`Arquivo USDZ encontrado para iOS: ${usdzSrc}`);
+                } else {
+                    logStatus('Usando conversão automática GLB → USDZ para iOS');
+                }
+                
+                // Definir escala AR para 160%
+                modelViewer.style.setProperty('--ar-scale', '1.6');
+                logStatus('Modelo GLB configurado para todas as plataformas com escala AR 160%');
+
+                return true;
+
+            } catch (error) {
+                logStatus(`Erro ao carregar modelo: ${error.message}`);
+                if (!is404Error) {
+                    showStatus('Erro ao carregar modelo 3D', 'error');
+                }
+                modelLoaded = false;
+                updateARButtonState();
+                return false;
+            }
+        }
+        
+        // Detectar dispositivos
+        function isIOSDevice() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent);
+        }
+        
+        function isAndroidDevice() {
+            return /Android/.test(navigator.userAgent);
+        }
+        
+        // Iniciar câmera como background
+        async function startCamera() {
+            try {
+                logStatus('Iniciando câmera...');
+
+                const constraints = {
+                    video: {
+                        facingMode: 'environment',
+                        width: { ideal: 1920, min: 640 },
+                        height: { ideal: 1080, min: 480 },
+                        frameRate: { ideal: 30, min: 15 }
+                    }
+                };
+
+                cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+
+                if (!cameraFeed) {
+                    throw new Error('Elemento de vídeo não encontrado');
+                }
+
+                cameraFeed.srcObject = cameraStream;
+                cameraFeed.style.display = 'block';
+
+                // Aguardar câmera estar pronta e iniciar reprodução
+                await new Promise((resolve, reject) => {
+                    cameraFeed.onloadedmetadata = () => {
+                        cameraFeed.play().then(resolve).catch(reject);
+                    };
+                    cameraFeed.onerror = reject;
+                    setTimeout(reject, 8000); // Timeout de 8s
+                });
+
+                const videoTracks = cameraStream.getVideoTracks();
+                const cameraLabel = videoTracks.length > 0 ? videoTracks[0].label : 'Desconhecida';
+                logStatus(`Câmera iniciada: ${cameraLabel}`);
+                return true;
+
+            } catch (error) {
+                logStatus(`Erro na câmera: ${error.message}`);
+
+                // Fallback: mostrar gradiente de fundo
+                if (cameraFeed) {
+                    cameraFeed.style.display = 'none';
+                }
+                document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+
+                return false;
+            }
+        }
+        
+        // FIXED: Teste de suporte AR com melhor detecção
+        async function testARSupport() {
+            try {
+                logStatus('Verificando suporte AR...');
+                
+                const results = {
+                    webxr: false,
+                    sceneViewer: isAndroidDevice(),
+                    quickLook: isIOSDevice()
+                };
+                
+                // Teste WebXR com timeout
+                if (navigator.xr) {
+                    try {
+                        const webxrPromise = navigator.xr.isSessionSupported('immersive-ar');
+                        const timeoutPromise = new Promise((_, reject) => 
+                            setTimeout(() => reject(new Error('WebXR timeout')), 3000)
+                        );
+                        
+                        results.webxr = await Promise.race([webxrPromise, timeoutPromise]);
+                        logStatus(`WebXR AR: ${results.webxr ? 'Suportado' : 'Não suportado'}`);
+                    } catch (e) {
+                        logStatus(`WebXR teste falhou: ${e.message}`);
+                    }
+                }
+                
+                const supported = results.webxr || results.sceneViewer || results.quickLook;
+                
+                if (supported) {
+                    const modes = [];
+                    if (results.webxr) modes.push('WebXR');
+                    if (results.sceneViewer) modes.push('Scene Viewer');
+                    if (results.quickLook) modes.push('Quick Look');
+                    
+                    logStatus(`✅ AR disponível via: ${modes.join(', ')}`);
+                    arReady = true;
+                } else {
+                    logStatus('❌ AR não disponível neste dispositivo');
+                    arReady = false;
+                }
+                
+                updateARButtonState();
+                return { supported, ...results };
+                
+            } catch (error) {
+                logStatus(`❌ Erro testando AR: ${error.message}`);
+                arReady = false;
+                updateARButtonState();
+                return { supported: false, error: error.message };
+            }
+        }
+        
+        // Event listeners do model-viewer
+        if (modelViewer) {
+            modelViewer.addEventListener('load', () => {
+                logStatus('Modelo carregado com sucesso');
+                modelLoaded = true;
+                updateARButtonState();
+                showControls();
+            });
+
+            modelViewer.addEventListener('error', (event) => {
+                logStatus(`Erro no modelo: ${event.detail || 'Erro desconhecido'}`);
+                showStatus('Erro no modelo 3D', 'error');
+                modelLoaded = false;
+                updateARButtonState();
+            });
+
+            modelViewer.addEventListener('progress', (event) => {
+                if (event.detail && typeof event.detail.totalProgress === 'number') {
+                    const progress = (event.detail.totalProgress * 100);
+                    updateProgressBar(progress);
+                    if (progress < 100) {
+                        logStatus(`Carregando: ${progress.toFixed(0)}%`);
+                    }
+                }
+            });
+
+            modelViewer.addEventListener('ar-status', (event) => {
+                const status = event.detail?.status || 'unknown';
+                logStatus(`AR Status: ${status}`);
+
+                switch(status) {
+                    case 'session-started':
+                        logStatus('Sessão AR iniciada');
+                        arSessionActive = true;
+                        break;
+                    case 'object-placed':
+                        logStatus('Objeto posicionado no AR');
+                        break;
+                    case 'failed':
+                        logStatus('AR falhou');
+                        showStatus('Falha no AR', 'error', 2000);
+                        arSessionActive = false;
+                        break;
+                    case 'not-presenting':
+                        logStatus('Saiu do modo AR');
+                        arSessionActive = false;
+                        break;
+                }
+            });
+        }
+        
+        // FIXED: Controles com verificação de elementos
+        if (resetCameraBtn) {
+            resetCameraBtn.addEventListener('click', () => {
+                if (modelViewer && typeof modelViewer.resetTurntableRotation === 'function') {
+                    modelViewer.resetTurntableRotation();
+                }
+                if (modelViewer && typeof modelViewer.jumpCameraToGoal === 'function') {
+                    modelViewer.jumpCameraToGoal();
+                }
+                logStatus('🔄 Câmera resetada');
+            });
+        }
+        
+        if (toggleRotateBtn) {
+            toggleRotateBtn.addEventListener('click', () => {
+                if (!modelViewer) return;
+                
+                if (isRotating) {
+                    modelViewer.removeAttribute('auto-rotate');
+                    toggleRotateBtn.textContent = '▶️';
+                    toggleRotateBtn.title = 'Iniciar rotação';
+                } else {
+                    modelViewer.setAttribute('auto-rotate', '');
+                    toggleRotateBtn.textContent = '⏸️';
+                    toggleRotateBtn.title = 'Parar rotação';
+                }
+                isRotating = !isRotating;
+                logStatus(`🔄 Rotação ${isRotating ? 'ativada' : 'desativada'}`);
+            });
+        }
+        
+        // Inicialização principal
+        async function initialize() {
+            try {
+                logStatus('Iniciando Techno Sutra AR...');
+
+                // 1. Carregar modelo primeiro
+                const modelLoadResult = await loadModel();
+                if (!modelLoadResult) {
+                    logStatus('Falha crítica: modelo não pôde ser carregado');
+                    showStatus('Modelo não encontrado', 'error');
+                    hideLoading();
+                    return;
+                }
+
+                // 2. Testar suporte AR
+                await testARSupport();
+
+                // 3. Tentar iniciar câmera automaticamente
+                const cameraStarted = await startCamera();
+
+                // 4. Tentar iniciar AR automaticamente se disponível
+                if (modelLoaded && arReady && !autoARAttempted) {
+                    autoARAttempted = true;
+                    setTimeout(() => {
+                        tryAutoAR();
+                    }, 2000); // Aguardar 2 segundos após carregamento
+                }
+
+                // 5. Finalizar inicialização
+                if (modelLoaded && arReady && cameraStarted) {
+                    logStatus('Sistema pronto para AR com câmera!');
+                    showStatus('AR iniciando automaticamente...', 'success', 2000);
+                } else if (modelLoaded && cameraStarted) {
+                    logStatus('Modelo e câmera carregados');
+                    showStatus('Visualização 3D com câmera', 'success', 2000);
+                } else if (modelLoaded) {
+                    logStatus('Modelo carregado, sem câmera');
+                    showStatus('Visualização 3D disponível', 'info', 2000);
+                }
+
+                showControls();
+
+                // Hide loading overlay
+                setTimeout(hideLoading, 1000);
+
+            } catch (error) {
+                logStatus(`Erro crítico na inicialização: ${error.message}`);
+                showStatus('Erro na inicialização', 'error');
+                hideLoading();
+                updateARButtonState();
+            }
+        }
+
+        // Camera button event listener
+        if (cameraButton) {
+            cameraButton.addEventListener('click', async () => {
+                hideCameraPermission();
+                const cameraStarted = await startCamera();
+                if (cameraStarted) {
+                    showStatus('Câmera ativada!', 'success', 2000);
+                } else {
+                    showStatus('Erro ao ativar câmera', 'error', 3000);
+                }
+            });
+        }
+        
+        // Função para tentar iniciar AR automaticamente
+        function tryAutoAR() {
+            if (!modelViewer || !arReady || !modelLoaded || arSessionActive) {
+                return;
+            }
+            
+            try {
+                logStatus('Tentando iniciar AR automaticamente...');
+                
+                // Simular clique no botão AR
+                if (arButton && !arButton.disabled) {
+                    arButton.click();
+                    logStatus('AR iniciado automaticamente');
+                } else {
+                    // Tentar ativar AR diretamente via model-viewer
+                    if (modelViewer.activateAR) {
+                        modelViewer.activateAR();
+                        logStatus('AR ativado via model-viewer');
+                    }
+                }
+            } catch (error) {
+                logStatus(`Erro ao iniciar AR automaticamente: ${error.message}`);
+                // Se falhar, garantir que a câmera está ativa como fallback
+                if (!cameraStream) {
+                    startCamera().then(success => {
+                        if (success) {
+                            logStatus('Câmera ativada como fallback');
+                            showStatus('Usando câmera como visualização', 'info', 2000);
+                        }
+                    });
+                }
+            }
+        }
+        
+        // Event listeners de página
+        window.addEventListener('load', initialize);
+        
+        // FIXED: Cleanup na saída
+        window.addEventListener('beforeunload', cleanup);
+        window.addEventListener('pagehide', cleanup);
+        
+        // Controle de visibilidade da página
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && arSessionActive) {
+                logStatus('🔄 Página oculta durante AR');
+            }
+        });
+        
+        // Debug toggle (triple tap to show debug info)
+        let tapCount = 0;
+        let tapTimer = null;
+
+        document.addEventListener('touchstart', (e) => {
+            tapCount++;
+
+            if (tapCount === 1) {
+                tapTimer = setTimeout(() => {
+                    tapCount = 0;
+                }, 500);
+            } else if (tapCount === 3) {
+                if (tapTimer) {
+                    clearTimeout(tapTimer);
+                }
+                // DEBUG MODE: Triple-tap shows debug info (dev only)
+                // Production: Silent debug mode
+                // Dev mode: Uncomment lines below for debugging
+                // console.log('=== DEBUG INFO ===');
+                // console.log('Model loaded:', modelLoaded);
+                // console.log('AR ready:', arReady);
+                // console.log('AR session active:', arSessionActive);
+                // console.log('Model ID:', modelId);
+                // console.log('User agent:', navigator.userAgent);
+                // console.log('==================');
+                tapCount = 0;
+            }
+        });
+        
+        // REMOVED: Problematic touch prevention that interfered with model-viewer
+        // The original touchmove prevention has been removed as it conflicts with model-viewer's built-in controls
+
+        // Service Worker para cache offline
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        logStatus('Service Worker registrado com sucesso');
+                        // Dev: console.log('SW registered:', registration);
+
+                        // Check for updates
+                        registration.addEventListener('updatefound', () => {
+                            logStatus('Atualizando cache...');
+                        });
+                    })
+                    .catch(error => {
+                        logStatus('Service Worker não disponível');
+                        // Dev: console.log('SW registration failed:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
