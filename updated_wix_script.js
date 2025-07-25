@@ -1,14 +1,14 @@
 import wixData from 'wix-data';
 
 $w.onReady(function () {
-    console.log("Página carregada, aguardando mensagens...");
+    // Dev: console.log("Página carregada, aguardando mensagens...");
     
     $w('#html2').onMessage((event) => {
-        console.log("Mensagem recebida:", event);
+        // Dev: console.log("Mensagem recebida:", event);
         
         if (event.data && event.data.type === 'chapterUpdate') {
             const chapterId = event.data.chapterId;
-            console.log(`Tentando filtrar por capitulo: ${chapterId}`);
+            // Dev: console.log(`Tentando filtrar por capitulo: ${chapterId}`);
             
             // Filtrar dataset1 (techosutra)
             $w('#dataset1').setFilter(
@@ -30,7 +30,7 @@ $w.onReady(function () {
                 chapterId: chapterId
             });
             
-            console.log(`Filtros aplicados em ambos os datasets e modelo 3D atualizado para capítulo ${chapterId}!`);
+            // Dev: console.log(`Filtros aplicados em ambos os datasets e modelo 3D atualizado para capítulo ${chapterId}!`);
         }
     });
     
@@ -49,5 +49,5 @@ $w.onReady(function () {
         chapterId: 1
     });
     
-    console.log("Datasets e modelo 3D inicializados com capítulo 1");
+    // Dev: console.log("Datasets e modelo 3D inicializados com capítulo 1");
 });

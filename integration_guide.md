@@ -96,12 +96,12 @@ Replace the content of your #html1 iframe with the content from `updated_3d_mode
         
         function updateModel(chapterNumber) {
             const newSrc = `https://raw.githubusercontent.com/technosutra21/technosutra/master/modelo${chapterNumber}.glb`;
-            console.log(`Atualizando modelo 3D para capítulo ${chapterNumber}: ${newSrc}`);
+            // Dev: console.log(`Atualizando modelo 3D para capítulo ${chapterNumber}: ${newSrc}`);
             modelViewer.src = newSrc;
         }
         
         window.addEventListener('message', (event) => {
-            console.log('3D Model iframe recebeu mensagem:', event.data);
+            // Dev: console.log('3D Model iframe recebeu mensagem:', event.data);
             
             if (event.data && event.data.type === 'chapterUpdate') {
                 const chapterId = event.data.chapterId;
@@ -125,14 +125,14 @@ Replace your existing Wix script with the content from `updated_wix_script.js`:
 import wixData from 'wix-data';
 
 $w.onReady(function () {
-    console.log("Página carregada, aguardando mensagens...");
+    // Dev: console.log("Página carregada, aguardando mensagens...");
     
     $w('#html2').onMessage((event) => {
-        console.log("Mensagem recebida:", event);
+        // Dev: console.log("Mensagem recebida:", event);
         
         if (event.data && event.data.type === 'chapterUpdate') {
             const chapterId = event.data.chapterId;
-            console.log(`Tentando filtrar por capitulo: ${chapterId}`);
+            // Dev: console.log(`Tentando filtrar por capitulo: ${chapterId}`);
             
             // Filtrar dataset1 (techosutra)
             $w('#dataset1').setFilter(
@@ -154,7 +154,7 @@ $w.onReady(function () {
                 chapterId: chapterId
             });
             
-            console.log(`Filtros aplicados em ambos os datasets e modelo 3D atualizado para capítulo ${chapterId}!`);
+            // Dev: console.log(`Filtros aplicados em ambos os datasets e modelo 3D atualizado para capítulo ${chapterId}!`);
         }
     });
     
@@ -173,7 +173,7 @@ $w.onReady(function () {
         chapterId: 1
     });
     
-    console.log("Datasets e modelo 3D inicializados com capítulo 1");
+    // Dev: console.log("Datasets e modelo 3D inicializados com capítulo 1");
 });
 ```
 

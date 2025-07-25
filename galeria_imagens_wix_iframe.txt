@@ -225,7 +225,7 @@
                 renderGallery(imageFiles);
                 
             } catch (error) {
-                console.error('Erro ao carregar imagens:', error);
+                // Dev: console.error('Erro ao carregar imagens:', error);
                 showError('Erro ao carregar imagens. Por favor, tente novamente.');
             }
         }

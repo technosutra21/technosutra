@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wix Site Wrapper - Fixed</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: transparent;
+        }
+        
+        .iframe-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: transparent;
+        }
+        
+        .wix-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: transparent;
+            isolation: isolate;
+            all: initial;
+            display: block;
+        }
+        
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.3s ease;
+        }
+        
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loading-text {
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .error-message {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            font-family: Arial, sans-serif;
+            color: #666;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        .retry-button {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: #0073e6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .retry-button:hover {
+            background: #005bb5;
+        }
+    </style>
+</head>
+<body>
+    <div class="iframe-container">
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-text">Carregando...</div>
+        </div>
+        
+        <iframe 
+            id="wixFrame"
+            class="wix-iframe"
+            src=""
+            allow="accelerometer; autoplay; camera; clipboard-read; clipboard-write; encrypted-media; geolocation; gyroscope; microphone; midi; payment; usb; xr-spatial-tracking; fullscreen"
+            sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation allow-top-navigation-by-user-activation allow-downloads allow-orientation-lock allow-pointer-lock allow-presentation allow-modals"
+            loading="lazy"
+            importance="high"
+            referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+        
+        <div class="error-message" id="errorMessage">
+            <h3>❌ Erro ao carregar o conteúdo</h3>
+            <p>Possíveis causas:</p>
+            <ul style="text-align: left; margin: 10px 0;">
+                <li>Site não permite iframe (X-Frame-Options)</li>
+                <li>Política de Segurança (CSP)</li>
+                <li>URL incorreta ou inacessível</li>
+            </ul>
+            <button class="retry-button" onclick="retryLoad()">🔄 Tentar Novamente</button>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURAÇÃO: Substitua pela URL do seu site Wix
+        const SITE_URL = 'https://seu-site.wixsite.com/nome-do-site'; // ⚠️ ALTERE AQUI
+        
+        const iframe = document.getElementById('wixFrame');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        let loadTimeout;
+        let isLoaded = false;
+        let retryCount = 0;
+        const MAX_RETRIES = 3;
+        
+        function initializeIframe() {
+            // Dev: console.log('🚀 Inicializando iframe com proteções aprimoradas...');
+            
+            // Verificar se a URL foi configurada
+            if (SITE_URL.includes('seu-site.wixsite.com')) {
+                showError('⚠️ Configure a URL do site na variável SITE_URL!');
+                return;
+            }
+            
+            // Limpar estados anteriores
+            isLoaded = false;
+            clearTimeout(loadTimeout);
+            hideError();
+            showLoading();
+            
+            // Configurar iframe com delay para evitar problemas de carregamento
+            setTimeout(() => {
+                try {
+                    iframe.src = SITE_URL;
+                    // Dev: console.log(`📡 Carregando: ${SITE_URL}`);
+                } catch (error) {
+                    // Dev: console.error('❌ Erro ao definir src:', error);
+                    showError('Erro ao configurar URL do iframe');
+                }
+            }, 200);
+            
+            // Timeout aumentado para sites Wix (podem ser lentos)
+            loadTimeout = setTimeout(() => {
+                if (!isLoaded) {
+                    // Dev: console.warn('⏰ Timeout atingido');
+                    showError('Timeout: O site demorou muito para carregar');
+                }
+            }, 20000); // 20 segundos para Wix
+        }
+        
+        // Event listeners aprimorados
+        iframe.addEventListener('load', function() {
+            // Dev: console.log('✅ Iframe carregado com sucesso');
+            isLoaded = true;
+            retryCount = 0;
+            clearTimeout(loadTimeout);
+            hideLoading();
+            
+            // Comunicação cross-origin segura
+            try {
+                iframe.contentWindow.postMessage({
+                    type: 'wrapperReady',
+                    timestamp: Date.now(),
+                    source: 'iframe-wrapper'
+                }, '*');
+                // Dev: console.log('📤 Mensagem de inicialização enviada');
+            } catch (error) {
+                // Dev: console.log('ℹ️ Comunicação cross-origin limitada (normal para sites externos)');
+            }
+        });
+        
+        iframe.addEventListener('error', function(e) {
+            // Dev: console.error('❌ Erro no iframe:', e);
+            showError('Erro de rede ou configuração');
+        });
+        
+        // Detectar quando o iframe é bloqueado por política de segurança
+        window.addEventListener('securitypolicyviolation', function(e) {
+            // Dev: console.error('🚫 Política de segurança violada:', e.violatedDirective);
+            showError('Site bloqueado por política de segurança (CSP)');
+        });
+        
+        // Listener para mensagens do Wix
+        window.addEventListener('message', function(event) {
+            // Dev: console.log('📨 Mensagem recebida:', event.data);
+            
+            // Processar mensagens específicas do Wix
+            if (event.data && event.data.type === 'chapterUpdate') {
+                // Dev: console.log(`📖 Capítulo atualizado: ${event.data.chapterId}`);
+                
+                // Repassar para componentes pais se necessário
+                if (window.parent && window.parent !== window) {
+                    try {
+                        window.parent.postMessage(event.data, '*');
+                    } catch (error) {
+                        // Dev: console.log('⚠️ Não foi possível repassar mensagem');
+                    }
+                }
+            }
+        });
+        
+        // Funções utilitárias
+        function showLoading() {
+            loadingOverlay.classList.remove('hidden');
+            loadingOverlay.style.display = 'flex';
+        }
+        
+        function hideLoading() {
+            loadingOverlay.classList.add('hidden');
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+            }, 300);
+        }
+        
+        function showError(message = 'Erro ao carregar o conteúdo') {
+            clearTimeout(loadTimeout);
+            hideLoading();
+            
+            const errorTitle = errorMessage.querySelector('h3');
+            if (message.includes('Configure a URL')) {
+                errorTitle.textContent = message;
+            } else {
+                errorTitle.textContent = `❌ ${message}`;
+            }
+            
+            errorMessage.classList.add('show');
+        }
+        
+        function hideError() {
+            errorMessage.classList.remove('show');
+        }
+        
+        function retryLoad() {
+            if (retryCount < MAX_RETRIES) {
+                retryCount++;
+                // Dev: console.log(`🔄 Tentativa ${retryCount}/${MAX_RETRIES}`);
+                initializeIframe();
+            } else {
+                showError('Máximo de tentativas atingido. Verifique a URL e configurações.');
+            }
+        }
+        
+        // Detectar mudanças de conectividade
+        window.addEventListener('online', function() {
+            // Dev: console.log('🌐 Conectividade restaurada');
+            if (!isLoaded) {
+                retryLoad();
+            }
+        });
+        
+        window.addEventListener('offline', function() {
+            // Dev: console.log('📡 Sem conexão');
+            showError('Sem conexão com a internet');
+        });
+        
+        // Listener para redimensionamento otimizado
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                iframe.style.height = '99.9%';
+                requestAnimationFrame(() => {
+                    iframe.style.height = '100%';
+                });
+            }, 100);
+        });
+        
+        // Inicialização
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeIframe);
+        } else {
+            initializeIframe();
+        }
+        
+        // Dev: console.log('🎯 Wrapper do iframe inicializado com proteções avançadas');
+    </script>
+</body>
+</html>

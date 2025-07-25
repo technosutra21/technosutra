@@ -82,8 +82,6 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
         body {
@@ -2168,7 +2166,7 @@
         const performanceObserver = new PerformanceObserver((list) => {
             for (const entry of list.getEntries()) {
                 if (entry.entryType === 'measure') {
-                    console.log(`${entry.name}: ${entry.duration}ms`);
+                    // Dev: console.log(`${entry.name}: ${entry.duration}ms`);
                 }
             }
         });
@@ -2390,7 +2388,7 @@
                     
                     return content;
                 } catch (error) {
-                    console.error(`Erro ao carregar ${character.filename}:`, error);
+                    // Dev: console.error(`Erro ao carregar ${character.filename}:`, error);
                     character.error = error.message;
                     character.loaded = false;
                     return null;
@@ -2415,7 +2413,7 @@
                     // Load batch with improved error handling
                     const promises = batch.map(character => 
                         this.loadCharacterContent(character).catch(error => {
-                            console.warn(`Failed to load ${character.name}:`, error);
+                            // Dev: console.warn(`Failed to load ${character.name}:`, error);
                             return null;
                         })
                     );

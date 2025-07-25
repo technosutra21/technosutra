@@ -53,28 +53,28 @@ const CACHE_FIRST_PATTERNS = [
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
-    console.log('[SW] Installing...');
+    // Dev: // Dev: console.log('[SW] Installing...');
     
     event.waitUntil(
         Promise.all([
             // Cache static assets
             caches.open(STATIC_CACHE_NAME).then((cache) => {
-                console.log('[SW] Caching static assets');
+                // Dev: // Dev: console.log('[SW] Caching static assets');
                 return cache.addAll(STATIC_ASSETS);
             }),
             // Pre-cache available models
             caches.open(DYNAMIC_CACHE_NAME).then((cache) => {
-                console.log('[SW] Pre-caching available models');
+                // Dev: console.log('[SW] Pre-caching available models');
                 return Promise.allSettled(
                     AVAILABLE_MODELS.map(model => 
                         cache.add(model).catch(err => 
-                            console.log(`[SW] Could not cache ${model}:`, err)
+                            // Dev: console.log(`[SW] Could not cache ${model}:`, err)
                         )
                     )
                 );
             })
         ]).then(() => {
-            console.log('[SW] Installation complete');
+            // Dev: console.log('[SW] Installation complete');
             // Force activation of new service worker
             return self.skipWaiting();
         })
@@ -83,7 +83,7 @@ self.addEventListener('install', (event) => {
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-    console.log('[SW] Activating...');
+    // Dev: console.log('[SW] Activating...');
     
     event.waitUntil(
         caches.keys().then((cacheNames) => {
@@ -92,13 +92,13 @@ self.addEventListener('activate', (event) => {
                     if (cacheName !== STATIC_CACHE_NAME && 
                         cacheName !== DYNAMIC_CACHE_NAME &&
                         cacheName.startsWith('techno-sutra-')) {
-                        console.log('[SW] Deleting old cache:', cacheName);
+                        // Dev: console.log('[SW] Deleting old cache:', cacheName);
                         return caches.delete(cacheName);
                     }
                 })
             );
         }).then(() => {
-            console.log('[SW] Activation complete');
+            // Dev: console.log('[SW] Activation complete');
             // Take control of all clients immediately
             return self.clients.claim();
         })
@@ -146,7 +146,7 @@ async function handleRequest(request) {
         return await networkFirstStrategy(request);
         
     } catch (error) {
-        console.error('[SW] Error handling request:', error);
+        // Dev: console.error('[SW] Error handling request:', error);
         return await handleOfflineFallback(request);
     }
 }
@@ -164,7 +164,7 @@ async function networkFirstStrategy(request) {
         
         return networkResponse;
     } catch (error) {
-        console.log('[SW] Network failed, trying cache:', request.url);
+        // Dev: console.log('[SW] Network failed, trying cache:', request.url);
         const cachedResponse = await caches.match(request);
         
         if (cachedResponse) {
@@ -193,7 +193,7 @@ async function cacheFirstStrategy(request) {
         
         return networkResponse;
     } catch (error) {
-        console.error('[SW] Cache-first failed for:', request.url);
+        // Dev: console.error('[SW] Cache-first failed for:', request.url);
         throw error;
     }
 }
@@ -210,7 +210,7 @@ async function staleWhileRevalidateStrategy(request) {
         }
         return response;
     }).catch(error => {
-        console.log('[SW] Background update failed:', error);
+        // Dev: console.log('[SW] Background update failed:', error);
     });
     
     // Return cached version immediately if available
@@ -273,9 +273,9 @@ self.addEventListener('message', (event) => {
         caches.open(DYNAMIC_CACHE_NAME).then(cache => {
             return cache.add(modelUrl);
         }).then(() => {
-            console.log('[SW] Model cached:', modelUrl);
+            // Dev: console.log('[SW] Model cached:', modelUrl);
         }).catch(error => {
-            console.error('[SW] Failed to cache model:', error);
+            // Dev: console.error('[SW] Failed to cache model:', error);
         });
     }
 });

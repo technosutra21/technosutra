@@ -115,7 +115,6 @@
             background: rgba(0, 0, 0, 0.95);
             z-index: 9999;
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             animation: lightboxFadeIn 0.3s ease;
         }
         

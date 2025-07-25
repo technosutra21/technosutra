@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0, shrink-to-fit=no">
+    <title>Site Fullscreen - 100% Agressivo</title>
+    <style>
+        /* RESET AGRESSIVO - Eliminar TUDO */
+        * {
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
+            outline: 0 !important;
+            box-sizing: border-box !important;
+
+        }
+        
+        /* HTML E BODY - FORÇAR 100% ABSOLUTO */
+        html {
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: 100vw !important;
+            max-height: 100vh !important;
+            min-width: 100vw !important;
+            min-height: 100vh !important;
+            overflow: hidden !important;
+            background: transparent !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+        }
+        
+        body {
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: 100vw !important;
+            max-height: 100vh !important;
+            min-width: 100vw !important;
+            min-height: 100vh !important;
+            overflow: hidden !important;
+            background: transparent !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            font-family: system-ui, -apple-system, sans-serif !important;
+        }
+        
+        /* CONTAINER - FORÇAR OCUPAÇÃO TOTAL */
+        .iframe-container {
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: 100vw !important;
+            max-height: 100vh !important;
+            min-width: 100vw !important;
+            min-height: 100vh !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            z-index: 999999 !important;
+            background: transparent !important;
+            overflow: hidden !important;
+        }
+        
+        /* IFRAME - MÁXIMA AGRESSIVIDADE */
+        .wix-iframe {
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: 100vw !important;
+            max-height: 100vh !important;
+            min-width: 100vw !important;
+            min-height: 100vh !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            border: none !important;
+            outline: none !important;
+            background: transparent !important;
+            display: block !important;
+            z-index: 999998 !important;
+            /* FORÇAR PROPRIEDADES DE IFRAME */
+            transform: scale(1) !important;
+            transform-origin: 0 0 !important;
+        }
+        
+        /* LOADING OVERLAY - COBERTURA TOTAL */
+        .loading-overlay {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: 100vw !important;
+            max-height: 100vh !important;
+            background: #000000 !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            z-index: 999999 !important;
+            transition: all 0.5s ease !important;
+            flex-direction: column !important;
+        }
+        
+        .loading-overlay.hidden {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
+        }
+        
+        .loading-text {
+            font-family: system-ui, -apple-system, sans-serif !important;
+            font-size: clamp(16px, 4vw, 24px) !important;
+            color: #ffffff !important;
+            font-weight: 500 !important;
+            text-align: center !important;
+            margin-bottom: 20px !important;
+        }
+        
+        .loading-spinner {
+            width: 40px !important;
+            height: 40px !important;
+            border: 3px solid rgba(255,255,255,0.3) !important;
+            border-radius: 50% !important;
+            border-top-color: #ffffff !important;
+            animation: spin 1s ease-in-out infinite !important;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* ERROR MESSAGE - COBERTURA TOTAL */
+        .error-message {
+            display: none !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            background: #1a1a1a !important;
+            color: #ffffff !important;
+            z-index: 999999 !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            align-items: center !important;
+            text-align: center !important;
+            padding: 20px !important;
+        }
+        
+        .error-message.show {
+            display: flex !important;
+        }
+        
+        .error-title {
+            font-size: clamp(20px, 5vw, 32px) !important;
+            margin-bottom: 20px !important;
+            font-weight: 600 !important;
+        }
+        
+        .error-list {
+            font-size: clamp(14px, 3vw, 18px) !important;
+            margin: 20px 0 !important;
+            text-align: left !important;
+        }
+        
+        .error-list li {
+            margin: 8px 0 !important;
+            list-style: none !important;
+        }
+        
+        .error-list li:before {
+            content: "❌ " !important;
+            margin-right: 8px !important;
+        }
+        
+        .retry-button {
+            margin-top: 30px !important;
+            padding: 15px 30px !important;
+            background: #0066cc !important;
+            color: #ffffff !important;
+            border: none !important;
+            border-radius: 8px !important;
+            cursor: pointer !important;
+            font-size: clamp(16px, 4vw, 20px) !important;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 4px 15px rgba(0,102,204,0.3) !important;
+        }
+        
+        .retry-button:hover {
+            background: #0052a3 !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 20px rgba(0,102,204,0.4) !important;
+        }
+        
+        .retry-button:active {
+            transform: translateY(0) !important;
+        }
+        
+        /* REMOVER SCROLLBARS COMPLETAMENTE */
+        ::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+        
+        html {
+            -ms-overflow-style: none !important;
+            scrollbar-width: none !important;
+        }
+        
+        /* FORÇAR FULLSCREEN EM MOBILE */
+        @media screen and (max-width: 768px) {
+            html {
+                text-size-adjust: none !important;
+            }
+            
+            body {
+                -webkit-touch-callout: none !important;
+                user-select: none !important;
+            }
+        }
+        
+        /* ESCONDER ELEMENTOS PADRÃO DO BROWSER */
+        body::-webkit-scrollbar { display: none !important; }
+        html::-webkit-scrollbar { display: none !important; }
+        
+        /* FORÇA OCUPAÇÃO EM QUALQUER RESOLUÇÃO */
+        @media screen and (min-width: 1px) {
+            .iframe-container, .wix-iframe {
+                width: 100vw !important;
+                height: 100vh !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="iframe-container">
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-text">🚀 CARREGANDO SITE COMPLETO...</div>
+            <div class="loading-spinner"></div>
+        </div>
+        
+        <iframe 
+            id="wixFrame"
+            class="wix-iframe"
+            src=""
+            allow="accelerometer; autoplay; camera; clipboard-read; clipboard-write; encrypted-media; fullscreen; geolocation; gyroscope; microphone; midi; payment; picture-in-picture; usb; web-share; xr-spatial-tracking"
+            sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox allow-forms allow-top-navigation allow-top-navigation-by-user-activation allow-downloads allow-orientation-lock allow-pointer-lock allow-presentation allow-modals allow-storage-access-by-user-activation"
+            importance="high"
+            loading="eager"
+            referrerpolicy="no-referrer-when-downgrade"
+            seamless="seamless"
+            scrolling="auto"
+            allowfullscreen="true"
+            webkitallowfullscreen="true"
+            mozallowfullscreen="true">
+        </iframe>
+        
+        <div class="error-message" id="errorMessage">
+            <div class="error-title">⚠️ FALHA AO CARREGAR SITE</div>
+            <div>Possíveis causas do problema:</div>
+            <ul class="error-list">
+                <li>Site bloqueia iframe (X-Frame-Options)</li>
+                <li>Política de Segurança (CSP) restritiva</li>
+                <li>URL incorreta ou inacessível</li>
+                <li>Problema de conectividade</li>
+            </ul>
+            <button class="retry-button" onclick="forceReload()">🔄 FORÇAR RELOAD</button>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURAÇÃO AGRESSIVA
+        const SITE_URL = 'https://technosutra84.wixstudio.com/stem-array';
+        const AGGRESSIVE_MODE = true;
+        const FORCE_FULLSCREEN = true;
+        
+        const iframe = document.getElementById('wixFrame');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        let loadTimeout;
+        let isLoaded = false;
+        let retryCount = 0;
+        const MAX_RETRIES = 5;
+        const LOAD_TIMEOUT = 30000; // 30 segundos
+        
+        // FORÇAR REMOÇÃO DE MARGENS E SCROLLBARS
+        function forceFullscreen() {
+            // Dev: console.log('🎯 MODO AGRESSIVO: Forçando fullscreen total...');
+            
+            // REMOVER MARGINS/PADDINGS DO BODY E HTML
+            document.documentElement.style.cssText = `
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                overflow: hidden !important;
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+            `;
+            
+            document.body.style.cssText = `
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                overflow: hidden !important;
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+            `;
+            
+            // FORÇAR IFRAME A OCUPAR TUDO
+            iframe.style.cssText = `
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                border: none !important;
+                z-index: 999998 !important;
+                display: block !important;
+            `;
+            
+            // TENTAR ENTRAR EM FULLSCREEN API
+            if (FORCE_FULLSCREEN && document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(() => {
+                    // Dev: console.log('ℹ️ Fullscreen API não disponível ou negado');
+                });
+            }
+        }
+        
+        function initializeIframe() {
+            // Dev: console.log('🚀 INICIALIZANDO MODO SUPER AGRESSIVO...');
+            
+            // APLICAR FULLSCREEN FORÇADO
+            forceFullscreen();
+            
+            // Limpar estados anteriores
+            isLoaded = false;
+            clearTimeout(loadTimeout);
+            hideError();
+            showLoading();
+            
+            // CONFIGURAR IFRAME COM MÁXIMA AGRESSIVIDADE
+            setTimeout(() => {
+                try {
+                    // Dev: console.log(`🔥 CARREGANDO COM FORÇA TOTAL: ${SITE_URL}`);
+                    iframe.src = SITE_URL;
+                    
+                    // FORÇAR ATRIBUTOS APÓS CARREGAR SRC
+                    setTimeout(() => {
+                        iframe.setAttribute('allowfullscreen', 'true');
+                        iframe.setAttribute('webkitallowfullscreen', 'true');
+                        iframe.setAttribute('mozallowfullscreen', 'true');
+                        iframe.setAttribute('seamless', 'seamless');
+                    }, 100);
+                    
+                } catch (error) {
+                    // Dev: console.error('❌ ERRO CRÍTICO ao configurar iframe:', error);
+                    showError('Erro crítico ao configurar iframe');
+                }
+            }, 300);
+            
+            // TIMEOUT EXTENDIDO
+            loadTimeout = setTimeout(() => {
+                if (!isLoaded) {
+                    // Dev: console.warn('⏰ TIMEOUT CRÍTICO atingido');
+                    showError('TIMEOUT: Site não respondeu em 30 segundos');
+                }
+            }, LOAD_TIMEOUT);
+        }
+        
+        // EVENT LISTENERS SUPER AGRESSIVOS
+        iframe.addEventListener('load', function() {
+            // Dev: console.log('✅ IFRAME CARREGADO COM SUCESSO TOTAL!');
+            isLoaded = true;
+            retryCount = 0;
+            clearTimeout(loadTimeout);
+            hideLoading();
+            
+            // REFORÇAR FULLSCREEN APÓS LOAD
+            setTimeout(() => {
+                forceFullscreen();
+            }, 500);
+            
+            // COMUNICAÇÃO CROSS-ORIGIN AGRESSIVA
+            try {
+                iframe.contentWindow.postMessage({
+                    type: 'aggressiveWrapperReady',
+                    fullscreen: true,
+                    aggressive: true,
+                    timestamp: Date.now(),
+                    source: 'aggressive-iframe-wrapper'
+                }, '*');
+                // Dev: console.log('📤 MENSAGEM AGRESSIVA enviada para o site');
+            } catch (error) {
+                // Dev: console.log('ℹ️ Comunicação cross-origin limitada (esperado)');
+            }
+        });
+        
+        iframe.addEventListener('error', function(e) {
+            // Dev: console.error('❌ ERRO CRÍTICO no iframe:', e);
+            showError('ERRO DE REDE OU CONFIGURAÇÃO CRÍTICA');
+        });
+        
+        // DETECTAR VIOLAÇÕES DE SEGURANÇA
+        window.addEventListener('securitypolicyviolation', function(e) {
+            // Dev: console.error('🚫 POLÍTICA DE SEGURANÇA VIOLADA:', e.violatedDirective);
+            showError(`BLOQUEADO POR SEGURANÇA: ${e.violatedDirective}`);
+        });
+        
+        // LISTENER PARA MENSAGENS
+        window.addEventListener('message', function(event) {
+            // Dev: console.log('📨 MENSAGEM RECEBIDA:', event.data);
+            
+            if (event.data && event.data.type === 'chapterUpdate') {
+                // Dev: console.log(`📖 CAPÍTULO ATUALIZADO: ${event.data.chapterId}`);
+                
+                if (window.parent && window.parent !== window) {
+                    try {
+                        window.parent.postMessage(event.data, '*');
+                    } catch (error) {
+                        // Dev: console.log('⚠️ Falha ao repassar mensagem');
+                    }
+                }
+            }
+        });
+        
+        // FUNÇÕES UTILITÁRIAS AGRESSIVAS
+        function showLoading() {
+            loadingOverlay.classList.remove('hidden');
+            loadingOverlay.style.display = 'flex';
+            loadingOverlay.style.zIndex = '999999';
+        }
+        
+        function hideLoading() {
+            loadingOverlay.classList.add('hidden');
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+            }, 500);
+        }
+        
+        function showError(message = 'ERRO CRÍTICO AO CARREGAR') {
+            clearTimeout(loadTimeout);
+            hideLoading();
+            
+            const errorTitle = errorMessage.querySelector('.error-title');
+            errorTitle.textContent = `⚠️ ${message.toUpperCase()}`;
+            
+            errorMessage.classList.add('show');
+            errorMessage.style.zIndex = '999999';
+        }
+        
+        function hideError() {
+            errorMessage.classList.remove('show');
+        }
+        
+        function forceReload() {
+            // Dev: console.log('🔄 FORÇANDO RELOAD AGRESSIVO...');
+            
+            if (retryCount < MAX_RETRIES) {
+                retryCount++;
+                // Dev: console.log(`🔥 TENTATIVA AGRESSIVA ${retryCount}/${MAX_RETRIES}`);
+                
+                // LIMPAR COMPLETAMENTE O IFRAME
+                iframe.src = 'about:blank';
+                
+                setTimeout(() => {
+                    initializeIframe();
+                }, 1000);
+                
+            } else {
+                showError('MÁXIMO DE TENTATIVAS ATINGIDO - SITE PODE ESTAR BLOQUEANDO IFRAME');
+            }
+        }
+        
+        // DETECTAR MUDANÇAS DE CONECTIVIDADE AGRESSIVAMENTE
+        window.addEventListener('online', function() {
+            // Dev: console.log('🌐 CONECTIVIDADE RESTAURADA - RELOAD AUTOMÁTICO');
+            if (!isLoaded) {
+                setTimeout(forceReload, 1000);
+            }
+        });
+        
+        window.addEventListener('offline', function() {
+            // Dev: console.log('📡 SEM CONEXÃO DETECTADA');
+            showError('SEM CONEXÃO COM A INTERNET');
+        });
+        
+        // REDIMENSIONAMENTO ULTRA AGRESSIVO
+        let resizeTimeout;
+        function handleResize() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                // Dev: console.log('📏 REDIMENSIONAMENTO FORÇADO');
+                forceFullscreen();
+                
+                // FORÇA RECÁLCULO DO IFRAME
+                iframe.style.width = '99.99vw';
+                iframe.style.height = '99.99vh';
+                
+                requestAnimationFrame(() => {
+                    iframe.style.width = '100vw';
+                    iframe.style.height = '100vh';
+                });
+            }, 50);
+        }
+        
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('orientationchange', handleResize);
+        screen.orientation?.addEventListener('change', handleResize);
+        
+        // DETECTAR FULLSCREEN CHANGES
+        document.addEventListener('fullscreenchange', function() {
+            // Dev: console.log('🖥️ FULLSCREEN MUDOU:', document.fullscreenElement ? 'ATIVADO' : 'DESATIVADO');
+            if (!document.fullscreenElement) {
+                // AINDA FORÇAR OCUPAÇÃO TOTAL MESMO SEM FULLSCREEN API
+                setTimeout(forceFullscreen, 100);
+            }
+        });
+        
+        // PREVENIR CONTEXT MENU E SELEÇÃO (MOBILE)
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('selectstart', e => e.preventDefault());
+        document.addEventListener('dragstart', e => e.preventDefault());
+        
+        // INICIALIZAÇÃO SUPER AGRESSIVA
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                setTimeout(initializeIframe, 100);
+            });
+        } else {
+            setTimeout(initializeIframe, 100);
+        }
+        
+        // APLICAR FULLSCREEN IMEDIATAMENTE
+        forceFullscreen();
+        
+        // Dev: console.log('🔥 WRAPPER IFRAME ULTRA AGRESSIVO INICIALIZADO - MODO FULLSCREEN FORÇADO!');
+    </script>
+</body>
+</html>

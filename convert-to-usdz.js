@@ -30,7 +30,7 @@ function executeCommand(command, args, cwd = process.cwd()) {
 function ensureDirectoryExists(dirPath) {
     if (!fs.existsSync(dirPath)) {
         fs.mkdirSync(dirPath, { recursive: true });
-        console.log(`📁 Diretório criado: ${dirPath}`);
+        // Dev: console.log(`📁 Diretório criado: ${dirPath}`);
     }
 }
 
@@ -43,27 +43,27 @@ function getGLBFiles() {
 // Função para converter GLB para USDZ usando Python
 async function convertGLBToUSDZ(inputFile, outputFile) {
     try {
-        console.log(`🔄 Convertendo: ${inputFile} → ${outputFile}`);
+        // Dev: console.log(`🔄 Convertendo: ${inputFile} → ${outputFile}`);
         
         // Usar o script Python para conversão
         await executeCommand('python', [PYTHON_SCRIPT, inputFile, outputFile]);
         
-        console.log(`✅ Sucesso: ${outputFile}`);
+        // Dev: console.log(`✅ Sucesso: ${outputFile}`);
         return true;
     } catch (error) {
-        console.error(`❌ Erro convertendo ${inputFile}:`, error.message);
+        // Dev: console.error(`❌ Erro convertendo ${inputFile}:`, error.message);
         return false;
     }
 }
 
 // Função principal
 async function main() {
-    console.log('🚀 Iniciando conversão GLB → USDZ...\n');
+    // Dev: console.log('🚀 Iniciando conversão GLB → USDZ...\n');
     
     // Verificar se o script Python existe
     if (!fs.existsSync(PYTHON_SCRIPT)) {
-        console.error(`❌ Script Python não encontrado: ${PYTHON_SCRIPT}`);
-        console.log('📋 Criando script Python...');
+        // Dev: console.error(`❌ Script Python não encontrado: ${PYTHON_SCRIPT}`);
+        // Dev: console.log('📋 Criando script Python...');
         
         // Criar o script Python
         const pythonScript = `#!/usr/bin/env python3
@@ -122,7 +122,7 @@ if __name__ == "__main__":
 `;
         
         fs.writeFileSync(PYTHON_SCRIPT, pythonScript);
-        console.log(`✅ Script Python criado: ${PYTHON_SCRIPT}\n`);
+        // Dev: console.log(`✅ Script Python criado: ${PYTHON_SCRIPT}\n`);
     }
     
     // Criar diretório de saída
@@ -132,13 +132,13 @@ if __name__ == "__main__":
     const glbFiles = getGLBFiles();
     
     if (glbFiles.length === 0) {
-        console.log('⚠️  Nenhum arquivo GLB encontrado');
+        // Dev: console.log('⚠️  Nenhum arquivo GLB encontrado');
         return;
     }
     
-    console.log(`📋 Encontrados ${glbFiles.length} arquivos GLB:`);
-    glbFiles.forEach(file => console.log(`   - ${file}`));
-    console.log('');
+    // Dev: console.log(`📋 Encontrados ${glbFiles.length} arquivos GLB:`);
+    glbFiles.forEach(file => // Dev: console.log(`   - ${file}`));
+    // Dev: console.log('');
     
     // Estatísticas
     let successful = 0;
@@ -159,17 +159,20 @@ if __name__ == "__main__":
     }
     
     // Relatório final
-    console.log('\n📊 Relatório Final:');
-    console.log(`✅ Conversões bem-sucedidas: ${successful}`);
-    console.log(`❌ Conversões falhas: ${failed}`);
-    console.log(`📁 Arquivos USDZ salvos em: ${OUTPUT_DIR}`);
+    // Dev: console.log('\n📊 Relatório Final:');
+    // Dev: console.log(`✅ Conversões bem-sucedidas: ${successful}`);
+    // Dev: console.log(`❌ Conversões falhas: ${failed}`);
+    // Dev: console.log(`📁 Arquivos USDZ salvos em: ${OUTPUT_DIR}`);
     
     if (successful > 0) {
-        console.log('\n🎉 Conversão concluída! Agora atualize o index.html para usar a pasta usdz/');
+        // Dev: console.log('\n🎉 Conversão concluída! Agora atualize o index.html para usar a pasta usdz/');
     }
 }
 
 // Executar se for chamado diretamente
 if (require.main === module) {
-    main().catch(console.error);
+    main().catch(err => {
+    // Dev: console.error(err);
+    process.exit(1);
+});
 }

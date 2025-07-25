@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Techno Sutra AR</title>
+    <meta name="description" content="Experiência imersiva em realidade aumentada dos 56 capítulos do Avatamsaka Sutra com modelos 3D interativos">
+    <title>Techno Sutra AR - Experiência Imersiva em Realidade Aumentada</title>
     <style>
         body {
             margin: 0;
@@ -279,6 +280,47 @@
         .hidden {
             display: none !important;
         }
+
+        /* Accessibility enhancements */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Focus indicators */
+        button:focus,
+        .ar-button:focus,
+        .control-button:focus,
+        .camera-button:focus {
+            outline: 3px solid #4285f4;
+            outline-offset: 2px;
+        }
+
+        /* Skip navigation */
+        .skip-nav {
+            position: absolute;
+            top: -40px;
+            left: 8px;
+            z-index: 10001;
+            background: #4285f4;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: top 0.3s ease;
+        }
+
+        .skip-nav:focus {
+            top: 8px;
+        }
         
         .loading-spinner {
             border: 3px solid rgba(255, 255, 255, 0.3);
@@ -473,92 +515,140 @@
         }
     </style>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+    
+    <!-- Security Scripts -->
+    <script src="security/security-config.js"></script>
+    <script src="security/csp-nonce.js"></script>
+    <script src="security/input-validation.js"></script>
+    <script src="security/iframe-security.js"></script>
+    <script src="security/file-access-security.js"></script>
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://ajax.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https:; font-src 'self'; object-src 'none'; media-src 'self'; frame-src 'self'; worker-src 'self'; manifest-src 'self'; form-action 'self'; frame-ancestors 'self'; base-uri 'self';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
 </head>
 <body>
-    <!-- Error 404 overlay -->
-    <div class="error-404 hidden" id="error-404">
-        <div class="error-icon">🤖</div>
-        <div class="error-title">404</div>
-        <div class="error-message">Você está pronto?</div>
-        <div class="error-subtitle">
-            O modelo solicitado não foi encontrado. Retornando ao modelo padrão...
-        </div>
-    </div>
+    <!-- Skip navigation -->
+    <a href="#main-content" class="skip-nav">Pular para o conteúdo principal</a>
 
-    <!-- Camera permission overlay -->
-    <div class="camera-permission hidden" id="camera-permission">
-        <div class="camera-icon">📷</div>
-        <div class="camera-title">Acesso à Câmera Necessário</div>
-        <div class="camera-description">
-            Para uma experiência AR completa, precisamos acessar sua câmera.
-            Isso permite ver o mundo real como fundo para os modelos 3D.
-        </div>
-        <button class="camera-button" id="camera-button">Permitir Câmera</button>
-    </div>
+    <!-- Main content -->
+    <main id="main-content">
+        <!-- Live region for status announcements -->
+        <div id="live-region" aria-live="polite" aria-atomic="true" class="sr-only"></div>
 
-    <!-- Loading overlay -->
-    <div class="loading-overlay" id="loading-overlay">
-        <div class="loading-content">
-            <div class="loading-title">Techno Sutra AR</div>
-            <div class="loading-subtitle">Preparando experiência imersiva...</div>
-            <div class="loading-spinner"></div>
-        </div>
-    </div>
-
-    <!-- Status (hidden by default, only for critical messages) -->
-    <div id="status" class="hidden"></div>
-
-    <!-- Feed da câmera -->
-    <video id="camera-feed" autoplay playsinline muted></video>
-
-    <!-- AR Prompt -->
-    <div class="ar-prompt">
-          Mova o dispositivo lentamente para encontrar uma superfície
-    </div>
-    
-    <!-- Visualizador 3D com melhorias AR seguindo padrões oficiais -->
-    <model-viewer
-        id="modelViewer"
-        alt="Modelo 3D Interativo - Techno Sutra AR"
-        camera-controls
-        touch-action="pan-y"
-        ar
-        ar-modes="webxr scene-viewer quick-look"
-        ar-scale="fixed"
-        ar-placement="floor"
-        auto-rotate
-        rotation-per-second="30deg"
-        loading="eager"
-        reveal="auto"	
-        skybox-image="https://modelviewer.dev/shared-assets/environments/spruit_sunrise_1k_HDR.jpg"
-        skybox-height="2m"
-        style="background-color: transparent; --ar-scale: 2.5;">
-
-        <!-- Botão AR customizado seguindo padrões oficiais -->
-        <button slot="ar-button" class="ar-button" id="ar-button">
-            <span class="ar-icon">📱</span>
-            <span class="ar-text">Ver em AR</span>
-        </button>
-
-        <!-- Progress bar customizado -->
-        <div slot="progress-bar" class="progress-bar" id="progress-bar">
-            <div class="progress-bar-fill"></div>
-        </div>
-
-        <!-- AR prompt seguindo padrões oficiais -->
-        <div slot="ar-prompt" class="ar-prompt-official">
-            <div class="ar-prompt-content">
-                <div class="ar-prompt-icon">📱</div>
-                <div class="ar-prompt-text">Mova o dispositivo para encontrar uma superfície</div>
+        <!-- Error 404 overlay -->
+        <section class="error-404 hidden" id="error-404" role="alert" aria-labelledby="error-title">
+            <div class="error-icon" aria-hidden="true">🤖</div>
+            <h1 class="error-title" id="error-title">404</h1>
+            <div class="error-message">Você está pronto?</div>
+            <div class="error-subtitle">
+                O modelo solicitado não foi encontrado. Retornando ao modelo padrão...
             </div>
+        </section>
+
+        <!-- Camera permission overlay -->
+        <section class="camera-permission hidden" id="camera-permission" role="dialog" aria-labelledby="camera-title" aria-describedby="camera-description">
+            <div class="camera-icon" aria-hidden="true">📷</div>
+            <h2 class="camera-title" id="camera-title">Acesso à Câmera Necessário</h2>
+            <div class="camera-description" id="camera-description">
+                Para uma experiência AR completa, precisamos acessar sua câmera.
+                Isso permite ver o mundo real como fundo para os modelos 3D.
+            </div>
+            <button class="camera-button" id="camera-button" aria-describedby="camera-description">Permitir Câmera</button>
+        </section>
+
+        <!-- Loading overlay -->
+        <section class="loading-overlay" id="loading-overlay" aria-labelledby="loading-title">
+            <div class="loading-content">
+                <h2 class="loading-title" id="loading-title">Techno Sutra AR</h2>
+                <div class="loading-subtitle">Preparando experiência imersiva...</div>
+                <div class="loading-spinner" role="progressbar" aria-label="Carregando modelo 3D"></div>
+            </div>
+        </section>
+
+        <!-- Status (hidden by default, only for critical messages) -->
+        <div id="status" class="hidden" role="status" aria-live="polite"></div>
+
+        <!-- Feed da câmera -->
+        <video id="camera-feed" autoplay playsinline muted aria-label="Feed da câmera para realidade aumentada"></video>
+
+        <!-- AR Prompt -->
+        <div class="ar-prompt" aria-live="polite">
+              Mova o dispositivo lentamente para encontrar uma superfície
         </div>
-    </model-viewer>
-    
-    <!-- Controles do modelo -->
-    <div class="model-controls hidden" id="model-controls">
-        <button class="control-button" id="reset-camera" title="Resetar câmera">🔄</button>
-        <button class="control-button" id="toggle-rotate" title="Alternar rotação">⏸️</button>
-    </div>
+        
+        <!-- Visualizador 3D com melhorias AR seguindo padrões oficiais -->
+        <section aria-labelledby="model-section-title">
+            <h2 id="model-section-title" class="sr-only">Visualizador de Modelo 3D em Realidade Aumentada</h2>
+            <model-viewer
+                id="modelViewer"
+                alt="Modelo 3D Interativo do Capítulo do Avatamsaka Sutra em Realidade Aumentada"
+                camera-controls
+                touch-action="pan-y"
+                ar
+                ar-modes="webxr scene-viewer quick-look"
+                ar-scale="fixed"
+                ar-placement="floor"
+                auto-rotate
+                rotation-per-second="30deg"
+                loading="eager"
+                reveal="auto"	
+                skybox-image="https://modelviewer.dev/shared-assets/environments/spruit_sunrise_1k_HDR.jpg"
+                skybox-height="2m"
+                style="background-color: transparent; --ar-scale: 2.5;"
+                aria-describedby="model-instructions">
+
+                <!-- Botão AR customizado seguindo padrões oficiais -->
+                <button slot="ar-button" class="ar-button" id="ar-button" 
+                        aria-label="Visualizar modelo em realidade aumentada" 
+                        aria-describedby="ar-button-description">
+                    <span class="ar-icon" aria-hidden="true">📱</span>
+                    <span class="ar-text">Ver em AR</span>
+                </button>
+
+                <!-- Progress bar customizado -->
+                <div slot="progress-bar" class="progress-bar" id="progress-bar" role="progressbar" aria-label="Progresso do carregamento do modelo">
+                    <div class="progress-bar-fill"></div>
+                </div>
+
+                <!-- AR prompt seguindo padrões oficiais -->
+                <div slot="ar-prompt" class="ar-prompt-official" aria-live="polite">
+                    <div class="ar-prompt-content">
+                        <div class="ar-prompt-icon" aria-hidden="true">📱</div>
+                        <div class="ar-prompt-text">Mova o dispositivo para encontrar uma superfície</div>
+                    </div>
+                </div>
+            </model-viewer>
+            
+            <!-- Instruções para screen readers -->
+            <div id="model-instructions" class="sr-only">
+                Use os controles de rotação para explorar o modelo 3D. Toque ou clique para interagir. 
+                Use o botão "Ver em AR" para experiência em realidade aumentada.
+            </div>
+            <div id="ar-button-description" class="sr-only">
+                Abre o modelo em realidade aumentada usando a câmera do dispositivo
+            </div>
+        </section>
+        
+        <!-- Controles do modelo -->
+        <nav class="model-controls hidden" id="model-controls" role="toolbar" aria-label="Controles do modelo 3D">
+            <button class="control-button" id="reset-camera" 
+                    aria-label="Resetar posição da câmera do modelo"
+                    title="Resetar câmera">
+                <span aria-hidden="true">🔄</span>
+                <span class="sr-only">Resetar câmera</span>
+            </button>
+            <button class="control-button" id="toggle-rotate" 
+                    aria-label="Alternar rotação automática do modelo"
+                    title="Alternar rotação">
+                <span aria-hidden="true">⏸️</span>
+                <span class="sr-only">Pausar rotação</span>
+            </button>
+        </nav>
+    </main>
 
     <script>
         // Elementos DOM com verificação de existência
@@ -578,7 +668,8 @@
         
         // Verificar se elementos existem
         if (!modelViewer || !statusDiv || !arButton) {
-            console.error('Elementos DOM essenciais não encontrados');
+            // Critical DOM elements not found - exit gracefully
+            return;
         }
         
         // Estado da aplicação
@@ -591,13 +682,23 @@
         let autoARAttempted = false;
         let is404Error = false;
         
-        // Configuração do modelo
-        const urlParams = new URLSearchParams(window.location.search);
-        const modelId = Math.max(1, Math.min(54, parseInt(urlParams.get('model')) || 1));
+        // Configuração do modelo com validação de segurança
+        const urlValidation = window.InputValidator ? 
+            window.InputValidator.validateURLParameters() : 
+            { sanitized: { model: 1 }, warnings: [] };
         
-        // Production logging - console only
+        const modelId = urlValidation.sanitized.model;
+        
+        // Log security warnings
+        if (urlValidation.warnings.length > 0 && window.SecurityLogger) {
+            urlValidation.warnings.forEach(warning => {
+                window.SecurityLogger.log('warning', warning);
+            });
+        }
+        
+        // Production logging - silent operation
         function logStatus(message) {
-            console.log(`[Techno Sutra AR] ${message}`);
+            // Silent in production - dev: console.log(`[Techno Sutra AR] ${message}`);
         }
 
         // Show critical status messages only
@@ -607,12 +708,21 @@
             statusDiv.textContent = message;
             statusDiv.className = `show ${type}`;
 
+            // Also announce to screen readers
+            const liveRegion = document.getElementById('live-region');
+            if (liveRegion) {
+                liveRegion.textContent = message;
+            }
+
             if (statusHideTimer) {
                 clearTimeout(statusHideTimer);
             }
 
             statusHideTimer = setTimeout(() => {
                 statusDiv.classList.remove('show');
+                if (liveRegion) {
+                    liveRegion.textContent = '';
+                }
             }, duration);
         }
 
@@ -673,9 +783,18 @@
             }
         }
         
-        // FIXED: Verificação de modelo com melhor tratamento de erro
+        // Verificação segura de modelo com validação de arquivo
         async function checkModelExists(modelSrc, timeout = 5000) {
             try {
+                // Validar caminho do arquivo primeiro
+                if (window.fileAccessSecurity) {
+                    const pathValidation = window.fileAccessSecurity.validateFilePath(modelSrc);
+                    if (!pathValidation.valid) {
+                        logStatus(`Caminho de arquivo inválido: ${pathValidation.error}`);
+                        return false;
+                    }
+                }
+                
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), timeout);
                 
@@ -686,6 +805,12 @@
                 });
                 
                 clearTimeout(timeoutId);
+                
+                // Log acesso ao arquivo
+                if (window.fileAccessSecurity) {
+                    window.fileAccessSecurity.logFileAccess(modelSrc, response.ok ? 'exists' : 'not_found');
+                }
+                
                 return response.ok;
             } catch (error) {
                 if (error.name === 'AbortError') {
@@ -693,6 +818,12 @@
                 } else {
                     logStatus(`Erro verificando modelo: ${error.message}`);
                 }
+                
+                // Log falha de acesso
+                if (window.fileAccessSecurity) {
+                    window.fileAccessSecurity.logFileAccess(modelSrc, 'check_failed', { error: error.message });
+                }
+                
                 return false;
             }
         }
@@ -1099,14 +1230,16 @@
                 if (tapTimer) {
                     clearTimeout(tapTimer);
                 }
-                // Show debug info in console
-                console.log('=== DEBUG INFO ===');
-                console.log('Model loaded:', modelLoaded);
-                console.log('AR ready:', arReady);
-                console.log('AR session active:', arSessionActive);
-                console.log('Model ID:', modelId);
-                console.log('User agent:', navigator.userAgent);
-                console.log('==================');
+                // DEBUG MODE: Triple-tap shows debug info (dev only)
+                // Production: Silent debug mode
+                // Dev mode: Uncomment lines below for debugging
+                // console.log('=== DEBUG INFO ===');
+                // console.log('Model loaded:', modelLoaded);
+                // console.log('AR ready:', arReady);
+                // console.log('AR session active:', arSessionActive);
+                // console.log('Model ID:', modelId);
+                // console.log('User agent:', navigator.userAgent);
+                // console.log('==================');
                 tapCount = 0;
             }
         });
@@ -1120,7 +1253,7 @@
                 navigator.serviceWorker.register('/sw.js')
                     .then(registration => {
                         logStatus('Service Worker registrado com sucesso');
-                        console.log('SW registered:', registration);
+                        // Dev: console.log('SW registered:', registration);
 
                         // Check for updates
                         registration.addEventListener('updatefound', () => {
@@ -1129,7 +1262,7 @@
                     })
                     .catch(error => {
                         logStatus('Service Worker não disponível');
-                        console.log('SW registration failed:', error);
+                        // Dev: console.log('SW registration failed:', error);
                     });
             });
         }

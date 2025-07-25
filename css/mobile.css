@@ -1,0 +1,654 @@
+/* Mobile-First Responsive CSS for Techno Sutra AR */
+
+/* Mobile Base Styles */
+* {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* Allow text selection for content areas */
+.model-title,
+.model-subtitle,
+.header-title,
+.header-subtitle,
+p {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+/* iOS Safari viewport fixes */
+body {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Safe area support for iOS */
+.header,
+.gallery-container,
+.footer {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+}
+
+.header {
+    padding-top: max(20px, env(safe-area-inset-top));
+}
+
+.footer {
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+}
+
+/* Mobile touch targets - minimum 44px */
+button,
+.action-btn,
+.filter-btn,
+.control-button,
+.ar-button,
+.camera-button,
+.quick-action-btn,
+.theme-toggle {
+    min-height: 44px;
+    min-width: 44px;
+    touch-action: manipulation;
+}
+
+/* Enhanced touch feedback */
+button:active,
+.action-btn:active,
+.filter-btn:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+}
+
+/* Mobile-optimized model viewer */
+model-viewer {
+    touch-action: manipulation;
+    /* Optimize for mobile performance */
+    --progress-bar-height: 4px;
+    --progress-bar-color: #7877c6;
+}
+
+/* Mobile-specific model viewer optimizations */
+@media (max-width: 768px) {
+    model-viewer {
+        /* Reduce quality for mobile performance */
+        --environment-image: none;
+        /* Optimize shadows for mobile */
+        --shadow-intensity: 0.5;
+        /* Faster loading on mobile */
+        loading: lazy;
+    }
+    
+    model-viewer[auto-rotate] {
+        /* Slower rotation for mobile battery */
+        rotation-per-second: 15deg;
+    }
+}
+
+/* Mobile hamburger menu animations */
+.mobile-menu-toggle {
+    position: relative;
+    z-index: 1001;
+    background: rgba(15, 15, 15, 0.8);
+    border: 1px solid rgba(120, 119, 198, 0.3);
+    border-radius: 8px;
+    backdrop-filter: blur(20px);
+    transition: all 0.3s ease;
+}
+
+.mobile-menu-toggle:hover {
+    background: rgba(120, 119, 198, 0.2);
+    border-color: rgba(120, 119, 198, 0.5);
+}
+
+.hamburger {
+    width: 24px;
+    height: 20px;
+    position: relative;
+    transform: rotate(0deg);
+    transition: 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.hamburger span {
+    display: block;
+    position: absolute;
+    height: 2px;
+    width: 100%;
+    background: #e5e7eb;
+    border-radius: 2px;
+    opacity: 1;
+    left: 0;
+    transform: rotate(0deg);
+    transition: 0.25s ease-in-out;
+}
+
+.hamburger span:nth-child(1) {
+    top: 0px;
+    transform-origin: left center;
+}
+
+.hamburger span:nth-child(2) {
+    top: 9px;
+    transform-origin: left center;
+}
+
+.hamburger span:nth-child(3) {
+    top: 18px;
+    transform-origin: left center;
+}
+
+.mobile-menu-toggle.active .hamburger span:nth-child(1) {
+    transform: rotate(45deg);
+    top: -2px;
+    left: 6px;
+}
+
+.mobile-menu-toggle.active .hamburger span:nth-child(2) {
+    width: 0%;
+    opacity: 0;
+}
+
+.mobile-menu-toggle.active .hamburger span:nth-child(3) {
+    transform: rotate(-45deg);
+    top: 20px;
+    left: 6px;
+}
+
+/* Mobile menu overlay */
+.mobile-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    height: -webkit-fill-available;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.mobile-menu.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.mobile-menu-item {
+    color: #e5e7eb;
+    text-decoration: none;
+    font-size: 1.25rem;
+    font-weight: 400;
+    padding: 16px 24px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+    text-align: center;
+    min-width: 200px;
+    display: block;
+    background: rgba(15, 15, 15, 0.6);
+    backdrop-filter: blur(10px);
+}
+
+.mobile-menu-item:hover,
+.mobile-menu-item:focus {
+    color: #f3f4f6;
+    background: rgba(120, 119, 198, 0.2);
+    border-color: rgba(120, 119, 198, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(120, 119, 198, 0.2);
+}
+
+/* Mobile search optimizations */
+#search-input {
+    font-size: 16px; /* Prevent zoom on iOS */
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+#search-input:focus {
+    transform: none; /* Prevent iOS zoom */
+}
+
+/* Mobile gallery grid optimizations */
+@media (max-width: 480px) {
+    .gallery-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 0 8px;
+    }
+    
+    .model-card {
+        padding: 16px;
+        border-radius: 12px;
+    }
+    
+    .model-viewer-container {
+        height: 200px;
+        border-radius: 8px;
+    }
+    
+    .action-btn {
+        font-size: 0.75rem;
+        padding: 10px 12px;
+        min-width: 80px;
+    }
+    
+    .filter-btn {
+        font-size: 0.8rem;
+        padding: 10px 16px;
+        border-radius: 16px;
+    }
+}
+
+/* Mobile landscape optimizations */
+@media (orientation: landscape) and (max-height: 600px) {
+    .header-hero {
+        padding: 20px 0 30px;
+    }
+    
+    .header-title {
+        font-size: 1.5rem;
+        margin-bottom: 12px;
+    }
+    
+    .header-subtitle {
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+    }
+    
+    .header-quick-stats {
+        gap: 12px;
+        margin-top: 16px;
+    }
+    
+    .header-quick-stat {
+        padding: 12px 8px;
+    }
+    
+    .mobile-menu-item {
+        font-size: 1rem;
+        padding: 12px 20px;
+        min-width: 150px;
+    }
+}
+
+/* Mobile button states and feedback */
+.mobile-feedback {
+    transition: all 0.1s ease;
+}
+
+.mobile-feedback:active {
+    transform: scale(0.95);
+    opacity: 0.8;
+}
+
+/* AR button mobile optimizations */
+.ar-button {
+    /* Ensure proper touch target size */
+    min-height: 56px;
+    min-width: 140px;
+    font-size: 16px;
+    padding: 16px 24px;
+    bottom: max(32px, env(safe-area-inset-bottom, 32px));
+}
+
+@media (max-width: 480px) {
+    .ar-button {
+        min-height: 52px;
+        min-width: 120px;
+        font-size: 15px;
+        padding: 14px 20px;
+    }
+}
+
+/* Mobile progress indicators */
+.progress-bar {
+    bottom: max(20px, env(safe-area-inset-bottom, 20px));
+    width: min(80vw, 300px);
+    height: 4px;
+}
+
+/* Mobile loading states */
+.loading-overlay {
+    padding: max(20px, env(safe-area-inset-top, 20px)) 20px max(20px, env(safe-area-inset-bottom, 20px));
+}
+
+.loading-title {
+    font-size: clamp(1.5rem, 6vw, 2.5rem);
+}
+
+.loading-subtitle {
+    font-size: clamp(0.9rem, 4vw, 1.1rem);
+    line-height: 1.4;
+}
+
+/* Mobile error states */
+.error-404,
+.camera-permission {
+    padding: max(20px, env(safe-area-inset-top, 20px)) 20px max(20px, env(safe-area-inset-bottom, 20px));
+}
+
+.error-icon,
+.camera-icon {
+    font-size: clamp(3rem, 12vw, 5rem);
+}
+
+.error-title,
+.camera-title {
+    font-size: clamp(1.5rem, 8vw, 2.5rem);
+}
+
+.error-message {
+    font-size: clamp(1rem, 5vw, 1.3rem);
+}
+
+.error-subtitle,
+.camera-description {
+    font-size: clamp(0.9rem, 4vw, 1rem);
+    max-width: 90vw;
+}
+
+/* Mobile status messages */
+#status {
+    top: max(20px, env(safe-area-inset-top, 20px));
+    left: 16px;
+    right: 16px;
+    padding: 16px 20px;
+    min-height: 44px;
+    font-size: 14px;
+}
+
+/* Mobile controls optimization */
+.model-controls {
+    bottom: max(100px, calc(env(safe-area-inset-bottom, 0px) + 100px));
+    gap: 16px;
+}
+
+.control-button {
+    width: 52px;
+    height: 52px;
+    font-size: 18px;
+}
+
+@media (max-width: 480px) {
+    .control-button {
+        width: 48px;
+        height: 48px;
+        font-size: 16px;
+    }
+}
+
+/* Mobile theme toggle positioning */
+.theme-toggle {
+    top: max(16px, env(safe-area-inset-top, 16px));
+    right: 16px;
+    width: 44px;
+    height: 44px;
+}
+
+/* Mobile quick actions positioning */
+.quick-actions {
+    bottom: max(20px, env(safe-area-inset-bottom, 20px));
+    right: 16px;
+}
+
+.quick-action-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 1rem;
+}
+
+/* Mobile accessibility enhancements */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .hamburger,
+    .hamburger span,
+    .mobile-menu {
+        transition: none !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .model-card,
+    .action-btn,
+    .filter-btn,
+    .mobile-menu-item {
+        border-width: 2px;
+        border-color: currentColor;
+    }
+    
+    .ar-button,
+    .control-button,
+    .camera-button {
+        border-width: 3px;
+    }
+}
+
+/* Dark mode mobile optimizations */
+@media (prefers-color-scheme: dark) {
+    .mobile-menu {
+        background: rgba(0, 0, 0, 0.98);
+    }
+    
+    .mobile-menu-item {
+        background: rgba(15, 15, 15, 0.8);
+    }
+    
+    .mobile-menu-toggle {
+        background: rgba(15, 15, 15, 0.9);
+    }
+}
+
+/* Light mode mobile styles */
+body.light-mode .mobile-menu {
+    background: rgba(248, 250, 252, 0.95);
+    color: #1f2937;
+}
+
+body.light-mode .mobile-menu-item {
+    background: rgba(255, 255, 255, 0.8);
+    color: #1f2937;
+    border-color: rgba(99, 102, 241, 0.1);
+}
+
+body.light-mode .mobile-menu-item:hover {
+    background: rgba(99, 102, 241, 0.1);
+    color: #111827;
+}
+
+body.light-mode .mobile-menu-toggle {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(99, 102, 241, 0.2);
+}
+
+body.light-mode .hamburger span {
+    background: #1f2937;
+}
+
+/* Mobile performance optimizations */
+.model-card {
+    contain: layout style paint;
+    will-change: transform;
+}
+
+model-viewer {
+    contain: layout style;
+}
+
+/* Smooth scrolling for mobile */
+html {
+    scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+/* Mobile focus management */
+.mobile-menu.active .mobile-menu-item:first-child {
+    /* Auto-focus first menu item when opened */
+    animation: focusIn 0.3s ease;
+}
+
+@keyframes focusIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile keyboard navigation */
+.mobile-menu-item:focus,
+.filter-btn:focus,
+.action-btn:focus {
+    outline: 3px solid #7877c6;
+    outline-offset: 2px;
+    z-index: 1;
+    position: relative;
+}
+
+/* Mobile swipe indicators (visual hints) */
+.swipe-hint {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    opacity: 0.5;
+    color: #9ca3af;
+    pointer-events: none;
+}
+
+/* Mobile connection-aware loading */
+.slow-connection .model-viewer-container {
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(120, 119, 198, 0.1),
+        rgba(120, 119, 198, 0.1) 10px,
+        transparent 10px,
+        transparent 20px
+    );
+}
+
+.slow-connection .loading-spinner {
+    border-top-color: #ff6b6b;
+}
+
+/* Mobile battery-aware animations */
+@media (prefers-reduced-motion: reduce) {
+    model-viewer[auto-rotate] {
+        auto-rotate: false;
+    }
+    
+    .loading-spinner {
+        animation: none;
+        border-top-color: #7877c6;
+    }
+}
+
+/* Very small screens (320px and below) */
+@media (max-width: 320px) {
+    .header-container {
+        padding: 0 12px;
+    }
+    
+    .gallery-container {
+        padding: 16px 12px;
+    }
+    
+    .mobile-menu-item {
+        font-size: 1rem;
+        padding: 12px 16px;
+        min-width: 160px;
+    }
+    
+    .filter-btn {
+        font-size: 0.75rem;
+        padding: 8px 12px;
+    }
+    
+    .action-btn {
+        font-size: 0.7rem;
+        padding: 8px 10px;
+        min-width: 70px;
+    }
+    
+    .ar-button {
+        min-width: 100px;
+        font-size: 14px;
+        padding: 12px 16px;
+        min-height: 48px;
+    }
+    
+    .theme-toggle,
+    .quick-action-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Mobile data saver mode */
+@media (prefers-reduced-data: reduce) {
+    model-viewer {
+        loading: lazy;
+        reveal: interaction;
+    }
+    
+    .model-viewer-container::before {
+        content: "Toque para carregar";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        z-index: 10;
+    }
+}
+
+/* Mobile print styles */
+@media print {
+    .mobile-menu,
+    .mobile-menu-toggle,
+    .theme-toggle,
+    .quick-actions,
+    .model-controls,
+    .ar-button {
+        display: none !important;
+    }
+    
+    .model-card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}

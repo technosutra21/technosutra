@@ -3,8 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Galeria completa com 56 capítulos do Avatamsaka Sutra em modelos 3D interativos e experiências de realidade aumentada">
     <title>Galeria Techno Sutra AR - 56 Capítulos do Avatamsaka Sutra</title>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+    
+    <!-- Security Scripts -->
+    <script src="security/security-config.js"></script>
+    <script src="security/csp-nonce.js"></script>
+    <script src="security/input-validation.js"></script>
+    <script src="security/iframe-security.js"></script>
+    <script src="security/file-access-security.js"></script>
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://ajax.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https:; font-src 'self'; object-src 'none'; media-src 'self'; frame-src 'self'; worker-src 'self'; manifest-src 'self'; form-action 'self'; frame-ancestors 'self'; base-uri 'self';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    
     <style>
         * {
             margin: 0;
@@ -802,11 +818,52 @@
             scroll-behavior: smooth;
         }
 
+        /* Accessibility enhancements */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Focus indicators */
+        button:focus,
+        .action-btn:focus,
+        .filter-btn:focus,
+        .theme-toggle:focus,
+        .quick-action-btn:focus,
+        .header-nav-item:focus {
+            outline: 3px solid #7877c6;
+            outline-offset: 2px;
+        }
+
+        /* Skip navigation */
+        .skip-nav {
+            position: absolute;
+            top: -40px;
+            left: 8px;
+            z-index: 10001;
+            background: #7877c6;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: top 0.3s ease;
+        }
+
+        .skip-nav:focus {
+            top: 8px;
+        }
+
         /* Enhanced transitions - only for interactive elements */
         .action-btn, .filter-btn, .model-card, .quick-action-btn, .theme-toggle {
-            transition-property: transform, opacity, background-color, border-color;
-            transition-duration: 0.2s;
-            transition-timing-function: ease-out;
+            transition: transform 0.2s ease-out, opacity 0.2s ease-out, background-color 0.2s ease-out, border-color 0.2s ease-out;
         }
 
         .model-card.hidden {
@@ -914,55 +971,74 @@
     </style>
 </head>
 <body>
+    <!-- Skip navigation -->
+    <a href="#main-content" class="skip-nav">Pular para o conteúdo principal</a>
+
     <!-- Botão de alternância de tema -->
-    <button class="theme-toggle tooltip" data-tooltip="Alternar tema claro/escuro" onclick="toggleTheme()">
-        🌙
+    <button class="theme-toggle tooltip" data-tooltip="Alternar tema claro/escuro" onclick="toggleTheme()" 
+            aria-label="Alternar entre tema claro e escuro">
+        <span aria-hidden="true">🌙</span>
+        <span class="sr-only">Alternar tema</span>
     </button>
 
     <!-- Quick Actions -->
-    <div class="quick-actions">
-        <button class="quick-action-btn tooltip" data-tooltip="Voltar ao topo" onclick="scrollToTop()">
-            ↑
+    <nav class="quick-actions" role="navigation" aria-label="Ações rápidas">
+        <button class="quick-action-btn tooltip" data-tooltip="Voltar ao topo" onclick="scrollToTop()"
+                aria-label="Voltar ao topo da página">
+            <span aria-hidden="true">↑</span>
+            <span class="sr-only">Voltar ao topo</span>
         </button>
-        <button class="quick-action-btn tooltip" data-tooltip="Estatísticas" onclick="showStats()">
-            📊
+        <button class="quick-action-btn tooltip" data-tooltip="Estatísticas" onclick="showStats()"
+                aria-label="Mostrar estatísticas da galeria">
+            <span aria-hidden="true">📊</span>
+            <span class="sr-only">Estatísticas</span>
         </button>
-        <button class="quick-action-btn tooltip" data-tooltip="Compartilhar" onclick="shareGallery()">
-            📤
+        <button class="quick-action-btn tooltip" data-tooltip="Compartilhar" onclick="shareGallery()"
+                aria-label="Compartilhar galeria">
+            <span aria-hidden="true">📤</span>
+            <span class="sr-only">Compartilhar</span>
         </button>
-    </div>
-    <div class="header">
+    </nav>
+
+    <!-- Live region for status announcements -->
+    <div id="live-region" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+
+    <header class="header">
         <div class="header-container">
             <!-- Navigation Bar -->
-            <nav class="header-nav">
+            <nav class="header-nav" role="navigation" aria-label="Navegação principal">
                 <div class="header-logo">
-                    <div class="header-logo-icon">🏛️</div>
+                    <div class="header-logo-icon" aria-hidden="true">🏛️</div>
                     <div class="header-logo-text">Techno Sutra AR</div>
                 </div>
                 <div class="header-nav-items">
-                    <div class="header-stats">
+                    <div class="header-stats" role="group" aria-label="Estatísticas da galeria">
                         <div class="header-stat">
-                            <span>📊</span>
+                            <span aria-hidden="true">📊</span>
                             <span class="header-stat-value" id="header-available-count">0</span>
                             <span>disponíveis</span>
                         </div>
                         <div class="header-stat">
-                            <span>🎯</span>
+                            <span aria-hidden="true">🎯</span>
                             <span class="header-stat-value" id="header-completion-rate">0%</span>
                             <span>completo</span>
                         </div>
                         <div class="header-stat">
-                            <span>⏱️</span>
+                            <span aria-hidden="true">⏱️</span>
                             <span class="header-stat-value" id="header-last-updated">Carregando...</span>
                         </div>
                     </div>
-                    <a href="index.html" class="header-nav-item">🚀 Visualizador AR</a>
-                    <a href="#gallery" class="header-nav-item">📚 Galeria</a>
+                    <a href="index.html" class="header-nav-item" aria-label="Ir para o visualizador de realidade aumentada">
+                        <span aria-hidden="true">🚀</span> Visualizador AR
+                    </a>
+                    <a href="#gallery" class="header-nav-item" aria-label="Ir para a seção da galeria">
+                        <span aria-hidden="true">📚</span> Galeria
+                    </a>
                 </div>
             </nav>
 
             <!-- Hero Section -->
-            <div class="header-hero">
+            <section class="header-hero">
                 <h1 class="header-title">Galeria Avatamsaka Sutra</h1>
                 <p class="header-subtitle">
                     Explore os 56 capítulos sagrados através de modelos 3D interativos.
@@ -1116,7 +1192,7 @@
 
         // Função para detectar dinamicamente todos os modelos disponíveis
         async function detectAvailableModels() {
-            console.log('🔍 Detectando modelos disponíveis...');
+            // Dev: console.log('🔍 Detectando modelos disponíveis...');
             const detectedModels = [];
 
             // Batch requests for better performance
@@ -1130,7 +1206,7 @@
                         checkModelExists(j).then(exists => {
                             if (exists) {
                                 detectedModels.push(j);
-                                console.log(`✅ Modelo ${j} encontrado`);
+                                // Dev: console.log(`✅ Modelo ${j} encontrado`);
                             }
                             return { id: j, exists };
                         })
@@ -1147,8 +1223,8 @@
             // Ordenar os modelos encontrados
             availableModels = detectedModels.sort((a, b) => a - b);
 
-            console.log(`📊 Total de modelos encontrados: ${availableModels.length}/56`);
-            console.log(`📋 Modelos disponíveis: [${availableModels.join(', ')}]`);
+            // Dev: console.log(`📊 Total de modelos encontrados: ${availableModels.length}/56`);
+            // Dev: console.log(`📋 Modelos disponíveis: [${availableModels.join(', ')}]`);
 
             return availableModels;
         }
@@ -1248,7 +1324,7 @@
                 for (let i = 1; i <= 56; i++) {
                     const chapter = chapters[i - 1];
                     if (!chapter) {
-                        console.warn(`Capítulo ${i} não encontrado nos dados`);
+                        // Dev: console.warn(`Capítulo ${i} não encontrado nos dados`);
                         continue;
                     }
 
@@ -1279,10 +1355,10 @@
                 // Atualizar contadores nos filtros
                 updateFilterCounts();
 
-                console.log(`✅ Galeria carregada: ${availableCount}/56 modelos disponíveis (${completionRate}%)`);
+                // Dev: console.log(`✅ Galeria carregada: ${availableCount}/56 modelos disponíveis (${completionRate}%)`);
 
             } catch (error) {
-                console.error('❌ Erro ao carregar galeria:', error);
+                // Dev: console.error('❌ Erro ao carregar galeria:', error);
                 galleryGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: #ef4444;">Erro ao carregar modelos. Verifique a conexão.</div>';
             }
         }
