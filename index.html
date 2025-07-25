@@ -201,13 +201,22 @@
         touch-action="pan-y"
         ar
         ar-modes="webxr scene-viewer quick-look"
-        ar-scale="fixed"
+        ar-scale="auto"
         ar-placement="floor"
         auto-rotate
         rotation-per-second="30deg"
         loading="eager"
-        reveal="auto"	
-        style="background-color: transparent; --ar-scale: 2.0;">
+        reveal="auto"
+        shadow-intensity="1.2"
+        shadow-softness="0.8"
+        environment-image="neutral"
+        exposure="1.0"
+        camera-target="auto auto auto"
+        field-of-view="30deg"
+        min-camera-orbit="auto 0deg auto"
+        max-camera-orbit="auto 180deg auto"
+        tone-mapping="aces"
+        style="background-color: transparent; --ar-scale: 1.5; --poster-color: transparent; filter: contrast(1.1) saturate(1.2) brightness(1.05);">
 
         <!-- Custom AR button -->
         <button slot="ar-button" class="ar-button" id="ar-button">
@@ -410,7 +419,18 @@
                 const usdzExists = await checkModelExists(usdzSrc);
                 if (usdzExists) {
                     elements.modelViewer.setAttribute('ios-src', usdzSrc);
-                    log(`USDZ file found for iOS: ${usdzSrc}`);
+                    
+                    // Enhanced iOS QuickLook attributes for better quality
+                    elements.modelViewer.setAttribute('ar-scale', 'auto');
+                    elements.modelViewer.setAttribute('camera-target', 'auto auto auto');
+                    
+                    // iOS-specific metadata for better viewing
+                    elements.modelViewer.setAttribute('seamless-poster', '');
+                    elements.modelViewer.setAttribute('poster-color', 'transparent');
+                    
+                    log(`USDZ file configured for iOS QuickLook: ${usdzSrc}`);
+                } else {
+                    log(`No USDZ file found, using GLB to USDZ conversion for iOS`);
                 }
                 
                 // Set AR scale

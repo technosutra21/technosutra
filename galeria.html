@@ -1115,10 +1115,10 @@
             
             // Pular a primeira linha (header)
             for (let i = 1; i < lines.length; i++) {
-                const line = lines[i];
-                if (line.trim()) {
-                    // Parse simplificado para CSV com pipe separator
-                    const values = line.split('|');
+                const line = lines[i].trim();
+                if (line && !line.startsWith('|')) {
+                    // Parse CSV com pipe separator, removendo aspas duplas
+                    const values = line.split('|').map(val => val.replace(/^"|"$/g, '').trim());
                     if (values.length > 1) {
                         result.push(values);
                     }
