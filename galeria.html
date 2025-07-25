@@ -1103,6 +1103,102 @@
 
         // Array para armazenar modelos disponíveis (detectados dinamicamente)
         let availableModels = [];
+        
+        // Arrays para armazenar os dados dos CSV
+        let chaptersData = {};
+        let charactersData = {};
+        
+        // Função para fazer parse do CSV
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n');
+            const result = [];
+            
+            // Pular a primeira linha (header)
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i];
+                if (line.trim()) {
+                    // Parse simplificado para CSV com pipe separator
+                    const values = line.split('|');
+                    if (values.length > 1) {
+                        result.push(values);
+                    }
+                }
+            }
+            
+            return result;
+        }
+        
+        // Função para carregar dados dos CSVs
+        async function loadCSVData() {
+            try {
+                // Carregar chapters.csv
+                const chaptersResponse = await fetch('summaries/chapters.csv');
+                if (chaptersResponse.ok) {
+                    const chaptersText = await chaptersResponse.text();
+                    const chaptersArray = parseCSV(chaptersText);
+                    
+                    chaptersArray.forEach(row => {
+                        if (row.length >= 16) {
+                            const chapterId = parseInt(row[4]); // coluna 'capitulo'
+                            if (!isNaN(chapterId)) {
+                                chaptersData[chapterId] = {
+                                    id: chapterId,
+                                    created_date: row[1]?.replace(/"/g, '') || '', // Created Date
+                                    updated_date: row[2]?.replace(/"/g, '') || '', // Updated Date
+                                    title: row[5]?.replace(/"/g, '') || 'Título não disponível', // Chapter_Title
+                                    name: row[6]?.replace(/"/g, '') || 'Nome não disponível', // Name_Translation
+                                    location: row[7]?.replace(/"/g, '') || 'Local não disponível', // Location
+                                    context: row[8]?.replace(/"/g, '') || 'Contexto não disponível', // Context
+                                    assembly_present: row[9]?.replace(/"/g, '') || 'Assembleia não descrita', // Assembly_Present
+                                    main_dialogue: row[10]?.replace(/"/g, '') || 'Diálogo não disponível', // Main_Dialogue
+                                    teaching: row[11]?.replace(/"/g, '') || 'Ensinamento não disponível', // Main_Teaching
+                                    manifestations: row[12]?.replace(/"/g, '') || 'Manifestações não disponíveis', // Miraculous_Manifestations
+                                    spiritual_progression: row[13]?.replace(/"/g, '') || 'Progressão espiritual não descrita', // Spiritual_Progression
+                                    transition: row[14]?.replace(/"/g, '') || 'Transição não descrita', // Transition
+                                    unique_elements: row[15]?.replace(/"/g, '') || 'Elementos únicos não descritos' // Unique_Elements
+                                };
+                            }
+                        }
+                    });
+                }
+                
+                // Carregar characters.csv
+                const charactersResponse = await fetch('summaries/characters.csv');
+                if (charactersResponse.ok) {
+                    const charactersText = await charactersResponse.text();
+                    const charactersArray = parseCSV(charactersText);
+                    
+                    charactersArray.forEach(row => {
+                        if (row.length >= 16) {
+                            const chapterId = parseInt(row[4]); // coluna 'capitulo'
+                            if (!isNaN(chapterId)) {
+                                charactersData[chapterId] = {
+                                    id: chapterId,
+                                    created_date: row[1]?.replace(/"/g, '') || '', // Created Date
+                                    updated_date: row[2]?.replace(/"/g, '') || '', // Updated Date
+                                    name: row[5]?.replace(/"/g, '') || 'Nome não disponível', // Nome
+                                    teaching: row[6]?.replace(/"/g, '') || 'Ensinamento não disponível', // Ensinamento
+                                    description: row[7]?.replace(/"/g, '') || 'Descrição não disponível', // Desc. Personagem
+                                    occupation: row[8]?.replace(/"/g, '') || 'Ocupação não disponível', // Ocupação
+                                    meaning: row[9]?.replace(/"/g, '') || 'Significado não disponível', // Significado
+                                    location: row[10]?.replace(/"/g, '') || 'Local não disponível', // Local
+                                    summary: row[11]?.replace(/"/g, '') || 'Resumo não disponível', // Resumo do Cap.
+                                    file_name: row[12]?.replace(/"/g, '') || '', // Cap. FILE NAME
+                                    cap_url: row[13]?.replace(/"/g, '') || '', // Cap. URL
+                                    qr_code_url: row[14]?.replace(/"/g, '') || '', // QR Code URL
+                                    model_link: row[15]?.replace(/"/g, '') || '' // LINK MODEL
+                                };
+                            }
+                        }
+                    });
+                }
+                
+                console.log(`📚 Dados carregados: ${Object.keys(chaptersData).length} capítulos, ${Object.keys(charactersData).length} personagens`);
+                
+            } catch (error) {
+                console.warn('⚠️ Erro ao carregar dados dos CSV:', error);
+            }
+        }
 
         // Função para verificar se um modelo existe
         async function checkModelExists(modelId) {
@@ -1499,7 +1595,24 @@
         // Função para visualizar modelo em tela cheia
         function viewFullscreen(modelId) {
             const chapter = chapters[modelId - 1];
+            const chapterData = chaptersData[modelId];
+            const characterData = charactersData[modelId];
+            
             if (!chapter) return;
+
+            // Combinar dados das diferentes fontes
+            const combinedData = {
+                name: characterData?.name || chapter.name,
+                title: chapterData?.title || chapter.title,
+                occupation: characterData?.occupation || chapter.occupation,
+                location: chapterData?.location || characterData?.location || chapter.location,
+                meaning: characterData?.meaning || 'Significado não disponível',
+                description: characterData?.description || 'Descrição não disponível',
+                context: chapterData?.context || 'Contexto não disponível',
+                teaching: characterData?.teaching || chapterData?.teaching || 'Ensinamento não disponível',
+                manifestations: chapterData?.manifestations || 'Manifestações não disponíveis',
+                summary: characterData?.summary || 'Resumo não disponível'
+            };
 
             const modal = document.createElement('div');
             modal.style.cssText = `
@@ -1509,19 +1622,78 @@
             `;
 
             modal.innerHTML = `
-                <div style="position: relative; width: 95%; height: 95%; max-width: 1000px; display: flex; flex-direction: column;">
-                    <div style="background: rgba(15,15,15,0.8); padding: 20px; border-radius: 12px 12px 0 0; border: 1px solid rgba(120,119,198,0.2);">
-                        <h3 style="margin: 0 0 8px 0; color: #f3f4f6; font-size: 1.5rem; font-weight: 300;">${chapter.name}</h3>
-                        <p style="margin: 0 0 8px 0; color: #9ca3af; font-size: 1rem; font-style: italic;">${chapter.title}</p>
-                        <div style="display: flex; gap: 20px; font-size: 0.9rem;">
-                            <span style="color: #7877c6;">${chapter.occupation}</span>
-                            <span style="color: #6b7280;">${chapter.location}</span>
+                <div style="position: relative; width: 95%; height: 95%; max-width: 1400px; display: flex; gap: 20px;">
+                    <!-- Painel de Informações -->
+                    <div style="width: 40%; background: rgba(15,15,15,0.9); border-radius: 12px; border: 1px solid rgba(120,119,198,0.2); padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+                        <!-- Header do Personagem -->
+                        <div style="padding: 24px; border-bottom: 1px solid rgba(120,119,198,0.1); background: linear-gradient(135deg, rgba(120,119,198,0.1), rgba(120,119,198,0.05));">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                                <div style="width: 48px; height: 48px; background: linear-gradient(135deg, rgba(120,119,198,0.3), rgba(120,119,198,0.1)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 1px solid rgba(120,119,198,0.3);">📿</div>
+                                <div>
+                                    <div style="color: #7877c6; font-size: 0.85rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em;">Capítulo ${modelId}</div>
+                                    <h2 style="margin: 0; color: #f3f4f6; font-size: 1.4rem; font-weight: 300;">${combinedData.name}</h2>
+                                </div>
+                            </div>
+                            <p style="margin: 0; color: #9ca3af; font-size: 1rem; font-style: italic; line-height: 1.4;">${combinedData.title}</p>
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px;">
+                                <span style="background: rgba(120,119,198,0.2); color: #e5e7eb; padding: 4px 12px; border-radius: 16px; font-size: 0.8rem; border: 1px solid rgba(120,119,198,0.3);">${combinedData.occupation}</span>
+                                <span style="background: rgba(75,85,99,0.3); color: #d1d5db; padding: 4px 12px; border-radius: 16px; font-size: 0.8rem; border: 1px solid rgba(75,85,99,0.5);">${combinedData.location}</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Conteúdo Scrollável -->
+                        <div style="flex: 1; padding: 20px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(120,119,198,0.3) transparent;">
+                            <!-- Significado -->
+                            <div style="margin-bottom: 24px;">
+                                <h4 style="margin: 0 0 8px 0; color: #f3f4f6; font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;"><span style="color: #7877c6;">✨</span> Significado</h4>
+                                <p style="margin: 0; color: #d1d5db; font-size: 0.85rem; line-height: 1.5;">${combinedData.meaning}</p>
+                            </div>
+                            
+                            <!-- Descrição -->
+                            <div style="margin-bottom: 24px;">
+                                <h4 style="margin: 0 0 8px 0; color: #f3f4f6; font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;"><span style="color: #7877c6;">👤</span> Descrição</h4>
+                                <p style="margin: 0; color: #d1d5db; font-size: 0.85rem; line-height: 1.5;">${combinedData.description.length > 200 ? combinedData.description.substring(0, 200) + '...' : combinedData.description}</p>
+                            </div>
+                            
+                            <!-- Contexto -->
+                            <div style="margin-bottom: 24px;">
+                                <h4 style="margin: 0 0 8px 0; color: #f3f4f6; font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;"><span style="color: #7877c6;">🏛️</span> Contexto</h4>
+                                <p style="margin: 0; color: #d1d5db; font-size: 0.85rem; line-height: 1.5;">${combinedData.context.length > 200 ? combinedData.context.substring(0, 200) + '...' : combinedData.context}</p>
+                            </div>
+                            
+                            <!-- Ensinamento -->
+                            <div style="margin-bottom: 24px;">
+                                <h4 style="margin: 0 0 8px 0; color: #f3f4f6; font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;"><span style="color: #7877c6;">📖</span> Ensinamento</h4>
+                                <p style="margin: 0; color: #d1d5db; font-size: 0.85rem; line-height: 1.5;">${combinedData.teaching.length > 300 ? combinedData.teaching.substring(0, 300) + '...' : combinedData.teaching}</p>
+                            </div>
+                            
+                            <!-- Manifestações -->
+                            <div style="margin-bottom: 24px;">
+                                <h4 style="margin: 0 0 8px 0; color: #f3f4f6; font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;"><span style="color: #7877c6;">✨</span> Manifestações</h4>
+                                <p style="margin: 0; color: #d1d5db; font-size: 0.85rem; line-height: 1.5;">${combinedData.manifestations.length > 200 ? combinedData.manifestations.substring(0, 200) + '...' : combinedData.manifestations}</p>
+                            </div>
+                            
+                            <!-- Resumo -->
+                            <div>
+                                <h4 style="margin: 0 0 8px 0; color: #f3f4f6; font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;"><span style="color: #7877c6;">📄</span> Resumo</h4>
+                                <p style="margin: 0; color: #d1d5db; font-size: 0.85rem; line-height: 1.5;">${combinedData.summary.length > 300 ? combinedData.summary.substring(0, 300) + '...' : combinedData.summary}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Footer com Ações -->
+                        <div style="padding: 16px 20px; border-top: 1px solid rgba(120,119,198,0.1); background: rgba(0,0,0,0.2);">
+                            <div style="display: flex; gap: 12px; justify-content: center;">
+                                <button onclick="openInAR(${modelId})" style="background: linear-gradient(135deg, rgba(120,119,198,0.3), rgba(120,119,198,0.2)); border: 1px solid rgba(120,119,198,0.4); color: #ffffff; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: all 0.3s ease;">🥽 Ver em AR</button>
+                                <button onclick="downloadModel(${modelId})" style="background: rgba(75,85,99,0.3); border: 1px solid rgba(75,85,99,0.5); color: #d1d5db; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: all 0.3s ease;">💾 Download</button>
+                            </div>
                         </div>
                     </div>
-                    <div style="flex: 1; background: rgba(0,0,0,0.4); border-radius: 0 0 12px 12px; border: 1px solid rgba(120,119,198,0.2); border-top: none;">
+                    
+                    <!-- Visualizador 3D -->
+                    <div style="flex: 1; background: rgba(0,0,0,0.4); border-radius: 12px; border: 1px solid rgba(120,119,198,0.2); overflow: hidden;">
                         <model-viewer
                             src="modelo${modelId}.glb"
-                            alt="Modelo 3D - ${chapter.name}: ${chapter.title}"
+                            alt="Modelo 3D - ${combinedData.name}: ${combinedData.title}"
                             auto-rotate
                             camera-controls
                             environment-image="neutral"
@@ -1532,14 +1704,23 @@
                             camera-orbit="0deg 70deg 3.5m"
                             field-of-view="45deg"
                             style="width: 100%; height: 100%; background: transparent;">
+                            <div slot="poster" style="display: flex; align-items: center; justify-content: center; height: 100%; background: rgba(0,0,0,0.1);">
+                                <div style="text-align: center; color: #9ca3af;">
+                                    <div style="font-size: 3rem; margin-bottom: 16px;">📿</div>
+                                    <div style="font-size: 1.1rem;">Carregando modelo 3D...</div>
+                                </div>
+                            </div>
                         </model-viewer>
                     </div>
+                    
+                    <!-- Botão Fechar -->
                     <button onclick="this.parentElement.parentElement.remove()"
-                            style="position: absolute; top: 15px; right: 15px;
-                                   background: rgba(15,15,15,0.8); border: 1px solid rgba(120,119,198,0.3);
+                            style="position: absolute; top: 15px; right: 15px; z-index: 10;
+                                   background: rgba(15,15,15,0.9); border: 1px solid rgba(120,119,198,0.3);
                                    color: #e5e7eb; padding: 12px; border-radius: 8px;
                                    cursor: pointer; font-size: 16px; backdrop-filter: blur(10px);
-                                   transition: all 0.3s ease;">✕</button>
+                                   transition: all 0.3s ease; width: 40px; height: 40px;
+                                   display: flex; align-items: center; justify-content: center;">✕</button>
                 </div>
             `;
 
@@ -1620,9 +1801,14 @@ function updateParallax() {
         }
 
         // Carregar galeria quando a página estiver pronta
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             setupLazyLoading();
-            loadGallery();
+            
+            // Carregar dados CSV primeiro
+            await loadCSVData();
+            
+            // Depois carregar a galeria
+            await loadGallery();
             setupFilters();
             setupSmoothNavigation();
 
