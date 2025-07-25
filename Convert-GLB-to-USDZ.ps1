@@ -60,7 +60,14 @@ function Convert-GLBToUSDZ {
         }
         
         # Método 3: Blender (se disponível)
+        $blenderPath = $null
         if (Get-Command "blender" -ErrorAction SilentlyContinue) {
+            $blenderPath = "blender"
+        } elseif (Test-Path "C:\Program Files\Blender Foundation\Blender 4.5\blender.exe") {
+            $blenderPath = "C:\Program Files\Blender Foundation\Blender 4.5\blender.exe"
+        }
+        
+        if ($blenderPath) {
             Write-Host "🔧 Usando Blender..." -ForegroundColor Cyan
             $blenderScript = @"
 import bpy
@@ -94,7 +101,7 @@ except Exception as e:
             $scriptPath = Join-Path $env:TEMP "blender_convert.py"
             $blenderScript | Out-File -FilePath $scriptPath -Encoding UTF8
             
-            $result = & blender --background --python $scriptPath -- $InputFile $OutputFile 2>&1
+            $result = & $blenderPath --background --python $scriptPath -- $InputFile $OutputFile 2>&1
             Remove-Item $scriptPath -Force -ErrorAction SilentlyContinue
             
             if ($LASTEXITCODE -eq 0 -and (Test-Path $OutputFile)) {

@@ -1108,26 +1108,23 @@
         let chaptersData = {};
         let charactersData = {};
         
-        // Função para fazer parse do CSV
         function parseCSV(csvText) {
-            const lines = csvText.split('\n');
-            const result = [];
-            
-            // Pular a primeira linha (header)
-            for (let i = 1; i < lines.length; i++) {
-                const line = lines[i].trim();
-                if (line && !line.startsWith('|')) {
-                    // Parse CSV com pipe separator, removendo aspas duplas
-                    const values = line.split('|').map(val => val.replace(/^"|"$/g, '').trim());
-                    if (values.length > 1) {
-                        result.push(values);
-                    }
-                }
+            const lines = csvText.trim().split('\n');
+            lines.shift(); // Remove header
+            if (!lines.length || (lines.length === 1 && !lines[0])) {
+                return [];
             }
-            
-            return result;
+            return lines.map(line => {
+                const cleanLine = line.trim();
+                if (!cleanLine) {
+                    return null;
+                }
+                const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
+                const values = cleanLine.split(regex);
+                return values.map(val => val.trim().replace(/^\"|\"$/g, '').trim());
+            }).filter(row => row !== null);
         }
-        
+
         // Função para carregar dados dos CSVs
         async function loadCSVData() {
             try {
@@ -1138,24 +1135,24 @@
                     const chaptersArray = parseCSV(chaptersText);
                     
                     chaptersArray.forEach(row => {
-                        if (row.length >= 16) {
-                            const chapterId = parseInt(row[4]); // coluna 'capitulo'
+                        if (row && row.length >= 16) {
+                            const chapterId = parseInt(row[4]);
                             if (!isNaN(chapterId)) {
                                 chaptersData[chapterId] = {
                                     id: chapterId,
-                                    created_date: row[1]?.replace(/"/g, '') || '', // Created Date
-                                    updated_date: row[2]?.replace(/"/g, '') || '', // Updated Date
-                                    title: row[5]?.replace(/"/g, '') || 'Título não disponível', // Chapter_Title
-                                    name: row[6]?.replace(/"/g, '') || 'Nome não disponível', // Name_Translation
-                                    location: row[7]?.replace(/"/g, '') || 'Local não disponível', // Location
-                                    context: row[8]?.replace(/"/g, '') || 'Contexto não disponível', // Context
-                                    assembly_present: row[9]?.replace(/"/g, '') || 'Assembleia não descrita', // Assembly_Present
-                                    main_dialogue: row[10]?.replace(/"/g, '') || 'Diálogo não disponível', // Main_Dialogue
-                                    teaching: row[11]?.replace(/"/g, '') || 'Ensinamento não disponível', // Main_Teaching
-                                    manifestations: row[12]?.replace(/"/g, '') || 'Manifestações não disponíveis', // Miraculous_Manifestations
-                                    spiritual_progression: row[13]?.replace(/"/g, '') || 'Progressão espiritual não descrita', // Spiritual_Progression
-                                    transition: row[14]?.replace(/"/g, '') || 'Transição não descrita', // Transition
-                                    unique_elements: row[15]?.replace(/"/g, '') || 'Elementos únicos não descritos' // Unique_Elements
+                                    created_date: row[1] || '',
+                                    updated_date: row[2] || '',
+                                    title: row[5] || 'Título não disponível',
+                                    name: row[6] || 'Nome não disponível',
+                                    location: row[7] || 'Local não disponível',
+                                    context: row[8] || 'Contexto não disponível',
+                                    assembly_present: row[9] || 'Assembleia não descrita',
+                                    main_dialogue: row[10] || 'Diálogo não disponível',
+                                    teaching: row[11] || 'Ensinamento não disponível',
+                                    manifestations: row[12] || 'Manifestações não disponíveis',
+                                    spiritual_progression: row[13] || 'Progressão espiritual não descrita',
+                                    transition: row[14] || 'Transição não descrita',
+                                    unique_elements: row[15] || 'Elementos únicos não descritos'
                                 };
                             }
                         }
@@ -1169,24 +1166,24 @@
                     const charactersArray = parseCSV(charactersText);
                     
                     charactersArray.forEach(row => {
-                        if (row.length >= 16) {
-                            const chapterId = parseInt(row[4]); // coluna 'capitulo'
+                        if (row && row.length >= 16) {
+                            const chapterId = parseInt(row[4]);
                             if (!isNaN(chapterId)) {
                                 charactersData[chapterId] = {
                                     id: chapterId,
-                                    created_date: row[1]?.replace(/"/g, '') || '', // Created Date
-                                    updated_date: row[2]?.replace(/"/g, '') || '', // Updated Date
-                                    name: row[5]?.replace(/"/g, '') || 'Nome não disponível', // Nome
-                                    teaching: row[6]?.replace(/"/g, '') || 'Ensinamento não disponível', // Ensinamento
-                                    description: row[7]?.replace(/"/g, '') || 'Descrição não disponível', // Desc. Personagem
-                                    occupation: row[8]?.replace(/"/g, '') || 'Ocupação não disponível', // Ocupação
-                                    meaning: row[9]?.replace(/"/g, '') || 'Significado não disponível', // Significado
-                                    location: row[10]?.replace(/"/g, '') || 'Local não disponível', // Local
-                                    summary: row[11]?.replace(/"/g, '') || 'Resumo não disponível', // Resumo do Cap.
-                                    file_name: row[12]?.replace(/"/g, '') || '', // Cap. FILE NAME
-                                    cap_url: row[13]?.replace(/"/g, '') || '', // Cap. URL
-                                    qr_code_url: row[14]?.replace(/"/g, '') || '', // QR Code URL
-                                    model_link: row[15]?.replace(/"/g, '') || '' // LINK MODEL
+                                    created_date: row[1] || '',
+                                    updated_date: row[2] || '',
+                                    name: row[5] || 'Nome não disponível',
+                                    teaching: row[6] || 'Ensinamento não disponível',
+                                    description: row[7] || 'Descrição não disponível',
+                                    occupation: row[8] || 'Ocupação não disponível',
+                                    meaning: row[9] || 'Significado não disponível',
+                                    location: row[10] || 'Local não disponível',
+                                    summary: row[11] || 'Resumo não disponível',
+                                    file_name: row[12] || '',
+                                    cap_url: row[13] || '',
+                                    qr_code_url: row[14] || '',
+                                    model_link: row[15] || ''
                                 };
                             }
                         }
@@ -1198,6 +1195,7 @@
             } catch (error) {
                 console.warn('⚠️ Erro ao carregar dados dos CSV:', error);
             }
+        }
         }
 
         // Função para verificar se um modelo existe
