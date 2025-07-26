@@ -68,11 +68,17 @@ function Convert-GLBToUSDZ {
         }
         
         if ($blenderPath) {
-            Write-Host "🔧 Usando Blender..." -ForegroundColor Cyan
+            Write-Host "🔧 Usando Blender... (Caminho: $blenderPath)" -ForegroundColor Cyan
             $blenderScript = @"
 import bpy
 import sys
 import os
+
+# Habilitar o addon USD
+try:
+    bpy.ops.preferences.addon_enable(module="io_scene_usd")
+except Exception as e:
+    print(f"Nota: Não foi possível habilitar o addon USD (pode já estar ativo): {e}")
 
 # Limpar cena
 bpy.ops.object.select_all(action='SELECT')
@@ -85,16 +91,16 @@ output_file = sys.argv[-1]
 try:
     bpy.ops.import_scene.gltf(filepath=input_file)
     
-    # Exportar como USDZ (se disponível)
+    # Exportar como USDZ
     if hasattr(bpy.ops.export_scene, 'usd'):
-        bpy.ops.export_scene.usd(filepath=output_file)
-        print("✅ Conversão bem-sucedida com Blender")
+        bpy.ops.export_scene.usd(filepath=output_file, use_selection=False)
+        print(f"✅ Conversão de {os.path.basename(input_file)} para USDZ bem-sucedida.")
     else:
-        print("❌ Blender não tem suporte para USDZ")
+        print("❌ ERRO FATAL: A versão do Blender não tem suporte para exportação USD.")
         sys.exit(1)
         
 except Exception as e:
-    print(f"❌ Erro no Blender: {e}")
+    print(f"❌ ERRO durante o processo do Blender: {e}")
     sys.exit(1)
 "@
             
@@ -102,11 +108,19 @@ except Exception as e:
             $blenderScript | Out-File -FilePath $scriptPath -Encoding UTF8
             
             $result = & $blenderPath --background --python $scriptPath -- $InputFile $OutputFile 2>&1
+            
+            Write-Host "--- Output do Blender ---"
+            Write-Host $result
+            Write-Host "--- Fim do Output do Blender ---"
+            Write-Host "Código de Saída do Blender: $LASTEXITCODE"
+
             Remove-Item $scriptPath -Force -ErrorAction SilentlyContinue
             
             if ($LASTEXITCODE -eq 0 -and (Test-Path $OutputFile)) {
                 Write-Host "✅ Conversão bem-sucedida com Blender" -ForegroundColor Green
                 return $true
+            } else {
+                Write-Host "❌ A conversão com o Blender falhou. Verifique o output e o código de saída acima." -ForegroundColor Red
             }
         }
         
