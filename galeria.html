@@ -1356,10 +1356,21 @@
 
         // Função para download do modelo
         function downloadModel(modelId) {
-            const link = document.createElement('a');
-            link.href = `modelo${modelId}.glb`;
-            link.download = `modelo${modelId}.glb`;
-            link.click();
+            const modelFile = `modelo${modelId}.glb`;
+
+            fetch(modelFile, { method: 'HEAD' })
+                .then((response) => {
+                    if (!response.ok) throw new Error('Model not found');
+
+                    const link = document.createElement('a');
+                    link.href = modelFile;
+                    link.download = modelFile;
+                    link.click();
+                })
+                .catch((error) => {
+                    console.error('Error downloading model:', error);
+                    alert('Model not available for download.');
+                });
         }
 
         // Função principal para carregar a galeria com detecção dinâmica
@@ -1496,6 +1507,47 @@
 
         // Lazy loading observer (initialized later)
         let lazyLoadObserver;
+
+        // Add navigation arrows
+        function addNavigationArrows() {
+            const leftArrow = document.createElement('button');
+            const rightArrow = document.createElement('button');
+
+            leftArrow.innerHTML = '⬅️';
+            rightArrow.innerHTML = '➡️';
+
+            leftArrow.classList.add('nav-arrow');
+            rightArrow.classList.add('nav-arrow');
+
+            leftArrow.style.position = 'absolute';
+            leftArrow.style.left = '10px';
+            leftArrow.style.top = '50%';
+            leftArrow.style.transform = 'translateY(-50%)';
+
+            rightArrow.style.position = 'absolute';
+            rightArrow.style.right = '10px';
+            rightArrow.style.top = '50%';
+            rightArrow.style.transform = 'translateY(-50%)';
+
+            leftArrow.addEventListener('click', () => navigateToModel(-1));
+            rightArrow.addEventListener('click', () => navigateToModel(1));
+
+            document.body.appendChild(leftArrow);
+            document.body.appendChild(rightArrow);
+        }
+
+        function navigateToModel(direction) {
+            const params = new URLSearchParams(window.location.search);
+            let currentModel = parseInt(params.get('model')) || 1;
+            let newModel = currentModel + direction;
+
+            if (newModel < 1) newModel = 56;
+            else if (newModel > 56) newModel = 1;
+
+            params.set('model', newModel);
+
+            window.location.search = params.toString();
+        }
 
         // Função para smooth scroll
         function smoothScrollTo(elementId) {
