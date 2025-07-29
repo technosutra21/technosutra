@@ -5,195 +5,544 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
     <style>
+        :root {
+            --neon-blue: #00f4ff;
+            --neon-purple: #bf40ff;
+            --neon-pink: #ff0080;
+            --neon-green: #00ff00;
+            --cyber-dark: #000000;
+            --cyber-accent: #111111;
+            --amoled-bg: rgba(0, 0, 0, 0.95);
+            --amoled-border: rgba(0, 244, 255, 0.3);
+            --glass-bg: var(--amoled-bg);
+            --glass-border: var(--amoled-border);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body, html { 
             margin: 0; 
             padding: 0; 
             width: 100%; 
             height: 100%; 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            overflow: hidden;
+            background: var(--cyber-dark);
         }
-        #map { width: 100%; height: 100%; }
-        
-        .map-controls {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            z-index: 1000;
+
+        #map { 
+            width: 100%; 
+            height: 100%; 
+            position: relative;
+        }
+
+        /* Modern Collapsible Menu */
+        .menu-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 2000;
+            font-family: inherit;
+        }
+
+        .menu-toggle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--cyber-dark);
+            border: 2px solid var(--neon-blue);
+            backdrop-filter: blur(20px);
+            cursor: pointer;
             display: flex;
-            flex-direction: column;
-            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px rgba(0, 244, 255, 0.4), 0 8px 32px rgba(0, 0, 0, 0.8);
         }
-        
-        .control-btn {
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            border-radius: 6px;
-            padding: 8px 12px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transition: all 0.2s ease;
+
+        .menu-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 40px rgba(0, 244, 255, 0.3);
+            border-color: var(--neon-blue);
         }
-        
-        .control-btn:hover {
-            background: rgba(255, 255, 255, 1);
-            transform: translateY(-1px);
+
+        .menu-icon {
+            width: 24px;
+            height: 24px;
+            position: relative;
+            transform: rotate(0deg);
+            transition: 0.3s ease-in-out;
         }
-        
-        .trail-info {
+
+        .menu-icon span {
+            display: block;
             position: absolute;
-            bottom: 10px;
-            left: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-size: 12px;
-            max-width: 300px;
+            height: 3px;
+            width: 100%;
+            background: var(--neon-blue);
+            border-radius: 9px;
+            opacity: 1;
+            left: 0;
+            transform: rotate(0deg);
+            transition: 0.25s ease-in-out;
+            box-shadow: 0 0 10px var(--neon-blue);
         }
-        
-        .maplibregl-popup {
-            max-width: 300px;
+
+        .menu-icon span:nth-child(1) { top: 0px; }
+        .menu-icon span:nth-child(2) { top: 8px; }
+        .menu-icon span:nth-child(3) { top: 16px; }
+
+        .menu-toggle.open .menu-icon span:nth-child(1) {
+            top: 8px;
+            transform: rotate(135deg);
         }
-        
-        .popup-content {
-            padding: 8px;
+
+        .menu-toggle.open .menu-icon span:nth-child(2) {
+            opacity: 0;
+            left: -60px;
         }
-        
-        .popup-title {
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #333;
+
+        .menu-toggle.open .menu-icon span:nth-child(3) {
+            top: 8px;
+            transform: rotate(-135deg);
         }
-        
-        .popup-location {
-            font-size: 11px;
-            color: #666;
-            font-style: italic;
+
+        .menu-panel {
+            position: absolute;
+            top: 60px;
+            left: 0;
+            min-width: 280px;
+            background: var(--cyber-dark);
+            border: 2px solid var(--neon-blue);
+            border-radius: 16px;
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            transform: translateY(-20px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 30px rgba(0, 244, 255, 0.5), 0 20px 60px rgba(0, 0, 0, 0.9);
         }
-        
-        .waypoint-marker {
-            background: #7877c6;
-            border: 2px solid white;
-            border-radius: 50%;
-            width: 12px;
-            height: 12px;
+
+        .menu-panel.open {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .menu-section {
+            margin-bottom: 20px;
+        }
+
+        .menu-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .menu-section h3 {
+            color: var(--neon-blue);
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0 0 12px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            margin: 6px 0;
+            background: rgba(0, 244, 255, 0.05);
+            border: 1px solid rgba(0, 244, 255, 0.2);
+            border-radius: 12px;
             cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            font-size: 14px;
+            text-decoration: none;
         }
-        
-        .user-marker {
-            background: #ff4444;
-            border: 3px solid white;
+
+        .menu-item:hover {
+            background: rgba(0, 244, 255, 0.1);
+            border-color: var(--neon-blue);
+            transform: translateX(4px);
+            box-shadow: 0 4px 20px rgba(0, 244, 255, 0.2);
+        }
+
+        .menu-item .icon {
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        .menu-item.active {
+            background: rgba(0, 244, 255, 0.2);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 20px rgba(0, 244, 255, 0.3);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch::before {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
+            background: white;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .toggle-switch.active {
+            background: var(--neon-blue);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 244, 255, 0.5);
+        }
+
+        .toggle-switch.active::before {
+            left: 28px;
+        }
+
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            margin: 6px 0;
+            background: rgba(0, 244, 255, 0.05);
+            border: 1px solid rgba(0, 244, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+        }
+
+
+         }
+
+        /* Enhanced Popups */
+        .maplibregl-popup {
+            max-width: 320px;
+        }
+
+        .maplibregl-popup-content {
+            background: var(--cyber-dark) !important;
+            border: 2px solid var(--neon-blue) !important;
+            border-radius: 16px !important;
+            backdrop-filter: blur(20px) !important;
+            box-shadow: 0 0 20px rgba(0, 244, 255, 0.4), 0 20px 60px rgba(0, 0, 0, 0.8) !important;
+        }
+
+        .popup-content {
+            padding: 16px;
+            color: white;
+        }
+
+        .popup-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--neon-blue);
+            font-size: 16px;
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .popup-location {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .popup-coordinates {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.6);
+            font-family: monospace;
+        }
+
+        /* Neon Waypoint Markers */
+        .waypoint-marker {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 5px currentColor;
+            transition: all 0.3s ease;
+            transform-origin: center;
+        }
+            transition: all 0.3s ease;
+            transform-origin: center;
+        }
+
+        .waypoint-marker.part1 {
+            background: radial-gradient(circle, var(--neon-blue), transparent 70%);
+            border: 2px solid var(--neon-blue);
+            box-shadow: 0 0 15px var(--neon-blue), inset 0 0 15px rgba(0, 244, 255, 0.3);
+        }
+
+        .waypoint-marker.part2 {
+            background: radial-gradient(circle, var(--neon-purple), transparent 70%);
+            border: 2px solid var(--neon-purple);
+            box-shadow: 0 0 15px var(--neon-purple), inset 0 0 15px rgba(191, 64, 255, 0.3);
+        }
+
+        .waypoint-marker:hover {
+            transform: translate(-50%, -50%) scale(1.2);
+            z-index: 1000;
+        }
+
+        /* Size variations for markers */
+        .waypoint-marker.size-small {
             width: 16px;
             height: 16px;
-            animation: pulse 2s infinite;
+            font-size: 8px;
         }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.7; }
-            100% { transform: scale(1); opacity: 1; }
+
+        .waypoint-marker.size-medium {
+            width: 24px;
+            height: 24px;
+            font-size: 10px;
+        }
+
+        .waypoint-marker.size-large {
+            width: 32px;
+            height: 32px;
+            font-size: 12px;
+        }
+
+        .waypoint-marker.size-extra-large {
+            width: 40px;
+            height: 40px;
+            font-size: 14px;
+        }
+
+        .waypoint-marker::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: inherit;
+            opacity: 0.6;
+            animation: pulse-ring 2s infinite;
+        }
+
+        /* Enhanced User Marker */
+        .user-marker {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--neon-pink), transparent 70%);
+            border: 3px solid var(--neon-pink);
+            box-shadow: 0 0 20px var(--neon-pink), inset 0 0 15px rgba(255, 0, 128, 0.3);
+            position: relative;
+        }
+
+        .user-marker::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: var(--neon-pink);
+            opacity: 0.4;
+            animation: pulse-ring 1.5s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 0.3;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+
+        /* Theme specific styles */
+        body.light-theme {
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .menu-item,
+        body.light-theme .toggle-item,
+        body.light-theme .popup-content {
+            color: #333;
+        }
+
+        body.light-theme .popup-title {
+            color: var(--neon-blue);
+        }
+
+        body.light-theme .popup-location {
+            color: rgba(0, 0, 0, 0.7);
+        }
+
+        body.light-theme .popup-coordinates {
+            color: rgba(0, 0, 0, 0.5);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .menu-panel {
+                min-width: 260px;
+                left: -10px;
+            }
+            
+
         }
     </style>
-    <title>Mapa da Trilha Techno Sutra - Águas da Prata</title>
+    <title>🌐 Techno Sutra Trail Map - Cyberpunk Edition</title>
 </head>
 <body>
     <div id="map"></div>
     
-    <!-- Controles personalizados -->
-    <div class="map-controls">
-        <button class="control-btn" onclick="toggleMapStyle()" id="styleBtn">📡 Satélite</button>
-        <button class="control-btn" onclick="zoomToTrail()">🗺️ Ver Trilha</button>
-        <button class="control-btn" onclick="locateUser()">📍 Minha Localização</button>
-        <button class="control-btn" onclick="toggleInfo()">ℹ️ Informações</button>
+    <!-- Modern Collapsible Menu -->
+    <div class="menu-container">
+        <div class="menu-toggle" onclick="toggleMenu()">
+            <div class="menu-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        
+        <div class="menu-panel" id="menuPanel">
+            <div class="menu-section">
+                <h3>🎨 Estilo do Mapa</h3>
+                <div class="menu-item active" onclick="setMapStyle('cyberpunk')" id="cyberpunk-style">
+                    <span class="icon">🌆</span>
+                    <span>Cyberpunk</span>
+                </div>
+                <div class="menu-item" onclick="setMapStyle('satellite')" id="satellite-style">
+                    <span class="icon">🛰️</span>
+                    <span>Satélite</span>
+                </div>
+                <div class="menu-item" onclick="setMapStyle('simple')" id="simple-style">
+                    <span class="icon">🗺️</span>
+                    <span>Simples</span>
+                </div>
+            </div>
+            
+                       
+            <div class="menu-section">
+                <h3>🧭 Navegação</h3>
+                <div class="menu-item" onclick="locateUser()">
+                    <span class="icon">📍</span>
+                    <span>Minha Localização</span>
+                </div>
+            </div>
+        </div>
     </div>
-    
-    <!-- Informações da trilha -->
-    <div class="trail-info" id="trailInfo">
-        <div><strong>Trilha Techno Sutra</strong></div>
-        <div>📍 Águas da Prata, SP</div>
-        <div>📊 56 waypoints • ~8km</div>
-        <div>🧭 Avatamsaka Sutra AR Experience</div>
-    </div>
-    
+        
     <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
     <script>
         // Dados da trilha com informações do trail.json
-        const trailData = {
-            "1": { "lat": -21.868036707651, "lng": -46.67732383198648, "name": "Buda Śākyamuni", "location": "Jetavana, no parque de Anāthapiṇḍada em Śrāvastī" },
-            "2": { "lat": -21.86953296779599, "lng": -46.67805522448601, "name": "Samanta­bhadra", "location": "Jetavana, no parque de Anāthapiṇḍada em Śrāvastī" },
-            "3": { "lat": -21.87091546996187, "lng": -46.67797426313243, "name": "Manjushri", "location": "Dhanyākara e floresta sagrada de Vicitra sāla dhvaja vyūha" },
-            "4": { "lat": -21.87221986659534, "lng": -46.67824132815174, "name": "Meghaśrī", "location": "Montanha Sugrīva, na terra de Rāmāvarānta" },
-            "5": { "lat": -21.87309784586943, "lng": -46.67866035798463, "name": "Sāgara­megha", "location": "Costa do oceano, distrito de Sāgaramukha" },
-            "6": { "lat": -21.87393288759804, "lng": -46.67925395359822, "name": "Supratiṣṭhita", "location": "Sāgaratīra, na região de Laṅka" },
-            "7": { "lat": -21.87514572152676, "lng": -46.67896578739468, "name": "Megha", "location": "Cidade de Vajrapura, na terra de Draviḍa" },
-            "8": { "lat": -21.87619736973498, "lng": -46.67855933883119, "name": "Muktaka", "location": "Cidade de Vanavāsī" },
-            "9": { "lat": -21.87646251203698, "lng": -46.67736879037174, "name": "Sāgara­dhvaja", "location": "Milaspharaṇa, ponta do continente de Jambudvīpa" },
-            "10": { "lat": -21.87646009570215, "lng": -46.67623116961117, "name": "Āśā", "location": "Parque Samantavyūha na cidade de Samudravetāḍī" },
-            "11": { "lat": -21.87726006988734, "lng": -46.6754990688399, "name": "Bhīṣmottara­nirghoṣa", "location": "Floresta na terra de Nālayu" },
-            "12": { "lat": -21.87881053413763, "lng": -46.67500319464728, "name": "Jayoṣmāyatana", "location": "Terra de Īṣāṇa, entre montanha de fogo e penhasco" },
-            "13": { "lat": -21.88019054400148, "lng": -46.67496499173143, "name": "Maitrayaṇī", "location": "Palácio Vairocana-garbha na cidade de Siṃha-vijṛmbhita" },
-            "14": { "lat": -21.88187093491057, "lng": -46.67521163743071, "name": "Sudarśana", "location": "Densa floresta na terra de Trinayana" },
-            "15": { "lat": -21.88360463284878, "lng": -46.67525319610547, "name": "Indriyeśvara", "location": "Confluência de rios na cidade de Sumukha" },
-            "16": { "lat": -21.88554337763284, "lng": -46.67386659277159, "name": "Jayoṣmāyatana", "location": "Casa na cidade de Samudra-pratiṣṭhāna" },
-            "17": { "lat": -21.88804852246186, "lng": -46.67358940032627, "name": "Vidvān", "location": "Encruzilhada no centro de Mahāsaṃbhava" },
-            "18": { "lat": -21.89026427458782, "lng": -46.67236457977307, "name": "Sudarśana", "location": "Cidade de Siṃhapota, casa de dez andares" },
-            "19": { "lat": -21.89257575982119, "lng": -46.67372402528618, "name": "Samanta­netra", "location": "Loja de perfumes em Samantamukha, terra de Vetramūlaka" },
-            "20": { "lat": -21.89565884155847, "lng": -46.67312906215643, "name": "Anala", "location": "Cidade de Tāladhvaja, sala do trono" },
-            "21": { "lat": -21.90046826241142, "lng": -46.67138193438598, "name": "Mahāprabha", "location": "Cidade de Suprabha, utopia de magnificência" },
-            "22": { "lat": -21.90531978305068, "lng": -46.67251368039676, "name": "Acalā", "location": "Cidade de Sthirā, casa dos pais" },
-            "23": { "lat": -21.9089395994778, "lng": -46.67338258043213, "name": "Sarvagamin", "location": "Topo da colina Sulabha, perto de Tosala" },
-            "24": { "lat": -21.91231515618248, "lng": -46.67015524085872, "name": "Utpalabhūti", "location": "Terra de Pṛthurāṣṭra" },
-            "25": { "lat": -21.91370861343965, "lng": -46.66815680928756, "name": "Vaira", "location": "Cidade costeira de Kūṭāgāra" },
-            "26": { "lat": -21.91747796051475, "lng": -46.66700692393895, "name": "Jayottama", "location": "Floresta Vicitra Dhvaja, cidade de Nandihāra" },
-            "27": { "lat": -21.92129874885887, "lng": -46.66574849523462, "name": "Siṃhavijṛmbhitā", "location": "Parque Sūrya Prabha, cidade de Kaliṅgavana" },
-            "28": { "lat": -21.92441500351332, "lng": -46.66505284033605, "name": "Vasumitrā", "location": "Cidade de Śubhaparaṃgama" },
-            "29": { "lat": -21.92638215736361, "lng": -46.66537976269724, "name": "Veṣṭhila", "location": "Cidade de Śubhapāraṃgama" },
-            "30": { "lat": -21.92872573943014, "lng": -46.67003972230864, "name": "Avalokiteśvara", "location": "Monte Potalaka, paraíso terrestre" },
-            "31": { "lat": -21.92801238471129, "lng": -46.67454405999145, "name": "Ananyagāmin", "location": "Pico de montanha do sistema de mundos Sahā" },
-            "32": { "lat": -21.92645798923365, "lng": -46.67815322914891, "name": "Mahādeva", "location": "Templo na encruzilhada da cidade de Dvāravatī" },
-            "33": { "lat": -21.92316358227298, "lng": -46.6791445469042, "name": "Sthāvarā", "location": "Bodhimaṇḍa na terra de Magadha" },
-            "34": { "lat": -21.92362359048531, "lng": -46.6842726229277, "name": "Vāsantī", "location": "Céu acima da cidade de Kapilavastu" },
-            "35": { "lat": -21.92525160262302, "lng": -46.6867179324565, "name": "Samanta­gambhīra­śrī­vimala­prabhā", "location": "Bodhimaṇḍa, terra de Magadha, próximo a Vāsantī" },
-            "36": { "lat": -21.9273497679517, "lng": -46.68749089829076, "name": "Pramudita­nayana­jagad­virocanā", "location": "Bodhimaṇḍa, assembleia do Buda" },
-            "37": { "lat": -21.9296471001546, "lng": -46.69039976309249, "name": "Samanta­sattva­trāṇojaḥ­śrī", "location": "No bodhimaṇḍa" },
-            "38": { "lat": -21.92897397421807, "lng": -46.69217665332104, "name": "Praśanta­ruta­sāgara­vatī", "location": "No bodhimaṇḍa" },
-            "39": { "lat": -21.93158183370527, "lng": -46.69375654414417, "name": "Sarva­nagara­rakṣā­saṃbhava­tejaḥ­śrī", "location": "Trono de lótus com séquito de deusas" },
-            "40": { "lat": -21.93423405856974, "lng": -46.69338262520748, "name": "Sarva­vṛkṣpraphullana­sukha­saṃvāsā", "location": "Kūṭāgāra de árvores preciosas" },
-            "41": { "lat": -21.93558462766117, "lng": -46.69382309551595, "name": "Sarva­jagad­rakṣā­praṇidhāna­vīrya­prabhā", "location": "Bodhimaṇḍa, meio do séquito" },
-            "42": { "lat": -21.93567267136837, "lng": -46.6939274554807, "name": "Sutejomaṇḍala­rati­śrī", "location": "Floresta de Lumbinī, local de nascimento do Buda" },
-            "43": { "lat": -21.93582378796983, "lng": -46.69400128111388, "name": "Gopā", "location": "Salão de assembleia dos bodhisattvas, Kapilavastu" },
-            "44": { "lat": -21.945875, "lng": -46.72265833333334, "name": "Māyādevī", "location": "Kūṭāgāra miraculoso em grande lótus de joias" },
-            "45": { "lat": -21.94576185804032, "lng": -46.72279111267893, "name": "Surendrābhā", "location": "Paraíso de Trāyastriṃśa (céu dos 33 deuses)" },
-            "46": { "lat": -21.9458126872239, "lng": -46.72271692853997, "name": "Viśvāmitra", "location": "Cidade de Kapilavastu" },
-            "47": { "lat": -21.94570944120324, "lng": -46.72285742172848, "name": "Śilpābhijña", "location": "Após falar com Viśvāmitra" },
-            "48": { "lat": -21.94566634811362, "lng": -46.72291440447311, "name": "Bhadrottamā", "location": "Cidade de Vartanaka, região de Kevalaka" },
-            "49": { "lat": -21.94561390616393, "lng": -46.72297119284677, "name": "Muktāsāra", "location": "Cidade de Bharukaccha, região sul" },
-            "50": { "lat": -21.9455701207428, "lng": -46.72301867573663, "name": "Sucandra", "location": "Floresta ao lado da cidade de Bharukaccha" },
-            "51": { "lat": -21.94554168699781, "lng": -46.72306759875011, "name": "Ajitasena", "location": "Cidade de Roruka, região sul" },
-            "52": { "lat": -21.94550541436743, "lng": -46.72312550616623, "name": "Śivarāgra", "location": "Vila chamada Dharma, região sul" },
-            "53": { "lat": -21.94578734327873, "lng": -46.72274673868932, "name": "Śrīsaṃbhava & Śrīmati", "location": "Cidade de Sumanāmukha, região sul" },
-            "54": { "lat": -21.94585287592502, "lng": -46.72269285931593, "name": "Maitreya", "location": "Grande pavilhão Vairocana-vyūhālaṃkāra-garbha" },
-            "55": { "lat": -21.9457395226932, "lng": -46.72281764935126, "name": "Manjushri", "location": "Cidade de Sumanāmukha, 110 yojanas de distância" },
-            "56": { "lat": -21.9457395226932, "lng": -46.72281764935126, "name": "Samanta­bhadra", "location": "Bodhimaṇḍa, diante do Tathāgata Vairocana" }
-        };
-        
+        const trailData = 
+
+{
+  "1": { "lat": -21.868036707651, "lng": -46.67732383198648, "name": "Buda Śākyamuni", "location": "Jetavana, no parque de Anāthapiṇḍada em Śrāvastī" },
+  "2": { "lat": -21.86953296779599, "lng": -46.67805522448601, "name": "Samanta­bhadra", "location": "Jetavana, no parque de Anāthapiṇḍada em Śrāvastī" },
+  "3": { "lat": -21.87091546996187, "lng": -46.67797426313243, "name": "Manjushri", "location": "Dhanyākara e floresta sagrada de Vicitra sāla dhvaja vyūha" },
+  "4": { "lat": -21.87221986659534, "lng": -46.67824132815174, "name": "Meghaśrī", "location": "Montanha Sugrīva, na terra de Rāmāvarānta" },
+  "5": { "lat": -21.87309784586943, "lng": -46.67866035798463, "name": "Sāgara­megha", "location": "Costa do oceano, distrito de Sāgaramukha" },
+  "6": { "lat": -21.87393288759804, "lng": -46.67925395359822, "name": "Supratiṣṭhita", "location": "Sāgaratīra, na região de Laṅka" },
+  "7": { "lat": -21.87514572152676, "lng": -46.67896578739468, "name": "Megha", "location": "Cidade de Vajrapura, na terra de Draviḍa" },
+  "8": { "lat": -21.87619736973498, "lng": -46.67855933883119, "name": "Muktaka", "location": "Cidade de Vanavāsī" },
+  "9": { "lat": -21.87646251203698, "lng": -46.67736879037174, "name": "Sāgara­dhvaja", "location": "Milaspharaṇa, ponta do continente de Jambudvīpa" },
+  "10": { "lat": -21.87646009570215, "lng": -46.67623116961117, "name": "Āśā", "location": "Parque Samantavyūha na cidade de Samudravetāḍī" },
+  "11": { "lat": -21.87726006988734, "lng": -46.6754990688399, "name": "Bhīṣmottara­nirghoṣa", "location": "Floresta na terra de Nālayu" },
+  "12": { "lat": -21.87881053413763, "lng": -46.67500319464728, "name": "Jayoṣmāyatana", "location": "Terra de Īṣāṇa, entre montanha de fogo e penhasco" },
+  "13": { "lat": -21.88019054400148, "lng": -46.67496499173143, "name": "Maitrayaṇī", "location": "Palácio Vairocana-garbha na cidade de Siṃha-vijṛmbhita" },
+  "14": { "lat": -21.88187093491057, "lng": -46.67521163743071, "name": "Sudarśana", "location": "Densa floresta na terra de Trinayana" },
+  "15": { "lat": -21.88360463284878, "lng": -46.67525319610547, "name": "Indriyeśvara", "location": "Confluência de rios na cidade de Sumukha" },
+  "16": { "lat": -21.88554337763284, "lng": -46.67386659277159, "name": "Jayoṣmāyatana", "location": "Casa na cidade de Samudra-pratiṣṭhāna" },
+  "17": { "lat": -21.88804852246186, "lng": -46.67358940032627, "name": "Vidvān", "location": "Encruzilhada no centro de Mahāsaṃbhava" },
+  "18": { "lat": -21.89026427458782, "lng": -46.67236457977307, "name": "Sudarśana", "location": "Cidade de Siṃhapota, casa de dez andares" },
+  "19": { "lat": -21.89257575982119, "lng": -46.67372402528618, "name": "Samanta­netra", "location": "Loja de perfumes em Samantamukha, terra de Vetramūlaka" },
+  "20": { "lat": -21.89565884155847, "lng": -46.67312906215643, "name": "Anala", "location": "Cidade de Tāladhvaja, sala do trono" },
+  "21": { "lat": -21.90046826241142, "lng": -46.67138193438598, "name": "Mahāprabha", "location": "Cidade de Suprabha, utopia de magnificência" },
+  "22": { "lat": -21.90531978305068, "lng": -46.67251368039676, "name": "Acalā", "location": "Cidade de Sthirā, casa dos pais" },
+  "23": { "lat": -21.9089395994778, "lng": -46.67338258043213, "name": "Sarvagamin", "location": "Topo da colina Sulabha, perto de Tosala" },
+  "24": { "lat": -21.91231515618248, "lng": -46.67015524085872, "name": "Utpalabhūti", "location": "Terra de Pṛthurāṣṭra" },
+  "25": { "lat": -21.91370861343965, "lng": -46.66815680928756, "name": "Vaira", "location": "Cidade costeira de Kūṭāgāra" },
+  "26": { "lat": -21.91747796051475, "lng": -46.66700692393895, "name": "Jayottama", "location": "Floresta Vicitra Dhvaja, cidade de Nandihāra" },
+  "27": { "lat": -21.92129874885887, "lng": -46.66574849523462, "name": "Siṃhavijṛmbhitā", "location": "Parque Sūrya Prabha, cidade de Kaliṅgavana" },
+  "28": { "lat": -21.92441500351332, "lng": -46.66505284033605, "name": "Vasumitrā", "location": "Cidade de Śubhaparaṃgama" },
+  "29": { "lat": -21.92638215736361, "lng": -46.66537976269724, "name": "Veṣṭhila", "location": "Cidade de Śubhapāraṃgama" },
+  "30": { "lat": -21.92872573943014, "lng": -46.67003972230864, "name": "Avalokiteśvara", "location": "Monte Potalaka, paraíso terrestre" },
+  "31": { "lat": -21.92801238471129, "lng": -46.67454405999145, "name": "Ananyagāmin", "location": "Pico de montanha do sistema de mundos Sahā" },
+  "32": { "lat": -21.92645798923365, "lng": -46.67815322914891, "name": "Mahādeva", "location": "Templo na encruzilhada da cidade de Dvāravatī" },
+  "33": { "lat": -21.92316358227298, "lng": -46.6791445469042, "name": "Sthāvarā", "location": "Bodhimaṇḍa na terra de Magadha" },
+  "34": { "lat": -21.92362359048531, "lng": -46.6842726229277, "name": "Vāsantī", "location": "Céu acima da cidade de Kapilavastu" },
+  "35": { "lat": -21.92525160262302, "lng": -46.6867179324565, "name": "Samanta­gambhīra­śrī­vimala­prabhā", "location": "Bodhimaṇḍa, terra de Magadha, próximo a Vāsantī" },
+  "36": { "lat": -21.9273497679517, "lng": -46.68749089829076, "name": "Pramudita­nayana­jagad­virocanā", "location": "Bodhimaṇḍa, assembleia do Buda" },
+  "37": { "lat": -21.9296471001546, "lng": -46.69039976309249, "name": "Samanta­sattva­trāṇojaḥ­śrī", "location": "No bodhimaṇḍa" },
+  "38": { "lat": -21.92897397421807, "lng": -46.69217665332104, "name": "Praśanta­ruta­sāgara­vatī", "location": "No bodhimaṇḍa" },
+  "39": { "lat": -21.93158183370527, "lng": -46.69375654414417, "name": "Sarva­nagara­rakṣā­saṃbhava­tejaḥ­śrī", "location": "Trono de lótus com séquito de deusas" },
+  "40": { "lat": -21.93423405856974, "lng": -46.69338262520748, "name": "Sarva­vṛkṣpraphullana­sukha­saṃvāsā", "location": "Kūṭāgāra de árvores preciosas" },
+  "41": { "lat": -21.93558462766117, "lng": -46.69382309551595, "name": "Sarva­jagad­rakṣā­praṇidhāna­vīrya­prabhā", "location": "Bodhimaṇḍa, meio do séquito" },
+  "42": { "lat": -21.93567267136837, "lng": -46.6939274554807, "name": "Sutejomaṇḍala­rati­śrī", "location": "Floresta de Lumbinī, local de nascimento do Buda" },
+  "43": { "lat": -21.93582378796983, "lng": -46.69400128111388, "name": "Gopā", "location": "Salão de assembleia dos bodhisattvas, Kapilavastu" },
+  "44": { "lat": -21.945875, "lng": -46.72265833333334, "name": "Māyādevī", "location": "Kūṭāgāra miraculoso em grande lótus de joias" },
+  "45": { "lat": -21.94576185804032, "lng": -46.72279111267893, "name": "Surendrābhā", "location": "Paraíso de Trāyastriṃśa (céu dos 33 deuses)" },
+  "46": { "lat": -21.9458126872239, "lng": -46.72271692853997, "name": "Viśvāmitra", "location": "Cidade de Kapilavastu" },
+  "47": { "lat": -21.94570944120324, "lng": -46.72285742172848, "name": "Śilpābhijña", "location": "Após falar com Viśvāmitra" },
+  "48": { "lat": -21.94566634811362, "lng": -46.72291440447311, "name": "Bhadrottamā", "location": "Cidade de Vartanaka, região de Kevalaka" },
+  "49": { "lat": -21.94561390616393, "lng": -46.72297119284677, "name": "Muktāsāra", "location": "Cidade de Bharukaccha, região sul" },
+  "50": { "lat": -21.9455701207428, "lng": -46.72301867573663, "name": "Sucandra", "location": "Floresta ao lado da cidade de Bharukaccha" },
+  "51": { "lat": -21.94554168699781, "lng": -46.72306759875011, "name": "Ajitasena", "location": "Cidade de Roruka, região sul" },
+  "52": { "lat": -21.94550541436743, "lng": -46.72312550616623, "name": "Śivarāgra", "location": "Vila chamada Dharma, região sul" },
+  "53": { "lat": -21.94578734327873, "lng": -46.72274673868932, "name": "Śrīsaṃbhava & Śrīmati", "location": "Cidade de Sumanāmukha, região sul" },
+  "54": { "lat": -21.94585287592502, "lng": -46.72269285931593, "name": "Maitreya", "location": "Grande pavilhão Vairocana-vyūhālaṃkāra-garbha" },
+  "55": { "lat": -21.9457395226932, "lng": -46.72281764935126, "name": "Manjushri", "location": "Cidade de Sumanāmukha, 110 yojanas de distância" },
+  "56": { "lat": -21.9457395226932, "lng": -46.72281764935126, "name": "Samanta­bhadra", "location": "Bodhimaṇḍa, diante do Tathāgata Vairocana" }
+}
+
+
         // Converter dados da trilha para array
         const waypoints = Object.entries(trailData).map(([id, point]) => ({
             id: parseInt(id),
             ...point
         }));
         
-        // Estilos de mapa
+        // Apply class for trail part markers
+        waypoints.forEach((point) => {
+            point.part = point.id <= 43 ? 'part1' : 'part2';
+        });
+        
+        // Estilos de mapa com suporte completo
         const mapStyles = {
-            street: {
-                name: 'OpenStreetMap',
+            cyberpunk: {
+                name: 'Cyberpunk',
                 style: {
                     "version": 8,
                     "sources": {
-                        "osm": {
+                        "terrain": {
                             "type": "raster",
                             "tiles": ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
                             "tileSize": 256,
@@ -201,10 +550,19 @@
                         }
                     },
                     "layers": [{
-                        "id": "osm",
+                        "id": "terrain",
                         "type": "raster",
-                        "source": "osm"
-                    }]
+                        "source": "terrain",
+                        "paint": {
+                            "raster-opacity": 0.8,
+                            "raster-hue-rotate": 200,
+                            "raster-saturation": -0.5,
+                            "raster-brightness-min": 0,
+                            "raster-brightness-max": 0.2,
+                            "raster-contrast": 0.7
+                        }
+                    }],
+                    "glyphs": "https://fonts.openmaptiles.org/{fontstack}/{range}.pbf"
                 }
             },
             satellite: {
@@ -226,28 +584,29 @@
                     }]
                 }
             },
-            hybrid: {
-                name: 'Híbrido',
+            simple: {
+                name: 'Simples',
                 style: {
                     "version": 8,
                     "sources": {
-                        "satellite": {
+                        "osm": {
                             "type": "raster",
-                            "tiles": ["https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"],
+                            "tiles": ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
                             "tileSize": 256,
-                            "attribution": "© Google Hybrid"
+                            "attribution": "© OpenStreetMap contributors"
                         }
                     },
                     "layers": [{
-                        "id": "satellite",
+                        "id": "osm",
                         "type": "raster",
-                        "source": "satellite"
+                        "source": "osm"
                     }]
                 }
             }
         };
         
-        let currentStyle = 'satellite';
+        let currentStyle = 'cyberpunk';
+        let currentMarkerSize = 'medium';
         let userMarker = null;
         let watchId = null;
         
@@ -267,7 +626,7 @@
         // Inicializar o mapa com vista satélite
         const map = new maplibregl.Map({
             container: 'map',
-            style: mapStyles.satellite.style,
+            style: mapStyles.cyberpunk.style,
             center: [-46.69, -21.91], // Centro aproximado da trilha
             zoom: 13,
             pitch: 0,
@@ -453,55 +812,66 @@
         }
         
         function addTrailLayers() {
-            // Adicionar fonte da trilha
-            if (!map.getSource('route')) {
-                map.addSource('route', {
+            // Adicionar fonte da trilha Parte 1
+            if (!map.getSource('route1')) {
+                map.addSource('route1', {
                     'type': 'geojson',
                     'data': {
                         'type': 'Feature',
                         'geometry': {
                             'type': 'LineString',
-                            'coordinates': waypoints.map(point => [point.lng, point.lat])
+                            'coordinates': waypoints.slice(0, 43).map(point => [point.lng, point.lat])
                         }
                     }
                 });
             }
             
-            // Adicionar camada da trilha
-            if (!map.getLayer('route')) {
+            if (!map.getLayer('route1')) {
                 map.addLayer({
-                    'id': 'route',
+                    'id': 'route1',
                     'type': 'line',
-                    'source': 'route',
+                    'source': 'route1',
                     'layout': {
                         'line-join': 'round',
                         'line-cap': 'round'
                     },
                     'paint': {
-                        'line-color': '#7877c6',
+                        'line-color': '#00f4ff',
                         'line-width': 4,
                         'line-opacity': 0.8
                     }
                 });
             }
             
-            // Adicionar camada de sombra da trilha
-            if (!map.getLayer('route-shadow')) {
+            // Adicionar fonte da trilha Parte 2
+            if (!map.getSource('route2')) {
+                map.addSource('route2', {
+                    'type': 'geojson',
+                    'data': {
+                        'type': 'Feature',
+                        'geometry': {
+                            'type': 'LineString',
+                            'coordinates': waypoints.slice(43).map(point => [point.lng, point.lat])
+                        }
+                    }
+                });
+            }
+            
+            if (!map.getLayer('route2')) {
                 map.addLayer({
-                    'id': 'route-shadow',
+                    'id': 'route2',
                     'type': 'line',
-                    'source': 'route',
+                    'source': 'route2',
                     'layout': {
                         'line-join': 'round',
                         'line-cap': 'round'
                     },
                     'paint': {
-                        'line-color': '#000000',
-                        'line-width': 6,
-                        'line-opacity': 0.3,
-                        'line-translate': [1, 1]
+                        'line-color': '#bf40ff',
+                        'line-width': 4,
+                        'line-opacity': 0.8
                     }
-                }, 'route');
+                });
             }
         }
         
@@ -510,33 +880,7 @@
             addTrailLayers();
             
             // Adicionar marcadores para cada waypoint
-            waypoints.forEach((point, index) => {
-                // Criar elemento customizado para o marcador
-                const waypointEl = document.createElement('div');
-                waypointEl.className = 'waypoint-marker';
-                waypointEl.innerHTML = point.id;
-                waypointEl.style.fontSize = '8px';
-                waypointEl.style.color = 'white';
-                waypointEl.style.fontWeight = 'bold';
-                waypointEl.style.display = 'flex';
-                waypointEl.style.alignItems = 'center';
-                waypointEl.style.justifyContent = 'center';
-                
-                const popup = new maplibregl.Popup({ offset: 25 }).setHTML(
-                    `<div class="popup-content">
-                        <div class="popup-title">${point.id}. ${point.name}</div>
-                        <div class="popup-location">${point.location}</div>
-                        <div style="margin-top: 8px; font-size: 10px; color: #999;">
-                            📍 ${point.lat.toFixed(6)}, ${point.lng.toFixed(6)}
-                        </div>
-                    </div>`
-                );
-                
-                new maplibregl.Marker(waypointEl)
-                    .setLngLat([point.lng, point.lat])
-                    .setPopup(popup)
-                    .addTo(map);
-            });
+            addWaypoints();
             
             // Zoom inicial para mostrar toda a trilha
             zoomToTrail();
@@ -564,6 +908,115 @@
                 );
             }
         }, 2000);
+        
+        // Menu Functions
+        function toggleMenu() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const menuPanel = document.getElementById('menuPanel');
+            
+            menuToggle.classList.toggle('open');
+            menuPanel.classList.toggle('open');
+        }
+        
+        function setMapStyle(style) {
+            // Remove active from all
+            document.querySelectorAll('.menu-item').forEach(item => {
+                if (item.id && item.id.includes('-style')) {
+                    item.classList.remove('active');
+                }
+            });
+            
+            // Add active to current
+            document.getElementById(style + '-style').classList.add('active');
+            
+            currentStyle = style;
+            map.setStyle(mapStyles[style].style);
+            
+            // Re-add layers after style change
+            map.once('styledata', () => {
+                addTrailLayers();
+                addWaypoints();
+            });
+        }
+        
+        function setMarkerSize(size) {
+            // Remove active class from previous size selection
+            document.querySelectorAll('.menu-item').forEach(item => {
+                if (item.id && item.id.includes('size-')) {
+                    item.classList.remove('active');
+                }
+            });
+            
+            // Set active class to current size selection
+            document.getElementById('size-' + size).classList.add('active');
+            
+            // Remove existing size classes
+            document.querySelectorAll('.waypoint-marker').forEach(marker => {
+                marker.classList.remove('size-small', 'size-medium', 'size-large', 'size-extra-large');
+                marker.classList.add('size-' + size);
+            });
+            
+            currentMarkerSize = size;
+        }
+        
+        function toggleDarkMode() {
+            const toggle = document.getElementById('darkModeToggle');
+            const body = document.body;
+            
+            toggle.classList.toggle('active');
+            body.classList.toggle('light-theme');
+        }
+        
+        function toggleTrailPart(part) {
+            const toggle = document.getElementById('trail' + part + 'Toggle');
+            const layerId = 'route' + part;
+            
+            toggle.classList.toggle('active');
+            
+            if (map.getLayer(layerId)) {
+                const visibility = map.getLayoutProperty(layerId, 'visibility');
+                map.setLayoutProperty(layerId, 'visibility', 
+                    visibility === 'visible' ? 'none' : 'visible');
+            }
+        }
+        
+        function toggleTrailInfo() {
+            const info = document.getElementById('trailInfo');
+            info.classList.toggle('visible');
+        }
+        
+        function addWaypoints() {
+            // Remove existing waypoint markers
+            document.querySelectorAll('.maplibregl-marker').forEach(marker => {
+                if (marker.querySelector('.waypoint-marker')) {
+                    marker.remove();
+                }
+            });
+            
+            // Add waypoint markers
+            waypoints.forEach((point) => {
+                const waypointEl = document.createElement('div');
+                waypointEl.className = 'waypoint-marker';
+                waypointEl.innerHTML = point.id;
+                waypointEl.classList.add(point.part);
+                waypointEl.classList.add('size-' + currentMarkerSize);
+                
+                const popup = new maplibregl.Popup({ offset: 25 }).setHTML(
+                    `<div class="popup-content">
+                        <div class="popup-title">${point.id}. ${point.name}</div>
+                        <div class="popup-location">${point.location}</div>
+                        <div style="margin-top: 8px; font-size: 10px; color: #999;">
+                            📍 ${point.lat.toFixed(6)}, ${point.lng.toFixed(6)}
+                        </div>
+                    </div>`
+                );
+                
+                new maplibregl.Marker({ element: waypointEl, anchor: 'center' })
+                    .setLngLat([point.lng, point.lat])
+                    .setPopup(popup)
+                    .addTo(map);
+            });
+        }
         
         // Cleanup ao sair da página
         window.addEventListener('beforeunload', () => {

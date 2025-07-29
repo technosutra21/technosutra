@@ -27,7 +27,7 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background: #000;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
             position: relative;
         }
@@ -40,7 +40,8 @@
             height: 100vh;
             object-fit: cover;
             z-index: 1;
-            background: #000;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: block !important;
         }
         
         model-viewer {
@@ -216,7 +217,7 @@
         min-camera-orbit="auto 0deg auto"
         max-camera-orbit="auto 180deg auto"
         tone-mapping="aces"
-        style="background-color: transparent; --ar-scale: 1.5; --poster-color: transparent; filter: contrast(1.1) saturate(1.2) brightness(1.05);">
+        style="background-color: transparent; --ar-scale: 1.5; --poster-color: transparent; filter: contrast(1.3) saturate(1.4) brightness(1.1);">
 
         <!-- Custom AR button -->
         <button slot="ar-button" class="ar-button" id="ar-button">
@@ -458,6 +459,18 @@
         function isAndroidDevice() {
             return /Android/.test(navigator.userAgent);
         }
+        
+        // Apply iOS-specific color enhancements
+        function applyIOSColorFix() {
+            if (isIOSDevice() && elements.modelViewer) {
+                // Enhanced color settings for iOS devices
+                elements.modelViewer.style.filter = 'contrast(1.5) saturate(1.6) brightness(1.15) hue-rotate(5deg)';
+                elements.modelViewer.setAttribute('exposure', '1.2');
+                elements.modelViewer.setAttribute('shadow-intensity', '1.5');
+                elements.modelViewer.setAttribute('environment-image', 'legacy');
+                log('Applied iOS color enhancement fixes');
+            }
+        }
 
         // Start camera with optimization
         async function startCamera() {
@@ -489,8 +502,9 @@
             } catch (error) {
                 log(`Camera error: ${error.message}`);
 
+                // Keep camera feed visible even on error - show gradient background
                 if (elements.cameraFeed) {
-                    elements.cameraFeed.style.display = 'none';
+                    elements.cameraFeed.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
                 }
                 document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
 
@@ -557,6 +571,9 @@
                     state.modelLoaded = true;
                     updateARButtonState();
                     showControls();
+                    
+                    // Apply iOS color fixes after model loads
+                    applyIOSColorFix();
                 });
 
                 elements.modelViewer.addEventListener('error', (event) => {
@@ -688,10 +705,24 @@
                 // Test AR support
                 await testARSupport();
 
-                // Try to start camera automatically
+                // Always try to start camera automatically
                 const cameraStarted = await startCamera();
-                if (!cameraStarted && elements.cameraPermission) {
-                    elements.cameraPermission.classList.remove('hidden');
+                if (!cameraStarted) {
+                    // Show camera permission dialog if camera fails
+                    if (elements.cameraPermission) {
+                        elements.cameraPermission.classList.remove('hidden');
+                    }
+                    // Ensure background gradient is visible when camera fails
+                    document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                    if (elements.cameraFeed) {
+                        elements.cameraFeed.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                    }
+                } else {
+                    // Camera started successfully, ensure it's visible
+                    if (elements.cameraFeed) {
+                        elements.cameraFeed.style.display = 'block';
+                        elements.cameraFeed.style.opacity = '1';
+                    }
                 }
 
                 // Auto-AR attempt
