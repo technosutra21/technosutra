@@ -24,750 +24,379 @@
     
     <style>
         :root {
-            --neon-blue: #00f4ff;
-            --neon-purple: #bf40ff;
-            --neon-pink: #ff0080;
-            --neon-green: #00ff00;
-            --neon-red: #ff0040;
+            --neon-blue: #00ffff;
+            --neon-pink: #ff00ff;
+            --neon-purple: #9d00ff;
             --cyber-dark: #000000;
-            --cyber-accent: #111111;
-            --glass-bg: rgba(0, 0, 0, 0.95);
-            --glass-border: rgba(0, 244, 255, 0.3);
-            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-cyber: linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
-            --shadow-glow: 0 0 30px rgba(0, 244, 255, 0.4);
+            --font-main: 'Orbitron', sans-serif;
+            --font-secondary: 'Chakra Petch', sans-serif;
+            --glow-blue: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue), 0 0 40px var(--neon-purple);
+            --glow-pink: 0 0 5px var(--neon-pink), 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink), 0 0 40px var(--neon-purple);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        html {
+            height: 100%;
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'SF Pro Display', Roboto, Arial, sans-serif;
-            background: var(--cyber-dark);
-            color: white;
-            overflow-x: hidden;
-            position: relative;
-            min-height: 100vh;
-        }
-
-        /* Animated background */
-        .animated-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
             height: 100%;
-            z-index: -1;
-            background: var(--gradient-cyber);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-        }
-
-        .animated-bg::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: 
-                radial-gradient(circle at 20% 80%, rgba(0, 244, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(191, 64, 255, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(255, 0, 128, 0.06) 0%, transparent 50%);
-            animation: particleFloat 20s ease-in-out infinite;
-        }
-
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        @keyframes particleFloat {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(30px, -30px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
-        }
-
-        /* Header */
-        .header {
-            position: relative;
-            text-align: center;
-            padding: 60px 20px;
-            z-index: 10;
-        }
-
-        .logo {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 30px;
-            background: var(--glass-bg);
-            border: 2px solid var(--glass-border);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            backdrop-filter: blur(20px);
-            box-shadow: var(--shadow-glow);
-            animation: logoFloat 6s ease-in-out infinite;
-        }
-
-        @keyframes logoFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .title {
-            font-size: clamp(2.5rem, 6vw, 4rem);
-            font-weight: 700;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #ffffff 0%, var(--neon-blue) 50%, var(--neon-purple) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 0 40px rgba(0, 244, 255, 0.3);
-            letter-spacing: -0.02em;
-        }
-
-        .subtitle {
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 40px;
-            line-height: 1.6;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* Main content */
-        .main-content {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Navigation cards */
-        .nav-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 60px;
-        }
-
-        .nav-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 30px;
-            text-decoration: none;
-            color: white;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(20px);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .nav-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 244, 255, 0.1), transparent);
-            transition: all 0.5s ease;
-        }
-
-        .nav-card:hover::before {
-            left: 100%;
-        }
-
-        .nav-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--neon-blue);
-            box-shadow: var(--shadow-glow);
-        }
-
-        .nav-card-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
-            display: block;
-        }
-
-        .nav-card-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .nav-card-desc {
-            font-size: 0.95rem;
-            color: rgba(255, 255, 255, 0.7);
-            line-height: 1.5;
-        }
-
-        /* PWA Installation section */
-        .pwa-section {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 40px;
-            text-align: center;
-            backdrop-filter: blur(20px);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .pwa-section::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: conic-gradient(transparent, rgba(0, 244, 255, 0.1), transparent);
-            animation: rotate 10s linear infinite;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .pwa-content {
-            position: relative;
-            z-index: 2;
-        }
-
-        .pwa-title {
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin-bottom: 15px;
+            background-color: var(--cyber-dark);
             color: var(--neon-blue);
-        }
-
-        .pwa-desc {
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-
-        .install-buttons {
+            font-family: var(--font-secondary);
+            overflow: hidden;
             display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .install-btn {
-            background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-purple) 100%);
-            border: none;
-            padding: 16px 32px;
-            border-radius: 50px;
-            color: white;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            min-width: 280px;
             justify-content: center;
-            box-shadow: 0 4px 20px rgba(0, 244, 255, 0.3);
+            align-items: center;
+            text-align: center;
+            perspective: 1000px;
         }
 
-        .install-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(0, 244, 255, 0.5);
+        #vignette {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            box-shadow: 0 0 200px rgba(0,0,0,0.9) inset;
+            z-index: 2;
+            pointer-events: none;
         }
 
-        .install-btn:disabled {
+        #starfield {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(1px 1px at 20px 30px, #eee, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 40px 70px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 50px 160px, #ddd, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 90px 40px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 150px 120px, #ddd, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: zoom 15s infinite alternate ease-in-out;
             opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
         }
 
-        .install-btn.ios {
-            background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+        @keyframes zoom {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.2); }
         }
 
-        .install-btn.android {
-            background: linear-gradient(135deg, #34A853 0%, #4285F4 100%);
-        }
-
-        /* Status messages */
-        .status-message {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--glass-bg);
-            border: 1px solid var(--neon-green);
-            border-radius: 12px;
-            padding: 12px 24px;
-            color: var(--neon-green);
-            backdrop-filter: blur(20px);
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .status-message.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .status-message.error {
-            border-color: var(--neon-red);
-            color: var(--neon-red);
-        }
-
-        /* Responsive design */
-        @media (min-width: 768px) {
-            .install-buttons {
-                flex-direction: row;
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .nav-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .pwa-section {
-                padding: 30px 20px;
-            }
-            
-            .install-btn {
-                min-width: 100%;
-            }
-        }
-
-        /* Loading overlay for PWA features */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+        .mandala-viewport {
+            position: relative;
+            width: 100vmin;
+            height: 100vmin;
             display: flex;
-            align-items: center;
             justify-content: center;
-            z-index: 2000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
+            align-items: center;
+            animation: fadeIn 3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
         }
 
-        .loading-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .loading-spinner {
-            width: 60px;
-            height: 60px;
-            border: 3px solid rgba(0, 244, 255, 0.3);
-            border-top: 3px solid var(--neon-blue);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        .mandala-container {
+            position: absolute;
+            width: 90vmin;
+            height: 90vmin;
+            transform-style: preserve-3d;
+            animation: spin 120s linear infinite;
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            from { transform: rotateZ(0deg); }
+            to { transform: rotateZ(360deg); }
+        }
+        
+        .mandala-core {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 15vmin; height: 15vmin;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--neon-purple) 0%, rgba(0,0,0,0) 70%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: var(--glow-pink);
+            animation: pulse 4s infinite ease-in-out;
+        }
+        
+        .core-icon {
+            width: 6vmin;
+            height: 6vmin;
+            object-fit: contain;
         }
 
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 40px 20px;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.9rem;
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: var(--glow-pink);}
+            50% { transform: translate(-50%, -50%) scale(1.1); box-shadow: 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink), 0 0 40px var(--neon-pink), 0 0 80px var(--neon-blue);}
         }
 
-        /* Offline indicator */
-        .offline-indicator {
-            position: fixed;
-            bottom: 20px;
+        .mandala-item {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 28vmin; height: 28vmin;
+            margin-left: -14vmin; margin-top: -14vmin;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--neon-blue);
+            box-shadow: var(--glow-blue);
+            backdrop-filter: blur(5px);
+            color: var(--neon-blue);
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+            transform-origin: center;
+            z-index: 10;
+        }
+
+        .mandala-item:hover {
+            transform: scale(1.15) !important;
+            box-shadow: 0 0 15px var(--neon-blue), 0 0 30px var(--neon-blue), 0 0 60px var(--neon-blue), 0 0 100px var(--neon-purple);
+            z-index: 11;
+        }
+        
+        .item-icon {
+            font-size: 7vmin;
+            margin-bottom: 1.5vmin;
+        }
+
+        .item-content h3 {
+            font-family: var(--font-main);
+            font-size: 2.5vmin;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: white;
+            text-shadow: 0 0 5px white;
+        }
+        
+        .item-content p {
+            font-size: 1.5vmin;
+            padding: 0 2vmin;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.4;
+        }
+
+        .title-container {
+            position: absolute;
+            bottom: 2vh;
             left: 50%;
             transform: translateX(-50%);
-            background: var(--neon-red);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 1000;
+            z-index: 5;
+            pointer-events: none;
+        }
+        
+        .main-title {
+            font-family: var(--font-main);
+            font-weight: 900;
+            font-size: 5vmin;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            position: relative;
+            text-shadow: var(--glow-blue);
         }
 
-        .offline-indicator.show {
-            opacity: 1;
-            visibility: visible;
+        .main-title::before, .main-title::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .main-title::before {
+            left: 2px;
+            text-shadow: -1px 0 var(--neon-pink);
+            clip: rect(24px, 550px, 90px, 0);
+            animation: glitch-anim-1 2s infinite linear alternate-reverse;
+        }
+
+        .main-title::after {
+            left: -2px;
+            text-shadow: -1px 0 var(--neon-blue), 1px 1px var(--neon-green);
+            clip: rect(85px, 550px, 140px, 0);
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim-1 {
+            0% { clip: rect(42px, 9999px, 44px, 0); } 20% { clip: rect(12px, 9999px, 89px, 0); } 40% { clip: rect(45px, 9999px, 89px, 0); } 60% { clip: rect(13px, 9999px, 54px, 0); } 80% { clip: rect(62px, 9999px, 83px, 0); } 100% { clip: rect(4px, 9999px, 78px, 0); }
+        }
+        @keyframes glitch-anim-2 {
+            0% { clip: rect(22px, 9999px, 90px, 0); } 20% { clip: rect(33px, 9999px, 4px, 0); } 40% { clip: rect(13px, 9999px, 44px, 0); } 60% { clip: rect(52px, 9999px, 83px, 0); } 80% { clip: rect(12px, 9999px, 54px, 0); } 100% { clip: rect(72px, 9999px, 8px, 0); }
+        }
+
+        .subtitle {
+            font-size: 2vmin;
+            color: var(--neon-pink);
+            text-shadow: 0 0 10px var(--neon-pink);
+            letter-spacing: 0.1em;
+        }
+
+        /* PWA Install Button */
+        .install-btn {
+            position: fixed;
+            bottom: 2vh;
+            right: 2vw;
+            background: rgba(157, 0, 255, 0.3);
+            border: 1px solid var(--neon-purple);
+            color: white;
+            padding: 1vmin 2vmin;
+            border-radius: 5px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            font-family: var(--font-secondary);
+            font-size: 1.8vmin;
+            z-index: 100;
+            display: none; /* Hidden by default, shown by JS */
+            transition: all 0.3s ease;
+        }
+        .install-btn:hover {
+            background: rgba(157, 0, 255, 0.6);
+            box-shadow: var(--glow-pink);
+        }
+
+        .fade-out {
+            animation: fadeOut 0.5s forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: scale(0.95);
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Animated background -->
-    <div class="animated-bg"></div>
+    <div id="starfield"></div>
+    <div id="vignette"></div>
 
-    <!-- Status message -->
-    <div id="statusMessage" class="status-message"></div>
-
-    <!-- Offline indicator -->
-    <div id="offlineIndicator" class="offline-indicator">
-        📱 Modo Offline Ativo
-    </div>
-
-    <!-- Loading overlay -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="loading-spinner"></div>
-    </div>
-
-    <!-- Header -->
-    <header class="header">
-        <div class="logo">🧘‍♂️</div>
-        <h1 class="title">Techno Sutra AR</h1>
-        <p class="subtitle">
-            Experiência imersiva em realidade aumentada dos 56 capítulos do Avatamsaka Sutra.
-            Explore modelos 3D interativos e mergulhe na sabedoria milenar.
-        </p>
-    </header>
-
-    <!-- Main content -->
-    <main class="main-content">
-        <!-- PWA Installation Section -->
-        <section class="pwa-section">
-            <div class="pwa-content">
-                <h2 class="pwa-title">📱 Instalar Aplicativo</h2>
-                <p class="pwa-desc">
-                    Adicione à tela inicial do seu dispositivo para acesso offline completo,
-                    incluindo todos os modelos 3D, mapa e galeria.
-                </p>
-                <div class="install-buttons">
-                    <button id="installPWA" class="install-btn" style="display: none;">
-                        📱 Adicionar à Tela Inicial
-                    </button>
-                    <button id="installIOS" class="install-btn ios" style="display: none;">
-                        🍎 Instalar no iOS
-                    </button>
-                    <a href="#" id="installAndroid" class="install-btn android" style="display: none;">
-                        🤖 Instalar no Android
-                    </a>
-                    <div id="installInstructions" style="display: none;">
-                        <p style="margin-bottom: 15px; color: rgba(255,255,255,0.9);">
-                            Para instalar no seu dispositivo:
-                        </p>
-                        <div id="iosInstructions" style="display: none;">
-                            <p>📱 <strong>iOS/Safari:</strong></p>
-                            <p>1. Toque no botão de compartilhar <span style="font-size: 1.2em;">⬆️</span></p>
-                            <p>2. Selecione "Adicionar à Tela de Início"</p>
-                            <p>3. Confirme para instalar o app</p>
-                        </div>
-                        <div id="androidInstructions" style="display: none;">
-                            <p>🤖 <strong>Android/Chrome:</strong></p>
-                            <p>1. Toque no menu (⋮) do navegador</p>
-                            <p>2. Selecione "Adicionar à tela inicial"</p>
-                            <p>3. Confirme para instalar o app</p>
-                        </div>
-                    </div>
-                </div>
+    <main class="mandala-viewport" id="viewport">
+        <div class="mandala-container" id="mandalaContainer">
+            <div class="mandala-core">
+                <img src="loboguara.png" alt="Loboguara" class="core-icon">
             </div>
-        </section>
 
-        <!-- Navigation -->
-        <section class="nav-grid">
-            <a href="AR.html" class="nav-card">
-                <span class="nav-card-icon">🥽</span>
-                <h3 class="nav-card-title">Visualizador AR</h3>
-                <p class="nav-card-desc">
-                    Experiência em realidade aumentada com modelos 3D interativos
-                </p>
+            <a href="AR.html" class="mandala-item" data-title="AR" data-index="0">
+                <div class="item-icon">🥽</div>
+                <div class="item-content">
+                    <h3>Visualizador AR</h3>
+                    <p>Modelos 3D interativos em realidade aumentada</p>
+                </div>
             </a>
 
-            <a href="galeria.html" class="nav-card">
-                <span class="nav-card-icon">🖼️</span>
-                <h3 class="nav-card-title">Galeria 3D</h3>
-                <p class="nav-card-desc">
-                    Explore todos os 56 modelos 3D dos capítulos do Avatamsaka Sutra
-                </p>
+            <a href="galeria.html" class="mandala-item" data-title="Gallery" data-index="1">
+                <div class="item-icon">🖼️</div>
+                <div class="item-content">
+                    <h3>Galeria 3D</h3>
+                    <p>Explore os 56 capítulos do Avatamsaka Sutra</p>
+                </div>
             </a>
 
-            <a href="map.html" class="nav-card">
-                <span class="nav-card-icon">🗺️</span>
-                <h3 class="nav-card-title">Mapa Interativo</h3>
-                <p class="nav-card-desc">
-                    Navegue pelo mundo virtual e descubra localizações especiais
-                </p>
+            <a href="map.html" class="mandala-item" data-title="Map" data-index="2">
+                <div class="item-icon">🗺️</div>
+                <div class="item-content">
+                    <h3>Mapa Interativo</h3>
+                    <p>Navegue pelo caminho do dharma virtual</p>
+                </div>
             </a>
-        </section>
+        </div>
+        <div class="title-container">
+            <h1 class="main-title" data-text="Techno Sutra">Techno Sutra</h1>
+            <h2 class="subtitle">Bless This Cyberspace</h2>
+        </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <p>© 2024 Techno Sutra AR - Experiência Imersiva em Realidade Aumentada</p>
-        <p>Versão PWA 1.2.0 - Funciona offline após instalação</p>
-    </footer>
-
+    <button id="installPWA" class="install-btn">
+        <span class="icon">💾</span> Instalar App Offline
+    </button>
+    
     <script>
-        // PWA Installation and Offline functionality
-        class TechnoSutraPWA {
-            constructor() {
-                this.deferredPrompt = null;
-                this.isIOS = this.detectIOS();
-                this.isAndroid = this.detectAndroid();
-                this.isStandalone = this.detectStandalone();
-                this.init();
-            }
-
-            init() {
-                this.setupServiceWorker();
-                this.setupInstallPrompt();
-                this.setupOfflineDetection();
-                this.setupUI();
-                this.preloadCriticalResources();
-            }
-
-            detectIOS() {
-                return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            }
-
-            detectAndroid() {
-                return /Android/.test(navigator.userAgent);
-            }
-
-            detectStandalone() {
-                return window.matchMedia('(display-mode: standalone)').matches ||
-                       window.navigator.standalone === true ||
-                       document.referrer.includes('android-app://') ||
-                       window.location.search.includes('homescreen=1');
-            }
-
-            async setupServiceWorker() {
-                if ('serviceWorker' in navigator) {
-                    try {
-                        const registration = await navigator.serviceWorker.register('sw.js');
-                        console.log('Service Worker registrado:', registration);
-                        
-                        // Check for updates
-                        registration.addEventListener('updatefound', () => {
-                            const newWorker = registration.installing;
-                            newWorker.addEventListener('statechange', () => {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    this.showMessage('Nova versão disponível! Recarregue a página para atualizar.', 'success');
-                                }
-                            });
-                        });
-                    } catch (error) {
-                        console.error('Erro ao registrar Service Worker:', error);
-                    }
-                }
-            }
-
-            setupInstallPrompt() {
-                // Listen for beforeinstallprompt event
-                window.addEventListener('beforeinstallprompt', (e) => {
-                    e.preventDefault();
-                    this.deferredPrompt = e;
-                    this.showInstallButton();
-                });
-
-                // Listen for app installed
-                window.addEventListener('appinstalled', () => {
-                    this.showMessage('App instalado com sucesso!', 'success');
-                    this.hideInstallButtons();
-                    this.deferredPrompt = null;
-                });
-            }
-
-            setupOfflineDetection() {
-                window.addEventListener('online', () => {
-                    this.hideOfflineIndicator();
-                    this.showMessage('Conexão restaurada!', 'success');
-                });
-
-                window.addEventListener('offline', () => {
-                    this.showOfflineIndicator();
-                    this.showMessage('Modo offline ativo', 'info');
-                });
-
-                // Check initial status
-                if (!navigator.onLine) {
-                    this.showOfflineIndicator();
-                }
-            }
-
-            setupUI() {
-                const installPWA = document.getElementById('installPWA');
-                const installIOS = document.getElementById('installIOS');
-                const installAndroid = document.getElementById('installAndroid');
-                const instructions = document.getElementById('installInstructions');
-                const iosInstructions = document.getElementById('iosInstructions');
-                const androidInstructions = document.getElementById('androidInstructions');
-
-                // PWA install button
-                installPWA.addEventListener('click', () => this.installPWA());
-
-                // Platform-specific instructions
-                if (this.isIOS && !this.isStandalone) {
-                    installIOS.style.display = 'flex';
-                    installIOS.addEventListener('click', () => {
-                        instructions.style.display = 'block';
-                        iosInstructions.style.display = 'block';
-                        androidInstructions.style.display = 'none';
-                    });
-                } else if (this.isAndroid && !this.isStandalone) {
-                    installAndroid.style.display = 'flex';
-                    installAndroid.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        instructions.style.display = 'block';
-                        androidInstructions.style.display = 'block';
-                        iosInstructions.style.display = 'none';
-                    });
-                }
-
-                // If already installed, hide PWA section
-                if (this.isStandalone) {
-                    document.querySelector('.pwa-section').style.display = 'none';
-                }
-            }
-
-            showInstallButton() {
-                const installPWA = document.getElementById('installPWA');
-                installPWA.style.display = 'flex';
-            }
-
-            hideInstallButtons() {
-                document.getElementById('installPWA').style.display = 'none';
-                document.getElementById('installIOS').style.display = 'none';
-                document.getElementById('installAndroid').style.display = 'none';
-            }
-
-            async installPWA() {
-                if (!this.deferredPrompt) {
-                    this.showMessage('Instalação não disponível neste navegador', 'error');
-                    return;
-                }
-
-                this.showLoading();
-
-                try {
-                    const result = await this.deferredPrompt.prompt();
-                    
-                    if (result.outcome === 'accepted') {
-                        this.showMessage('App sendo instalado...', 'success');
-                        this.deferredPrompt = null;
-                    } else {
-                        this.showMessage('Instalação cancelada', 'info');
-                    }
-                } catch (error) {
-                    console.error('Erro na instalação:', error);
-                    this.showMessage('Erro na instalação', 'error');
-                } finally {
-                    this.hideLoading();
-                }
-            }
-
-            async preloadCriticalResources() {
-                if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
-                    try {
-                        const registration = await navigator.serviceWorker.ready;
-                        
-                        // Preload critical resources
-                        const criticalResources = [
-                            'AR.html',
-                            'galeria.html',
-                            'map.html',
-                            'manifest.json'
-                        ];
-
-                        // Cache critical GLB models
-                        const criticalModels = ['modelo1.glb', 'modelo2.glb', 'modelo3.glb'];
-                        
-                        // Request background sync for model preloading
-                        await registration.sync.register('preload-models');
-                        
-                        console.log('Recursos críticos sendo pré-carregados...');
-                    } catch (error) {
-                        console.log('Background sync não disponível:', error);
-                    }
-                }
-            }
-
-            showMessage(message, type = 'info') {
-                const statusMessage = document.getElementById('statusMessage');
-                statusMessage.textContent = message;
-                statusMessage.className = `status-message show ${type}`;
-                
-                setTimeout(() => {
-                    statusMessage.className = 'status-message';
-                }, 3000);
-            }
-
-            showLoading() {
-                document.getElementById('loadingOverlay').className = 'loading-overlay show';
-            }
-
-            hideLoading() {
-                document.getElementById('loadingOverlay').className = 'loading-overlay';
-            }
-
-            showOfflineIndicator() {
-                document.getElementById('offlineIndicator').className = 'offline-indicator show';
-            }
-
-            hideOfflineIndicator() {
-                document.getElementById('offlineIndicator').className = 'offline-indicator';
-            }
-        }
-
-        // Initialize PWA functionality
         document.addEventListener('DOMContentLoaded', () => {
-            new TechnoSutraPWA();
-        });
+            const mandalaContainer = document.getElementById('mandalaContainer');
+            const items = document.querySelectorAll('.mandala-item');
+            const viewport = document.getElementById('viewport');
+            
+            const numItems = items.length;
+            const radius = 35; // in vmin
 
-        // Performance optimization: Preload next likely pages
-        if ('requestIdleCallback' in window) {
-            requestIdleCallback(() => {
-                const links = ['AR.html', 'galeria.html', 'map.html'];
-                links.forEach(link => {
-                    const linkEl = document.createElement('link');
-                    linkEl.rel = 'prefetch';
-                    linkEl.href = link;
-                    document.head.appendChild(linkEl);
+            items.forEach((item, i) => {
+                const angle = (i / numItems) * 360;
+                const x = Math.cos(angle * Math.PI / 180) * radius;
+                const y = Math.sin(angle * Math.PI / 180) * radius;
+                
+                // We use vmin for positioning, which is CSS-only, but JS can also do it:
+                item.style.transform = `rotate(${angle}deg) translate(${radius}vmin) rotate(${-angle}deg)`;
+
+                item.addEventListener('mouseenter', () => mandalaContainer.style.animationPlayState = 'paused');
+                item.addEventListener('mouseleave', () => mandalaContainer.style.animationPlayState = 'running');
+
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.body.classList.add('fade-out');
+                    setTimeout(() => {
+                        window.location.href = item.href;
+                    }, 500);
                 });
             });
-        }
 
-        // Add visual feedback for navigation
-        document.querySelectorAll('.nav-card').forEach(card => {
-            card.addEventListener('click', (e) => {
-                e.preventDefault();
-                const href = card.href;
+            // Parallax effect on mouse move
+            viewport.addEventListener('mousemove', (e) => {
+                const { clientX, clientY, currentTarget } = e;
+                const { clientWidth, clientHeight } = currentTarget;
+                const x = (clientX - clientWidth / 2) / clientWidth;
+                const y = (clientY - clientHeight / 2) / clientHeight;
                 
-                // Add loading state
-                card.style.opacity = '0.7';
-                card.style.transform = 'scale(0.98)';
-                
-                // Navigate after animation
-                setTimeout(() => {
-                    window.location.href = href;
-                }, 150);
+                mandalaContainer.style.transform = `rotateX(${-y * 10}deg) rotateY(${x * 10}deg)`;
             });
+
+            // PWA Installation Logic
+            let deferredPrompt;
+            const installButton = document.getElementById('installPWA');
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                installButton.style.display = 'inline-flex';
+            });
+
+            installButton.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        console.log('User accepted the A2HS prompt');
+                    }
+                    deferredPrompt = null;
+                    installButton.style.display = 'none';
+                }
+            });
+
+            window.addEventListener('appinstalled', () => {
+                installButton.style.display = 'none';
+                console.log('PWA was installed');
+            });
+
+            if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+                installButton.style.display = 'none';
+            }
         });
+
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker: Registered'))
+                    .catch(err => console.log(`Service Worker: Error: ${err}`));
+            });
+        }
     </script>
 </body>
 </html>
