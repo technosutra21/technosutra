@@ -238,6 +238,92 @@
                 right: 10px;
             }
         }
+
+        /* Mobile Bottom Navigation */
+        .mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(120, 119, 198, 0.2);
+            padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
+            z-index: 1000;
+            display: none;
+        }
+
+        .mobile-nav-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            color: #9ca3af;
+            transition: all 0.3s ease;
+            padding: 8px 12px;
+            border-radius: 12px;
+            min-width: 60px;
+        }
+
+        .mobile-nav-item:hover,
+        .mobile-nav-item.active {
+            color: #7877c6;
+            background: rgba(120, 119, 198, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .mobile-nav-icon {
+            font-size: 1.5rem;
+            margin-bottom: 2px;
+        }
+
+        .mobile-nav-label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .mobile-nav-item.center {
+            background: linear-gradient(135deg, rgba(120, 119, 198, 0.2) 0%, rgba(120, 119, 198, 0.1) 100%);
+            border: 1px solid rgba(120, 119, 198, 0.3);
+            color: #ffffff;
+            transform: scale(1.1);
+        }
+
+        .mobile-nav-item.center:hover {
+            background: linear-gradient(135deg, rgba(120, 119, 198, 0.3) 0%, rgba(120, 119, 198, 0.2) 100%);
+            border-color: rgba(120, 119, 198, 0.5);
+            transform: scale(1.15) translateY(-2px);
+        }
+
+        /* Show mobile nav on mobile devices */
+        @media (max-width: 768px) {
+            .mobile-nav {
+                display: block;
+            }
+            
+            body {
+                padding-bottom: 80px;
+            }
+        }
+
+        /* PWA safe area adjustments */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .mobile-nav {
+                padding-bottom: calc(12px + env(safe-area-inset-bottom));
+            }
+        }
     </style>
 </head>
 <body>
@@ -318,6 +404,24 @@
         <button id="reset-camera" style="background: rgba(0, 0, 0, 0.8); color: white; border: none; padding: 14px; border-radius: 50%; cursor: pointer; backdrop-filter: blur(20px); width: 48px; height: 48px; font-size: 18px;">🔄</button>
         <button id="toggle-rotate" style="background: rgba(0, 0, 0, 0.8); color: white; border: none; padding: 14px; border-radius: 50%; cursor: pointer; backdrop-filter: blur(20px); width: 48px; height: 48px; font-size: 18px;">⏸️</button>
     </div>
+
+    <!-- Mobile Navigation Bar -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-container">
+            <a href="galeria.html" class="mobile-nav-item">
+                <div class="mobile-nav-icon">📚</div>
+                <div class="mobile-nav-label">Galeria</div>
+            </a>
+            <a href="index.html" class="mobile-nav-item center">
+                <div class="mobile-nav-icon">🏛️</div>
+                <div class="mobile-nav-label">Home</div>
+            </a>
+            <a href="ar.html" class="mobile-nav-item active">
+                <div class="mobile-nav-icon">🥽</div>
+                <div class="mobile-nav-label">AR</div>
+            </a>
+        </div>
+    </nav>
 
     <!-- Load model-viewer with defer for better performance -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js" defer></script>
