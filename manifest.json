@@ -3,7 +3,7 @@
     "short_name": "Techno Sutra AR",
     "description": "Experiência imersiva em realidade aumentada dos 56 capítulos do Avatamsaka Sutra com modelos 3D interativos",
     "version": "1.2.0",
-    "start_url": "/",
+    "start_url": "/index.html",
     "display": "standalone",
     "orientation": "portrait-primary",
     "theme_color": "#7877c6",
@@ -38,7 +38,7 @@
             "name": "Visualizador AR",
             "short_name": "AR Viewer",
             "description": "Abrir experiência de realidade aumentada",
-            "url": "/index.html",
+            "url": "/AR.html",
             "icons": [
                 {
                     "src": "technosutra-logo.png",

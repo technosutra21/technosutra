@@ -10,19 +10,17 @@ const MODEL_CACHE = `techno-sutra-models-v${CACHE_VERSION}`;
 const STATIC_ASSETS = [
     '/',
     '/index.html',
-    '/index-optimized.html',
+    '/AR.html',
     '/galeria.html',
-    '/galeria-optimized.html',
-    '/css/critical.css',
-    '/css/main.css',
-    '/js/performance-utils.js',
-    '/config.json',
+    '/map.html',
+    '/manifest.json',
     '/technosutra-logo.png',
-    '/manifest.json'
+    '/config.json',
+    '/trail.json'
 ];
 
-// Model files pattern
-const MODEL_PATTERN = /modelo\d+\.(glb|usdz)$/;
+// Model files pattern - includes all GLB files
+const MODEL_PATTERN = /\.(glb|usdz)$/;
 
 // External resources
 const EXTERNAL_RESOURCES = [
@@ -181,7 +179,7 @@ function isModelFile(request) {
 // Check if request is for external resource
 function isExternalResource(request) {
     const url = new URL(request.url);
-    return !url.origin.includes(self.location.origin);
+    return url.origin !== self.location.origin;
 }
 
 // Handle static asset requests - Cache First strategy
@@ -259,11 +257,15 @@ async function handleModelFile(request) {
 // Handle external resource requests - Network First with cache fallback
 async function handleExternalResource(request) {
     try {
-        // Try network first
+        // Try network first with manual timeout for compatibility
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        
         const response = await fetch(request, {
-            // Add timeout for external resources
-            signal: AbortSignal.timeout(10000) // 10 second timeout
+            signal: controller.signal
         });
+        
+        clearTimeout(timeoutId);
         
         if (response.ok) {
             // Cache successful responses
@@ -397,24 +399,50 @@ async function preloadModels() {
     try {
         // Dev: console.log('[SW] Background preloading models...');
         
-        // Preload first 5 models
-        const modelPromises = [];
-        for (let i = 1; i <= 5; i++) {
-            modelPromises.push(
-                fetch(`modelo${i}.glb`)
+        // List of all available models for caching
+        const allModels = [
+            'cosmic-buddha.glb', 'cosmic.glb', 'fat-buddha.glb', 'modelo-dragao.glb', 'nsrinha.glb',
+            'modelo1.glb', 'modelo2.glb', 'modelo3.glb', 'modelo4.glb', 'modelo5.glb',
+            'modelo6.glb', 'modelo8.glb', 'modelo9.glb', 'modelo10.glb', 'modelo11.glb',
+            'modelo12.glb', 'modelo15.glb', 'modelo17.glb', 'modelo18.glb', 'modelo19.glb',
+            'modelo20.glb', 'modelo21.glb', 'modelo22.glb', 'modelo23.glb', 'modelo24.glb',
+            'modelo26.glb', 'modelo28.glb', 'modelo29.glb', 'modelo30.glb', 'modelo31.glb',
+            'modelo32.glb', 'modelo33.glb', 'modelo34.glb', 'modelo35.glb', 'modelo36.glb',
+            'modelo37.glb', 'modelo38.glb', 'modelo39.glb', 'modelo40.glb', 'modelo41.glb',
+            'modelo42.glb', 'modelo44.glb', 'modelo45.glb', 'modelo46.glb', 'modelo47.glb',
+            'modelo48.glb', 'modelo49.glb', 'modelo50.glb', 'modelo51.glb', 'modelo54.glb',
+            'modelo55.glb', 'modelo56.glb'
+        ];
+        
+        // Preload in batches to avoid overwhelming the system
+        const batchSize = 5;
+        for (let i = 0; i < allModels.length; i += batchSize) {
+            const batch = allModels.slice(i, i + batchSize);
+            const batchPromises = batch.map(modelFile => 
+                fetch(modelFile)
                     .then(response => {
                         if (response.ok) {
                             return caches.open(MODEL_CACHE)
-                                .then(cache => cache.put(`modelo${i}.glb`, response));
+                                .then(cache => {
+                                    // Check cache size before adding
+                                    return manageCacheSize(MODEL_CACHE, CACHE_LIMITS[MODEL_CACHE])
+                                        .then(() => cache.put(modelFile, response));
+                                });
                         }
                     })
                     .catch(error => {
-                        // Dev: console.log(`[SW] Failed to preload modelo${i}.glb:`, error);
+                        // Dev: console.log(`[SW] Failed to preload ${modelFile}:`, error);
                     })
             );
+            
+            await Promise.allSettled(batchPromises);
+            
+            // Small delay between batches to prevent overwhelming
+            if (i + batchSize < allModels.length) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
         }
         
-        await Promise.allSettled(modelPromises);
         // Dev: console.log('[SW] Background preloading complete');
     } catch (error) {
         // Dev: console.error('[SW] Error in background preloading:', error);
