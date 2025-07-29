@@ -1,22 +1,44 @@
 // Enhanced Service Worker for Techno Sutra AR
 // Provides aggressive caching, offline support, and performance optimizations
+// ENSURES COMPLETE OFFLINE FUNCTIONALITY WHEN INSTALLED AS PWA
 
-const CACHE_VERSION = '1.2.0';
+const CACHE_VERSION = '2.0.0';
 const STATIC_CACHE = `techno-sutra-static-v${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `techno-sutra-dynamic-v${CACHE_VERSION}`;
 const MODEL_CACHE = `techno-sutra-models-v${CACHE_VERSION}`;
+const CSS_CACHE = `techno-sutra-css-v${CACHE_VERSION}`;
+const FONT_CACHE = `techno-sutra-fonts-v${CACHE_VERSION}`;
+const DATA_CACHE = `techno-sutra-data-v${CACHE_VERSION}`;
 
-// Critical resources to cache immediately
+// COMPLETE LIST OF CRITICAL RESOURCES FOR FULL OFFLINE FUNCTIONALITY
 const STATIC_ASSETS = [
     '/',
     '/index.html',
     '/AR.html',
     '/galeria.html',
     '/map.html',
+    '/navegador-capitulos-updated.html',
     '/manifest.json',
     '/technosutra-logo.png',
+    '/lobo-guará.jpg',
     '/config.json',
     '/trail.json'
+];
+
+// CSS and Style Resources
+const CSS_ASSETS = [
+    '/css/app.css',
+    '/css/critical.css',
+    '/css/main.css',
+    '/css/mobile.css'
+];
+
+// Data files for offline functionality
+const DATA_ASSETS = [
+    '/summaries/chapters.csv',
+    '/summaries/characters.csv',
+    '/summaries/txt/iframe_wrapper_fixed.html',
+    '/summaries/txt/iframe_fullscreen_aggressive.html'
 ];
 
 // Model files pattern - includes all GLB files
@@ -86,18 +108,43 @@ self.addEventListener('fetch', event => {
     }
 });
 
-// Cache static assets on install
+// COMPREHENSIVE CACHING FOR COMPLETE OFFLINE FUNCTIONALITY
 async function cacheStaticAssets() {
     try {
-        const cache = await caches.open(STATIC_CACHE);
+        // Cache all static assets
+        await cacheAssetGroup(STATIC_CACHE, STATIC_ASSETS, 'Static Assets');
+        
+        // Cache CSS files
+        await cacheAssetGroup(CSS_CACHE, CSS_ASSETS, 'CSS Assets');
+        
+        // Cache data files
+        await cacheAssetGroup(DATA_CACHE, DATA_ASSETS, 'Data Assets');
+        
+        // Cache MapLibre GL resources for map.html offline functionality
+        await cacheMapLibreResources();
+        
+        // Start aggressive model preloading for complete offline experience
+        await preloadCriticalModels();
+        
+        // Dev: console.log('[SW] Complete offline caching completed');
+    } catch (error) {
+        // Dev: console.error('[SW] Error in comprehensive caching:', error);
+    }
+}
+
+// Cache a group of assets
+async function cacheAssetGroup(cacheName, assets, groupName) {
+    try {
+        const cache = await caches.open(cacheName);
         const responses = await Promise.allSettled(
-            STATIC_ASSETS.map(url => 
+            assets.map(url => 
                 fetch(url)
                     .then(response => {
                         if (response.ok) {
                             cache.put(url, response.clone());
+                            return response;
                         }
-                        return response;
+                        throw new Error(`Failed to fetch ${url}: ${response.status}`);
                     })
                     .catch(error => {
                         // Dev: console.warn(`[SW] Failed to cache ${url}:`, error);
@@ -107,9 +154,73 @@ async function cacheStaticAssets() {
         );
         
         const successful = responses.filter(r => r.status === 'fulfilled' && r.value).length;
-        // Dev: console.log(`[SW] Cached ${successful}/${STATIC_ASSETS.length} static assets`);
+        // Dev: console.log(`[SW] Cached ${successful}/${assets.length} ${groupName}`);
     } catch (error) {
-        // Dev: console.error('[SW] Error caching static assets:', error);
+        // Dev: console.error(`[SW] Error caching ${groupName}:`, error);
+    }
+}
+
+// Cache MapLibre GL resources for map offline functionality
+async function cacheMapLibreResources() {
+    try {
+        const cache = await caches.open(STATIC_CACHE);
+        const mapLibreResources = [
+            'https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css',
+            'https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js'
+        ];
+        
+        for (const url of mapLibreResources) {
+            try {
+                const response = await fetch(url);
+                if (response.ok) {
+                    await cache.put(url, response);
+                    // Dev: console.log(`[SW] Cached MapLibre resource: ${url}`);
+                }
+            } catch (error) {
+                // Dev: console.warn(`[SW] Failed to cache MapLibre resource ${url}:`, error);
+            }
+        }
+    } catch (error) {
+        // Dev: console.error('[SW] Error caching MapLibre resources:', error);
+    }
+}
+
+// Preload critical models immediately for offline AR experience
+async function preloadCriticalModels() {
+    try {
+        const cache = await caches.open(MODEL_CACHE);
+        
+        // Priority models to cache immediately (first 10 chapters)
+        const criticalModels = [
+            'modelo1.glb', 'modelo2.glb', 'modelo3.glb', 'modelo4.glb', 'modelo5.glb',
+            'modelo6.glb', 'modelo8.glb', 'modelo9.glb', 'modelo10.glb', 'modelo11.glb'
+        ];
+        
+        const cachePromises = criticalModels.map(async (modelFile) => {
+            try {
+                // Check if model exists first
+                const headResponse = await fetch(modelFile, { method: 'HEAD' });
+                if (headResponse.ok) {
+                    const response = await fetch(modelFile);
+                    if (response.ok) {
+                        await cache.put(modelFile, response);
+                        // Dev: console.log(`[SW] Preloaded critical model: ${modelFile}`);
+                        return true;
+                    }
+                }
+                return false;
+            } catch (error) {
+                // Dev: console.warn(`[SW] Failed to preload ${modelFile}:`, error);
+                return false;
+            }
+        });
+        
+        const results = await Promise.allSettled(cachePromises);
+        const successful = results.filter(r => r.status === 'fulfilled' && r.value).length;
+        // Dev: console.log(`[SW] Preloaded ${successful}/${criticalModels.length} critical models`);
+        
+    } catch (error) {
+        // Dev: console.error('[SW] Error preloading critical models:', error);
     }
 }
 
@@ -492,6 +603,183 @@ self.addEventListener('notificationclick', event => {
     }
 });
 
+// PWA INSTALLATION DETECTION - TRIGGERS COMPLETE OFFLINE CACHING
+self.addEventListener('appinstalled', event => {
+    // Dev: console.log('[SW] 🎉 PWA installed! Starting complete offline caching...');
+    
+    // Trigger aggressive caching when PWA is installed
+    event.waitUntil(
+        completeOfflineCaching().then(() => {
+            // Dev: console.log('[SW] ✅ Complete offline caching finished - App fully functional offline!');
+            
+            // Notify all clients that offline caching is complete
+            self.clients.matchAll().then(clients => {
+                clients.forEach(client => {
+                    client.postMessage({
+                        type: 'OFFLINE_READY',
+                        message: 'App is now fully available offline!'
+                    });
+                });
+            });
+        })
+    );
+});
+
+// COMPLETE OFFLINE CACHING - Downloads everything for full offline functionality
+async function completeOfflineCaching() {
+    try {
+        // Dev: console.log('[SW] 🚀 Starting complete offline caching process...');
+        
+        // 1. Cache all remaining models aggressively
+        await cacheAllAvailableModels();
+        
+        // 2. Cache additional resources that might be needed
+        await cacheAdditionalResources();
+        
+        // 3. Preload critical data files
+        await preloadDataFiles();
+        
+        // Dev: console.log('[SW] 🎯 Complete offline caching process finished!');
+        return true;
+        
+    } catch (error) {
+        // Dev: console.error('[SW] ❌ Error in complete offline caching:', error);
+        return false;
+    }
+}
+
+// Cache ALL available models for complete offline AR experience
+async function cacheAllAvailableModels() {
+    try {
+        const cache = await caches.open(MODEL_CACHE);
+        
+        // All possible models (including USDZ for iOS)
+        const allModels = [
+            // GLB models
+            'cosmic-buddha.glb', 'cosmic.glb', 'fat-buddha.glb', 'modelo-dragao.glb', 'nsrinha.glb',
+            'modelo1.glb', 'modelo2.glb', 'modelo3.glb', 'modelo4.glb', 'modelo5.glb',
+            'modelo6.glb', 'modelo8.glb', 'modelo9.glb', 'modelo10.glb', 'modelo11.glb',
+            'modelo12.glb', 'modelo15.glb', 'modelo17.glb', 'modelo18.glb', 'modelo19.glb',
+            'modelo20.glb', 'modelo21.glb', 'modelo22.glb', 'modelo23.glb', 'modelo24.glb',
+            'modelo26.glb', 'modelo28.glb', 'modelo29.glb', 'modelo30.glb', 'modelo31.glb',
+            'modelo32.glb', 'modelo33.glb', 'modelo34.glb', 'modelo35.glb', 'modelo36.glb',
+            'modelo37.glb', 'modelo38.glb', 'modelo39.glb', 'modelo40.glb', 'modelo41.glb',
+            'modelo42.glb', 'modelo44.glb', 'modelo45.glb', 'modelo46.glb', 'modelo47.glb',
+            'modelo48.glb', 'modelo49.glb', 'modelo50.glb', 'modelo51.glb', 'modelo54.glb',
+            'modelo55.glb', 'modelo56.glb',
+            // USDZ models for iOS
+            'modelo1.usdz', 'modelo2.usdz', 'modelo3.usdz', 'modelo4.usdz', 'modelo5.usdz',
+            'modelo6.usdz', 'modelo8.usdz', 'modelo9.usdz', 'modelo10.usdz', 'modelo11.usdz',
+            'modelo12.usdz', 'modelo15.usdz', 'modelo17.usdz', 'modelo18.usdz', 'modelo19.usdz',
+            'modelo20.usdz', 'modelo21.usdz', 'modelo22.usdz', 'modelo23.usdz', 'modelo24.usdz',
+            'modelo26.usdz', 'modelo28.usdz', 'modelo29.usdz', 'modelo30.usdz', 'modelo31.usdz',
+            'modelo32.usdz', 'modelo33.usdz', 'modelo34.usdz', 'modelo35.usdz', 'modelo36.usdz',
+            'modelo37.usdz', 'modelo38.usdz', 'modelo39.usdz', 'modelo40.usdz', 'modelo41.usdz',
+            'modelo42.usdz', 'modelo44.usdz', 'modelo45.usdz', 'modelo46.usdz', 'modelo47.usdz',
+            'modelo48.usdz', 'modelo49.usdz', 'modelo50.usdz', 'modelo51.usdz', 'modelo54.usdz',
+            'modelo55.usdz', 'modelo56.usdz'
+        ];
+        
+        let cachedCount = 0;
+        const batchSize = 3; // Smaller batches for complete caching
+        
+        for (let i = 0; i < allModels.length; i += batchSize) {
+            const batch = allModels.slice(i, i + batchSize);
+            
+            const batchPromises = batch.map(async (modelFile) => {
+                try {
+                    // Check if model exists first
+                    const headResponse = await fetch(modelFile, { method: 'HEAD' });
+                    if (headResponse.ok) {
+                        const response = await fetch(modelFile);
+                        if (response.ok) {
+                            await cache.put(modelFile, response);
+                            cachedCount++;
+                            // Dev: console.log(`[SW] 📦 Cached model ${cachedCount}: ${modelFile}`);
+                            return true;
+                        }
+                    }
+                    return false;
+                } catch (error) {
+                    // Dev: console.warn(`[SW] ⚠️ Failed to cache ${modelFile}:`, error.message);
+                    return false;
+                }
+            });
+            
+            await Promise.allSettled(batchPromises);
+            
+            // Longer delay for complete caching to prevent overwhelming
+            if (i + batchSize < allModels.length) {
+                await new Promise(resolve => setTimeout(resolve, 2000));
+            }
+        }
+        
+        // Dev: console.log(`[SW] 🎯 Complete model caching finished: ${cachedCount} models cached`);
+        
+    } catch (error) {
+        // Dev: console.error('[SW] ❌ Error in complete model caching:', error);
+    }
+}
+
+// Cache additional resources for complete offline functionality
+async function cacheAdditionalResources() {
+    try {
+        const cache = await caches.open(DYNAMIC_CACHE);
+        
+        // Additional resources that might be needed offline
+        const additionalResources = [
+            // Font files (if any)
+            '/fonts/Inter-Regular.woff2',
+            '/fonts/Inter-Medium.woff2',
+            '/fonts/Inter-Bold.woff2',
+            // Additional images
+            '/images/placeholder.png',
+            '/images/loading.gif',
+            // Error pages
+            '/404.html',
+            '/offline.html'
+        ];
+        
+        for (const resource of additionalResources) {
+            try {
+                const response = await fetch(resource);
+                if (response.ok) {
+                    await cache.put(resource, response);
+                    // Dev: console.log(`[SW] 📄 Cached additional resource: ${resource}`);
+                }
+            } catch (error) {
+                // Dev: console.warn(`[SW] ⚠️ Additional resource not found: ${resource}`);
+            }
+        }
+        
+    } catch (error) {
+        // Dev: console.error('[SW] ❌ Error caching additional resources:', error);
+    }
+}
+
+// Preload data files for offline functionality
+async function preloadDataFiles() {
+    try {
+        const cache = await caches.open(DATA_CACHE);
+        
+        // Ensure all data files are cached
+        for (const dataFile of DATA_ASSETS) {
+            try {
+                const response = await fetch(dataFile);
+                if (response.ok) {
+                    await cache.put(dataFile, response);
+                    // Dev: console.log(`[SW] 📊 Cached data file: ${dataFile}`);
+                }
+            } catch (error) {
+                // Dev: console.warn(`[SW] ⚠️ Data file not found: ${dataFile}`);
+            }
+        }
+        
+    } catch (error) {
+        // Dev: console.error('[SW] ❌ Error preloading data files:', error);
+    }
+}
+
 // Message handling for communication with main thread
 self.addEventListener('message', event => {
     const { type, data } = event.data;
@@ -516,6 +804,17 @@ self.addEventListener('message', event => {
         case 'PRELOAD_MODEL':
             preloadSpecificModel(data.modelId).then(() => {
                 event.ports[0].postMessage({ type: 'MODEL_PRELOADED', data: { modelId: data.modelId } });
+            });
+            break;
+            
+        case 'FORCE_COMPLETE_CACHE':
+            // Manual trigger for complete offline caching
+            completeOfflineCaching().then((success) => {
+                event.ports[0].postMessage({ 
+                    type: 'COMPLETE_CACHE_FINISHED', 
+                    success: success,
+                    message: success ? 'All content cached for offline use!' : 'Some content failed to cache'
+                });
             });
             break;
     }
