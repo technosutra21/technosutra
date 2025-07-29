@@ -446,27 +446,27 @@
                 <img src="technosutra-logo.png" alt="Loboguara" class="core-icon">
             </div>
 
-            <a href="AR.html" class="mandala-item" data-title="AR" data-index="0">
-                <div class="item-icon">⁛</div>
+            <a href="AR.html" class="mandala-item" data-title="AR" data-index="0" role="button" tabindex="0" aria-label="Visualizador AR - Modelos 3D interativos em realidade aumentada">
+                <div class="item-icon" aria-hidden="true">🥽</div>
                 <div class="item-content">
                     <h3>Visualizador AR</h3>
                     <p>Modelos 3D interativos em realidade aumentada</p>
                 </div>
             </a>
 
-            <a href="galeria.html" class="mandala-item" data-title="Gallery" data-index="1">
-                <div class="item-icon">⁛</div>
+            <a href="galeria.html" class="mandala-item" data-title="Gallery" data-index="1" role="button" tabindex="0" aria-label="Galeria 3D - Explore os 56 capítulos do Avatamsaka Sutra">
+                <div class="item-icon" aria-hidden="true">🖼️</div>
                 <div class="item-content">
                     <h3>Galeria 3D</h3>
                     <p>Explore os 56 capítulos do Avatamsaka Sutra</p>
                 </div>
             </a>
 
-            <a href="map.html" class="mandala-item" data-title="Map" data-index="2">
-                <div class="item-icon">⁛</div>
+            <a href="map.html" class="mandala-item" data-title="Map" data-index="2" role="button" tabindex="0" aria-label="Mapa Interativo - Navegue pelo caminho do dharma virtual">
+                <div class="item-icon" aria-hidden="true">🗺️</div>
                 <div class="item-content">
                     <h3>Mapa Interativo</h3>
-                    <p>Navegue pelo caminho</br> do dharma virtual</p>
+                    <p>Navegue pelo caminho do dharma virtual</p>
                 </div>
             </a>
         </div>
@@ -481,73 +481,169 @@
     </button>
     
     <script>
+        // Enhanced error handling
+        window.addEventListener('error', (e) => {
+            console.error('Global error:', e.error);
+        });
+        
+        window.addEventListener('unhandledrejection', (e) => {
+            console.error('Unhandled promise rejection:', e.reason);
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
-            const mandalaContainer = document.getElementById('mandalaContainer');
-            const items = document.querySelectorAll('.mandala-item');
-            const viewport = document.getElementById('viewport');
-            
-            const numItems = items.length;
-            const radius = 35; // in vmin
-
-            items.forEach((item, i) => {
-                const angle = (i / numItems) * 360;
-                const x = Math.cos(angle * Math.PI / 180) * radius;
-                const y = Math.sin(angle * Math.PI / 180) * radius;
+            try {
+                const mandalaContainer = document.getElementById('mandalaContainer');
+                const items = document.querySelectorAll('.mandala-item');
+                const viewport = document.getElementById('viewport');
                 
-                // We use vmin for positioning, which is CSS-only, but JS can also do it:
-                item.style.transform = `rotate(${angle}deg) translate(${radius}vmin) rotate(${-angle}deg)`;
-
-                item.addEventListener('mouseenter', () => mandalaContainer.style.animationPlayState = 'paused');
-                item.addEventListener('mouseleave', () => mandalaContainer.style.animationPlayState = 'running');
-
-                item.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    document.body.classList.add('fade-out');
-                    setTimeout(() => {
-                        window.location.href = item.href;
-                    }, 500);
-                });
-            });
-
-            // Parallax effect on mouse move
-            viewport.addEventListener('mousemove', (e) => {
-                const { clientX, clientY, currentTarget } = e;
-                const { clientWidth, clientHeight } = currentTarget;
-                const x = (clientX - clientWidth / 2) / clientWidth;
-                const y = (clientY - clientHeight / 2) / clientHeight;
-                
-                mandalaContainer.style.transform = `rotateX(${-y * 10}deg) rotateY(${x * 10}deg)`;
-            });
-
-            // PWA Installation Logic
-            let deferredPrompt;
-            const installButton = document.getElementById('installPWA');
-
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                installButton.style.display = 'inline-flex';
-            });
-
-            installButton.addEventListener('click', async () => {
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    if (outcome === 'accepted') {
-                        console.log('User accepted the A2HS prompt');
-                    }
-                    deferredPrompt = null;
-                    installButton.style.display = 'none';
+                if (!mandalaContainer || !items.length || !viewport) {
+                    throw new Error('Required DOM elements not found');
                 }
-            });
+                
+                const numItems = items.length;
+                const radius = 35; // in vmin
 
-            window.addEventListener('appinstalled', () => {
-                installButton.style.display = 'none';
-                console.log('PWA was installed');
-            });
+                items.forEach((item, i) => {
+                    try {
+                        const angle = (i / numItems) * 360;
+                        const x = Math.cos(angle * Math.PI / 180) * radius;
+                        const y = Math.sin(angle * Math.PI / 180) * radius;
+                        
+                        // We use vmin for positioning, which is CSS-only, but JS can also do it:
+                        item.style.transform = `rotate(${angle}deg) translate(${radius}vmin) rotate(${-angle}deg)`;
 
-            if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
-                installButton.style.display = 'none';
+                        // Mouse event handlers
+                        item.addEventListener('mouseenter', () => {
+                            if (mandalaContainer) {
+                                mandalaContainer.style.animationPlayState = 'paused';
+                            }
+                        });
+                        
+                        item.addEventListener('mouseleave', () => {
+                            if (mandalaContainer) {
+                                mandalaContainer.style.animationPlayState = 'running';
+                            }
+                        });
+
+                        // Enhanced click handler with error handling
+                        const handleNavigation = (e) => {
+                            try {
+                                e.preventDefault();
+                                const href = item.getAttribute('href');
+                                if (href) {
+                                    document.body.classList.add('fade-out');
+                                    setTimeout(() => {
+                                        window.location.href = href;
+                                    }, 500);
+                                }
+                            } catch (error) {
+                                console.error('Navigation error:', error);
+                                // Fallback navigation
+                                window.location.href = item.href;
+                            }
+                        };
+                        
+                        item.addEventListener('click', handleNavigation);
+                        
+                        // Keyboard navigation support
+                        item.addEventListener('keydown', (e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                handleNavigation(e);
+                            }
+                        });
+                        
+                        // Focus and blur events for accessibility
+                        item.addEventListener('focus', () => {
+                            if (mandalaContainer) {
+                                mandalaContainer.style.animationPlayState = 'paused';
+                            }
+                        });
+                        
+                        item.addEventListener('blur', () => {
+                            if (mandalaContainer) {
+                                mandalaContainer.style.animationPlayState = 'running';
+                            }
+                        });
+                        
+                    } catch (error) {
+                        console.error(`Error setting up item ${i}:`, error);
+                    }
+                });
+
+                // Enhanced parallax effect with error handling
+                if (viewport && mandalaContainer) {
+                    viewport.addEventListener('mousemove', (e) => {
+                        try {
+                            const { clientX, clientY, currentTarget } = e;
+                            const { clientWidth, clientHeight } = currentTarget;
+                            const x = (clientX - clientWidth / 2) / clientWidth;
+                            const y = (clientY - clientHeight / 2) / clientHeight;
+                            
+                            // Throttle the animation for better performance
+                            requestAnimationFrame(() => {
+                                if (mandalaContainer) {
+                                    mandalaContainer.style.transform = `rotateX(${-y * 10}deg) rotateY(${x * 10}deg)`;
+                                }
+                            });
+                        } catch (error) {
+                            console.error('Parallax error:', error);
+                        }
+                    });
+                }
+
+                // Enhanced PWA Installation Logic
+                let deferredPrompt;
+                const installButton = document.getElementById('installPWA');
+
+                if (installButton) {
+                    window.addEventListener('beforeinstallprompt', (e) => {
+                        try {
+                            e.preventDefault();
+                            deferredPrompt = e;
+                            installButton.style.display = 'inline-flex';
+                        } catch (error) {
+                            console.error('PWA prompt error:', error);
+                        }
+                    });
+
+                    installButton.addEventListener('click', async () => {
+                        try {
+                            if (deferredPrompt) {
+                                await deferredPrompt.prompt();
+                                const { outcome } = await deferredPrompt.userChoice;
+                                if (outcome === 'accepted') {
+                                    console.log('User accepted the A2HS prompt');
+                                }
+                                deferredPrompt = null;
+                                installButton.style.display = 'none';
+                            }
+                        } catch (error) {
+                            console.error('PWA installation error:', error);
+                        }
+                    });
+
+                    window.addEventListener('appinstalled', () => {
+                        try {
+                            installButton.style.display = 'none';
+                            console.log('PWA was installed');
+                        } catch (error) {
+                            console.error('PWA installed event error:', error);
+                        }
+                    });
+
+                    // Check if already in standalone mode
+                    try {
+                        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+                            installButton.style.display = 'none';
+                        }
+                    } catch (error) {
+                        console.error('Standalone detection error:', error);
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Main initialization error:', error);
             }
         });
 
