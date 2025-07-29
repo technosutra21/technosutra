@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+    <style>
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100%; 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+        #map { width: 100%; height: 100%; }
+        
+        .map-controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .control-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-1px);
+        }
+        
+        .trail-info {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            max-width: 300px;
+        }
+        
+        .maplibregl-popup {
+            max-width: 300px;
+        }
+        
+        .popup-content {
+            padding: 8px;
+        }
+        
+        .popup-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .popup-location {
+            font-size: 11px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .waypoint-marker {
+            background: #7877c6;
+            border: 2px solid white;
+            border-radius: 50%;
+            width: 12px;
+            height: 12px;
+            cursor: pointer;
+        }
+        
+        .user-marker {
+            background: #ff4444;
+            border: 3px solid white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+    <title>Mapa da Trilha Techno Sutra - Águas da Prata</title>
+</head>
+<body>
+    <div id="map"></div>
+    
+    <!-- Controles personalizados -->
+    <div class="map-controls">
+        <button class="control-btn" onclick="toggleMapStyle()" id="styleBtn">📡 Satélite</button>
+        <button class="control-btn" onclick="zoomToTrail()">🗺️ Ver Trilha</button>
+        <button class="control-btn" onclick="locateUser()">📍 Minha Localização</button>
+        <button class="control-btn" onclick="toggleInfo()">ℹ️ Informações</button>
+    </div>
+    
+    <!-- Informações da trilha -->
+    <div class="trail-info" id="trailInfo">
+        <div><strong>Trilha Techno Sutra</strong></div>
+        <div>📍 Águas da Prata, SP</div>
+        <div>📊 56 waypoints • ~8km</div>
+        <div>🧭 Avatamsaka Sutra AR Experience</div>
+    </div>
+    
+    <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+    <script>
+        // Dados da trilha com informações do trail.json
+        const trailData = {
+            "1": { "lat": -21.868036707651, "lng": -46.67732383198648, "name": "Buda Śākyamuni", "location": "Jetavana, no parque de Anāthapiṇḍada em Śrāvastī" },
+            "2": { "lat": -21.86953296779599, "lng": -46.67805522448601, "name": "Samanta­bhadra", "location": "Jetavana, no parque de Anāthapiṇḍada em Śrāvastī" },
+            "3": { "lat": -21.87091546996187, "lng": -46.67797426313243, "name": "Manjushri", "location": "Dhanyākara e floresta sagrada de Vicitra sāla dhvaja vyūha" },
+            "4": { "lat": -21.87221986659534, "lng": -46.67824132815174, "name": "Meghaśrī", "location": "Montanha Sugrīva, na terra de Rāmāvarānta" },
+            "5": { "lat": -21.87309784586943, "lng": -46.67866035798463, "name": "Sāgara­megha", "location": "Costa do oceano, distrito de Sāgaramukha" },
+            "6": { "lat": -21.87393288759804, "lng": -46.67925395359822, "name": "Supratiṣṭhita", "location": "Sāgaratīra, na região de Laṅka" },
+            "7": { "lat": -21.87514572152676, "lng": -46.67896578739468, "name": "Megha", "location": "Cidade de Vajrapura, na terra de Draviḍa" },
+            "8": { "lat": -21.87619736973498, "lng": -46.67855933883119, "name": "Muktaka", "location": "Cidade de Vanavāsī" },
+            "9": { "lat": -21.87646251203698, "lng": -46.67736879037174, "name": "Sāgara­dhvaja", "location": "Milaspharaṇa, ponta do continente de Jambudvīpa" },
+            "10": { "lat": -21.87646009570215, "lng": -46.67623116961117, "name": "Āśā", "location": "Parque Samantavyūha na cidade de Samudravetāḍī" },
+            "11": { "lat": -21.87726006988734, "lng": -46.6754990688399, "name": "Bhīṣmottara­nirghoṣa", "location": "Floresta na terra de Nālayu" },
+            "12": { "lat": -21.87881053413763, "lng": -46.67500319464728, "name": "Jayoṣmāyatana", "location": "Terra de Īṣāṇa, entre montanha de fogo e penhasco" },
+            "13": { "lat": -21.88019054400148, "lng": -46.67496499173143, "name": "Maitrayaṇī", "location": "Palácio Vairocana-garbha na cidade de Siṃha-vijṛmbhita" },
+            "14": { "lat": -21.88187093491057, "lng": -46.67521163743071, "name": "Sudarśana", "location": "Densa floresta na terra de Trinayana" },
+            "15": { "lat": -21.88360463284878, "lng": -46.67525319610547, "name": "Indriyeśvara", "location": "Confluência de rios na cidade de Sumukha" },
+            "16": { "lat": -21.88554337763284, "lng": -46.67386659277159, "name": "Jayoṣmāyatana", "location": "Casa na cidade de Samudra-pratiṣṭhāna" },
+            "17": { "lat": -21.88804852246186, "lng": -46.67358940032627, "name": "Vidvān", "location": "Encruzilhada no centro de Mahāsaṃbhava" },
+            "18": { "lat": -21.89026427458782, "lng": -46.67236457977307, "name": "Sudarśana", "location": "Cidade de Siṃhapota, casa de dez andares" },
+            "19": { "lat": -21.89257575982119, "lng": -46.67372402528618, "name": "Samanta­netra", "location": "Loja de perfumes em Samantamukha, terra de Vetramūlaka" },
+            "20": { "lat": -21.89565884155847, "lng": -46.67312906215643, "name": "Anala", "location": "Cidade de Tāladhvaja, sala do trono" },
+            "21": { "lat": -21.90046826241142, "lng": -46.67138193438598, "name": "Mahāprabha", "location": "Cidade de Suprabha, utopia de magnificência" },
+            "22": { "lat": -21.90531978305068, "lng": -46.67251368039676, "name": "Acalā", "location": "Cidade de Sthirā, casa dos pais" },
+            "23": { "lat": -21.9089395994778, "lng": -46.67338258043213, "name": "Sarvagamin", "location": "Topo da colina Sulabha, perto de Tosala" },
+            "24": { "lat": -21.91231515618248, "lng": -46.67015524085872, "name": "Utpalabhūti", "location": "Terra de Pṛthurāṣṭra" },
+            "25": { "lat": -21.91370861343965, "lng": -46.66815680928756, "name": "Vaira", "location": "Cidade costeira de Kūṭāgāra" },
+            "26": { "lat": -21.91747796051475, "lng": -46.66700692393895, "name": "Jayottama", "location": "Floresta Vicitra Dhvaja, cidade de Nandihāra" },
+            "27": { "lat": -21.92129874885887, "lng": -46.66574849523462, "name": "Siṃhavijṛmbhitā", "location": "Parque Sūrya Prabha, cidade de Kaliṅgavana" },
+            "28": { "lat": -21.92441500351332, "lng": -46.66505284033605, "name": "Vasumitrā", "location": "Cidade de Śubhaparaṃgama" },
+            "29": { "lat": -21.92638215736361, "lng": -46.66537976269724, "name": "Veṣṭhila", "location": "Cidade de Śubhapāraṃgama" },
+            "30": { "lat": -21.92872573943014, "lng": -46.67003972230864, "name": "Avalokiteśvara", "location": "Monte Potalaka, paraíso terrestre" },
+            "31": { "lat": -21.92801238471129, "lng": -46.67454405999145, "name": "Ananyagāmin", "location": "Pico de montanha do sistema de mundos Sahā" },
+            "32": { "lat": -21.92645798923365, "lng": -46.67815322914891, "name": "Mahādeva", "location": "Templo na encruzilhada da cidade de Dvāravatī" },
+            "33": { "lat": -21.92316358227298, "lng": -46.6791445469042, "name": "Sthāvarā", "location": "Bodhimaṇḍa na terra de Magadha" },
+            "34": { "lat": -21.92362359048531, "lng": -46.6842726229277, "name": "Vāsantī", "location": "Céu acima da cidade de Kapilavastu" },
+            "35": { "lat": -21.92525160262302, "lng": -46.6867179324565, "name": "Samanta­gambhīra­śrī­vimala­prabhā", "location": "Bodhimaṇḍa, terra de Magadha, próximo a Vāsantī" },
+            "36": { "lat": -21.9273497679517, "lng": -46.68749089829076, "name": "Pramudita­nayana­jagad­virocanā", "location": "Bodhimaṇḍa, assembleia do Buda" },
+            "37": { "lat": -21.9296471001546, "lng": -46.69039976309249, "name": "Samanta­sattva­trāṇojaḥ­śrī", "location": "No bodhimaṇḍa" },
+            "38": { "lat": -21.92897397421807, "lng": -46.69217665332104, "name": "Praśanta­ruta­sāgara­vatī", "location": "No bodhimaṇḍa" },
+            "39": { "lat": -21.93158183370527, "lng": -46.69375654414417, "name": "Sarva­nagara­rakṣā­saṃbhava­tejaḥ­śrī", "location": "Trono de lótus com séquito de deusas" },
+            "40": { "lat": -21.93423405856974, "lng": -46.69338262520748, "name": "Sarva­vṛkṣpraphullana­sukha­saṃvāsā", "location": "Kūṭāgāra de árvores preciosas" },
+            "41": { "lat": -21.93558462766117, "lng": -46.69382309551595, "name": "Sarva­jagad­rakṣā­praṇidhāna­vīrya­prabhā", "location": "Bodhimaṇḍa, meio do séquito" },
+            "42": { "lat": -21.93567267136837, "lng": -46.6939274554807, "name": "Sutejomaṇḍala­rati­śrī", "location": "Floresta de Lumbinī, local de nascimento do Buda" },
+            "43": { "lat": -21.93582378796983, "lng": -46.69400128111388, "name": "Gopā", "location": "Salão de assembleia dos bodhisattvas, Kapilavastu" },
+            "44": { "lat": -21.945875, "lng": -46.72265833333334, "name": "Māyādevī", "location": "Kūṭāgāra miraculoso em grande lótus de joias" },
+            "45": { "lat": -21.94576185804032, "lng": -46.72279111267893, "name": "Surendrābhā", "location": "Paraíso de Trāyastriṃśa (céu dos 33 deuses)" },
+            "46": { "lat": -21.9458126872239, "lng": -46.72271692853997, "name": "Viśvāmitra", "location": "Cidade de Kapilavastu" },
+            "47": { "lat": -21.94570944120324, "lng": -46.72285742172848, "name": "Śilpābhijña", "location": "Após falar com Viśvāmitra" },
+            "48": { "lat": -21.94566634811362, "lng": -46.72291440447311, "name": "Bhadrottamā", "location": "Cidade de Vartanaka, região de Kevalaka" },
+            "49": { "lat": -21.94561390616393, "lng": -46.72297119284677, "name": "Muktāsāra", "location": "Cidade de Bharukaccha, região sul" },
+            "50": { "lat": -21.9455701207428, "lng": -46.72301867573663, "name": "Sucandra", "location": "Floresta ao lado da cidade de Bharukaccha" },
+            "51": { "lat": -21.94554168699781, "lng": -46.72306759875011, "name": "Ajitasena", "location": "Cidade de Roruka, região sul" },
+            "52": { "lat": -21.94550541436743, "lng": -46.72312550616623, "name": "Śivarāgra", "location": "Vila chamada Dharma, região sul" },
+            "53": { "lat": -21.94578734327873, "lng": -46.72274673868932, "name": "Śrīsaṃbhava & Śrīmati", "location": "Cidade de Sumanāmukha, região sul" },
+            "54": { "lat": -21.94585287592502, "lng": -46.72269285931593, "name": "Maitreya", "location": "Grande pavilhão Vairocana-vyūhālaṃkāra-garbha" },
+            "55": { "lat": -21.9457395226932, "lng": -46.72281764935126, "name": "Manjushri", "location": "Cidade de Sumanāmukha, 110 yojanas de distância" },
+            "56": { "lat": -21.9457395226932, "lng": -46.72281764935126, "name": "Samanta­bhadra", "location": "Bodhimaṇḍa, diante do Tathāgata Vairocana" }
+        };
+        
+        // Converter dados da trilha para array
+        const waypoints = Object.entries(trailData).map(([id, point]) => ({
+            id: parseInt(id),
+            ...point
+        }));
+        
+        // Estilos de mapa
+        const mapStyles = {
+            street: {
+                name: 'OpenStreetMap',
+                style: {
+                    "version": 8,
+                    "sources": {
+                        "osm": {
+                            "type": "raster",
+                            "tiles": ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+                            "tileSize": 256,
+                            "attribution": "© OpenStreetMap contributors"
+                        }
+                    },
+                    "layers": [{
+                        "id": "osm",
+                        "type": "raster",
+                        "source": "osm"
+                    }]
+                }
+            },
+            satellite: {
+                name: 'Satélite',
+                style: {
+                    "version": 8,
+                    "sources": {
+                        "satellite": {
+                            "type": "raster",
+                            "tiles": ["https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"],
+                            "tileSize": 256,
+                            "attribution": "© Google Satellite"
+                        }
+                    },
+                    "layers": [{
+                        "id": "satellite",
+                        "type": "raster",
+                        "source": "satellite"
+                    }]
+                }
+            },
+            hybrid: {
+                name: 'Híbrido',
+                style: {
+                    "version": 8,
+                    "sources": {
+                        "satellite": {
+                            "type": "raster",
+                            "tiles": ["https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"],
+                            "tileSize": 256,
+                            "attribution": "© Google Hybrid"
+                        }
+                    },
+                    "layers": [{
+                        "id": "satellite",
+                        "type": "raster",
+                        "source": "satellite"
+                    }]
+                }
+            }
+        };
+        
+        let currentStyle = 'satellite';
+        let userMarker = null;
+        let watchId = null;
+        
+        // Configurações de alta precisão para geolocalização
+        const highAccuracyOptions = {
+            enableHighAccuracy: true,  // Usar GPS quando disponível
+            timeout: 20000,           // 20 segundos para obter posição inicial
+            maximumAge: 0             // Sempre buscar nova posição, não usar cache
+        };
+        
+        const trackingOptions = {
+            enableHighAccuracy: true,  // Manter GPS ativo para rastreamento
+            timeout: 10000,           // 10 segundos para atualizações
+            maximumAge: 5000          // Aceitar posição de até 5 segundos atrás
+        };
+        
+        // Inicializar o mapa com vista satélite
+        const map = new maplibregl.Map({
+            container: 'map',
+            style: mapStyles.satellite.style,
+            center: [-46.69, -21.91], // Centro aproximado da trilha
+            zoom: 13,
+            pitch: 0,
+            bearing: 0
+        });
+        
+        // Adicionar controles de navegação
+        map.addControl(new maplibregl.NavigationControl(), 'top-right');
+        map.addControl(new maplibregl.ScaleControl(), 'bottom-right');
+        
+        // Funções de controle
+        function toggleMapStyle() {
+            const styleBtn = document.getElementById('styleBtn');
+            const styles = Object.keys(mapStyles);
+            const currentIndex = styles.indexOf(currentStyle);
+            const nextIndex = (currentIndex + 1) % styles.length;
+            currentStyle = styles[nextIndex];
+            
+            map.setStyle(mapStyles[currentStyle].style);
+            
+            const icons = { street: '🗺️', satellite: '📡', hybrid: '🌍' };
+            styleBtn.innerHTML = `${icons[currentStyle]} ${mapStyles[currentStyle].name}`;
+            
+            // Re-adicionar as camadas após mudança de estilo
+            map.once('styledata', () => {
+                addTrailLayers();
+            });
+        }
+        
+        function zoomToTrail() {
+            const bounds = new maplibregl.LngLatBounds();
+            waypoints.forEach(point => {
+                bounds.extend([point.lng, point.lat]);
+            });
+            map.fitBounds(bounds, { padding: 50 });
+        }
+        
+        function locateUser() {
+            if (!navigator.geolocation) {
+                alert('Geolocalização não é suportada neste navegador.');
+                return;
+            }
+            
+            // Mostrar mensagem de carregamento
+            const btn = document.querySelector('[onclick="locateUser()"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '🔄 Localizando...';
+            btn.disabled = true;
+            
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const userLocation = [position.coords.longitude, position.coords.latitude];
+                    const accuracy = position.coords.accuracy;
+                    
+                    console.log(`Localização obtida com precisão de ${accuracy} metros`);
+                    
+                    // Remover marcador anterior se existir
+                    if (userMarker) {
+                        userMarker.remove();
+                    }
+                    
+                    // Criar elemento customizado para o marcador do usuário
+                    const userMarkerEl = document.createElement('div');
+                    userMarkerEl.className = 'user-marker';
+                    
+                    userMarker = new maplibregl.Marker(userMarkerEl)
+                        .setLngLat(userLocation)
+                        .setPopup(new maplibregl.Popup().setHTML(
+                            `<div class="popup-content">
+                                <div class="popup-title">📍 Você está aqui</div>
+                                <div style="font-size: 10px; color: #666; margin-top: 4px;">
+                                    Precisão: ~${Math.round(accuracy)}m
+                                </div>
+                            </div>`
+                        ))
+                        .addTo(map);
+                    
+                    map.flyTo({ center: userLocation, zoom: 17 });
+                    
+                    // Iniciar rastreamento contínuo
+                    if (watchId) {
+                        navigator.geolocation.clearWatch(watchId);
+                    }
+                    
+                    watchId = navigator.geolocation.watchPosition(
+                        (position) => {
+                            const newLocation = [position.coords.longitude, position.coords.latitude];
+                            if (userMarker) {
+                                userMarker.setLngLat(newLocation);
+                                
+                                // Atualizar popup com nova precisão
+                                const newAccuracy = position.coords.accuracy;
+                                userMarker.setPopup(new maplibregl.Popup().setHTML(
+                                    `<div class="popup-content">
+                                        <div class="popup-title">📍 Você está aqui</div>
+                                        <div style="font-size: 10px; color: #666; margin-top: 4px;">
+                                            Precisão: ~${Math.round(newAccuracy)}m
+                                        </div>
+                                    </div>`
+                                ));
+                            }
+                        },
+                        (error) => {
+                            console.warn('Erro no rastreamento:', error);
+                            // Tentar novamente com configurações menos restritivas se falhar
+                            if (error.code === 3) { // TIMEOUT
+                                navigator.geolocation.watchPosition(
+                                    (position) => {
+                                        const newLocation = [position.coords.longitude, position.coords.latitude];
+                                        if (userMarker) {
+                                            userMarker.setLngLat(newLocation);
+                                        }
+                                    },
+                                    () => {}, // Silenciar erros subsequentes
+                                    { enableHighAccuracy: false, maximumAge: 30000, timeout: 15000 }
+                                );
+                            }
+                        },
+                        trackingOptions
+                    );
+                    
+                    // Restaurar botão
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                },
+                (error) => {
+                    console.error('Erro de geolocalização:', error);
+                    let errorMessage = 'Erro ao obter localização: ';
+                    
+                    switch(error.code) {
+                        case 1: // PERMISSION_DENIED
+                            errorMessage += 'Permissão negada. Verifique as configurações do navegador.';
+                            break;
+                        case 2: // POSITION_UNAVAILABLE
+                            errorMessage += 'Posição indisponível. Tente novamente.';
+                            break;
+                        case 3: // TIMEOUT
+                            errorMessage += 'Tempo esgotado. Tentando com menor precisão...';
+                            // Tentar novamente com configurações menos restritivas
+                            navigator.geolocation.getCurrentPosition(
+                                (position) => {
+                                    const userLocation = [position.coords.longitude, position.coords.latitude];
+                                    
+                                    if (userMarker) {
+                                        userMarker.remove();
+                                    }
+                                    
+                                    const userMarkerEl = document.createElement('div');
+                                    userMarkerEl.className = 'user-marker';
+                                    
+                                    userMarker = new maplibregl.Marker(userMarkerEl)
+                                        .setLngLat(userLocation)
+                                        .setPopup(new maplibregl.Popup().setHTML(
+                                            '<div class="popup-content"><div class="popup-title">📍 Você está aqui (baixa precisão)</div></div>'
+                                        ))
+                                        .addTo(map);
+                                    
+                                    map.flyTo({ center: userLocation, zoom: 15 });
+                                },
+                                () => alert('Não foi possível obter sua localização.'),
+                                { enableHighAccuracy: false, timeout: 15000, maximumAge: 300000 }
+                            );
+                            break;
+                        default:
+                            errorMessage += error.message;
+                    }
+                    
+                    if (error.code !== 3) {
+                        alert(errorMessage);
+                    }
+                    
+                    // Restaurar botão
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                },
+                highAccuracyOptions
+            );
+        }
+        
+        function toggleInfo() {
+            const info = document.getElementById('trailInfo');
+            info.style.display = info.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        function addTrailLayers() {
+            // Adicionar fonte da trilha
+            if (!map.getSource('route')) {
+                map.addSource('route', {
+                    'type': 'geojson',
+                    'data': {
+                        'type': 'Feature',
+                        'geometry': {
+                            'type': 'LineString',
+                            'coordinates': waypoints.map(point => [point.lng, point.lat])
+                        }
+                    }
+                });
+            }
+            
+            // Adicionar camada da trilha
+            if (!map.getLayer('route')) {
+                map.addLayer({
+                    'id': 'route',
+                    'type': 'line',
+                    'source': 'route',
+                    'layout': {
+                        'line-join': 'round',
+                        'line-cap': 'round'
+                    },
+                    'paint': {
+                        'line-color': '#7877c6',
+                        'line-width': 4,
+                        'line-opacity': 0.8
+                    }
+                });
+            }
+            
+            // Adicionar camada de sombra da trilha
+            if (!map.getLayer('route-shadow')) {
+                map.addLayer({
+                    'id': 'route-shadow',
+                    'type': 'line',
+                    'source': 'route',
+                    'layout': {
+                        'line-join': 'round',
+                        'line-cap': 'round'
+                    },
+                    'paint': {
+                        'line-color': '#000000',
+                        'line-width': 6,
+                        'line-opacity': 0.3,
+                        'line-translate': [1, 1]
+                    }
+                }, 'route');
+            }
+        }
+        
+        // Quando o mapa carregar
+        map.on('load', () => {
+            addTrailLayers();
+            
+            // Adicionar marcadores para cada waypoint
+            waypoints.forEach((point, index) => {
+                // Criar elemento customizado para o marcador
+                const waypointEl = document.createElement('div');
+                waypointEl.className = 'waypoint-marker';
+                waypointEl.innerHTML = point.id;
+                waypointEl.style.fontSize = '8px';
+                waypointEl.style.color = 'white';
+                waypointEl.style.fontWeight = 'bold';
+                waypointEl.style.display = 'flex';
+                waypointEl.style.alignItems = 'center';
+                waypointEl.style.justifyContent = 'center';
+                
+                const popup = new maplibregl.Popup({ offset: 25 }).setHTML(
+                    `<div class="popup-content">
+                        <div class="popup-title">${point.id}. ${point.name}</div>
+                        <div class="popup-location">${point.location}</div>
+                        <div style="margin-top: 8px; font-size: 10px; color: #999;">
+                            📍 ${point.lat.toFixed(6)}, ${point.lng.toFixed(6)}
+                        </div>
+                    </div>`
+                );
+                
+                new maplibregl.Marker(waypointEl)
+                    .setLngLat([point.lng, point.lat])
+                    .setPopup(popup)
+                    .addTo(map);
+            });
+            
+            // Zoom inicial para mostrar toda a trilha
+            zoomToTrail();
+        });
+        
+        // Auto localizar usuário ao carregar (opcional)
+        setTimeout(() => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const userLocation = [position.coords.longitude, position.coords.latitude];
+                        
+                        const userMarkerEl = document.createElement('div');
+                        userMarkerEl.className = 'user-marker';
+                        
+                        userMarker = new maplibregl.Marker(userMarkerEl)
+                            .setLngLat(userLocation)
+                            .setPopup(new maplibregl.Popup().setHTML(
+                                '<div class="popup-content"><div class="popup-title">📍 Você está aqui</div></div>'
+                            ))
+                            .addTo(map);
+                    },
+                    () => {}, // Silenciar erros na localização automática
+                    { timeout: 5000 }
+                );
+            }
+        }, 2000);
+        
+        // Cleanup ao sair da página
+        window.addEventListener('beforeunload', () => {
+            if (watchId) {
+                navigator.geolocation.clearWatch(watchId);
+            }
+        });
+    </script>
+</body>
+</html>
