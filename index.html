@@ -3,11 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="description" content="Techno Sutra AR - Experiência imersiva em realidade aumentada dos 56 capítulos do Avatamsaka Sutra">
-    <meta name="theme-color" content="#000000">
+    <meta name="description" content="Techno Sutra AR - Experiência imersiva em realidade aumentada dos 56 capítulos do Avatamsaka Sutra com modelos 3D interativos">
+    <meta name="keywords" content="avatamsaka sutra, budismo, realidade aumentada, AR, modelos 3D, dharma, experiência imersiva, cyber dharma, techno sutra">
+    <meta name="author" content="Techno Sutra Team">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#7877c6">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Techno Sutra AR">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Techno Sutra AR - Cyber Dharma Experience">
+    <meta property="og:description" content="Explore os 56 capítulos do Avatamsaka Sutra em realidade aumentada com modelos 3D interativos">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://technosutra.app">
+    <meta property="og:image" content="./technosutra-logo.png">
+    <meta property="og:site_name" content="Techno Sutra AR">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Techno Sutra AR - Cyber Dharma Experience">
+    <meta name="twitter:description" content="Experiência imersiva em realidade aumentada dos 56 capítulos do Avatamsaka Sutra">
+    <meta name="twitter:image" content="./technosutra-logo.png">
     
     <title>Techno Sutra AR - Cyber Dharma Experience</title>
     
@@ -83,11 +100,13 @@
 
         .mandala-viewport {
             position: relative;
-            width: 100vmin;
-            height: 100vmin;
+            width: 100%;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 2vh;
+            box-sizing: border-box;
             animation: fadeIn 3s ease;
         }
         
@@ -114,8 +133,8 @@
             top: 50%; left: 50%;
             width: 15vmin; height: 15vmin;
             transform: translate(-50%, -50%);
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--neon-purple) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 80%;
+            background: radial-gradient(circle, var(--neon-purple) 10%, rgba(0,0,0,0) 70%);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -124,9 +143,10 @@
         }
         
         .core-icon {
-            width: 6vmin;
-            height: 6vmin;
+            width: 30vmin;
+            height: 30vmin;
             object-fit: contain;
+	    
         }
 
         @keyframes pulse {
@@ -156,7 +176,6 @@
         }
 
         .mandala-item:hover {
-            transform: scale(1.15) !important;
             box-shadow: 0 0 15px var(--neon-blue), 0 0 30px var(--neon-blue), 0 0 60px var(--neon-blue), 0 0 100px var(--neon-purple);
             z-index: 11;
         }
@@ -272,6 +291,149 @@
                 transform: scale(0.95);
             }
         }
+
+        /* Responsive Design Improvements */
+        @media (max-width: 768px) {
+            .mandala-container {
+                width: 95vmin;
+                height: 95vmin;
+            }
+            
+            .mandala-item {
+                width: 25vmin;
+                height: 25vmin;
+                margin-left: -12.5vmin;
+                margin-top: -12.5vmin;
+            }
+            
+            .item-icon {
+                font-size: 6vmin;
+                margin-bottom: 1vmin;
+            }
+            
+            .item-content h3 {
+                font-size: 2.2vmin;
+            }
+            
+            .item-content p {
+                font-size: 1.3vmin;
+                padding: 0 1.5vmin;
+            }
+            
+            .main-title {
+                font-size: 4.5vmin;
+            }
+            
+            .subtitle {
+                font-size: 1.8vmin;
+            }
+            
+            .install-btn {
+                font-size: 1.6vmin;
+                padding: 0.8vmin 1.5vmin;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .mandala-viewport {
+                padding: 1vh;
+            }
+            
+            .mandala-item {
+                width: 22vmin;
+                height: 22vmin;
+                margin-left: -11vmin;
+                margin-top: -11vmin;
+            }
+            
+            .item-icon {
+                font-size: 5vmin;
+            }
+            
+            .item-content h3 {
+                font-size: 2vmin;
+            }
+            
+            .item-content p {
+                font-size: 1.2vmin;
+                padding: 0 1vmin;
+            }
+            
+            .main-title {
+                font-size: 4vmin;
+                letter-spacing: 0.1em;
+            }
+            
+            .subtitle {
+                font-size: 1.6vmin;
+            }
+        }
+        
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .mandala-item {
+                border-width: 2px;
+                background: rgba(0, 0, 0, 0.8);
+            }
+            
+            .item-content h3,
+            .item-content p {
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            }
+        }
+        
+        /* Reduced motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+            .mandala-container {
+                animation: none;
+            }
+            
+            .mandala-core {
+                animation: none;
+            }
+            
+            #starfield {
+                animation: none;
+            }
+            
+            .main-title::before,
+            .main-title::after {
+                animation: none;
+            }
+        }
+        
+        /* Focus styles for accessibility */
+        .mandala-item:focus {
+            outline: 3px solid var(--neon-blue);
+            outline-offset: 2px;
+            transform: scale(1.1);
+            box-shadow: 0 0 20px var(--neon-blue);
+        }
+        
+        .install-btn:focus {
+            outline: 2px solid var(--neon-purple);
+            outline-offset: 2px;
+        }
+        
+        /* Print styles */
+        @media print {
+            #starfield,
+            #vignette,
+            .install-btn {
+                display: none;
+            }
+            
+            body {
+                background: white;
+                color: black;
+            }
+            
+            .main-title,
+            .subtitle {
+                color: black;
+                text-shadow: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -281,11 +443,11 @@
     <main class="mandala-viewport" id="viewport">
         <div class="mandala-container" id="mandalaContainer">
             <div class="mandala-core">
-                <img src="loboguara.png" alt="Loboguara" class="core-icon">
+                <img src="technosutra-logo.png" alt="Loboguara" class="core-icon">
             </div>
 
             <a href="AR.html" class="mandala-item" data-title="AR" data-index="0">
-                <div class="item-icon">🥽</div>
+                <div class="item-icon">⁛</div>
                 <div class="item-content">
                     <h3>Visualizador AR</h3>
                     <p>Modelos 3D interativos em realidade aumentada</p>
@@ -293,7 +455,7 @@
             </a>
 
             <a href="galeria.html" class="mandala-item" data-title="Gallery" data-index="1">
-                <div class="item-icon">🖼️</div>
+                <div class="item-icon">⁛</div>
                 <div class="item-content">
                     <h3>Galeria 3D</h3>
                     <p>Explore os 56 capítulos do Avatamsaka Sutra</p>
@@ -301,10 +463,10 @@
             </a>
 
             <a href="map.html" class="mandala-item" data-title="Map" data-index="2">
-                <div class="item-icon">🗺️</div>
+                <div class="item-icon">⁛</div>
                 <div class="item-content">
                     <h3>Mapa Interativo</h3>
-                    <p>Navegue pelo caminho do dharma virtual</p>
+                    <p>Navegue pelo caminho</br> do dharma virtual</p>
                 </div>
             </a>
         </div>
