@@ -41,8 +41,8 @@
     
     <style>
         :root {
-            --neon-blue: #00ffff;
-            --neon-pink: #ff00ff;
+            --neon-blue: #00ff95;
+            --neon-pink: #ff0048;
             --neon-purple: #9d00ff;
             --cyber-dark: #000000;
             --font-main: 'Orbitron', sans-serif;
@@ -128,6 +128,16 @@
             to { transform: rotateZ(360deg); }
         }
         
+        @keyframes counter-spin {
+            from { transform: rotateZ(0deg); }
+            to { transform: rotateZ(-360deg); }
+        }
+        
+        @keyframes counter-spin-centered {
+            from { transform: translate(-50%, -50%) rotateZ(0deg); }
+            to { transform: translate(-50%, -50%) rotateZ(-360deg); }
+        }
+        
         .mandala-core {
             position: absolute;
             top: 50%; left: 50%;
@@ -143,14 +153,15 @@
         }
         
         .core-icon {
-            width: 12vmin;
-            height: 12vmin;
+            width: 60vmin;
+            height: 60vmin;
             object-fit: contain;
+            animation: counter-spin 120s pulse 120s;
         }
 
         @keyframes pulse {
             0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: var(--glow-pink);}
-            50% { transform: translate(-50%, -50%) scale(1.1); box-shadow: 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink), 0 0 40px var(--neon-pink), 0 0 80px var(--neon-blue);}
+            50% { transform: translate(-50%, -50%) scale(1.1); box-shadow: 0 0 200px var(--neon-pink), 0 0 200px var(--neon-pink), 0 0 400px var(--neon-pink), 0 0 800px var(--neon-blue);}
         }
 
         .mandala-item {
@@ -161,7 +172,7 @@
             border-radius: 50%;
             background: rgba(0, 0, 0, 0.5);
             border: 1px solid var(--neon-blue);
-            box-shadow: var(--glow-blue);
+            box-shadow: 0 0 15px var(--neon-blue), 0 0 30px var(--neon-blue), 0 0 60px var(--neon-blue), 0 0 100px var(--neon-purple);
             backdrop-filter: blur(5px);
             color: var(--neon-blue);
             text-decoration: none;
@@ -175,13 +186,29 @@
         }
 
         .mandala-item:hover {
-            box-shadow: 0 0 15px var(--neon-blue), 0 0 30px var(--neon-blue), 0 0 60px var(--neon-blue), 0 0 100px var(--neon-purple);
+            box-shadow: 0 0 250px var(--neon-blue), 0 0 50px var(--neon-blue), 0 0 100px var(--neon-blue), 0 0 10px var(--neon-purple);
             z-index: 11;
         }
         
         .item-icon {
-            font-size: 7vmin;
-            margin-bottom: 1.5vmin;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            font-size: 15vmin;
+            opacity: 0.2;
+            z-index: 1;
+            transform-origin: center;
+            animation: counter-spin-centered 120s linear infinite;
+        }
+
+        .item-content {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            z-index: 2;
         }
 
         .item-content h3 {
@@ -192,6 +219,11 @@
             text-transform: uppercase;
             color: white;
             text-shadow: 0 0 5px white;
+            text-align: center;
+            line-height: 1.2;
+            margin: 0;
+            padding: 0 1vmin;
+            animation: counter-spin 120s linear infinite;
         }
         
         .item-content p {
@@ -306,8 +338,7 @@
             }
             
             .item-icon {
-                font-size: 6vmin;
-                margin-bottom: 1vmin;
+                font-size: 12vmin;
             }
             
             .item-content h3 {
@@ -346,7 +377,7 @@
             }
             
             .item-icon {
-                font-size: 5vmin;
+                font-size: 10vmin;
             }
             
             .item-content h3 {
@@ -399,6 +430,11 @@
             .main-title::after {
                 animation: none;
             }
+            
+            .item-content h3,
+            .item-icon {
+                animation: none;
+            }
         }
         
         /* Focus styles for accessibility */
@@ -446,21 +482,21 @@
             </a>
 
             <a href="AR.html" class="mandala-item" data-title="AR" data-index="0" role="button" tabindex="0" aria-label="Visualizador AR - Modelos 3D interativos em realidade aumentada">
-                <div class="item-icon" aria-hidden="true">⩆</div>
+                <div class="item-icon" aria-hidden="true">⁛</div>
                 <div class="item-content">
                     <h3>Visualizador AR</h3>
                 </div>
             </a>
 
             <a href="galeria.html" class="mandala-item" data-title="Gallery" data-index="1" role="button" tabindex="0" aria-label="Galeria 3D - Explore os 56 capítulos do Avatamsaka Sutra">
-                <div class="item-icon" aria-hidden="true">⩆</div>
+                <div class="item-icon" aria-hidden="true">⁜</div>
                 <div class="item-content">
                     <h3>Galeria 3D</h3>
                 </div>
             </a>
 
             <a href="map.html" class="mandala-item" data-title="Map" data-index="2" role="button" tabindex="0" aria-label="Mapa Interativo - Navegue pelo caminho do dharma virtual">
-                <div class="item-icon" aria-hidden="true">⩆</div>
+                <div class="item-icon" aria-hidden="true">⁕</div>
                 <div class="item-content">
                     <h3>Mapa Interativo</h3>
                 </div>
