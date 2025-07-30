@@ -14,6 +14,7 @@ const DATA_CACHE = `techno-sutra-data-v${CACHE_VERSION}`;
 const STATIC_ASSETS = [
     '/',
     '/index.html',
+    '/home.html',
     '/AR.html',
     '/galeria.html',
     '/map.html',
