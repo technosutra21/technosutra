@@ -8,14 +8,14 @@
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
         
         :root {
-            --cyber-primary: #00ffff;
+            --cyber-primary: #ff0000;
             --cyber-secondary: #ff0080;
             --cyber-accent: #ffff00;
             --cyber-dark: #0a0a0a;
             --cyber-darker: #000000;
-            --cyber-purple: #8b00ff;
+            --cyber-purple: #00ff73;
             --cyber-green: #00ff41;
-            --cyber-blue: #0080ff;
+            --cyber-blue: #600000;
             --neon-glow: 0 0 20px;
         }
         
@@ -38,15 +38,10 @@
         }
         
         .cyber-container {
-	    overflow: hidden; !important
+	        overflow: hidden;
             position: relative;
             width: 100%;
             height: 100%;
-            background: 
-                linear-gradient(45deg, transparent 30%, rgba(0, 255, 255, 0.03) 50%, transparent 70%),
-                radial-gradient(circle at 20% 80%, rgba(255, 0, 128, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(139, 0, 255, 0.1) 0%, transparent 50%),
-                linear-gradient(180deg, var(--cyber-darker) 0%, var(--cyber-dark) 100%);
             overflow: hidden;
         }
         
@@ -103,7 +98,7 @@
             height: 100%;
             background: 
                 radial-gradient(circle at center, rgba(0, 255, 255, 0.1) 0%, var(--cyber-darker) 70%),
-                linear-gradient(45deg, var(--cyber-darker) 0%, #1a0033 50%, var(--cyber-darker) 100%);
+                linear-gradient(45deg, var(--cyber-darker) 0%, #330000 50%, var(--cyber-darker) 100%);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -146,7 +141,6 @@
             position: relative;
         }
         
-        .cyber-spinner::before,
         .cyber-spinner::after {
             content: '';
             position: absolute;
@@ -173,16 +167,11 @@
             border-left: 2px solid var(--cyber-accent);
             animation-direction: reverse;
             animation-duration: 1s;
-            box-shadow: var(--neon-glow) var(--cyber-purple);
         }
         
         .loading-text {
-            font-size: 18px;
-            font-weight: 600;
-            text-shadow: 
-                0 0 10px var(--cyber-primary),
-                0 0 20px var(--cyber-primary),
-                0 0 30px var(--cyber-primary);
+            font-size: 40px;
+            font-weight: 1200;
             animation: textPulse 2s ease-in-out infinite;
             margin-bottom: 20px;
         }
