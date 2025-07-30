@@ -462,14 +462,95 @@
             color: rgba(0, 0, 0, 0.5);
         }
 
+        /* Mobile Bottom Navigation */
+        .mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0, 244, 255, 0.3);
+            padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
+            z-index: 1000;
+            display: none;
+        }
+
+        .mobile-nav-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            color: #9ca3af;
+            transition: all 0.3s ease;
+            padding: 8px 12px;
+            border-radius: 12px;
+            min-width: 60px;
+        }
+
+        .mobile-nav-item:hover,
+        .mobile-nav-item.active {
+            color: var(--neon-blue);
+            background: rgba(0, 244, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .mobile-nav-icon {
+            font-size: 1.5rem;
+            margin-bottom: 2px;
+        }
+
+        .mobile-nav-label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .mobile-nav-item.center {
+            background: linear-gradient(135deg, rgba(0, 244, 255, 0.2) 0%, rgba(0, 244, 255, 0.1) 100%);
+            border: 1px solid rgba(0, 244, 255, 0.3);
+            color: #ffffff;
+            transform: scale(1.1);
+        }
+
+        .mobile-nav-item.center:hover {
+            background: linear-gradient(135deg, rgba(0, 244, 255, 0.3) 0%, rgba(0, 244, 255, 0.2) 100%);
+            border-color: rgba(0, 244, 255, 0.5);
+            transform: scale(1.15) translateY(-2px);
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
+            .mobile-nav {
+                display: block;
+            }
+            
+            body {
+                padding-bottom: 80px;
+            }
+            
             .menu-panel {
                 min-width: 260px;
                 left: -10px;
             }
-            
+        }
 
+        /* PWA safe area adjustments */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .mobile-nav {
+                padding-bottom: calc(12px + env(safe-area-inset-bottom));
+            }
         }
     </style>
     <title>🌐 Techno Sutra Trail Map - Cyberpunk Edition</title>
@@ -1072,5 +1153,23 @@ navigator.geolocation.getCurrentPosition(
             }
         });
     </script>
+
+    <!-- Mobile Navigation Bar -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-container">
+            <a href="home.html" class="mobile-nav-item">
+                <div class="mobile-nav-icon">🏠</div>
+                <div class="mobile-nav-label">Home</div>
+            </a>
+            <a href="galeria.html" class="mobile-nav-item">
+                <div class="mobile-nav-icon">🎨</div>
+                <div class="mobile-nav-label">Galeria</div>
+            </a>
+            <a href="map.html" class="mobile-nav-item center active">
+                <div class="mobile-nav-icon">🗺️</div>
+                <div class="mobile-nav-label">Mapa</div>
+            </a>
+        </div>
+    </nav>
 </body>
 </html>
