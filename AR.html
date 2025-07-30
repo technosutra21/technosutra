@@ -19,7 +19,7 @@
     <meta property="og:url" content="https://technosutra.com/AR.html">
     <meta property="og:title" content="Techno Sutra AR - Experiência Imersiva em Realidade Aumentada">
     <meta property="og:description" content="Explore os 56 capítulos do Avatamsaka Sutra através de modelos 3D em realidade aumentada. Uma experiência imersiva única que combina tradição budista com tecnologia avançada.">
-    <meta property="og:image" content="https://technosutra.com/technosutra-logo.png">
+    <meta property="og:image" content="https://technosutra.com/icon.png">
     <meta property="og:site_name" content="Techno Sutra AR">
     <meta property="og:locale" content="pt_BR">
     
@@ -28,7 +28,7 @@
     <meta property="twitter:url" content="https://technosutra.com/AR.html">
     <meta property="twitter:title" content="Techno Sutra AR - Experiência Imersiva em Realidade Aumentada">
     <meta property="twitter:description" content="Explore os 56 capítulos do Avatamsaka Sutra através de modelos 3D em realidade aumentada.">
-    <meta property="twitter:image" content="https://technosutra.com/technosutra-logo.png">
+    <meta property="twitter:image" content="https://technosutra.com/icon.png">
     
     <!-- PWA Meta Tags -->
     <link rel="manifest" href="manifest.json">
@@ -36,11 +36,11 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Techno Sutra AR">
-    <link rel="apple-touch-icon" href="technosutra-logo.png">
+    <link rel="apple-touch-icon" href="icon.png">
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="technosutra-logo.png">
-    <link rel="shortcut icon" href="technosutra-logo.png">
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="shortcut icon" href="icon.png">
     
     <!-- Performance optimizations -->
     <link rel="preload" href="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js" as="script" crossorigin="anonymous">
@@ -52,7 +52,7 @@
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="technosutra-logo.png">
+    <link rel="apple-touch-icon" href="icon.png">
     
     <!-- Critical CSS inline for faster rendering -->
     <style>
@@ -324,9 +324,35 @@
                 padding-bottom: calc(12px + env(safe-area-inset-bottom));
             }
         }
+
+        /* Offline Status Header */
+        .offline-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #000000;
+            color: #00FF41; /* Matrix Green */
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.8rem;
+            text-align: center;
+            padding: 4px 0;
+            z-index: 2000;
+            display: none; /* Hidden by default */
+            text-shadow: 0 0 5px #00FF41, 0 0 10px #00FF41;
+            letter-spacing: 0.1em;
+        }
+
+        .offline-header.show {
+            display: block;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Offline Status Header -->
+    <div class="offline-header" id="offline-header"></div>
+
     <!-- Loading overlay -->
     <div class="loading-overlay" id="loading-overlay">
         <div class="loading-content">
@@ -409,16 +435,16 @@
     <nav class="mobile-nav">
         <div class="mobile-nav-container">
             <a href="galeria.html" class="mobile-nav-item">
-                <div class="mobile-nav-icon">📚</div>
+                <div class="mobile-nav-icon">⁜</div>
                 <div class="mobile-nav-label">Galeria</div>
             </a>
             <a href="index.html" class="mobile-nav-item center">
-                <div class="mobile-nav-icon">🏛️</div>
+                <div class="mobile-nav-icon">🎵</div>
                 <div class="mobile-nav-label">Home</div>
             </a>
             <a href="ar.html" class="mobile-nav-item active">
-                <div class="mobile-nav-icon">🥽</div>
-                <div class="mobile-nav-label">AR</div>
+                <div class="mobile-nav-icon">⁜</div>
+                <div class="mobile-nav-label">Mapa</div>
             </a>
         </div>
     </nav>
@@ -1002,7 +1028,33 @@
         // Add navigation arrows after DOM loads
         document.addEventListener('DOMContentLoaded', () => {
             addNavigationArrows();
+            checkOfflineStatus();
         });
+
+        // Check PWA and offline status
+        function checkOfflineStatus() {
+            const offlineHeader = document.getElementById('offline-header');
+            if (!offlineHeader) return;
+
+            const isOffline = !navigator.onLine;
+
+            if (isOffline) {
+                offlineHeader.textContent = '⚫ OFFLINE MODE';
+                offlineHeader.classList.add('show');
+                return;
+            }
+
+            if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.postMessage({ action: 'is-fully-cached' });
+
+                navigator.serviceWorker.addEventListener('message', event => {
+                    if (event.data.action === 'is-fully-cached-reply' && event.data.isFullyCached) {
+                        offlineHeader.textContent = '🟢 SYSTEM FULLY CACHED';
+                        offlineHeader.classList.add('show');
+                    }
+                });
+            }
+        }
     </script>
 </body>
 </html>

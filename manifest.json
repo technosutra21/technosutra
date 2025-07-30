@@ -14,13 +14,13 @@
     
     "icons": [
         {
-            "src": "technosutra-logo.png",
+            "src": "icon.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "any maskable"
         },
         {
-            "src": "technosutra-logo.png",
+            "src": "icon.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "any"
@@ -41,7 +41,7 @@
             "url": "/AR.html",
             "icons": [
                 {
-                    "src": "technosutra-logo.png",
+                    "src": "icon.png",
                     "sizes": "96x96"
                 }
             ]
@@ -53,7 +53,7 @@
             "url": "/galeria.html",
             "icons": [
                 {
-                    "src": "technosutra-logo.png",
+                    "src": "icon.png",
                     "sizes": "96x96"
                 }
             ]

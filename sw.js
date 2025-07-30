@@ -19,7 +19,7 @@ const STATIC_ASSETS = [
     '/map.html',
     '/navegador-capitulos-updated.html',
     '/manifest.json',
-    '/technosutra-logo.png',
+    '/icon.png',
     '/lobo-guará.jpg',
     '/config.json',
     '/trail.json'
@@ -566,8 +566,8 @@ self.addEventListener('push', event => {
         const data = event.data.json();
         const options = {
             body: data.body,
-            icon: '/technosutra-logo.png',
-            badge: '/technosutra-logo.png',
+            icon: '/icon.png',
+            badge: '/icon.png',
             vibrate: [100, 50, 100],
             data: {
                 dateOfArrival: Date.now(),
@@ -577,7 +577,7 @@ self.addEventListener('push', event => {
                 {
                     action: 'explore',
                     title: 'Explorar em AR',
-                    icon: '/technosutra-logo.png'
+                    icon: '/icon.png'
                 },
                 {
                     action: 'close',
