@@ -7,7 +7,7 @@
     <meta name="keywords" content="avatamsaka sutra, budismo, realidade aumentada, AR, modelos 3D, dharma, experiência imersiva, cyber dharma, techno sutra">
     <meta name="author" content="Techno Sutra Team">
     <meta name="robots" content="index, follow">
-    <meta name="theme-color" content="#7877c6">
+    <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Techno Sutra AR">
@@ -90,7 +90,20 @@
             background-repeat: repeat;
             background-size: 200px 200px;
             animation: zoom 15s infinite alternate ease-in-out;
-            opacity: 0.5;
+    opacity: 0.5;
+        }
+
+        /* Dynamic canvas background */
+        #dynamicBackgroundCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+opacity: 0.6;
+            pointer-events: none;
+            z-index: 1;
+        }
         }
 
         @keyframes zoom {
@@ -473,6 +486,7 @@
 <body>
     <div id="starfield"></div>
     <div id="vignette"></div>
+    <canvas id="dynamicBackgroundCanvas"></canvas>
 
     <main class="mandala-viewport" id="viewport">
         <div class="mandala-container" id="mandalaContainer">
@@ -687,5 +701,39 @@
             });
         }
     </script>
+
+    <!-- Dynamic background animation using 1.js & 2.js -->
+    <script type="module">
+        import generatePositions from './1.js';
+
+        const canvas = document.getElementById('dynamicBackgroundCanvas');
+        const ctx = canvas.getContext('2d');
+        const controller = {};
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function render(time) {
+            const gridSize = 40;
+            const positions = generatePositions(gridSize, time, controller);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+ctx.fillStyle = 'rgba(0,255,149,0.9)';
+            positions.forEach(({ x, y }) => {
+                const px = (x / gridSize) * canvas.width;
+                const py = (y / gridSize) * canvas.height;
+ctx.fillRect(px, py, 3, 3);
+            });
+            requestAnimationFrame(render);
+        }
+
+        requestAnimationFrame(render);
+    </script>
+
+    <script defer src="2.js"></script>
 </body>
 </html>
