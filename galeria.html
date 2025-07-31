@@ -1127,6 +1127,45 @@
             }
         }
 
+        /* Desktop Back Button */
+        .desktop-back-btn {
+            position: fixed;
+            top: 0.5%;
+            left: 5%;
+            z-index: 2000;
+            background: rgba(15, 15, 15, 0.9);
+            border: 1px solid rgba(120, 119, 198, 0.4);
+            color: #e5e7eb;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 0.025em;
+            box-shadow: 0 4px 20px rgba(120, 119, 198, 0.1);
+            text-decoration: none;
+        }
+
+        .desktop-back-btn:hover {
+            background: linear-gradient(135deg, rgba(120, 119, 198, 0.3) 0%, rgba(120, 119, 198, 0.2) 100%);
+            border-color: rgba(120, 119, 198, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(120, 119, 198, 0.2);
+            color: #ffffff;
+        }
+
+        /* Hide back button on mobile */
+        @media (max-width: 768px) {
+            .desktop-back-btn {
+                display: none;
+            }
+        }
+
         /* Enhanced transitions - only for interactive elements */
         .action-btn, .filter-btn, .model-card, .quick-action-btn, .theme-toggle {
             transition-property: transform, opacity, background-color, border-color;
@@ -1242,6 +1281,11 @@
     <!-- Offline Status Header -->
     <div class="offline-header" id="offline-header"></div>
 
+    <!-- Desktop Back Button -->
+    <a href="index.html" class="desktop-back-btn">
+        ← Voltar
+    </a>
+
     <!-- Botão de alternância de tema -->
     <button class="theme-toggle tooltip" data-tooltip="Alternar tema claro/escuro" onclick="toggleTheme()">
         🌙
@@ -1289,10 +1333,6 @@
     <div class="gallery-container" id="gallery">
         <!-- Enhanced Filtros e busca -->
         <div class="controls" style="margin-bottom: 40px; text-align: center; display: flex;">
-            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px;">
-                <button class="filter-btn active" data-filter="all">Todos (56)</button>
-                <button class="filter-btn" data-filter="bodhisattvas">Bodhisattvas</button>
-            </div>
             <div style="max-width: 500px; margin: 0 auto; position: relative;">
                 <input type="text" id="search-input" placeholder="🔍 Buscar por nome, título, ocupação ou localização..."
                        style="width: 100%; padding: 16px 20px; border-radius: 12px; border: 1px solid rgba(120,119,198,0.2);
@@ -1336,7 +1376,7 @@
                 <div class="mobile-nav-icon">🎵</div>
                 <div class="mobile-nav-label">Home</div>
             </a>
-            <a href="ar.html" class="mobile-nav-item active">
+            <a href="map.html" class="mobile-nav-item active">
                 <div class="mobile-nav-icon">⁜</div>
                 <div class="mobile-nav-label">Mapa</div>
             </a>
@@ -1881,9 +1921,6 @@
                         break;
                     case 'stages':
                         shouldShow = chapterId >= 27 && chapterId <= 36;
-                        break;
-                    case 'bodhisattvas':
-                        shouldShow = chapter.occupation.toLowerCase().includes('bodhisattva');
                         break;
                     case 'all':
                     default:
