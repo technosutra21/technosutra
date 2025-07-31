@@ -288,27 +288,87 @@
             letter-spacing: 0.1em;
         }
 
-        /* PWA Install Button */
+        /* PWA Install Button - Enhanced Design */
         .install-btn {
             position: fixed;
-            top: 2vh;
-            right: 50%;
-            background: rgba(255, 0, 0, 0.3);
-            border: 1px solid var(--neon-purple);
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, rgba(0, 244, 255, 0.15) 0%, rgba(191, 64, 255, 0.15) 100%);
+            border: 2px solid transparent;
+            background-clip: padding-box;
             color: white;
-            padding: 1vmin 2vmin;
-            border-radius: 5px;
+            padding: 12px 20px;
+            border-radius: 12px;
             cursor: pointer;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(20px);
             font-family: var(--font-secondary);
-            font-size: 1.8vmin;
-            z-index: 100;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 1000;
             display: none; /* Hidden by default, shown by JS */
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 
+                0 8px 32px rgba(0, 244, 255, 0.2),
+                0 0 0 1px rgba(0, 244, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            white-space: nowrap;
+            min-width: 180px;
+            text-align: center;
         }
+        
+        .install-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .install-btn:hover::before {
+            left: 100%;
+        }
+        
         .install-btn:hover {
-            background: rgba(157, 0, 255, 0.6);
-            box-shadow: var(--glow-pink);
+            background: linear-gradient(135deg, rgba(0, 244, 255, 0.25) 0%, rgba(191, 64, 255, 0.25) 100%);
+            box-shadow: 
+                0 12px 40px rgba(0, 244, 255, 0.3),
+                0 0 0 2px rgba(0, 244, 255, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px) scale(1.02);
+        }
+        
+        .install-btn:active {
+            transform: translateY(-1px) scale(1.01);
+            transition: all 0.1s ease;
+        }
+        
+        .install-btn .icon {
+            display: inline-block;
+            margin-right: 8px;
+            font-size: 16px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+        
+        /* Enhanced responsive design for install button */
+        @media (max-width: 768px) {
+            .install-btn {
+                top: 15px;
+                right: 15px;
+                padding: 10px 16px;
+                font-size: 12px;
+                min-width: 140px;
+            }
         }
 
         .fade-out {
@@ -508,7 +568,7 @@
     </main>
 
     <button id="installPWA" class="install-btn">
-        <span class="icon">💾</span> Offline Map e Galeria
+        <span class="icon">📱</span> Instalar App
     </button>
     
     <script>
@@ -628,45 +688,179 @@
                 const installButton = document.getElementById('installPWA');
 
                 if (installButton) {
+                    // Enhanced beforeinstallprompt with better timing and conditions
                     window.addEventListener('beforeinstallprompt', (e) => {
                         try {
                             e.preventDefault();
                             deferredPrompt = e;
-                            installButton.style.display = 'inline-flex';
+                            
+                            // Show button only after user interaction and delay
+                            setTimeout(() => {
+                                if (deferredPrompt && !isInstalled()) {
+                                    showInstallButton();
+                                }
+                            }, 3000); // Wait 3 seconds before showing
                         } catch (error) {
                             console.error('PWA prompt error:', error);
                         }
                     });
+                    
+                    // Function to check if app is already installed
+                    function isInstalled() {
+                        return window.matchMedia('(display-mode: standalone)').matches || 
+                               window.navigator.standalone === true;
+                    }
+                    
+                    // Enhanced install button show with animation
+                    function showInstallButton() {
+                        if (installButton && !isInstalled()) {
+                            installButton.style.display = 'inline-flex';
+                            installButton.style.opacity = '0';
+                            installButton.style.transform = 'translateY(-20px) scale(0.9)';
+                            
+                            // Animate in
+                            setTimeout(() => {
+                                installButton.style.transition = 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                                installButton.style.opacity = '1';
+                                installButton.style.transform = 'translateY(0) scale(1)';
+                            }, 100);
+                            
+                            // Auto-hide after 10 seconds if not interacted with
+                            setTimeout(() => {
+                                if (installButton && installButton.style.display !== 'none') {
+                                    hideInstallButton();
+                                }
+                            }, 10000);
+                        }
+                    }
+                    
+                    // Enhanced hide function with animation
+                    function hideInstallButton() {
+                        if (installButton) {
+                            installButton.style.transition = 'all 0.3s ease-out';
+                            installButton.style.opacity = '0';
+                            installButton.style.transform = 'translateY(-20px) scale(0.9)';
+                            setTimeout(() => {
+                                installButton.style.display = 'none';
+                            }, 300);
+                        }
+                    }
 
                     installButton.addEventListener('click', async () => {
                         try {
+                            // Add loading state
+                            const originalText = installButton.innerHTML;
+                            installButton.innerHTML = '<span class="icon">⏳</span> Instalando...';
+                            installButton.style.pointerEvents = 'none';
+                            
                             if (deferredPrompt) {
                                 await deferredPrompt.prompt();
                                 const { outcome } = await deferredPrompt.userChoice;
+                                
                                 if (outcome === 'accepted') {
                                     console.log('User accepted the A2HS prompt');
+                                    installButton.innerHTML = '<span class="icon">✅</span> Instalado!';
+                                    setTimeout(() => {
+                                        hideInstallButton();
+                                    }, 2000);
+                                } else {
+                                    console.log('User dismissed the A2HS prompt');
+                                    installButton.innerHTML = originalText;
+                                    installButton.style.pointerEvents = 'auto';
+                                    // Auto-hide after rejection
+                                    setTimeout(() => {
+                                        hideInstallButton();
+                                    }, 3000);
                                 }
                                 deferredPrompt = null;
-                                installButton.style.display = 'none';
+                            } else {
+                                // Manual installation instructions
+                                showManualInstallInstructions();
+                                installButton.innerHTML = originalText;
+                                installButton.style.pointerEvents = 'auto';
                             }
                         } catch (error) {
                             console.error('PWA installation error:', error);
+                            installButton.innerHTML = originalText;
+                            installButton.style.pointerEvents = 'auto';
                         }
                     });
+                    
+                    // Manual installation instructions modal
+                    function showManualInstallInstructions() {
+                        const modal = document.createElement('div');
+                        modal.style.cssText = `
+                            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                            background: rgba(0, 0, 0, 0.8); z-index: 10000; display: flex;
+                            align-items: center; justify-content: center; backdrop-filter: blur(10px);
+                        `;
+                        
+                        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                        const isAndroid = /Android/.test(navigator.userAgent);
+                        
+                        let instructions = '';
+                        if (isIOS) {
+                            instructions = 'Toque no botão "Compartilhar" no Safari, depois em "Adicionar à Tela de Início"';
+                        } else if (isAndroid) {
+                            instructions = 'Toque no menu do navegador e selecione "Adicionar à tela inicial" ou "Instalar app"';
+                        } else {
+                            instructions = 'Procure pelo ícone de instalação na barra de endereços do seu navegador ou no menu "Instalar app"';
+                        }
+                        
+                        modal.innerHTML = `
+                            <div style="background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(20, 20, 20, 0.9));
+                                        border: 2px solid rgba(0, 244, 255, 0.3); border-radius: 16px; padding: 30px;
+                                        max-width: 400px; width: 90%; text-align: center; backdrop-filter: blur(20px);
+                                        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);">
+                                <div style="font-size: 3rem; margin-bottom: 20px;">📱</div>
+                                <h3 style="color: #00f4ff; margin-bottom: 16px; font-size: 1.3rem;">Como Instalar</h3>
+                                <p style="color: #e5e7eb; margin-bottom: 24px; line-height: 1.5;">${instructions}</p>
+                                <button onclick="this.parentElement.parentElement.remove()" 
+                                        style="background: linear-gradient(135deg, rgba(0, 244, 255, 0.2), rgba(191, 64, 255, 0.2));
+                                               border: 1px solid rgba(0, 244, 255, 0.5); color: white; padding: 12px 24px;
+                                               border-radius: 8px; cursor: pointer; font-weight: 600;">Entendi</button>
+                            </div>
+                        `;
+                        
+                        document.body.appendChild(modal);
+                        modal.addEventListener('click', (e) => {
+                            if (e.target === modal) modal.remove();
+                        });
+                    }
 
                     window.addEventListener('appinstalled', () => {
                         try {
-                            installButton.style.display = 'none';
-                            console.log('PWA was installed');
+                            console.log('PWA was installed successfully!');
+                            if (installButton) {
+                                installButton.innerHTML = '<span class="icon">🎉</span> App Instalado!';
+                                setTimeout(() => {
+                                    hideInstallButton();
+                                }, 3000);
+                            }
                         } catch (error) {
                             console.error('PWA installed event error:', error);
                         }
                     });
 
-                    // Check if already in standalone mode
+                    // Check if already in standalone mode with enhanced detection
                     try {
-                        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+                        if (isInstalled()) {
                             installButton.style.display = 'none';
+                            console.log('App is already installed');
+                        } else {
+                            // Show install hint after some user interaction
+                            let interactionCount = 0;
+                            const showInstallHint = () => {
+                                interactionCount++;
+                                if (interactionCount >= 2 && deferredPrompt && !isInstalled()) {
+                                    showInstallButton();
+                                    document.removeEventListener('click', showInstallHint);
+                                    document.removeEventListener('scroll', showInstallHint);
+                                }
+                            };
+                            
+                            document.addEventListener('click', showInstallHint);
+                            document.addEventListener('scroll', showInstallHint);
                         }
                     } catch (error) {
                         console.error('Standalone detection error:', error);
