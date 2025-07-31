@@ -386,6 +386,7 @@
     <model-viewer
         id="modelViewer"
         alt="Modelo 3D Interativo - Techno Sutra AR"
+        scale="222"
         camera-controls
         touch-action="pan-y"
         ar
@@ -393,7 +394,7 @@
         ar-scale="auto"
         ar-placement="floor"
         auto-rotate
-        rotation-per-second="30deg"
+        rotation-per-second="2deg"
         loading="eager"
         reveal="auto"
         shadow-intensity="0.8"
@@ -404,12 +405,13 @@
         field-of-view="45deg"
         min-camera-orbit="auto 0deg auto"
         max-camera-orbit="auto 180deg auto"
-        tone-mapping="commerce"
-        style="background-color: transparent; --ar-scale: 1.5; --poster-color: transparent; filter: contrast(1.8) saturate(1.8) brightness(1.4) hue-rotate(5deg);">
+        tone-mapping="neutral"
+        orientation="0 0 -90"
+        style="background-color: transparent; --ar-scale: 1.5; --poster-color: transparent; filter: contrast(1) saturate(1) brightness(1) hue-rotate(5deg);">
 
         <!-- Custom AR button -->
         <button slot="ar-button" class="ar-button" id="ar-button">
-            <span>📱</span>
+            <span>🛞</span>
             <span>Ver em AR</span>
         </button>
 

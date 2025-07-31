@@ -3,23 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Experiência imersiva em realidade aumentada dos 56 capítulos do Avatamsaka Sutra com modelos 3D interativos">
-    <meta name="keywords" content="avatamsaka sutra, budismo, realidade aumentada, AR, modelos 3D, experiência imersiva">
-    <meta name="theme-color" content="#667eea">
+    
+    <!-- SEO Meta Tags -->
+    <title>Techno Sutra AR - Experiência Imersiva em Realidade Aumentada</title>
+    <meta name="description" content="Experiência imersiva em realidade aumentada dos 56 capítulos do Avatamsaka Sutra com modelos 3D interativos. Explore o dharma através da tecnologia moderna.">
+    <meta name="keywords" content="Avatamsaka Sutra, Budismo, Realidade Aumentada, AR, Modelos 3D, Experiência Imersiva, Dharma, Meditação, WebXR, Techno Sutra">
+    <meta name="author" content="Techno Sutra AR">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="Portuguese">
+    <meta name="revisit-after" content="7 days">
+    <meta name="theme-color" content="#7877c6">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://technosutra.com/AR.html">
+    <meta property="og:title" content="Techno Sutra AR - Experiência Imersiva em Realidade Aumentada">
+    <meta property="og:description" content="Explore os 56 capítulos do Avatamsaka Sutra através de modelos 3D em realidade aumentada. Uma experiência imersiva única que combina tradição budista com tecnologia avançada.">
+    <meta property="og:image" content="https://technosutra.com/icon.png">
+    <meta property="og:site_name" content="Techno Sutra AR">
+    <meta property="og:locale" content="pt_BR">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://technosutra.com/AR.html">
+    <meta property="twitter:title" content="Techno Sutra AR - Experiência Imersiva em Realidade Aumentada">
+    <meta property="twitter:description" content="Explore os 56 capítulos do Avatamsaka Sutra através de modelos 3D em realidade aumentada.">
+    <meta property="twitter:image" content="https://technosutra.com/icon.png">
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Techno Sutra AR">
+    <link rel="apple-touch-icon" href="icon.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="shortcut icon" href="icon.png">
     
     <!-- Performance optimizations -->
-    <link rel="preload" href="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js" as="script">
+    <link rel="preload" href="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js" as="script" crossorigin="anonymous">
     <link rel="dns-prefetch" href="https://ajax.googleapis.com">
     <link rel="dns-prefetch" href="https://modelviewer.dev">
     <link rel="preconnect" href="https://ajax.googleapis.com" crossorigin>
-    
-    <title>Techno Sutra AR - Experiência Imersiva em Realidade Aumentada</title>
     
     <!-- Progressive Web App -->
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="technosutra-logo.png">
+    <link rel="apple-touch-icon" href="icon.png">
     
     <!-- Critical CSS inline for faster rendering -->
     <style>
@@ -152,9 +185,174 @@
         .hidden {
             display: none !important;
         }
+
+        /* Navigation arrows */
+        .nav-arrow {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 150;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-arrow:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .nav-arrow.left {
+            left: 20px;
+        }
+
+        .nav-arrow.right {
+            right: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-arrow {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+            
+            .nav-arrow.left {
+                left: 10px;
+            }
+            
+            .nav-arrow.right {
+                right: 10px;
+            }
+        }
+
+        /* Mobile Bottom Navigation */
+        .mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(120, 119, 198, 0.2);
+            padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
+            z-index: 1000;
+            display: none;
+        }
+
+        .mobile-nav-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            color: #9ca3af;
+            transition: all 0.3s ease;
+            padding: 8px 12px;
+            border-radius: 12px;
+            min-width: 60px;
+        }
+
+        .mobile-nav-item:hover,
+        .mobile-nav-item.active {
+            color: #7877c6;
+            background: rgba(120, 119, 198, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .mobile-nav-icon {
+            font-size: 1.5rem;
+            margin-bottom: 2px;
+        }
+
+        .mobile-nav-label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .mobile-nav-item.center {
+            background: linear-gradient(135deg, rgba(120, 119, 198, 0.2) 0%, rgba(120, 119, 198, 0.1) 100%);
+            border: 1px solid rgba(120, 119, 198, 0.3);
+            color: #ffffff;
+            transform: scale(1.1);
+        }
+
+        .mobile-nav-item.center:hover {
+            background: linear-gradient(135deg, rgba(120, 119, 198, 0.3) 0%, rgba(120, 119, 198, 0.2) 100%);
+            border-color: rgba(120, 119, 198, 0.5);
+            transform: scale(1.15) translateY(-2px);
+        }
+
+        /* Show mobile nav on mobile devices */
+        @media (max-width: 768px) {
+            .mobile-nav {
+                display: block;
+            }
+            
+            body {
+                padding-bottom: 80px;
+            }
+        }
+
+        /* PWA safe area adjustments */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .mobile-nav {
+                padding-bottom: calc(12px + env(safe-area-inset-bottom));
+            }
+        }
+
+        /* Offline Status Header */
+        .offline-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #000000;
+            color: #00FF41; /* Matrix Green */
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.8rem;
+            text-align: center;
+            padding: 4px 0;
+            z-index: 2000;
+            display: none; /* Hidden by default */
+            text-shadow: 0 0 5px #00FF41, 0 0 10px #00FF41;
+            letter-spacing: 0.1em;
+        }
+
+        .offline-header.show {
+            display: block;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Offline Status Header -->
+    <div class="offline-header" id="offline-header"></div>
+
     <!-- Loading overlay -->
     <div class="loading-overlay" id="loading-overlay">
         <div class="loading-content">
@@ -175,17 +373,7 @@
     </div>
 
     <!-- Camera permission overlay -->
-    <div class="camera-permission hidden" id="camera-permission" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; color: white; text-align: center; padding: 20px;">
-        <div style="font-size: 64px; margin-bottom: 24px;">📷</div>
-        <div style="font-size: 24px; font-weight: 700; margin-bottom: 16px;">Acesso à Câmera Necessário</div>
-        <div style="font-size: 16px; opacity: 0.8; margin-bottom: 32px; max-width: 400px; line-height: 1.5;">
-            Para uma experiência AR completa, precisamos acessar sua câmera.
-            Isso permite ver o mundo real como fundo para os modelos 3D.
-        </div>
-        <button id="camera-button" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 16px 32px; border-radius: 50px; font-size: 16px; font-weight: 600; cursor: pointer;">
-            Permitir Câmera
-        </button>
-    </div>
+
 
     <!-- Status message -->
     <div id="status" class="hidden" style="position: absolute; top: 20px; left: 20px; right: 20px; background: rgba(0, 0, 0, 0.8); color: white; padding: 12px 16px; border-radius: 16px; font-size: 13px; text-align: center; z-index: 100; backdrop-filter: blur(20px); transition: all 0.3s ease; opacity: 0;">
@@ -208,16 +396,16 @@
         rotation-per-second="30deg"
         loading="eager"
         reveal="auto"
-        shadow-intensity="1.2"
-        shadow-softness="0.8"
-        environment-image="neutral"
-        exposure="1.0"
+        shadow-intensity="0.8"
+        shadow-softness="0.5"
+        environment-image="legacy"
+        exposure="1.5"
         camera-target="auto auto auto"
-        field-of-view="30deg"
+        field-of-view="45deg"
         min-camera-orbit="auto 0deg auto"
         max-camera-orbit="auto 180deg auto"
-        tone-mapping="aces"
-        style="background-color: transparent; --ar-scale: 1.5; --poster-color: transparent; filter: contrast(1.3) saturate(1.4) brightness(1.1);">
+        tone-mapping="commerce"
+        style="background-color: transparent; --ar-scale: 1.5; --poster-color: transparent; filter: contrast(1.8) saturate(1.8) brightness(1.4) hue-rotate(5deg);">
 
         <!-- Custom AR button -->
         <button slot="ar-button" class="ar-button" id="ar-button">
@@ -242,6 +430,24 @@
         <button id="reset-camera" style="background: rgba(0, 0, 0, 0.8); color: white; border: none; padding: 14px; border-radius: 50%; cursor: pointer; backdrop-filter: blur(20px); width: 48px; height: 48px; font-size: 18px;">🔄</button>
         <button id="toggle-rotate" style="background: rgba(0, 0, 0, 0.8); color: white; border: none; padding: 14px; border-radius: 50%; cursor: pointer; backdrop-filter: blur(20px); width: 48px; height: 48px; font-size: 18px;">⏸️</button>
     </div>
+
+    <!-- Mobile Navigation Bar -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-container">
+            <a href="galeria.html" class="mobile-nav-item">
+                <div class="mobile-nav-icon">⁜</div>
+                <div class="mobile-nav-label">Galeria</div>
+            </a>
+            <a href="index.html" class="mobile-nav-item center">
+                <div class="mobile-nav-icon">🎵</div>
+                <div class="mobile-nav-label">Home</div>
+            </a>
+            <a href="ar.html" class="mobile-nav-item active">
+                <div class="mobile-nav-icon">⁜</div>
+                <div class="mobile-nav-label">Mapa</div>
+            </a>
+        </div>
+    </nav>
 
     <!-- Load model-viewer with defer for better performance -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js" defer></script>
@@ -463,12 +669,20 @@
         // Apply iOS-specific color enhancements
         function applyIOSColorFix() {
             if (isIOSDevice() && elements.modelViewer) {
-                // Enhanced color settings for iOS devices
-                elements.modelViewer.style.filter = 'contrast(1.5) saturate(1.6) brightness(1.15) hue-rotate(5deg)';
-                elements.modelViewer.setAttribute('exposure', '1.2');
-                elements.modelViewer.setAttribute('shadow-intensity', '1.5');
-                elements.modelViewer.setAttribute('environment-image', 'legacy');
-                log('Applied iOS color enhancement fixes');
+                // Enhanced color settings for iOS devices - more aggressive brightness
+                elements.modelViewer.style.filter = 'contrast(2.0) saturate(2.2) brightness(1.8) hue-rotate(10deg)';
+                elements.modelViewer.setAttribute('exposure', '2.0');
+                elements.modelViewer.setAttribute('shadow-intensity', '0.5'); // Reduce shadows
+                elements.modelViewer.setAttribute('shadow-softness', '0.3');
+                elements.modelViewer.setAttribute('environment-image', 'neutral');
+                elements.modelViewer.setAttribute('tone-mapping', 'commerce'); // Better for iOS
+                
+                // iOS Quick Look specific fixes
+                elements.modelViewer.setAttribute('ar-scale', 'fixed');
+                elements.modelViewer.setAttribute('camera-target', '0m 0.5m 0m');
+                elements.modelViewer.setAttribute('field-of-view', '45deg');
+                
+                log('Applied aggressive iOS color enhancement fixes');
             }
         }
 
@@ -485,6 +699,8 @@
 
                 elements.cameraFeed.srcObject = state.cameraStream;
                 elements.cameraFeed.style.display = 'block';
+                elements.cameraFeed.style.opacity = '1';
+                elements.cameraFeed.style.background = 'transparent';
 
                 await new Promise((resolve, reject) => {
                     elements.cameraFeed.onloadedmetadata = () => {
@@ -497,14 +713,19 @@
                 const videoTracks = state.cameraStream.getVideoTracks();
                 const cameraLabel = videoTracks.length > 0 ? videoTracks[0].label : 'Unknown';
                 log(`Camera started: ${cameraLabel}`);
+                
+                // Hide gradient background when camera starts
+                document.body.style.background = 'transparent';
+                
                 return true;
 
             } catch (error) {
                 log(`Camera error: ${error.message}`);
 
-                // Keep camera feed visible even on error - show gradient background
+                // Show gradient background only when camera fails
                 if (elements.cameraFeed) {
                     elements.cameraFeed.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                    elements.cameraFeed.style.opacity = '1';
                 }
                 document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
 
@@ -770,6 +991,35 @@
             initialize();
         }
 
+        // Add navigation arrows functionality
+        function addNavigationArrows() {
+            const leftArrow = document.createElement('button');
+            const rightArrow = document.createElement('button');
+
+            leftArrow.innerHTML = '⬅️';
+            rightArrow.innerHTML = '➡️';
+
+            leftArrow.className = 'nav-arrow left';
+            rightArrow.className = 'nav-arrow right';
+
+            leftArrow.addEventListener('click', () => navigateToModel(-1));
+            rightArrow.addEventListener('click', () => navigateToModel(1));
+
+            document.body.appendChild(leftArrow);
+            document.body.appendChild(rightArrow);
+        }
+
+        function navigateToModel(direction) {
+            const params = new URLSearchParams(window.location.search);
+            let currentModel = parseInt(params.get('model')) || 1;
+            let newModel = currentModel + direction;
+
+            if (newModel < 1) newModel = 56;
+            else if (newModel > 56) newModel = 1;
+
+            window.location.href = `${window.location.pathname}?model=${newModel}`;
+        }
+
         // Register service worker for performance
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -781,6 +1031,37 @@
                         log('Service worker registration failed');
                     });
             });
+        }
+
+        // Add navigation arrows after DOM loads
+        document.addEventListener('DOMContentLoaded', () => {
+            addNavigationArrows();
+            checkOfflineStatus();
+        });
+
+        // Check PWA and offline status
+        function checkOfflineStatus() {
+            const offlineHeader = document.getElementById('offline-header');
+            if (!offlineHeader) return;
+
+            const isOffline = !navigator.onLine;
+
+            if (isOffline) {
+                offlineHeader.textContent = '⚫ OFFLINE MODE';
+                offlineHeader.classList.add('show');
+                return;
+            }
+
+            if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.postMessage({ action: 'is-fully-cached' });
+
+                navigator.serviceWorker.addEventListener('message', event => {
+                    if (event.data.action === 'is-fully-cached-reply' && event.data.isFullyCached) {
+                        offlineHeader.textContent = '🟢 SYSTEM FULLY CACHED';
+                        offlineHeader.classList.add('show');
+                    }
+                });
+            }
         }
     </script>
 </body>
