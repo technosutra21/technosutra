@@ -2076,31 +2076,61 @@ const charactersResponse = await fetch(`summaries/characters${langSuffix}.csv`);
                             <!-- Descrição -->
                             <div style="margin-bottom: 24px;">
                                 <h4 style="margin: 0 0 8px 0; color: #f3f4f6; font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;"><span style="color: #7877c6;">👤</span> Descrição</h4>
-                                <p style="margin: 0; color: #d1d5db; font-size: 0.85rem; line-height: 1.5;">${combinedData.description.length > 200 ? combinedData.description.substring(0, 200) + '...' : combinedData.description}</p>
+                                <div class="expandable-content" data-section="description">
+                                    <p style="margin: 0; color: #d1d5db; font-size: 0.85rem; line-height: 1.5;" class="content-preview">${combinedData.description.length > 200 ? combinedData.description.substring(0, 200) : combinedData.description}</p>
+                                    ${combinedData.description.length > 200 ? `
+                                        <p style="margin: 8px 0 0 0; color: #d1d5db; font-size: 0.85rem; line-height: 1.5; display: none;" class="content-full">${combinedData.description}</p>
+                                        <button onclick="toggleContent('description', this)" style="background: none; border: none; color: #7877c6; font-size: 0.8rem; cursor: pointer; text-decoration: underline; padding: 4px 0; margin-top: 8px;">Leia mais...</button>
+                                    ` : ''}
+                                </div>
                             </div>
                             
                             <!-- Contexto -->
                             <div style="margin-bottom: 24px;">
                                 <h4 style="margin: 0 0 8px 0; color: #f3f4f6; font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;"><span style="color: #7877c6;">🏛️</span> Contexto</h4>
-                                <p style="margin: 0; color: #d1d5db; font-size: 0.85rem; line-height: 1.5;">${combinedData.context.length > 200 ? combinedData.context.substring(0, 200) + '...' : combinedData.context}</p>
+                                <div class="expandable-content" data-section="context">
+                                    <p style="margin: 0; color: #d1d5db; font-size: 0.85rem; line-height: 1.5;" class="content-preview">${combinedData.context.length > 200 ? combinedData.context.substring(0, 200) : combinedData.context}</p>
+                                    ${combinedData.context.length > 200 ? `
+                                        <p style="margin: 8px 0 0 0; color: #d1d5db; font-size: 0.85rem; line-height: 1.5; display: none;" class="content-full">${combinedData.context}</p>
+                                        <button onclick="toggleContent('context', this)" style="background: none; border: none; color: #7877c6; font-size: 0.8rem; cursor: pointer; text-decoration: underline; padding: 4px 0; margin-top: 8px;">Leia mais...</button>
+                                    ` : ''}
+                                </div>
                             </div>
                             
                             <!-- Ensinamento -->
                             <div style="margin-bottom: 24px;">
                                 <h4 style="margin: 0 0 8px 0; color: #f3f4f6; font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;"><span style="color: #7877c6;">📖</span> Ensinamento</h4>
-                                <p style="margin: 0; color: #d1d5db; font-size: 0.85rem; line-height: 1.5;">${combinedData.teaching.length > 300 ? combinedData.teaching.substring(0, 300) + '...' : combinedData.teaching}</p>
+                                <div class="expandable-content" data-section="teaching">
+                                    <p style="margin: 0; color: #d1d5db; font-size: 0.85rem; line-height: 1.5;" class="content-preview">${combinedData.teaching.length > 300 ? combinedData.teaching.substring(0, 300) : combinedData.teaching}</p>
+                                    ${combinedData.teaching.length > 300 ? `
+                                        <p style="margin: 8px 0 0 0; color: #d1d5db; font-size: 0.85rem; line-height: 1.5; display: none;" class="content-full">${combinedData.teaching}</p>
+                                        <button onclick="toggleContent('teaching', this)" style="background: none; border: none; color: #7877c6; font-size: 0.8rem; cursor: pointer; text-decoration: underline; padding: 4px 0; margin-top: 8px;">Leia mais...</button>
+                                    ` : ''}
+                                </div>
                             </div>
                             
                             <!-- Manifestações -->
                             <div style="margin-bottom: 24px;">
                                 <h4 style="margin: 0 0 8px 0; color: #f3f4f6; font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;"><span style="color: #7877c6;">✨</span> Manifestações</h4>
-                                <p style="margin: 0; color: #d1d5db; font-size: 0.85rem; line-height: 1.5;">${combinedData.manifestations.length > 200 ? combinedData.manifestations.substring(0, 200) + '...' : combinedData.manifestations}</p>
+                                <div class="expandable-content" data-section="manifestations">
+                                    <p style="margin: 0; color: #d1d5db; font-size: 0.85rem; line-height: 1.5;" class="content-preview">${combinedData.manifestations.length > 200 ? combinedData.manifestations.substring(0, 200) : combinedData.manifestations}</p>
+                                    ${combinedData.manifestations.length > 200 ? `
+                                        <p style="margin: 8px 0 0 0; color: #d1d5db; font-size: 0.85rem; line-height: 1.5; display: none;" class="content-full">${combinedData.manifestations}</p>
+                                        <button onclick="toggleContent('manifestations', this)" style="background: none; border: none; color: #7877c6; font-size: 0.8rem; cursor: pointer; text-decoration: underline; padding: 4px 0; margin-top: 8px;">Leia mais...</button>
+                                    ` : ''}
+                                </div>
                             </div>
                             
                             <!-- Resumo -->
                             <div>
                                 <h4 style="margin: 0 0 8px 0; color: #f3f4f6; font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;"><span style="color: #7877c6;">📄</span> Resumo</h4>
-                                <p style="margin: 0; color: #d1d5db; font-size: 0.85rem; line-height: 1.5;">${combinedData.summary.length > 300 ? combinedData.summary.substring(0, 300) + '...' : combinedData.summary}</p>
+                                <div class="expandable-content" data-section="summary">
+                                    <p style="margin: 0; color: #d1d5db; font-size: 0.85rem; line-height: 1.5;" class="content-preview">${combinedData.summary.length > 300 ? combinedData.summary.substring(0, 300) : combinedData.summary}</p>
+                                    ${combinedData.summary.length > 300 ? `
+                                        <p style="margin: 8px 0 0 0; color: #d1d5db; font-size: 0.85rem; line-height: 1.5; display: none;" class="content-full">${combinedData.summary}</p>
+                                        <button onclick="toggleContent('summary', this)" style="background: none; border: none; color: #7877c6; font-size: 0.8rem; cursor: pointer; text-decoration: underline; padding: 4px 0; margin-top: 8px;">Leia mais...</button>
+                                    ` : ''}
+                                </div>
                             </div>
                         </div>
                         
@@ -2307,6 +2337,34 @@ function updateParallax() {
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) modal.remove();
             });
+        }
+
+        // Função para alternar conteúdo expandível
+        function toggleContent(section, button) {
+            const expandableDiv = button.parentElement;
+            const previewElement = expandableDiv.querySelector('.content-preview');
+            const fullElement = expandableDiv.querySelector('.content-full');
+            
+            if (!previewElement || !fullElement) return;
+            
+            const isExpanded = fullElement.style.display !== 'none';
+            
+            if (isExpanded) {
+                // Collapse: show preview, hide full
+                previewElement.style.display = 'block';
+                fullElement.style.display = 'none';
+                button.textContent = 'Leia mais...';
+                button.style.color = '#7877c6';
+            } else {
+                // Expand: hide preview, show full
+                previewElement.style.display = 'none';
+                fullElement.style.display = 'block';
+                button.textContent = 'Leia menos';
+                button.style.color = '#9ca3af';
+            }
+            
+            // Add smooth animation
+            expandableDiv.style.transition = 'all 0.3s ease';
         }
 
         // Função para compartilhar galeria
