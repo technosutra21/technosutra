@@ -709,6 +709,9 @@
         }
 
         /* Botão de tema */
+        .language-toggle {
+            top: 90px; /* Positioned below the theme toggle */
+        }
         .theme-toggle {
             position: fixed;
             top: 20px;
@@ -1319,6 +1322,11 @@
         🌙
     </button>
 
+    <!-- Language Switcher -->
+    <button class="theme-toggle language-toggle tooltip" data-tooltip="Switch language / Mudar idioma" onclick="toggleLanguage()" style="top: 90px;">
+        🌐
+    </button>
+
     <!-- Quick Actions -->
     <div class="quick-actions">
         <button class="quick-action-btn tooltip" data-tooltip="Voltar ao topo" onclick="scrollToTop()">
@@ -1478,6 +1486,17 @@
         // Array para armazenar modelos disponíveis (detectados dinamicamente)
         let availableModels = [];
         
+        // Language handling
+        let currentLanguage = localStorage.getItem('language') || 'pt';
+        document.documentElement.lang = currentLanguage === 'en' ? 'en' : 'pt-BR';
+
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'pt' ? 'en' : 'pt';
+            localStorage.setItem('language', currentLanguage);
+            // Simple reload to re-fetch correct CSVs and refresh UI
+            location.reload();
+        }
+
         // Arrays para armazenar os dados dos CSV
         let chaptersData = {};
         let charactersData = {};
@@ -1503,7 +1522,9 @@
         async function loadCSVData() {
             try {
                 // Carregar chapters.csv
-                const chaptersResponse = await fetch('summaries/chapters.csv');
+const langSuffix = currentLanguage === 'en' ? '_en' : '';
+                // Fetch chapters CSV respecting current language
+                const chaptersResponse = await fetch(`summaries/chapters${langSuffix}.csv`);
                 if (chaptersResponse.ok) {
                     const chaptersText = await chaptersResponse.text();
                     const chaptersArray = parseCSV(chaptersText);
@@ -1534,7 +1555,7 @@
                 }
                 
                 // Carregar characters.csv
-                const charactersResponse = await fetch('summaries/characters.csv');
+const charactersResponse = await fetch(`summaries/characters${langSuffix}.csv`);
                 if (charactersResponse.ok) {
                     const charactersText = await charactersResponse.text();
                     const charactersArray = parseCSV(charactersText);
