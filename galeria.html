@@ -1662,9 +1662,7 @@ const charactersResponse = await fetch(`summaries/characters${langSuffix}.csv`);
                         <model-viewer
                             src="modelo${chapter.id}.glb"
                             alt="Modelo 3D - ${chapter.name}: ${chapter.title}"
-                            auto-rotate
                             camera-controls
-                            rotation-per-second="6deg"
                             loading="lazy"
                             reveal="manual"
                             environment-image="neutral"
@@ -1674,12 +1672,14 @@ const charactersResponse = await fetch(`summaries/characters${langSuffix}.csv`);
                             max-camera-orbit="auto auto 5m"
                             camera-orbit="0deg 70deg 2.5m"
                             field-of-view="45deg"
+                            tone-mapping="neutral"
+                            orientation="0 0 -90"
                             style="background-color: transparent;">
                         </model-viewer>
                     ` : `
                         <div class="unavailable-overlay">
                             <div class="unavailable-icon">⏳</div>
-                            <div class="unavailable-text">Em desenvolvimento</div>
+                            <div class="unavailable-text">|Almost there...</div>
                         </div>
                         <div class="loading-placeholder">
                             <div class="loading-spinner"></div>
@@ -1692,14 +1692,14 @@ const charactersResponse = await fetch(`summaries/characters${langSuffix}.csv`);
                               Ver em AR
                         </button>
                         <button class="action-btn" onclick="viewFullscreen(${chapter.id})">
-                            🔍 Ampliar
+                            ⌖ About
                         </button>
                         <button class="action-btn" onclick="downloadModel(${chapter.id})">
-                            💾 Download
+                            ⌖ Download
                         </button>
                     ` : `
                         <button class="action-btn" disabled>
-                            ⏳ Em Breve
+                            ⌖ Em Breve
                         </button>
                     `}
                 </div>
@@ -1708,23 +1708,141 @@ const charactersResponse = await fetch(`summaries/characters${langSuffix}.csv`);
             return card;
         }
 
-        // Função para download do modelo
-        function downloadModel(modelId) {
+        // Função para download do modelo - Enhanced for PWA mobile
+        async function downloadModel(modelId) {
             const modelFile = `modelo${modelId}.glb`;
-
-            fetch(modelFile, { method: 'HEAD' })
-                .then((response) => {
-                    if (!response.ok) throw new Error('Model not found');
-
-                    const link = document.createElement('a');
-                    link.href = modelFile;
-                    link.download = modelFile;
-                    link.click();
-                })
-                .catch((error) => {
-                    console.error('Error downloading model:', error);
-                    alert('Model not available for download.');
+            const chapter = chapters[modelId - 1];
+            const fileName = `${chapter?.name?.replace(/[^a-zA-Z0-9]/g, '_') || 'modelo'}_${modelId}.glb`;
+            
+            try {
+                console.log('📥 Starting download for:', modelFile);
+                
+                // First check if model exists in cache (PWA)
+                if ('caches' in window) {
+                    const cache = await caches.open('techno-sutra-models-v2.0.0');
+                    const cachedResponse = await cache.match(modelFile);
+                    
+                    if (cachedResponse) {
+                        console.log('📦 Using cached model for download');
+                        const blob = await cachedResponse.blob();
+                        downloadBlob(blob, fileName);
+                        return;
+                    }
+                }
+                
+                // Fetch from network if not cached
+                const response = await fetch(modelFile);
+                if (!response.ok) throw new Error(`Model not found: ${response.status}`);
+                
+                const blob = await response.blob();
+                downloadBlob(blob, fileName);
+                
+            } catch (error) {
+                console.error('Error downloading model:', error);
+                
+                // Show user-friendly error
+                const errorDiv = document.createElement('div');
+                errorDiv.style.cssText = `
+                    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                    background: rgba(239, 68, 68, 0.9); color: white; padding: 20px;
+                    border-radius: 8px; z-index: 10000; text-align: center;
+                    backdrop-filter: blur(10px); border: 1px solid rgba(239, 68, 68, 0.3);
+                `;
+                errorDiv.innerHTML = `
+                    <h3>❌ Download Falhou</h3>
+                    <p>Modelo não disponível ou erro de rede.</p>
+                    <button onclick="this.parentElement.remove()" 
+                            style="background: rgba(255,255,255,0.2); border: none; color: white; 
+                                   padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px;">
+                        OK
+                    </button>
+                `;
+                document.body.appendChild(errorDiv);
+                
+                setTimeout(() => errorDiv.remove(), 5000);
+            }
+        }
+        
+        // Enhanced blob download function for mobile compatibility
+        function downloadBlob(blob, filename) {
+            try {
+                // Method 1: Modern File System Access API (if available)
+                if ('showSaveFilePicker' in window) {
+                    downloadWithFileSystemAPI(blob, filename);
+                    return;
+                }
+                
+                // Method 2: Traditional download (works on most devices)
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                link.style.display = 'none';
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Clean up
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+                
+                // Show success message
+                showDownloadSuccess(filename);
+                
+            } catch (error) {
+                console.error('Download blob error:', error);
+                // Fallback: try to open in new tab
+                const url = URL.createObjectURL(blob);
+                window.open(url, '_blank');
+            }
+        }
+        
+        // Modern File System Access API download
+        async function downloadWithFileSystemAPI(blob, filename) {
+            try {
+                const fileHandle = await window.showSaveFilePicker({
+                    suggestedName: filename,
+                    types: [{
+                        description: 'GLB 3D Model files',
+                        accept: { 'model/gltf-binary': ['.glb'] }
+                    }]
                 });
+                
+                const writable = await fileHandle.createWritable();
+                await writable.write(blob);
+                await writable.close();
+                
+                showDownloadSuccess(filename);
+            } catch (error) {
+                if (error.name !== 'AbortError') {
+                    console.error('File System API error:', error);
+                    // Fallback to traditional method
+                    downloadBlob(blob, filename);
+                }
+            }
+        }
+        
+        // Show download success notification
+        function showDownloadSuccess(filename) {
+            const successDiv = document.createElement('div');
+            successDiv.style.cssText = `
+                position: fixed; top: 20px; right: 20px; background: rgba(34, 197, 94, 0.9);
+                color: white; padding: 16px 20px; border-radius: 8px; z-index: 10000;
+                backdrop-filter: blur(10px); border: 1px solid rgba(34, 197, 94, 0.3);
+                animation: slideInFromRight 0.3s ease-out;
+            `;
+            successDiv.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="font-size: 1.5rem;">✅</div>
+                    <div>
+                        <div style="font-weight: 500;">Download Concluído!</div>
+                        <div style="font-size: 0.8rem; opacity: 0.9;">${filename}</div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(successDiv);
+            setTimeout(() => successDiv.remove(), 4000);
         }
 
         // Função principal para carregar a galeria com detecção dinâmica

@@ -1,3 +1,91 @@
+# PowerShell Script to Convert GLB to USDZ
+# Requires USD tools (pip install usd-core)
+
+Write-Host "🔄 GLB to USDZ Conversion Script" -ForegroundColor Cyan
+Write-Host "=================================" -ForegroundColor Cyan
+
+# Check if USD tools are installed
+$usdcatInstalled = Get-Command "usdcat" -ErrorAction SilentlyContinue
+$usdzipInstalled = Get-Command "usdzip" -ErrorAction SilentlyContinue
+
+if (-not $usdcatInstalled -or -not $usdzipInstalled) {
+    Write-Host "❌ USD tools not found. Please install:" -ForegroundColor Red
+    Write-Host "pip install usd-core" -ForegroundColor Yellow
+    Write-Host "Or download from: https://graphics.pixar.com/usd/release/" -ForegroundColor Yellow
+    exit 1
+}
+
+# Get all GLB files
+$glbFiles = Get-ChildItem -Path "." -Filter "*.glb"
+
+if ($glbFiles.Count -eq 0) {
+    Write-Host "❌ No GLB files found in current directory" -ForegroundColor Red
+    exit 1
+}
+
+Write-Host "📊 Found $($glbFiles.Count) GLB files to convert" -ForegroundColor Green
+
+# Create output directory for USDZ files
+$usdzDir = "usdz-output"
+if (-not (Test-Path $usdzDir)) {
+    New-Item -ItemType Directory -Path $usdzDir -Force | Out-Null
+}
+
+$convertedCount = 0
+
+foreach ($file in $glbFiles) {
+    $baseName = $file.BaseName
+    $usdFile = "$baseName.usd"
+    $usdzFile = "$usdzDir\$baseName.usdz"
+    
+    Write-Host "🔄 Converting: $($file.Name)" -ForegroundColor Cyan
+    
+    try {
+        # Step 1: Convert GLB to USD
+        $process1 = Start-Process -FilePath "usdcat" -ArgumentList @(
+            $file.FullName,
+            "--out", $usdFile
+        ) -Wait -PassThru -NoNewWindow -WindowStyle Hidden
+        
+        if ($process1.ExitCode -eq 0 -and (Test-Path $usdFile)) {
+            # Step 2: Package USD to USDZ
+            $process2 = Start-Process -FilePath "usdzip" -ArgumentList @(
+                $usdzFile,
+                $usdFile
+            ) -Wait -PassThru -NoNewWindow -WindowStyle Hidden
+            
+            if ($process2.ExitCode -eq 0 -and (Test-Path $usdzFile)) {
+                $usdzSize = (Get-Item $usdzFile).Length
+                Write-Host "  ✅ Created: $baseName.usdz ($([math]::Round($usdzSize/1KB, 1))KB)" -ForegroundColor Green
+                $convertedCount++
+            }
+            else {
+                Write-Host "  ❌ Failed to create USDZ for $($file.Name)" -ForegroundColor Red
+            }
+            
+            # Clean up temporary USD file
+            if (Test-Path $usdFile) { Remove-Item $usdFile }
+        }
+        else {
+            Write-Host "  ❌ Failed to convert GLB to USD for $($file.Name)" -ForegroundColor Red
+        }
+    }
+    catch {
+        Write-Host "  ❌ Error converting $($file.Name): $($_.Exception.Message)" -ForegroundColor Red
+    }
+}
+
+# Summary
+Write-Host "`n📊 CONVERSION SUMMARY" -ForegroundColor Cyan
+Write-Host "=====================" -ForegroundColor Cyan
+Write-Host "Files converted: $convertedCount / $($glbFiles.Count)" -ForegroundColor White
+Write-Host "USDZ files saved to: $usdzDir" -ForegroundColor Green
+
+if ($convertedCount -gt 0) {
+    Write-Host "`n🍎 Your USDZ files are ready for iOS AR QuickLook!" -ForegroundColor Green
+    Write-Host "You can now serve these alongside your GLB files for better iOS compatibility." -ForegroundColor White
+}
+
 # Script PowerShell para converter arquivos GLB para USDZ
 # Usa Reality Converter (macOS) ou USD Tools (Windows/Linux)
 

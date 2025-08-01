@@ -2,7 +2,7 @@
 // Provides aggressive caching, offline support, and performance optimizations
 // ENSURES COMPLETE OFFLINE FUNCTIONALITY WHEN INSTALLED AS PWA
 
-const CACHE_VERSION = '2.0.0';
+const CACHE_VERSION = '2.1.0';
 const STATIC_CACHE = `techno-sutra-static-v${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `techno-sutra-dynamic-v${CACHE_VERSION}`;
 const MODEL_CACHE = `techno-sutra-models-v${CACHE_VERSION}`;
@@ -332,31 +332,35 @@ async function handleModelFile(request) {
         const cached = await cache.match(request);
         
         if (cached) {
-            // Dev: console.log('[SW] Serving cached model:', request.url);
+            console.log('[SW] ✅ Serving cached model:', request.url);
             return cached;
         }
         
-        // Dev: console.log('[SW] Fetching model:', request.url);
+        console.log('[SW] 📡 Fetching model:', request.url);
         
-        // Check HEAD first to validate model exists
-        const headResponse = await fetch(request.url, { method: 'HEAD' });
-        if (!headResponse.ok) {
-            throw new Error(`Model not found: ${headResponse.status}`);
-        }
-        
-        // Fetch full model
+        // Fetch full model directly (skip HEAD check for better reliability)
         const response = await fetch(request);
         
         if (response.ok) {
-            // Check cache size before storing
-            await manageCacheSize(MODEL_CACHE, CACHE_LIMITS[MODEL_CACHE]);
+            console.log('[SW] 💾 Caching model:', request.url);
+            // Cache the model immediately
             await cache.put(request, response.clone());
-            // Dev: console.log('[SW] Cached model:', request.url);
+            console.log('[SW] ✅ Model cached successfully:', request.url);
+        } else {
+            console.warn('[SW] ⚠️ Model fetch failed:', request.url, response.status);
         }
         
         return response;
     } catch (error) {
-        // Dev: console.error('[SW] Error handling model file:', error);
+        console.error('[SW] ❌ Error handling model file:', error);
+        
+        // Try to return cached version as fallback
+        const cache = await caches.open(MODEL_CACHE);
+        const cached = await cache.match(request);
+        if (cached) {
+            console.log('[SW] 🔄 Serving cached model as fallback:', request.url);
+            return cached;
+        }
         
         // Return 404 for missing models
         return new Response('Model not found', { 
@@ -606,24 +610,32 @@ self.addEventListener('notificationclick', event => {
 
 // PWA INSTALLATION DETECTION - TRIGGERS COMPLETE OFFLINE CACHING
 self.addEventListener('appinstalled', event => {
-    // Dev: console.log('[SW] 🎉 PWA installed! Starting complete offline caching...');
+    console.log('[SW] 🎉 PWA installed! Starting complete offline caching...');
     
     // Trigger aggressive caching when PWA is installed
     event.waitUntil(
-        completeOfflineCaching().then(() => {
-            // Dev: console.log('[SW] ✅ Complete offline caching finished - App fully functional offline!');
+        completeOfflineCaching().then((success) => {
+            console.log('[SW] ✅ Complete offline caching finished - App fully functional offline!');
             
             // Notify all clients that offline caching is complete
             self.clients.matchAll().then(clients => {
                 clients.forEach(client => {
                     client.postMessage({
                         type: 'OFFLINE_READY',
-                        message: 'App is now fully available offline!'
+                        message: 'App is now fully available offline!',
+                        success: success
                     });
                 });
             });
         })
     );
+});
+
+// Listen for the PWA install prompt event
+self.addEventListener('beforeinstallprompt', event => {
+    console.log('[SW] 📱 PWA install prompt available');
+    // Immediately start caching critical models
+    event.waitUntil(preloadCriticalModels());
 });
 
 // COMPLETE OFFLINE CACHING - Downloads everything for full offline functionality
@@ -654,9 +666,8 @@ async function cacheAllAvailableModels() {
     try {
         const cache = await caches.open(MODEL_CACHE);
         
-        // All possible models (including USDZ for iOS)
+        // All GLB models that actually exist in your directory
         const allModels = [
-            // GLB models
             'cosmic-buddha.glb', 'cosmic.glb', 'fat-buddha.glb', 'modelo-dragao.glb', 'nsrinha.glb',
             'modelo1.glb', 'modelo2.glb', 'modelo3.glb', 'modelo4.glb', 'modelo5.glb',
             'modelo6.glb', 'modelo8.glb', 'modelo9.glb', 'modelo10.glb', 'modelo11.glb',
@@ -667,18 +678,7 @@ async function cacheAllAvailableModels() {
             'modelo37.glb', 'modelo38.glb', 'modelo39.glb', 'modelo40.glb', 'modelo41.glb',
             'modelo42.glb', 'modelo44.glb', 'modelo45.glb', 'modelo46.glb', 'modelo47.glb',
             'modelo48.glb', 'modelo49.glb', 'modelo50.glb', 'modelo51.glb', 'modelo54.glb',
-            'modelo55.glb', 'modelo56.glb',
-            // USDZ models for iOS
-            'modelo1.usdz', 'modelo2.usdz', 'modelo3.usdz', 'modelo4.usdz', 'modelo5.usdz',
-            'modelo6.usdz', 'modelo8.usdz', 'modelo9.usdz', 'modelo10.usdz', 'modelo11.usdz',
-            'modelo12.usdz', 'modelo15.usdz', 'modelo17.usdz', 'modelo18.usdz', 'modelo19.usdz',
-            'modelo20.usdz', 'modelo21.usdz', 'modelo22.usdz', 'modelo23.usdz', 'modelo24.usdz',
-            'modelo26.usdz', 'modelo28.usdz', 'modelo29.usdz', 'modelo30.usdz', 'modelo31.usdz',
-            'modelo32.usdz', 'modelo33.usdz', 'modelo34.usdz', 'modelo35.usdz', 'modelo36.usdz',
-            'modelo37.usdz', 'modelo38.usdz', 'modelo39.usdz', 'modelo40.usdz', 'modelo41.usdz',
-            'modelo42.usdz', 'modelo44.usdz', 'modelo45.usdz', 'modelo46.usdz', 'modelo47.usdz',
-            'modelo48.usdz', 'modelo49.usdz', 'modelo50.usdz', 'modelo51.usdz', 'modelo54.usdz',
-            'modelo55.usdz', 'modelo56.usdz'
+            'modelo55.glb', 'modelo56.glb'
         ];
         
         let cachedCount = 0;
