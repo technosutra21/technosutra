@@ -535,8 +535,40 @@ opacity: 0.6;
             console.error('Unhandled promise rejection:', e.reason);
         });
 
+        // Check for model parameter and redirect to AR.html if present
+        function checkModelParameter() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const modelParam = urlParams.get('model');
+            
+            if (modelParam) {
+                const modelId = parseInt(modelParam);
+                // Validate model ID is within valid range (1-56)
+                if (modelId >= 1 && modelId <= 56) {
+                    console.log(`Redirecting to AR.html with model ${modelId}`);
+                    // Add fade out effect before redirect
+                    document.body.classList.add('fade-out');
+                    setTimeout(() => {
+                        window.location.href = `AR.html?model=${modelId}`;
+                    }, 500);
+                    return true; // Indicates redirect is happening
+                } else {
+                    console.warn(`Invalid model ID: ${modelId}. Must be between 1-56.`);
+                    // Remove invalid parameter from URL
+                    urlParams.delete('model');
+                    const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+                    window.history.replaceState({}, '', newUrl);
+                }
+            }
+            return false; // No redirect
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             try {
+                // Check for model parameter first
+                if (checkModelParameter()) {
+                    return; // Stop initialization if redirecting
+                }
+                
                 const mandalaContainer = document.getElementById('mandalaContainer');
                 const items = document.querySelectorAll('.mandala-item');
                 const viewport = document.getElementById('viewport');

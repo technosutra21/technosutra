@@ -505,7 +505,7 @@
 
         // Optimized logging
         function log(message) {
-            // Dev: if (console.log) console.log(`[Techno Sutra AR] ${message}`);
+            if (console.log) console.log(`[Techno Sutra AR] ${message}`);
         }
 
         // Show status with better performance
@@ -608,7 +608,6 @@
         // Load model with error handling
         async function loadModel() {
             const modelSrc = `modelo${config.modelId}.glb`;
-            const usdzSrc = `modelo${config.modelId}.usdz`;
             log(`Loading model: ${modelSrc}`);
 
             try {
@@ -624,23 +623,16 @@
 
                 elements.modelViewer.src = modelSrc;
                 
-                // Check for USDZ file for iOS
-                const usdzExists = await checkModelExists(usdzSrc);
-                if (usdzExists) {
-                    elements.modelViewer.setAttribute('ios-src', usdzSrc);
-                    
-                    // Enhanced iOS QuickLook attributes for better quality
-                    elements.modelViewer.setAttribute('ar-scale', 'auto');
-                    elements.modelViewer.setAttribute('camera-target', 'auto auto auto');
-                    
-                    // iOS-specific metadata for better viewing
-                    elements.modelViewer.setAttribute('seamless-poster', '');
-                    elements.modelViewer.setAttribute('poster-color', 'transparent');
-                    
-                    log(`USDZ file configured for iOS QuickLook: ${usdzSrc}`);
-                } else {
-                    log(`No USDZ file found, using GLB to USDZ conversion for iOS`);
-                }
+                // Use automatic GLB to USDZ conversion for iOS (model-viewer handles this automatically)
+                log(`Using automatic GLB to USDZ conversion for iOS QuickLook`);
+                
+                // Enhanced iOS QuickLook attributes for better quality
+                elements.modelViewer.setAttribute('ar-scale', 'auto');
+                elements.modelViewer.setAttribute('camera-target', 'auto auto auto');
+                
+                // iOS-specific metadata for better viewing
+                elements.modelViewer.setAttribute('seamless-poster', '');
+                elements.modelViewer.setAttribute('poster-color', 'transparent');
                 
                 // Set AR scale
                 elements.modelViewer.style.setProperty('--ar-scale', config.arScale.toString());
