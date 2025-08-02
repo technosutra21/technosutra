@@ -2,7 +2,7 @@
 // Provides aggressive caching, offline support, and performance optimizations
 // ENSURES COMPLETE OFFLINE FUNCTIONALITY WHEN INSTALLED AS PWA
 
-const CACHE_VERSION = '2.1.0';
+const CACHE_VERSION = '2.1.1';
 const STATIC_CACHE = `techno-sutra-static-v${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `techno-sutra-dynamic-v${CACHE_VERSION}`;
 const MODEL_CACHE = `techno-sutra-models-v${CACHE_VERSION}`;
@@ -91,8 +91,8 @@ self.addEventListener('fetch', event => {
     const { request } = event;
     const url = new URL(request.url);
     
-    // Skip non-GET requests
-    if (request.method !== 'GET') return;
+    // Skip non-GET and non-HEAD requests
+    if (request.method !== 'GET' && request.method !== 'HEAD') return;
     
     // Skip chrome-extension and other protocols
     if (!url.protocol.startsWith('http')) return;
@@ -331,24 +331,32 @@ async function handleModelFile(request) {
         const cache = await caches.open(MODEL_CACHE);
         const cached = await cache.match(request);
         
-        if (cached) {
-            console.log('[SW] ✅ Serving cached model:', request.url);
-            return cached;
-        }
-        
-        console.log('[SW] 📡 Fetching model:', request.url);
-        
-        // Fetch full model directly (skip HEAD check for better reliability)
-        const response = await fetch(request);
-        
-        if (response.ok) {
-            console.log('[SW] 💾 Caching model:', request.url);
-            // Cache the model immediately
-            await cache.put(request, response.clone());
-            console.log('[SW] ✅ Model cached successfully:', request.url);
-        } else {
-            console.warn('[SW] ⚠️ Model fetch failed:', request.url, response.status);
-        }
+if (request.method === 'HEAD') {
+    // Respond with status 200 for HEAD requests if model is cached
+    if (cached) {
+        return new Response('', { status: 200 });
+    }
+    // Fetching externally, avoid caching HEAD responses.
+    const headResponse = await fetch(request, { method: 'HEAD' });
+    return headResponse;
+} else {
+    if (cached) {
+        console.log('[SW] ✅ Serving cached model:', request.url);
+        return cached;
+    }
+
+    console.log('[SW] 📡 Fetching model:', request.url);
+
+    const response = await fetch(request);
+
+    if (response.ok) {
+        console.log('[SW] 💾 Caching model:', request.url);
+        await cache.put(request, response.clone());
+        console.log('[SW] ✅ Model cached successfully:', request.url);
+    } else {
+        console.warn('[SW] ⚠️ Model fetch failed:', request.url, response.status);
+    }
+}
         
         return response;
     } catch (error) {

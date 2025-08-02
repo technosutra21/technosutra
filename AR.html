@@ -548,13 +548,26 @@
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), timeout);
                 
-                const response = await fetch(src, { 
-                    method: 'HEAD',
-                    signal: controller.signal,
-                    cache: 'force-cache'
-                });
+let response;
+try {
+    response = await fetch(src, { 
+        method: 'HEAD',
+        signal: controller.signal,
+        cache: 'force-cache'
+    });
+    
+    if (!response.ok) {
+        throw new Error('Fallback to GET');
+    }
+} catch {
+    response = await fetch(src, { 
+        method: 'GET',
+        signal: controller.signal
+    });
+}
                 
                 clearTimeout(timeoutId);
+                log(`Model check response: ${response.status} ${response.statusText}`);
                 return response.ok;
             } catch (error) {
                 log(`Error checking model: ${error.message}`);
