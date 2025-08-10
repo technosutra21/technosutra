@@ -97,6 +97,20 @@ export default function RotatingSmallerSphereSort(gridSize = 40, currentTime, co
     return sphereCache.positions;
 }
 
+// Wrapper function for compatibility with HTML import
+export function generatePositions(gridSize, time, controller) {
+    const spherePositions = RotatingSmallerSphereSort(gridSize, time, controller);
+    
+    // Convert to normalized coordinates (0-1) for screen mapping
+    return spherePositions.map(pos => ({
+        x: pos.x / gridSize, // Normalize to 0-1
+        y: pos.y / gridSize, // Normalize to 0-1
+        depth: pos.depth,
+        opacity: pos.opacity,
+        size: pos.size
+    }));
+}
+
 // Enhanced cosmic background generator with memory leak fixes
 export function createCosmicBackground(canvas, ctx) {
     const nebulaClouds = [];
