@@ -1,16 +1,21 @@
 // Enhanced particle and animation controller for Techno Sutra background effects
 export function createAnimationController() {
+    let idCounter = 0;
+    const animationsToDelete = []; // Avoid deleting during iteration
+    
     return {
         baseDuration: 2000,
         baseInterval: 100,
         animations: new Map(),
         
-        addAnimation(shape, type, options) {
-            const animationId = `${shape.id || Math.random()}_${type}`;
+        addAnimation(shape, type, options = {}) {
+            // Use incrementing counter instead of Math.random() for better ID uniqueness
+            const animationId = options.id ?? `${shape.id || ++idCounter}_${type}`;
             const animation = {
                 id: animationId,
                 shape,
                 type,
+                duration: options.duration ?? this.baseDuration, // Fix undefined duration
                 ...options,
                 startTime: performance.now(),
                 isActive: true
@@ -26,8 +31,11 @@ export function createAnimationController() {
         },
         
         updateAnimations(currentTime) {
-            this.animations.forEach((animation, id) => {
-                if (!animation.isActive) return;
+            animationsToDelete.length = 0;
+            
+            // Use for-of instead of forEach to avoid iteration issues
+            for (const [id, animation] of this.animations) {
+                if (!animation.isActive) continue;
                 
                 const elapsed = currentTime - animation.startTime;
                 const progress = Math.min(elapsed / animation.duration, 1);
@@ -64,14 +72,19 @@ export function createAnimationController() {
                         animation.startTime = currentTime;
                         animation.reversed = false;
                     } else {
-                        // Animation complete
+                        // Animation complete - mark for deletion
                         if (animation.onComplete) {
                             animation.onComplete(animation);
                         }
-                        this.animations.delete(id);
+                        animationsToDelete.push(id);
                     }
                 }
-            });
+            }
+            
+            // Delete completed animations after iteration
+            for (const id of animationsToDelete) {
+                this.animations.delete(id);
+            }
         },
         
         applyEasing(t, easingType) {
@@ -97,34 +110,70 @@ export function createAnimationController() {
     };
 }
 
-// Enhanced particle system for background effects
+// Enhanced particle system for background effects with performance optimizations
 export function createParticleSystem(canvas, ctx) {
     const particles = [];
-    const maxParticles = 150;
+    const maxParticles = 100; // Reduced for better performance
+    const gradientCache = new Map(); // Cache gradients by size
+    let lastFrameTime = 0;
+    let isDestroyed = false;
+    
+    // Pre-render particle sprite for better performance
+    function createParticleSprite(size, intensity) {
+        const spriteSize = size * 8;
+        const spriteCanvas = document.createElement('canvas');
+        spriteCanvas.width = spriteSize;
+        spriteCanvas.height = spriteSize;
+        const spriteCtx = spriteCanvas.getContext('2d');
+        
+        const gradient = spriteCtx.createRadialGradient(
+            spriteSize/2, spriteSize/2, 0,
+            spriteSize/2, spriteSize/2, size * 4
+        );
+        gradient.addColorStop(0, `rgba(0, 255, 149, ${intensity})`);
+        gradient.addColorStop(0.4, `rgba(157, 0, 255, ${intensity * 0.6})`);
+        gradient.addColorStop(1, 'rgba(0, 255, 149, 0)');
+        
+        spriteCtx.fillStyle = gradient;
+        spriteCtx.beginPath();
+        spriteCtx.arc(spriteSize/2, spriteSize/2, size * 4, 0, Math.PI * 2);
+        spriteCtx.fill();
+        
+        // Add bright center
+        spriteCtx.fillStyle = `rgba(255, 255, 255, ${intensity * 0.9})`;
+        spriteCtx.beginPath();
+        spriteCtx.arc(spriteSize/2, spriteSize/2, size * 0.5, 0, Math.PI * 2);
+        spriteCtx.fill();
+        
+        return spriteCanvas;
+    }
     
     class Particle {
         constructor() {
-            this.reset();
-            this.life = Math.random(); // Start with random life to distribute particles
+            this.reset(true); // Initialize with random life
         }
         
-        reset() {
+        reset(randomLife = false) {
             this.x = Math.random() * canvas.width;
             this.y = Math.random() * canvas.height;
             this.vx = (Math.random() - 0.5) * 0.5;
             this.vy = (Math.random() - 0.5) * 0.5;
-            this.life = 1;
+            this.life = randomLife ? Math.random() : 1;
             this.maxLife = 3 + Math.random() * 2;
             this.size = 1 + Math.random() * 2;
             this.twinkle = Math.random() * Math.PI * 2;
             this.twinkleSpeed = 0.02 + Math.random() * 0.03;
+            this.sprite = null;
+            this.lastIntensity = -1;
         }
         
-        update() {
-            this.x += this.vx;
-            this.y += this.vy;
-            this.life -= 0.006;
-            this.twinkle += this.twinkleSpeed;
+        update(deltaTime) {
+            if (isDestroyed) return;
+            
+            this.x += this.vx * deltaTime * 60; // Normalize for 60fps
+            this.y += this.vy * deltaTime * 60;
+            this.life -= deltaTime * 0.002; // Frame-rate independent
+            this.twinkle = (this.twinkle + this.twinkleSpeed * deltaTime * 60) % (Math.PI * 2);
             
             // Wrap around screen
             if (this.x < 0) this.x = canvas.width;
@@ -138,30 +187,24 @@ export function createParticleSystem(canvas, ctx) {
         }
         
         draw() {
+            if (isDestroyed) return;
+            
             const alpha = this.life * (0.5 + 0.5 * Math.sin(this.twinkle));
             const intensity = 0.3 + 0.7 * Math.sin(this.twinkle);
             
+            // Create or reuse sprite if intensity changed significantly
+            if (!this.sprite || Math.abs(intensity - this.lastIntensity) > 0.1) {
+                this.sprite = createParticleSprite(this.size, intensity);
+                this.lastIntensity = intensity;
+            }
+            
             ctx.save();
             ctx.globalAlpha = alpha * 0.8;
-            
-            // Create a glowing effect
-            const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 4);
-            gradient.addColorStop(0, `rgba(0, 255, 149, ${intensity})`);
-            gradient.addColorStop(0.4, `rgba(157, 0, 255, ${intensity * 0.6})`);
-            gradient.addColorStop(1, 'rgba(0, 255, 149, 0)');
-            
-            ctx.fillStyle = gradient;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size * 4, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Add a bright center
-            ctx.globalAlpha = alpha;
-            ctx.fillStyle = `rgba(255, 255, 255, ${intensity * 0.9})`;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size * 0.5, 0, Math.PI * 2);
-            ctx.fill();
-            
+            ctx.drawImage(
+                this.sprite,
+                this.x - this.size * 4,
+                this.y - this.size * 4
+            );
             ctx.restore();
         }
     }
@@ -172,20 +215,40 @@ export function createParticleSystem(canvas, ctx) {
     }
     
     return {
-        update() {
-            particles.forEach(particle => particle.update());
+        update(currentTime) {
+            if (isDestroyed) return;
+            
+            const deltaTime = lastFrameTime ? (currentTime - lastFrameTime) / 1000 : 0.016;
+            lastFrameTime = currentTime;
+            
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update(deltaTime);
+            }
         },
         
         draw() {
-            particles.forEach(particle => particle.draw());
+            if (isDestroyed) return;
+            
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].draw();
+            }
         },
         
         resize() {
+            if (isDestroyed) return;
+            
             // Redistribute particles when canvas resizes
-            particles.forEach(particle => {
+            for (let i = 0; i < particles.length; i++) {
+                const particle = particles[i];
                 if (particle.x > canvas.width) particle.x = Math.random() * canvas.width;
                 if (particle.y > canvas.height) particle.y = Math.random() * canvas.height;
-            });
+            }
+        },
+        
+        destroy() {
+            isDestroyed = true;
+            particles.length = 0;
+            gradientCache.clear();
         }
     };
 }

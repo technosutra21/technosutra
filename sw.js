@@ -546,8 +546,14 @@ async function getOfflinePage() {
     }
 }
 
-// Enhanced message handling for complete caching
+// Enhanced message handling for complete caching with security checks
 self.addEventListener('message', event => {
+    // Security: Only accept messages from same origin
+    if (event.origin !== self.origin) {
+        console.warn('[SW] Rejected message from foreign origin:', event.origin);
+        return;
+    }
+    
     const { type, data } = event.data || {};
     const port = event.ports[0];
     
@@ -578,13 +584,15 @@ self.addEventListener('message', event => {
             break;
             
         case 'CACHE_MODEL':
-            if (data && data.modelUrl) {
+            if (data && data.modelUrl && isValidModelUrl(data.modelUrl)) {
                 cacheSpecificModel(data.modelUrl).then(() => {
                     port?.postMessage({ 
                         type: 'MODEL_CACHED', 
                         modelUrl: data.modelUrl 
                     });
                 });
+            } else {
+                console.warn('[SW] Invalid model URL rejected:', data?.modelUrl);
             }
             break;
             
@@ -599,6 +607,19 @@ self.addEventListener('message', event => {
     }
 });
 
+// Security: Validate model URLs
+function isValidModelUrl(url) {
+    try {
+        const urlObj = new URL(url, self.origin);
+        // Only allow same-origin model files
+        if (urlObj.origin !== self.origin) return false;
+        // Must match model pattern
+        return MODEL_PATTERN.test(urlObj.pathname) || ALL_MODELS.includes(urlObj.pathname);
+    } catch {
+        return false;
+    }
+}
+
 // Cache specific model manually
 async function cacheSpecificModel(modelUrl) {
     try {
@@ -611,10 +632,10 @@ async function cacheSpecificModel(modelUrl) {
             return true;
         }
         
-        const response = await fetch(modelUrl);
+        const response = await fetch(modelUrl, { cache: 'no-cache' });
         
         if (response.ok) {
-            await cache.put(modelUrl, response);
+            await cache.put(modelUrl, response.clone()); // Fix: Clone response
             console.log(`[SW] ✅ Manually cached model: ${modelUrl}`);
             return true;
         }

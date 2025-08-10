@@ -1416,8 +1416,32 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
+        let lastTime = 0;
+        let frameCount = 0;
+        let fpsElement = null;
+        
+        // Create FPS counter for performance monitoring (debug mode)
+        if (window.location.search.includes('debug')) {
+            fpsElement = document.createElement('div');
+            fpsElement.style.cssText = `
+                position: fixed; top: 10px; right: 10px; z-index: 1000;
+                background: rgba(0,0,0,0.8); color: #00ff95; padding: 5px 10px;
+                font-family: monospace; font-size: 12px; border-radius: 4px;
+            `;
+            document.body.appendChild(fpsElement);
+        }
+
         function render(time) {
             const gridSize = 40;
+            const deltaTime = time - lastTime;
+            
+            // FPS monitoring
+            if (fpsElement && frameCount % 60 === 0) {
+                const fps = Math.round(1000 / (deltaTime || 16));
+                fpsElement.textContent = `FPS: ${fps} | Particles: ${particleSystem ? 100 : 0}`;
+            }
+            frameCount++;
+            lastTime = time;
             
             // Clear canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1426,35 +1450,44 @@
             cosmicBackground.update(time * 0.001);
             cosmicBackground.draw(time * 0.001);
             
-            // Update and draw particle system
-            particleSystem.update();
+            // Update and draw particle system with proper time
+            particleSystem.update(time);
             particleSystem.draw();
             
             // Generate and draw sphere positions with enhanced effects
             const positions = generatePositions(gridSize, time, controller);
             
+            // Use cached gradient for better performance
+            const gradientCache = new Map();
+            
             positions.forEach(({ x, y, depth, opacity, size }) => {
                 const px = (x / gridSize) * canvas.width;
                 const py = (y / gridSize) * canvas.height;
                 
-                // Create gradient effect based on depth
-                const gradient = ctx.createRadialGradient(px, py, 0, px, py, size * 3);
-                gradient.addColorStop(0, `rgba(0, 255, 149, ${opacity * 0.9})`);
-                gradient.addColorStop(0.5, `rgba(157, 0, 255, ${opacity * 0.6})`);
-                gradient.addColorStop(1, `rgba(0, 255, 149, 0)`);
+                // Cache gradients by size to reduce creation
+                const sizeKey = Math.round(size * 10);
+                let gradient = gradientCache.get(sizeKey);
+                if (!gradient) {
+                    gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, size * 3);
+                    gradient.addColorStop(0, `rgba(0, 255, 149, 0.9)`);
+                    gradient.addColorStop(0.5, `rgba(157, 0, 255, 0.6)`);
+                    gradient.addColorStop(1, `rgba(0, 255, 149, 0)`);
+                    gradientCache.set(sizeKey, gradient);
+                }
                 
                 ctx.save();
+                ctx.translate(px, py);
                 ctx.globalAlpha = opacity * 0.8;
                 ctx.fillStyle = gradient;
                 ctx.beginPath();
-                ctx.arc(px, py, size * 2, 0, Math.PI * 2);
+                ctx.arc(0, 0, size * 2, 0, Math.PI * 2);
                 ctx.fill();
                 
                 // Add bright center
                 ctx.globalAlpha = opacity;
                 ctx.fillStyle = `rgba(255, 255, 255, ${opacity * 0.5})`;
                 ctx.beginPath();
-                ctx.arc(px, py, size * 0.5, 0, Math.PI * 2);
+                ctx.arc(0, 0, size * 0.5, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.restore();
             });
