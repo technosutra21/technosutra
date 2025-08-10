@@ -1,5 +1,15 @@
 // Enhanced particle and animation controller for Techno Sutra background effects
-import { safeExecute } from './1.js';
+// Removed import to avoid circular dependency - will use inline error handling
+
+// Safe execution wrapper
+function safeExecute(fn, fallback, context = '') {
+    try {
+        return fn();
+    } catch (error) {
+        console.warn(`Safe execution failed in ${context}:`, error);
+        return fallback;
+    }
+}
 
 // Global sprite cache to prevent memory leaks
 const spriteCache = new Map();
