@@ -404,6 +404,7 @@
         min-camera-orbit="auto 0deg auto"
         max-camera-orbit="auto 180deg auto"
         tone-mapping="neutral"
+
         style="background-color: transparent; --poster-color: transparent;">
 
         <!-- Custom AR button -->
@@ -618,7 +619,9 @@ try {
         // Load model with error handling
         async function loadModel() {
             const modelSrc = `modelo${config.modelId}.glb`;
-            log(`Loading model: ${modelSrc}`);
+            const usdzSrc = `usdz/modelo${config.modelId}.usdz`;
+
+            log(`Loading model: ${modelSrc}, ${usdzSrc}`);
 
             try {
                 const exists = await checkModelExists(modelSrc);
@@ -640,9 +643,10 @@ try {
                 elements.modelViewer.setAttribute('ar-scale', 'auto');
                 elements.modelViewer.setAttribute('camera-target', 'auto auto auto');
                 
-                // iOS-specific metadata for better viewing
-                elements.modelViewer.setAttribute('seamless-poster', '');
-                elements.modelViewer.setAttribute('poster-color', 'transparent');
+                elements.modelViewer.setAttribute('ios-src', usdzSrc);
+
+
+
                 
                 // Set AR scale
                 elements.modelViewer.style.setProperty('--ar-scale', config.arScale.toString());
@@ -672,19 +676,16 @@ try {
         
         // Apply iOS-specific color enhancements
         function applyIOSColorFix() {
-            if (isIOSDevice() && elements.modelViewer) {
+            if (isIOSDevice()) {
                 // Enhanced color settings for iOS devices - more aggressive brightness
                 elements.modelViewer.style.filter = 'contrast(2.0) saturate(2.2) brightness(1.8) hue-rotate(10deg)';
-                elements.modelViewer.setAttribute('exposure', '2.0');
-                elements.modelViewer.setAttribute('shadow-intensity', '0.5'); // Reduce shadows
-                elements.modelViewer.setAttribute('shadow-softness', '0.3');
-                elements.modelViewer.setAttribute('environment-image', 'neutral');
-                elements.modelViewer.setAttribute('tone-mapping', 'commerce'); // Better for iOS
-                
+                elements.modelViewer.setAttribute('saturation', '1.0');
                 // iOS Quick Look specific fixes
-                elements.modelViewer.setAttribute('ar-scale', 'fixed');
-                elements.modelViewer.setAttribute('camera-target', '0m 0.5m 0m');
+                
                 elements.modelViewer.setAttribute('field-of-view', '45deg');
+                elements.modelViewer.setAttribute('ar-target', 'auto auto auto');
+
+                elements.modelViewer.setAttribute('ios-src', usdzSrc);
                 
                 log('Applied aggressive iOS color enhancement fixes');
             }
