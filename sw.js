@@ -40,8 +40,7 @@ const ALL_MODELS = [
     '/modelo38.glb', '/modelo39.glb', '/modelo40.glb', '/modelo41.glb', '/modelo42.glb',
     '/modelo44.glb', '/modelo45.glb', '/modelo46.glb', '/modelo47.glb', '/modelo48.glb',
     '/modelo49.glb', '/modelo50.glb', '/modelo51.glb', '/modelo54.glb', '/modelo55.glb',
-    '/modelo56.glb', '/modelo-dragao.glb', '/14.glb', '/31.glb', '/cosmic-buddha.glb',
-    '/cosmic.glb', '/fat-buddha.glb', '/nsrinha.glb'
+    '/modelo56.glb'
 ];
 
 // External resources

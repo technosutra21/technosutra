@@ -1432,7 +1432,7 @@
         }
 
         function render(time) {
-            const gridSize = 40;
+            const gridSize = 25; // Reduced for better performance
             const deltaTime = time - lastTime;
             
             // FPS monitoring
@@ -1460,34 +1460,31 @@
             // Use cached gradient for better performance
             const gradientCache = new Map();
             
+            // Pre-create common gradients
+            const greenGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 20);
+            greenGradient.addColorStop(0, `rgba(0, 255, 149, 0.9)`);
+            greenGradient.addColorStop(0.5, `rgba(0, 255, 149, 0.6)`);
+            greenGradient.addColorStop(1, `rgba(0, 255, 149, 0)`);
+            
             positions.forEach(({ x, y, depth, opacity, size }) => {
                 const px = (x / gridSize) * canvas.width;
                 const py = (y / gridSize) * canvas.height;
                 
-                // Cache gradients by size to reduce creation
-                const sizeKey = Math.round(size * 10);
-                let gradient = gradientCache.get(sizeKey);
-                if (!gradient) {
-                    gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, size * 3);
-                    gradient.addColorStop(0, `rgba(0, 255, 149, 0.9)`);
-                    gradient.addColorStop(0.5, `rgba(157, 0, 255, 0.6)`);
-                    gradient.addColorStop(1, `rgba(0, 255, 149, 0)`);
-                    gradientCache.set(sizeKey, gradient);
-                }
-                
                 ctx.save();
                 ctx.translate(px, py);
-                ctx.globalAlpha = opacity * 0.8;
-                ctx.fillStyle = gradient;
+                ctx.globalAlpha = opacity * 0.7;
+                
+                // Use pre-created gradient for better performance
+                ctx.fillStyle = greenGradient;
                 ctx.beginPath();
-                ctx.arc(0, 0, size * 2, 0, Math.PI * 2);
+                ctx.arc(0, 0, size * 1.5, 0, Math.PI * 2);
                 ctx.fill();
                 
-                // Add bright center
-                ctx.globalAlpha = opacity;
-                ctx.fillStyle = `rgba(255, 255, 255, ${opacity * 0.5})`;
+                // Bright green center
+                ctx.globalAlpha = opacity * 0.9;
+                ctx.fillStyle = `rgba(0, 255, 149, ${opacity * 0.8})`;
                 ctx.beginPath();
-                ctx.arc(0, 0, size * 0.5, 0, Math.PI * 2);
+                ctx.arc(0, 0, size * 0.3, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.restore();
             });
