@@ -385,22 +385,18 @@
         camera-controls
         touch-action="pan-y"
         ar
-        ar-modes="webxr scene-viewer quick-look"
+        ar-modes="quick-look webxr scene-viewer"
         ar-scale="auto"
         ar-placement="floor"
         auto-rotate
         rotation-per-second="15deg"
         loading="eager"
         reveal="auto"
-        shadow-intensity="0.3"
-        shadow-softness="0.8"
-        environment-image="neutral"
-        exposure="1.0"
         field-of-view="30deg"
         min-camera-orbit="auto 0deg auto"
         max-camera-orbit="auto 180deg auto"
-        tone-mapping="neutral"
-
+        tone-mapping="linear"
+        
         style="background-color: transparent; --poster-color: transparent;">
 
         <!-- Custom AR button -->
@@ -669,11 +665,7 @@ try {
         // Apply iOS-specific color enhancements
         function applyIOSColorFix() {
             if (isIOSDevice()) {
-                // Enhanced color settings for iOS devices - more aggressive brightness
-                elements.modelViewer.setAttribute('tone-mapping', 'linear');
 
-
-                // iOS Quick Look specific fixes    
             
                 elements.modelViewer.setAttribute('ios-src', usdzSrc);
                 

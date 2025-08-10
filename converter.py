@@ -561,7 +561,7 @@ def main():
     Converte todos os arquivos GLB em 'glb-usd/glb_files' para USDZ em 'glb-usd/usdz_files'.
     """
     base = Path(__file__).resolve().parent
-    glb_dir = base / "glb_files"
+    glb_dir = base / "."
     usdz_dir = base / "usdz_files"
 
     if not glb_dir.exists():
