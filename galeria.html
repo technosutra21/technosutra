@@ -767,6 +767,64 @@
             color: #6b7280;
         }
 
+        body.light-mode .search-input {
+            background: rgba(255, 255, 255, 0.9) !important;
+            color: #1f2937 !important;
+            border-color: rgba(99, 102, 241, 0.2) !important;
+        }
+
+        body.light-mode .theme-toggle {
+            background: rgba(255, 255, 255, 0.9) !important;
+            color: #1f2937 !important;
+            border-color: rgba(99, 102, 241, 0.3) !important;
+        }
+
+        body.light-mode .language-toggle {
+            background: rgba(255, 255, 255, 0.9) !important;
+            color: #1f2937 !important;
+            border-color: rgba(99, 102, 241, 0.3) !important;
+        }
+
+        /* Enhanced mobile styles */
+        @media (max-width: 768px) {
+            .header-hero h1 {
+                font-size: 2rem !important;
+            }
+            
+            .header-subtitle {
+                font-size: 0.9rem !important;
+                line-height: 1.4 !important;
+            }
+            
+            .search-input {
+                font-size: 14px !important;
+                padding: 12px 16px !important;
+            }
+            
+            .theme-toggle, .language-toggle {
+                width: 45px !important;
+                height: 45px !important;
+                font-size: 14px !important;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+                gap: 15px !important;
+            }
+            
+            .model-card {
+                padding: 16px !important;
+            }
+            
+            .model-title {
+                font-size: 1.1rem !important;
+            }
+            
+            .model-subtitle {
+                font-size: 0.8rem !important;
+            }
+        }
+
         /* Loading skeleton */
         .skeleton {
             background: linear-gradient(90deg,
@@ -1324,7 +1382,7 @@
 
     <!-- Language Switcher -->
     <button class="theme-toggle language-toggle tooltip" data-tooltip="Switch language / Mudar idioma" onclick="toggleLanguage()" style="top: 90px;">
-        🌐
+        🌐 EN
     </button>
 
     <!-- Quick Actions -->
@@ -1354,10 +1412,9 @@
 
             <!-- Hero Section -->
             <div class="header-hero">
-                <h1 class="header-title">Galeria de Personagens </br> TECHNO SUTRA</h1>
+                <h1 class="header-title">TECHNO SUTRA AR</h1>
                 <p class="header-subtitle">
                     Explore os 56 capítulos sagrados através de modelos 3D interativos.
-                    </br>Uma jornada visual pela sabedoria budista ancestral em realidade aumentada, no estilo cyberpunk.
                 </p>
 
                 <!-- Quick Stats -->
@@ -1370,7 +1427,7 @@
         <!-- Enhanced Filtros e busca -->
         <div class="controls" style="margin-bottom: 40px; text-align: center; display: flex;">
             <div style="max-width: 500px; margin: 0 auto; position: relative;">
-                <input type="text" id="search-input" placeholder="🔍 Buscar por nome, título, ocupação ou localização..."
+                <input type="text" id="search-input" class="search-input" placeholder="🔍 Buscar por nome, título, ocupação ou localização..."
                        style="width: 100%; padding: 16px 20px; border-radius: 12px; border: 1px solid rgba(120,119,198,0.2);
                               background: rgba(15,15,15,0.8); color: #e5e7eb; font-size: 16px; backdrop-filter: blur(20px);
                               transition: all 0.3s ease; outline: none;">
@@ -1486,15 +1543,145 @@
         // Array para armazenar modelos disponíveis (detectados dinamicamente)
         let availableModels = [];
         
-        // Language handling
+        // Language handling with proper UI translations
         let currentLanguage = localStorage.getItem('language') || 'pt';
         document.documentElement.lang = currentLanguage === 'en' ? 'en' : 'pt-BR';
+
+        // Translation dictionary
+        const translations = {
+            pt: {
+                pageTitle: 'Galeria Techno Sutra AR - 56 Capítulos do Avatamsaka Sutra',
+                mainTitle: 'Techno Sutra AR',
+                subtitle: 'Explore os 56 capítulos sagrados através de modelos 3D interativos.',
+                themeToggleLight: 'Alternar para tema escuro',
+                themeToggleDark: 'Alternar para tema claro',
+                languageToggle: 'Switch to English / Mudar para inglês',
+                searchPlaceholder: 'Buscar por capítulo, localização ou ensinamento...',
+                filterAll: 'Todos',
+                filterBodhisattvas: 'Bodhisattvas',
+                filterMasters: 'Mestres',
+                filterCities: 'Cidades',
+                filterTeachings: 'Ensinamentos',
+                sortChapter: 'Capítulo',
+                sortName: 'Nome',
+                sortLocation: 'Localização',
+                readMore: 'Leia mais...',
+                readLess: 'Leia menos...',
+                viewAR: 'Ver em AR',
+                downloadModel: 'Baixar Modelo',
+                moreInfo: 'Mais Informações',
+                closeModal: 'Fechar',
+                statsTitle: 'Estatísticas da Galeria',
+                bodhisattvasLabel: 'Bodhisattvas',
+                teachersLabel: 'Professores',
+                citiesLabel: 'Cidades',
+                teachingsLabel: 'Ensinamentos',
+                loading: 'Carregando...',
+                noResults: 'Nenhum resultado encontrado',
+                context: 'Contexto',
+                teaching: 'Ensinamento',
+                manifestations: 'Manifestações',
+                progression: 'Progressão'
+            },
+            en: {
+                pageTitle: 'Techno Sutra AR Gallery - 56 Chapters of the Avatamsaka Sutra',
+                mainTitle: 'Techno Sutra AR',
+                subtitle: 'Explore the 56 sacred chapters through interactive 3D models.',
+                themeToggleLight: 'Switch to dark theme',
+                themeToggleDark: 'Switch to light theme',
+                languageToggle: 'Mudar para português / Switch to Portuguese',
+                searchPlaceholder: 'Search by chapter, location, or teaching...',
+                filterAll: 'All',
+                filterBodhisattvas: 'Bodhisattvas',
+                filterMasters: 'Masters',
+                filterCities: 'Cities',
+                filterTeachings: 'Teachings',
+                sortChapter: 'Chapter',
+                sortName: 'Name',
+                sortLocation: 'Location',
+                readMore: 'Read more...',
+                readLess: 'Read less...',
+                viewAR: 'View in AR',
+                downloadModel: 'Download Model',
+                moreInfo: 'More Information',
+                closeModal: 'Close',
+                statsTitle: 'Gallery Statistics',
+                bodhisattvasLabel: 'Bodhisattvas',
+                teachersLabel: 'Teachers',
+                citiesLabel: 'Cities',
+                teachingsLabel: 'Teachings',
+                loading: 'Loading...',
+                noResults: 'No results found',
+                context: 'Context',
+                teaching: 'Teaching',
+                manifestations: 'Manifestations',
+                progression: 'Progression'
+            }
+        };
+
+        function t(key) {
+            return translations[currentLanguage][key] || translations.pt[key] || key;
+        }
 
         function toggleLanguage() {
             currentLanguage = currentLanguage === 'pt' ? 'en' : 'pt';
             localStorage.setItem('language', currentLanguage);
-            // Simple reload to re-fetch correct CSVs and refresh UI
-            location.reload();
+            document.documentElement.lang = currentLanguage === 'en' ? 'en' : 'pt-BR';
+            
+            // Update UI texts immediately
+            updateUITexts();
+            
+            // Reload to fetch correct CSV data
+            setTimeout(() => location.reload(), 100);
+        }
+
+        function updateUITexts() {
+            // Update page title
+            document.title = t('pageTitle');
+            
+            // Update main header
+            const titleElement = document.querySelector('.header-title');
+            if (titleElement) titleElement.textContent = t('mainTitle');
+            
+            const subtitleElement = document.querySelector('.header-subtitle');
+            if (subtitleElement) subtitleElement.textContent = t('subtitle');
+            
+            // Update search placeholder
+            const searchInput = document.querySelector('.search-input');
+            if (searchInput) searchInput.placeholder = t('searchPlaceholder');
+            
+            // Update filter buttons
+            updateFilterButtons();
+            
+            // Update theme/language button tooltips
+            updateButtonTooltips();
+        }
+
+        function updateButtonTooltips() {
+            const themeBtn = document.querySelector('.theme-toggle');
+            const langBtn = document.querySelector('.language-toggle');
+            
+            if (themeBtn) {
+                const isLight = document.body.classList.contains('light-mode');
+                themeBtn.setAttribute('data-tooltip', isLight ? t('themeToggleLight') : t('themeToggleDark'));
+            }
+            
+            if (langBtn) {
+                langBtn.setAttribute('data-tooltip', t('languageToggle'));
+                langBtn.textContent = currentLanguage === 'pt' ? '🌐 EN' : '🌐 PT';
+            }
+        }
+
+        function updateFilterButtons() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(btn => {
+                const filterType = btn.getAttribute('data-filter');
+                if (filterType === 'all') btn.textContent = t('filterAll');
+                else if (filterType === 'bodhisattva') btn.textContent = t('filterBodhisattvas');
+                else if (filterType === 'master') btn.textContent = t('filterMasters');
+                else if (filterType === 'city') btn.textContent = t('filterCities');
+                else if (filterType === 'teaching') btn.textContent = t('filterTeachings');
+            });
         }
 
         // Arrays para armazenar os dados dos CSV
@@ -2174,10 +2361,13 @@ const charactersResponse = await fetch(`summaries/characters${langSuffix}.csv`);
                 align-items: center; justify-content: center; backdrop-filter: blur(20px);
             `;
 
+            // Check if mobile
+            const isMobile = window.innerWidth <= 768;
+            
             modal.innerHTML = `
-                <div style="position: relative; width: 95%; height: 95%; max-width: 1400px; display: flex; gap: 20px;">
+                <div style="position: relative; width: 95%; height: 95%; max-width: 1400px; display: flex; gap: ${isMobile ? '0' : '20px'}; flex-direction: ${isMobile ? 'column' : 'row'};">
                     <!-- Painel de Informações -->
-                    <div style="width: 40%; background: rgba(15,15,15,0.9); border-radius: 12px; border: 1px solid rgba(120,119,198,0.2); padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+                    <div style="width: ${isMobile ? '100%' : '40%'}; ${isMobile ? 'height: 60%;' : ''} background: rgba(15,15,15,0.9); border-radius: 12px; border: 1px solid rgba(120,119,198,0.2); padding: 0; overflow: hidden; display: flex; flex-direction: column; ${isMobile ? 'margin-bottom: 10px;' : ''}">
                         <!-- Header do Personagem -->
                         <div style="padding: 24px; border-bottom: 1px solid rgba(120,119,198,0.1); background: linear-gradient(135deg, rgba(120,119,198,0.1), rgba(120,119,198,0.05));">
                             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
@@ -2209,7 +2399,7 @@ const charactersResponse = await fetch(`summaries/characters${langSuffix}.csv`);
                                     <p style="margin: 0; color: #d1d5db; font-size: 0.85rem; line-height: 1.5;" class="content-preview">${combinedData.description.length > 200 ? combinedData.description.substring(0, 200) : combinedData.description}</p>
                                     ${combinedData.description.length > 200 ? `
                                         <p style="margin: 8px 0 0 0; color: #d1d5db; font-size: 0.85rem; line-height: 1.5; display: none;" class="content-full">${combinedData.description}</p>
-                                        <button onclick="toggleContent('description', this)" style="background: none; border: none; color: #7877c6; font-size: 0.8rem; cursor: pointer; text-decoration: underline; padding: 4px 0; margin-top: 8px;">Leia mais...</button>
+                                        <button onclick="toggleContent('description', this)" style="background: none; border: none; color: #7877c6; font-size: 0.8rem; cursor: pointer; text-decoration: underline; padding: 4px 0; margin-top: 8px;">${t('readMore')}</button>
                                     ` : ''}
                                 </div>
                             </div>
@@ -2273,7 +2463,7 @@ const charactersResponse = await fetch(`summaries/characters${langSuffix}.csv`);
                     </div>
                     
                     <!-- Visualizador 3D -->
-                    <div style="flex: 1; background: rgba(0,0,0,0.4); border-radius: 12px; border: 1px solid rgba(120,119,198,0.2); overflow: hidden;">
+                    <div style="${isMobile ? 'height: 40%;' : 'flex: 1;'} background: rgba(0,0,0,0.4); border-radius: 12px; border: 1px solid rgba(120,119,198,0.2); overflow: hidden;">
                         <model-viewer
                             src="modelo${modelId}.glb"
                             alt="Modelo 3D - ${combinedData.name}: ${combinedData.title}"
@@ -2408,11 +2598,11 @@ function updateParallax() {
             
             if (body.classList.contains('light-mode')) {
                 themeBtn.textContent = '☀️';
-                themeBtn.setAttribute('data-tooltip', 'Alternar para tema escuro');
+                themeBtn.setAttribute('data-tooltip', t('themeToggleLight'));
                 localStorage.setItem('theme', 'light');
             } else {
                 themeBtn.textContent = '🌙';
-                themeBtn.setAttribute('data-tooltip', 'Alternar para tema claro');
+                themeBtn.setAttribute('data-tooltip', t('themeToggleDark'));
                 localStorage.setItem('theme', 'dark');
             }
         }
@@ -2482,13 +2672,13 @@ function updateParallax() {
                 // Collapse: show preview, hide full
                 previewElement.style.display = 'block';
                 fullElement.style.display = 'none';
-                button.textContent = 'Leia mais...';
+                button.textContent = t('readMore');
                 button.style.color = '#7877c6';
             } else {
                 // Expand: hide preview, show full
                 previewElement.style.display = 'none';
                 fullElement.style.display = 'block';
-                button.textContent = 'Leia menos';
+                button.textContent = t('readLess');
                 button.style.color = '#9ca3af';
             }
             
@@ -2534,13 +2724,26 @@ function updateParallax() {
         function loadSavedTheme() {
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'light') {
-                toggleTheme();
+                document.body.classList.add('light-mode');
+                const themeBtn = document.querySelector('.theme-toggle');
+                if (themeBtn) {
+                    themeBtn.textContent = '☀️';
+                    themeBtn.setAttribute('data-tooltip', t('themeToggleLight'));
+                }
             }
+        }
+
+        function initializeUI() {
+            // Apply saved theme
+            loadSavedTheme();
+            
+            // Update all UI texts with current language
+            updateUITexts();
         }
 
         // Inicializar tema ao carregar
         document.addEventListener('DOMContentLoaded', () => {
-            loadSavedTheme();
+            initializeUI();
             checkOfflineStatus();
         });
 
