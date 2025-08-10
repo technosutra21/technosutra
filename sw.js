@@ -462,7 +462,9 @@ async function handleStaticAsset(request) {
         // Fetch and cache new version
         const response = await fetch(request);
         if (response.ok) {
-            cache.put(request, response.clone());
+            cache.put(request, response.clone()).catch(error => {
+                console.warn(`[SW] ⚠️ Failed to cache static asset ${request.url}:`, error);
+            });
         }
         
         return response;
@@ -489,9 +491,12 @@ async function handleExternalResource(request) {
         
         clearTimeout(timeoutId);
         
-        if (response.ok) {
+        // Accept both successful and opaque responses for offline use
+        if (response.ok || response.type === 'opaque') {
             const cache = await caches.open(STATIC_CACHE);
-            cache.put(request, response.clone());
+            cache.put(request, response.clone()).catch(error => {
+                console.warn(`[SW] ⚠️ Failed to cache external resource ${request.url}:`, error);
+            });
         }
         
         return response;
@@ -514,7 +519,10 @@ async function handleDynamicRequest(request) {
         
         if (response.ok) {
             const cache = await caches.open(DYNAMIC_CACHE);
-            cache.put(request, response.clone());
+            await cache.put(request, response.clone());
+            
+            // Manage cache size to prevent overflow
+            await manageCacheSize(DYNAMIC_CACHE, 50);
         }
         
         return response;
@@ -532,7 +540,10 @@ async function handleDynamicRequest(request) {
             if (offlineResponse) return offlineResponse;
         }
         
-        return new Response('Offline', { status: 503 });
+        // Return 404 for missing resources instead of 503
+        const status = request.mode === 'navigate' ? 503 : 404;
+        const statusText = request.mode === 'navigate' ? 'Service Unavailable' : 'Not Found';
+        return new Response('Resource unavailable offline', { status, statusText });
     }
 }
 
@@ -667,6 +678,27 @@ async function getCacheStatus() {
     } catch (error) {
         console.error('[SW] Error getting cache status:', error);
         return {};
+    }
+}
+
+// Cache size management - clean up old entries when cache gets too large
+async function manageCacheSize(cacheName, maxEntries = 100) {
+    try {
+        const cache = await caches.open(cacheName);
+        const keys = await cache.keys();
+        
+        if (keys.length > maxEntries) {
+            console.log(`[SW] 🧹 Cache ${cacheName} has ${keys.length} entries, cleaning up...`);
+            
+            // Remove oldest entries (simple FIFO, could be improved with LRU)
+            const entriesToDelete = keys.slice(0, keys.length - maxEntries);
+            const deletePromises = entriesToDelete.map(key => cache.delete(key));
+            
+            await Promise.all(deletePromises);
+            console.log(`[SW] ✅ Cleaned up ${entriesToDelete.length} entries from ${cacheName}`);
+        }
+    } catch (error) {
+        console.error(`[SW] Error managing cache size for ${cacheName}:`, error);
     }
 }
 
