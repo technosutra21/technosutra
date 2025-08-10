@@ -1605,22 +1605,31 @@ const charactersResponse = await fetch(`summaries/characters${langSuffix}.csv`);
         // Função para detectar dinamicamente todos os modelos disponíveis
         async function detectAvailableModels() {
             console.log('🔍 Detectando modelos disponíveis...');
+            
+            // List of models that actually exist - no need to check all 56
+            const possibleModels = [
+                1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 15, 17, 18, 19, 20,
+                21, 22, 23, 24, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37,
+                38, 39, 40, 41, 42, 44, 45, 46, 47, 48, 49, 50, 51, 54, 55, 56
+            ];
+            
             const detectedModels = [];
 
             // Batch requests for better performance
-            const batchSize = 10;
+            const batchSize = 8;
             const batches = [];
             
-            for (let i = 0; i < 56; i += batchSize) {
+            for (let i = 0; i < possibleModels.length; i += batchSize) {
                 const batch = [];
-                for (let j = i + 1; j <= Math.min(i + batchSize, 56); j++) {
+                for (let j = i; j < Math.min(i + batchSize, possibleModels.length); j++) {
+                    const modelId = possibleModels[j];
                     batch.push(
-                        checkModelExists(j).then(exists => {
+                        checkModelExists(modelId).then(exists => {
                             if (exists) {
-                                detectedModels.push(j);
-                                console.log(`✅ Modelo ${j} encontrado`);
+                                detectedModels.push(modelId);
+                                console.log(`✅ Modelo ${modelId} encontrado`);
                             }
-                            return { id: j, exists };
+                            return { id: modelId, exists };
                         })
                     );
                 }
@@ -1630,12 +1639,14 @@ const charactersResponse = await fetch(`summaries/characters${langSuffix}.csv`);
             // Process batches sequentially to avoid overloading
             for (const batch of batches) {
                 await batch;
+                // Small delay between batches
+                await new Promise(resolve => setTimeout(resolve, 100));
             }
 
             // Ordenar os modelos encontrados
             availableModels = detectedModels.sort((a, b) => a - b);
 
-            console.log(`📊 Total de modelos encontrados: ${availableModels.length}/56`);
+            console.log(`📊 Total de modelos encontrados: ${availableModels.length}/${possibleModels.length}`);
             console.log(`📋 Modelos disponíveis: [${availableModels.join(', ')}]`);
 
             return availableModels;

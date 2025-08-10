@@ -29,8 +29,20 @@ const STATIC_ASSETS = [
     '/qr-scanner.js'
 ];
 
-// ALL 56 MODELS - Add your complete model paths here
-const ALL_MODELS = Array.from({length: 56}, (_, i) => `/models/model${i + 1}.glb`);
+// ACTUAL EXISTING MODELS - Only cache models that exist
+const ALL_MODELS = [
+    '/modelo1.glb', '/modelo2.glb', '/modelo3.glb', '/modelo4.glb', '/modelo5.glb',
+    '/modelo6.glb', '/modelo9.glb', '/modelo10.glb', '/modelo11.glb', '/modelo12.glb',
+    '/modelo15.glb', '/modelo17.glb', '/modelo18.glb', '/modelo19.glb', '/modelo20.glb',
+    '/modelo21.glb', '/modelo22.glb', '/modelo23.glb', '/modelo24.glb', '/modelo26.glb',
+    '/modelo28.glb', '/modelo29.glb', '/modelo30.glb', '/modelo31.glb', '/modelo32.glb',
+    '/modelo33.glb', '/modelo34.glb', '/modelo35.glb', '/modelo36.glb', '/modelo37.glb',
+    '/modelo38.glb', '/modelo39.glb', '/modelo40.glb', '/modelo41.glb', '/modelo42.glb',
+    '/modelo44.glb', '/modelo45.glb', '/modelo46.glb', '/modelo47.glb', '/modelo48.glb',
+    '/modelo49.glb', '/modelo50.glb', '/modelo51.glb', '/modelo54.glb', '/modelo55.glb',
+    '/modelo56.glb', '/modelo-dragao.glb', '/14.glb', '/31.glb', '/cosmic-buddha.glb',
+    '/cosmic.glb', '/fat-buddha.glb', '/nsrinha.glb'
+];
 
 // External resources
 const EXTERNAL_RESOURCES = [
@@ -185,7 +197,7 @@ async function cacheAllModels(port = null) {
         }
     };
     
-    for (let i = 0; i < 56; i++) {
+    for (let i = 0; i < ALL_MODELS.length; i++) {
         const modelUrl = ALL_MODELS[i];
         
         try {
@@ -212,7 +224,7 @@ async function cacheAllModels(port = null) {
             if (response.ok) {
                 await cache.put(modelUrl, response.clone());
                 successCount++;
-                console.log(`[SW] ✅ Cached model ${i + 1}/56: ${modelUrl}`);
+                console.log(`[SW] ✅ Cached model ${i + 1}/${ALL_MODELS.length}: ${modelUrl}`);
             } else {
                 failCount++;
                 console.warn(`[SW] ⚠️ Failed to cache model ${modelUrl}: ${response.status}`);

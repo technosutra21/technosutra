@@ -1393,17 +1393,24 @@
         });
     </script>
 
-    <!-- Dynamic background animation using 1.js & 2.js -->
+    <!-- Enhanced Dynamic background animation using 1.js & 2.js -->
     <script type="module">
-        import generatePositions from './1.js';
+        import generatePositions, { createCosmicBackground } from './1.js';
+        import { createAnimationController, createParticleSystem } from './2.js';
 
         const canvas = document.getElementById('dynamicBackgroundCanvas');
         const ctx = canvas.getContext('2d');
-        const controller = {};
+        
+        // Initialize systems
+        const controller = createAnimationController();
+        const cosmicBackground = createCosmicBackground(canvas, ctx);
+        const particleSystem = createParticleSystem(canvas, ctx);
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            cosmicBackground.resize();
+            particleSystem.resize();
         }
 
         window.addEventListener('resize', resizeCanvas);
@@ -1411,14 +1418,50 @@
 
         function render(time) {
             const gridSize = 40;
-            const positions = generatePositions(gridSize, time, controller);
+            
+            // Clear canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-ctx.fillStyle = 'rgba(0,255,149,0.9)';
-            positions.forEach(({ x, y }) => {
+            
+            // Update and draw cosmic background
+            cosmicBackground.update(time * 0.001);
+            cosmicBackground.draw(time * 0.001);
+            
+            // Update and draw particle system
+            particleSystem.update();
+            particleSystem.draw();
+            
+            // Generate and draw sphere positions with enhanced effects
+            const positions = generatePositions(gridSize, time, controller);
+            
+            positions.forEach(({ x, y, depth, opacity, size }) => {
                 const px = (x / gridSize) * canvas.width;
                 const py = (y / gridSize) * canvas.height;
-ctx.fillRect(px, py, 3, 3);
+                
+                // Create gradient effect based on depth
+                const gradient = ctx.createRadialGradient(px, py, 0, px, py, size * 3);
+                gradient.addColorStop(0, `rgba(0, 255, 149, ${opacity * 0.9})`);
+                gradient.addColorStop(0.5, `rgba(157, 0, 255, ${opacity * 0.6})`);
+                gradient.addColorStop(1, `rgba(0, 255, 149, 0)`);
+                
+                ctx.save();
+                ctx.globalAlpha = opacity * 0.8;
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(px, py, size * 2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Add bright center
+                ctx.globalAlpha = opacity;
+                ctx.fillStyle = `rgba(255, 255, 255, ${opacity * 0.5})`;
+                ctx.beginPath();
+                ctx.arc(px, py, size * 0.5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
             });
+            
+            // Update animations
+            controller.updateAnimations(time);
+            
             requestAnimationFrame(render);
         }
 
