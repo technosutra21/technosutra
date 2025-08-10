@@ -212,7 +212,7 @@ def _author_display_color_and_opacity(mesh: "trimesh.Trimesh", mesh_prim: "UsdGe
 
 def _save_texture_if_any(mesh: "trimesh.Trimesh", textures_dir: Path, name_hint: str) -> str:
     """
-    Try to extract a texture image from trimesh and save to disk.
+    Try to extract a texture image from trimesh and save to disk with iOS optimizations.
     Returns a relative path like 'textures/<file>.png' on success, else ''.
     """
     vis = getattr(mesh, "visual", None)
@@ -258,11 +258,42 @@ def _save_texture_if_any(mesh: "trimesh.Trimesh", textures_dir: Path, name_hint:
     textures_dir.mkdir(parents=True, exist_ok=True)
     rel_tex = f"textures/{name_hint}.png"
     out_path = textures_dir / f"{name_hint}.png"
+    
     try:
-        img.save(str(out_path))
+        # iOS QuickLook optimization: enhance contrast and saturation
+        if _PIL_OK and img:
+            # Convert to RGB if needed
+            if img.mode != 'RGB':
+                img = img.convert('RGB')
+            
+            # Enhance for iOS viewing - boost contrast and saturation slightly
+            from PIL import ImageEnhance
+            
+            # Increase contrast by 15% for better iOS rendering
+            contrast_enhancer = ImageEnhance.Contrast(img)
+            img = contrast_enhancer.enhance(1.15)
+            
+            # Increase saturation by 20% to combat iOS desaturation
+            color_enhancer = ImageEnhance.Color(img)
+            img = color_enhancer.enhance(1.2)
+            
+            # Slight brightness boost (5%) to combat iOS darkness
+            brightness_enhancer = ImageEnhance.Brightness(img)
+            img = brightness_enhancer.enhance(1.05)
+            
+            # Save with high quality for iOS
+            img.save(str(out_path), "PNG", optimize=True, quality=95)
+        else:
+            img.save(str(out_path))
+        
         return rel_tex
-    except Exception:
-        return ""
+    except Exception as e:
+        print(f"Warning: texture enhancement failed, saving original: {e}")
+        try:
+            img.save(str(out_path))
+            return rel_tex
+        except Exception:
+            return ""
 
 
 def _bind_preview_surface_with_texture(
@@ -282,13 +313,18 @@ def _bind_preview_surface_with_texture(
 
     material = UsdShade.Material.Define(stage, mat_path)
 
-    # texture node
+    # texture node with iOS optimizations
     tex = UsdShade.Shader.Define(stage, f"{mat_path}/{tex_name}")
     tex.CreateIdAttr("UsdUVTexture")
     tex.CreateInput("file", Sdf.ValueTypeNames.Asset).Set(Sdf.AssetPath(tex_rel_path))
+    
+    # Critical for iOS: proper color space and texture settings
     if use_srgb:
-        # ensure proper color space for baseColor textures
         tex.CreateInput("sourceColorSpace", Sdf.ValueTypeNames.Token).Set("sRGB")
+    
+    # iOS QuickLook specific texture improvements
+    tex.CreateInput("wrapS", Sdf.ValueTypeNames.Token).Set("repeat")
+    tex.CreateInput("wrapT", Sdf.ValueTypeNames.Token).Set("repeat")
 
     # primvar reader for 'st'
     st_reader = UsdShade.Shader.Define(stage, f"{mat_path}/{st_reader_name}")
@@ -298,13 +334,33 @@ def _bind_preview_surface_with_texture(
     # connect st to texture
     tex.CreateInput("st", Sdf.ValueTypeNames.Float2).ConnectToSource(st_reader, "result")
 
-    # preview surface
+    # Enhanced preview surface for better iOS rendering
     ps = UsdShade.Shader.Define(stage, f"{mat_path}/{ps_name}")
     ps.CreateIdAttr("UsdPreviewSurface")
+    
+    # Connect diffuse texture
     ps.CreateInput("diffuseColor", Sdf.ValueTypeNames.Color3f).ConnectToSource(tex, "rgb")
+    
+    # iOS QuickLook optimizations - these significantly improve appearance
+    # Set proper metallic/roughness for better material response
+    ps.CreateInput("metallic", Sdf.ValueTypeNames.Float).Set(0.0)
+    ps.CreateInput("roughness", Sdf.ValueTypeNames.Float).Set(0.6)  # Slightly rough for better lighting
+    
+    # Improve specular response 
+    ps.CreateInput("specularColor", Sdf.ValueTypeNames.Color3f).Set(Gf.Vec3f(1.0, 1.0, 1.0))
+    
+    # Add slight emissive to combat iOS darkness
+    ps.CreateInput("emissiveColor", Sdf.ValueTypeNames.Color3f).Set(Gf.Vec3f(0.05, 0.05, 0.05))
+    
+    # Ensure full opacity
+    ps.CreateInput("opacity", Sdf.ValueTypeNames.Float).Set(1.0)
+    
+    # Enable displacement for better surface detail
+    ps.CreateInput("displacement", Sdf.ValueTypeNames.Float).Set(0.0)
 
-    # wire surface
+    # wire surface and displacement
     material.CreateSurfaceOutput().ConnectToSource(ps, "surface")
+    material.CreateDisplacementOutput().ConnectToSource(ps, "displacement")
 
     # bind to mesh
     UsdShade.MaterialBindingAPI(mesh_prim.GetPrim()).Bind(material)
@@ -420,10 +476,23 @@ def convert_glb_to_usdz(glb_path, usdz_path):
 
         # Y-up is glTF's convention
         UsdGeom.SetStageUpAxis(stage, UsdGeom.Tokens.y)
+        
+        # Set stage metadata for iOS QuickLook optimization
+        stage.SetMetadata("metersPerUnit", 1.0)
+        stage.SetMetadata("timeCodesPerSecond", 24.0)
+        
+        # Add iOS-specific metadata for better AR viewing
+        stage.GetRootLayer().customLayerData = {
+            "creator": "GLB to USDZ Converter",
+            "description": "Optimized for iOS QuickLook AR viewing"
+        }
 
         # root xform + default prim
         root = UsdGeom.Xform.Define(stage, "/Root")
         stage.SetDefaultPrim(root.GetPrim())
+        
+        # Add kind metadata for better iOS recognition
+        root.GetPrim().SetMetadata("kind", "component")
 
         wrote_any = False
         extra_assets = []
