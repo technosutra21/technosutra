@@ -643,8 +643,6 @@ try {
                 elements.modelViewer.setAttribute('ar-scale', 'auto');
                 elements.modelViewer.setAttribute('camera-target', 'auto auto auto');
                 
-                elements.modelViewer.setAttribute('ios-src', usdzSrc);
-
 
 
                 
@@ -678,13 +676,9 @@ try {
         function applyIOSColorFix() {
             if (isIOSDevice()) {
                 // Enhanced color settings for iOS devices - more aggressive brightness
-                elements.modelViewer.style.filter = 'contrast(2.0) saturate(2.2) brightness(1.8) hue-rotate(10deg)';
                 elements.modelViewer.setAttribute('saturation', '1.0');
                 // iOS Quick Look specific fixes
-                
-                elements.modelViewer.setAttribute('field-of-view', '45deg');
-                elements.modelViewer.setAttribute('ar-target', 'auto auto auto');
-
+            
                 elements.modelViewer.setAttribute('ios-src', usdzSrc);
                 
                 log('Applied aggressive iOS color enhancement fixes');
