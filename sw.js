@@ -185,7 +185,7 @@ async function cacheAllModels(port = null) {
         }
     };
     
-    for (let i = 0; i < ALL_MODELS.length; i++) {
+    for (let i = 0; i < 56; i++) {
         const modelUrl = ALL_MODELS[i];
         
         try {
