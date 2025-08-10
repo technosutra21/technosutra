@@ -106,6 +106,76 @@
             pointer-events: none;
             z-index: 1;
         }
+
+        /* Accessibility and reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            .mandala-container {
+                animation: none !important;
+            }
+            
+            #starfield {
+                animation: none !important;
+            }
+            
+            .mandala-core {
+                animation: pulse-reduced 8s infinite ease-in-out !important;
+            }
+            
+            .item-content h3,
+            .item-icon {
+                animation: none !important;
+            }
+            
+            @keyframes pulse-reduced {
+                0%, 100% { transform: translate(-50%, -50%) scale(1); }
+                50% { transform: translate(-50%, -50%) scale(1.05); }
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            :root {
+                --neon-blue: #00ffff;
+                --neon-pink: #ff00ff;
+                --neon-purple: #ff00ff;
+            }
+            
+            .mandala-item {
+                border-width: 2px;
+                background: rgba(0, 0, 0, 0.9);
+            }
+        }
+
+        /* Error fallback styles */
+        .error-fallback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 0, 0, 0.1);
+            border: 2px solid #ff4444;
+            color: #ff4444;
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+            z-index: 9999;
+            display: none;
+        }
+
+        .canvas-fallback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 255, 149, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 30%, rgba(157, 0, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(0, 255, 149, 0.05) 0%, transparent 50%);
+            z-index: 1;
+            pointer-events: none;
+            display: none;
+        }
     
 
         @keyframes zoom {
@@ -768,6 +838,15 @@
     </style>
 </head>
 <body>
+    <!-- Error fallback elements -->
+    <div class="error-fallback" id="errorFallback">
+        <h3>🛠️ Technical Difficulty</h3>
+        <p>Some visual effects are unavailable. The experience will continue with basic graphics.</p>
+        <button onclick="document.getElementById('errorFallback').style.display='none'">Continue</button>
+    </div>
+    
+    <div class="canvas-fallback" id="canvasFallback"></div>
+    
     <div id="starfield"></div>
     <div id="vignette"></div>
     <canvas id="dynamicBackgroundCanvas"></canvas>
@@ -1372,14 +1451,47 @@
         }
 
 
+        // Enhanced PWA service worker with update detection
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js').then(registration => {
                 console.log('SW registered');
                 
-                // Força cache completo na primeira visita
+                // Check for updates
+                registration.addEventListener('updatefound', () => {
+                    const newWorker = registration.installing;
+                    if (newWorker) {
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                // New version available
+                                showNotification(
+                                    '🔄 Update Available',
+                                    'A new version is ready. Refresh to update.',
+                                    'info',
+                                    0 // Don't auto-hide
+                                );
+                            }
+                        });
+                    }
+                });
+                
+                // Force complete cache on first visit
                 registration.active?.postMessage({
                     type: 'CACHE_ALL_ASSETS'
                 });
+                
+                // Listen for update messages
+                navigator.serviceWorker.addEventListener('message', event => {
+                    if (event.data.type === 'UPDATE_AVAILABLE') {
+                        showNotification(
+                            '🔄 App Updated',
+                            'New features available! Refresh to update.',
+                            'success',
+                            8000
+                        );
+                    }
+                });
+            }).catch(error => {
+                console.warn('SW registration failed:', error);
             });
         }
 
@@ -1395,18 +1507,77 @@
         });
     </script>
 
-    <!-- Enhanced Dynamic background animation using 1.js & 2.js -->
+    <!-- Enhanced Dynamic background animation with comprehensive error handling -->
     <script type="module">
-        import generatePositions, { createCosmicBackground } from './1.js';
-        import { createAnimationController, createParticleSystem } from './2.js';
+        // Global error handler
+        window.addEventListener('error', (event) => {
+            console.warn('Script error:', event.error);
+            showErrorFallback('Script execution error');
+        });
 
-        const canvas = document.getElementById('dynamicBackgroundCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        // Initialize systems
-        const controller = createAnimationController();
-        const cosmicBackground = createCosmicBackground(canvas, ctx);
-        const particleSystem = createParticleSystem(canvas, ctx);
+        window.addEventListener('unhandledrejection', (event) => {
+            console.warn('Unhandled promise rejection:', event.reason);
+            event.preventDefault();
+        });
+
+        // Error fallback system
+        function showErrorFallback(message) {
+            const errorFallback = document.getElementById('errorFallback');
+            const canvasFallback = document.getElementById('canvasFallback');
+            
+            if (errorFallback && canvasFallback) {
+                errorFallback.style.display = 'block';
+                canvasFallback.style.display = 'block';
+                
+                // Hide canvas if it's causing issues
+                const canvas = document.getElementById('dynamicBackgroundCanvas');
+                if (canvas) canvas.style.display = 'none';
+            }
+        }
+
+        // Safe module import with fallbacks
+        async function initializeBackground() {
+            try {
+                const { default: generatePositions, createCosmicBackground, safeExecute } = await import('./1.js');
+                const { createAnimationController, createParticleSystem, createCanvasFallback } = await import('./2.js');
+
+                const canvas = document.getElementById('dynamicBackgroundCanvas');
+                const ctx = canvas?.getContext('2d');
+                
+                if (!canvas || !ctx) {
+                    throw new Error('Canvas not available');
+                }
+
+                // Test canvas capabilities
+                try {
+                    ctx.fillStyle = 'test';
+                    ctx.fillRect(0, 0, 1, 1);
+                } catch (canvasError) {
+                    throw new Error('Canvas context not working');
+                }
+                
+                // Initialize systems with error handling
+                const controller = createAnimationController();
+                const cosmicBackground = createCosmicBackground(canvas, ctx);
+                const particleSystem = createParticleSystem(canvas, ctx);
+
+                if (!controller || !cosmicBackground || !particleSystem) {
+                    throw new Error('Failed to initialize rendering systems');
+                }
+
+                return { generatePositions, controller, cosmicBackground, particleSystem, canvas, ctx };
+            } catch (error) {
+                console.warn('Background initialization failed:', error);
+                showErrorFallback('Graphics initialization failed');
+                return null;
+            }
+        }
+
+        // Initialize with error handling
+        initializeBackground().then(systems => {
+            if (!systems) return;
+
+            const { generatePositions, controller, cosmicBackground, particleSystem, canvas, ctx } = systems;
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
@@ -1433,68 +1604,108 @@
             `;
             document.body.appendChild(fpsElement);
         }
-// Replace the render function in your HTML with this corrected version
-    function render(time) {
-        const gridSize = 25; // Reduced for better performance
-        const deltaTime = time - lastTime;
-        
-        // FPS monitoring
-        if (fpsElement && frameCount % 60 === 0) {
-            const fps = Math.round(1000 / (deltaTime || 16));
-            fpsElement.textContent = `FPS: ${fps} | Particles: ${particleSystem ? 100 : 0}`;
-        }
-        frameCount++;
-        lastTime = time;
-        
-        // Clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // Update and draw cosmic background
-        cosmicBackground.update(time * 0.001);
-        cosmicBackground.draw(time * 0.001);
-        
-        // Update and draw particle system with proper time
-        particleSystem.update(time);
-        particleSystem.draw();
-        
-        // Generate and draw sphere positions - NOW USES CORRECT FUNCTION
-        const positions = generatePositions(gridSize, time, controller);
-        
-        // Pre-create common gradients
-        const greenGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 20);
-        greenGradient.addColorStop(0, `rgba(0, 255, 149, 0.9)`);
-        greenGradient.addColorStop(0.5, `rgba(0, 255, 149, 0.6)`);
-        greenGradient.addColorStop(1, `rgba(0, 255, 149, 0)`);
-        
-        positions.forEach(({ x, y, depth, opacity, size }) => {
-            // Now x,y are normalized (0-1), so multiply by canvas dimensions
-            const px = x * canvas.width;
-            const py = y * canvas.height;
-            
-            ctx.save();
-            ctx.translate(px, py);
-            ctx.globalAlpha = opacity * 0.7;
-            
-            // Use pre-created gradient for better performance
-            ctx.fillStyle = greenGradient;
-            ctx.beginPath();
-            ctx.arc(0, 0, size * 1.5, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Bright green center
-            ctx.globalAlpha = opacity * 0.9;
-            ctx.fillStyle = `rgba(0, 255, 149, ${opacity * 0.8})`;
-            ctx.beginPath();
-            ctx.arc(0, 0, size * 0.3, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
+
+            // Enhanced render function with error handling
+            function render(time) {
+                try {
+                    const gridSize = 25;
+                    const deltaTime = time - lastTime;
+                    
+                    // FPS monitoring
+                    if (fpsElement && frameCount % 60 === 0) {
+                        const fps = Math.round(1000 / (deltaTime || 16));
+                        const stats = particleSystem.getStats ? particleSystem.getStats() : {};
+                        fpsElement.textContent = `FPS: ${fps} | Particles: ${stats.particleCount || 0}`;
+                    }
+                    frameCount++;
+                    lastTime = time;
+                    
+                    // Clear canvas with error handling
+                    try {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    } catch (clearError) {
+                        console.warn('Canvas clear error:', clearError);
+                        return;
+                    }
+                    
+                    // Update and draw cosmic background
+                    try {
+                        cosmicBackground.update(time * 0.001);
+                        cosmicBackground.draw(time * 0.001);
+                    } catch (cosmicError) {
+                        console.warn('Cosmic background error:', cosmicError);
+                    }
+                    
+                    // Update and draw particle system
+                    try {
+                        particleSystem.update(time);
+                        particleSystem.draw();
+                    } catch (particleError) {
+                        console.warn('Particle system error:', particleError);
+                    }
+                    
+                    // Generate and draw sphere positions
+                    try {
+                        const positions = generatePositions(gridSize, time, controller);
+                        
+                        if (positions && positions.length > 0) {
+                            // Pre-create gradient once per frame
+                            const greenGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 20);
+                            greenGradient.addColorStop(0, `rgba(0, 255, 149, 0.9)`);
+                            greenGradient.addColorStop(0.5, `rgba(0, 255, 149, 0.6)`);
+                            greenGradient.addColorStop(1, `rgba(0, 255, 149, 0)`);
+                            
+                            // Batch draw spheres
+                            positions.forEach(({ x, y, depth, opacity, size }) => {
+                                if (isNaN(x) || isNaN(y)) return; // Skip invalid positions
+                                
+                                const px = x * canvas.width;
+                                const py = y * canvas.height;
+                                
+                                ctx.save();
+                                ctx.translate(px, py);
+                                ctx.globalAlpha = Math.max(0, Math.min(1, opacity * 0.7));
+                                
+                                // Outer glow
+                                ctx.fillStyle = greenGradient;
+                                ctx.beginPath();
+                                ctx.arc(0, 0, size * 1.5, 0, Math.PI * 2);
+                                ctx.fill();
+                                
+                                // Bright center
+                                ctx.globalAlpha = Math.max(0, Math.min(1, opacity * 0.9));
+                                ctx.fillStyle = `rgba(0, 255, 149, ${Math.max(0, Math.min(1, opacity * 0.8))})`;
+                                ctx.beginPath();
+                                ctx.arc(0, 0, size * 0.3, 0, Math.PI * 2);
+                                ctx.fill();
+                                ctx.restore();
+                            });
+                        }
+                    } catch (sphereError) {
+                        console.warn('Sphere rendering error:', sphereError);
+                    }
+                    
+                    // Update animations
+                    try {
+                        controller.updateAnimations(time);
+                    } catch (animError) {
+                        console.warn('Animation update error:', animError);
+                    }
+                    
+                    requestAnimationFrame(render);
+                } catch (renderError) {
+                    console.error('Render function error:', renderError);
+                    showErrorFallback('Rendering system failure');
+                }
+            }
+
+            // Start rendering loop
+            requestAnimationFrame(render);
+
+        }).catch(error => {
+            console.error('System initialization failed:', error);
+            showErrorFallback('Complete system failure');
         });
-        
-        // Update animations
-        controller.updateAnimations(time);
-        
-        requestAnimationFrame(render);
-        }
     </script>
 
     <script src="qr-scanner.js"></script>
