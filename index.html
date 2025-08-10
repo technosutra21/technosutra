@@ -1370,14 +1370,27 @@
         }
 
 
-        // Register service worker
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('Service Worker: Registered'))
-                    .catch(err => console.log(`Service Worker: Error: ${err}`));
+            navigator.serviceWorker.register('/sw.js').then(registration => {
+                console.log('SW registered');
+                
+                // Força cache completo na primeira visita
+                registration.active?.postMessage({
+                    type: 'CACHE_ALL_ASSETS'
+                });
             });
         }
+
+        // Botão para download offline
+        document.getElementById('offline-button')?.addEventListener('click', () => {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.ready.then(registration => {
+                    registration.active?.postMessage({
+                        type: 'FORCE_CACHE_ALL'
+                    });
+                });
+            }
+        });
     </script>
 
     <!-- Dynamic background animation using 1.js & 2.js -->

@@ -1,7 +1,7 @@
-// Enhanced Service Worker for Techno Sutra AR - FIXED VERSION
+// Enhanced Service Worker for Techno Sutra AR - COMPLETE VERSION v2.4.0
 // Provides reliable caching, offline support, and performance optimizations
 
-const CACHE_VERSION = '2.2.0';
+const CACHE_VERSION = '2.4.0';
 const STATIC_CACHE = `techno-sutra-static-v${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `techno-sutra-dynamic-v${CACHE_VERSION}`;
 const MODEL_CACHE = `techno-sutra-models-v${CACHE_VERSION}`;
@@ -23,27 +23,36 @@ const STATIC_ASSETS = [
     '/css/app.css',
     '/css/main.css',
     '/summaries/chapters.csv',
-    '/summaries/characters.csv'
+    '/summaries/characters.csv',
+    '/1.js',
+    '/2.js',
+    '/qr-scanner.js'
 ];
+
+// ALL 56 MODELS - Add your complete model paths here
+const ALL_MODELS = Array.from({length: 56}, (_, i) => `/models/model${i + 1}.glb`);
 
 // External resources
 const EXTERNAL_RESOURCES = [
     'https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js',
     'https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css',
-    'https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js'
+    'https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js',
+    'https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Chakra+Petch:wght@300;400;600;700&display=swap'
 ];
 
 // Model files pattern
 const MODEL_PATTERN = /\.(glb|usdz)$/i;
 
-// Install event - cache critical resources only
+// Install event - cache critical resources and trigger complete caching
 self.addEventListener('install', event => {
     console.log('[SW] Installing service worker v' + CACHE_VERSION);
     
     event.waitUntil(
         Promise.all([
             cacheStaticAssets(),
-            cacheExternalResources()
+            cacheExternalResources(),
+            // Don't cache all models during install to avoid long installation times
+            // They will be cached on first access or when explicitly requested
         ]).then(() => {
             console.log('[SW] Installation complete');
             return self.skipWaiting();
@@ -53,7 +62,7 @@ self.addEventListener('install', event => {
     );
 });
 
-// Activate event - clean up old caches
+// Activate event - clean up old caches and setup complete caching if needed
 self.addEventListener('activate', event => {
     console.log('[SW] Activating service worker...');
     
@@ -93,9 +102,8 @@ async function cacheStaticAssets() {
     try {
         const cache = await caches.open(STATIC_CACHE);
         
-        // Cache assets one by one to handle failures gracefully
-        let successCount = 0;
-        for (const asset of STATIC_ASSETS) {
+        // Cache assets with better error handling
+        const cachePromises = STATIC_ASSETS.map(async (asset) => {
             try {
                 const response = await fetch(asset, { 
                     cache: 'no-cache',
@@ -104,15 +112,20 @@ async function cacheStaticAssets() {
                 
                 if (response.ok) {
                     await cache.put(asset, response.clone());
-                    successCount++;
                     console.log(`[SW] ✅ Cached: ${asset}`);
+                    return true;
                 } else {
                     console.warn(`[SW] ⚠️ Failed to cache ${asset}: ${response.status}`);
+                    return false;
                 }
             } catch (error) {
                 console.warn(`[SW] ⚠️ Error caching ${asset}:`, error.message);
+                return false;
             }
-        }
+        });
+        
+        const results = await Promise.allSettled(cachePromises);
+        const successCount = results.filter(r => r.status === 'fulfilled' && r.value).length;
         
         console.log(`[SW] Static assets cached: ${successCount}/${STATIC_ASSETS.length}`);
     } catch (error) {
@@ -125,7 +138,7 @@ async function cacheExternalResources() {
     try {
         const cache = await caches.open(STATIC_CACHE);
         
-        for (const url of EXTERNAL_RESOURCES) {
+        const externalPromises = EXTERNAL_RESOURCES.map(async (url) => {
             try {
                 const response = await fetch(url, {
                     mode: 'cors',
@@ -135,13 +148,179 @@ async function cacheExternalResources() {
                 if (response.ok) {
                     await cache.put(url, response.clone());
                     console.log(`[SW] ✅ Cached external: ${url}`);
+                    return true;
                 }
+                return false;
             } catch (error) {
                 console.warn(`[SW] ⚠️ Failed to cache external ${url}:`, error.message);
+                return false;
             }
-        }
+        });
+        
+        await Promise.allSettled(externalPromises);
     } catch (error) {
         console.error('[SW] Error caching external resources:', error);
+    }
+}
+
+// Cache all models - NEW FUNCTION
+async function cacheAllModels(port = null) {
+    const cache = await caches.open(MODEL_CACHE);
+    let successCount = 0;
+    let failCount = 0;
+    
+    console.log(`[SW] 🚀 Starting to cache all ${ALL_MODELS.length} models...`);
+    
+    // Send progress updates if port is provided
+    const sendProgress = (current, total, success, failed) => {
+        if (port) {
+            port.postMessage({
+                type: 'CACHE_PROGRESS',
+                current,
+                total,
+                success,
+                failed,
+                percentage: Math.round((current / total) * 100)
+            });
+        }
+    };
+    
+    for (let i = 0; i < ALL_MODELS.length; i++) {
+        const modelUrl = ALL_MODELS[i];
+        
+        try {
+            // Check if already cached
+            const cached = await cache.match(modelUrl);
+            if (cached) {
+                console.log(`[SW] ✅ Model already cached: ${modelUrl}`);
+                successCount++;
+                sendProgress(i + 1, ALL_MODELS.length, successCount, failCount);
+                continue;
+            }
+            
+            // Fetch with timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 45000); // 45 seconds
+            
+            const response = await fetch(modelUrl, {
+                signal: controller.signal,
+                cache: 'no-cache'
+            });
+            
+            clearTimeout(timeoutId);
+            
+            if (response.ok) {
+                await cache.put(modelUrl, response.clone());
+                successCount++;
+                console.log(`[SW] ✅ Cached model ${i + 1}/56: ${modelUrl}`);
+            } else {
+                failCount++;
+                console.warn(`[SW] ⚠️ Failed to cache model ${modelUrl}: ${response.status}`);
+            }
+            
+        } catch (error) {
+            failCount++;
+            console.error(`[SW] ❌ Error caching model ${modelUrl}:`, error.message);
+        }
+        
+        sendProgress(i + 1, ALL_MODELS.length, successCount, failCount);
+        
+        // Small delay to prevent overwhelming the browser
+        await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    
+    console.log(`[SW] 🏁 Model caching complete: ${successCount} success, ${failCount} failed`);
+    
+    return {
+        success: failCount === 0,
+        successCount,
+        failCount,
+        total: ALL_MODELS.length
+    };
+}
+
+// Discover and cache all assets dynamically - NEW FUNCTION
+async function discoverAndCacheAllAssets(port = null) {
+    try {
+        // First, cache all known static assets and models
+        await cacheStaticAssets();
+        await cacheExternalResources();
+        
+        // Cache all models with progress tracking
+        const modelResults = await cacheAllModels(port);
+        
+        // Try to discover additional assets from config files
+        try {
+            const configResponse = await fetch('/config.json');
+            if (configResponse.ok) {
+                const config = await configResponse.json();
+                await cacheDiscoveredAssets(config);
+            }
+        } catch (error) {
+            console.warn('[SW] Could not load config.json for asset discovery:', error);
+        }
+        
+        try {
+            const trailResponse = await fetch('/trail.json');
+            if (trailResponse.ok) {
+                const trail = await trailResponse.json();
+                await cacheDiscoveredAssets(trail);
+            }
+        } catch (error) {
+            console.warn('[SW] Could not load trail.json for asset discovery:', error);
+        }
+        
+        return modelResults;
+        
+    } catch (error) {
+        console.error('[SW] Error in complete asset caching:', error);
+        return {
+            success: false,
+            successCount: 0,
+            failCount: ALL_MODELS.length,
+            total: ALL_MODELS.length,
+            error: error.message
+        };
+    }
+}
+
+// Cache assets discovered from config files
+async function cacheDiscoveredAssets(configData) {
+    const cache = await caches.open(DYNAMIC_CACHE);
+    
+    // Extract URLs from config data (adapt based on your config structure)
+    const extractUrls = (obj, urls = []) => {
+        for (const key in obj) {
+            const value = obj[key];
+            if (typeof value === 'string') {
+                // Check if it looks like a URL or path
+                if (value.startsWith('/') || value.startsWith('http') || 
+                    value.endsWith('.html') || value.endsWith('.json') || 
+                    value.endsWith('.csv') || value.endsWith('.jpg') || 
+                    value.endsWith('.png') || value.endsWith('.glb')) {
+                    urls.push(value);
+                }
+            } else if (typeof value === 'object' && value !== null) {
+                extractUrls(value, urls);
+            }
+        }
+        return urls;
+    };
+    
+    const discoveredUrls = extractUrls(configData);
+    
+    for (const url of discoveredUrls) {
+        try {
+            if (!url.startsWith('http') && !STATIC_ASSETS.includes(url)) {
+                const response = await fetch(url);
+                if (response.ok) {
+                    await cache.put(url, response);
+                    console.log(`[SW] ✅ Cached discovered asset: ${url}`);
+                }
+            }
+        } catch (error) {
+            console.warn(`[SW] ⚠️ Failed to cache discovered asset ${url}:`, error);
+        }
     }
 }
 
@@ -170,7 +349,7 @@ async function cleanupOldCaches() {
 // Check if request is for a model file
 function isModelFile(request) {
     const url = new URL(request.url);
-    return MODEL_PATTERN.test(url.pathname);
+    return MODEL_PATTERN.test(url.pathname) || ALL_MODELS.some(model => url.pathname.endsWith(model));
 }
 
 // Check if request is for a static asset
@@ -185,7 +364,8 @@ function isStaticAsset(request) {
            pathname.endsWith('.jpg') ||
            pathname.endsWith('.svg') ||
            pathname.endsWith('.ico') ||
-           pathname.endsWith('.json');
+           pathname.endsWith('.json') ||
+           pathname.endsWith('.csv');
 }
 
 // Check if request is for external resource
@@ -194,7 +374,7 @@ function isExternalResource(request) {
     return url.origin !== self.location.origin;
 }
 
-// Handle model file requests - FIXED VERSION
+// Handle model file requests with improved caching
 async function handleModelFile(request) {
     const url = request.url;
     const cache = await caches.open(MODEL_CACHE);
@@ -209,9 +389,9 @@ async function handleModelFile(request) {
         
         console.log(`[SW] 📡 Fetching model: ${url}`);
         
-        // Fetch with shorter timeout for large files
+        // Fetch with timeout for large files
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 seconds
+        const timeoutId = setTimeout(() => controller.abort(), 45000); // 45 seconds
         
         const response = await fetch(request, {
             signal: controller.signal,
@@ -354,19 +534,41 @@ async function getOfflinePage() {
     }
 }
 
-// Message handling for debugging and manual operations
+// Enhanced message handling for complete caching
 self.addEventListener('message', event => {
     const { type, data } = event.data || {};
+    const port = event.ports[0];
     
     switch (type) {
         case 'SKIP_WAITING':
             self.skipWaiting();
             break;
             
+        case 'FORCE_COMPLETE_CACHE':
+            console.log('[SW] 🚀 Starting complete offline caching...');
+            discoverAndCacheAllAssets(port).then(results => {
+                const message = `Cached ${results.successCount}/${results.total} models successfully`;
+                port?.postMessage({ 
+                    type: 'COMPLETE_CACHE_FINISHED', 
+                    success: results.success,
+                    message: results.error ? `Error: ${results.error}` : message,
+                    results
+                });
+            }).catch(error => {
+                console.error('[SW] Complete caching failed:', error);
+                port?.postMessage({ 
+                    type: 'COMPLETE_CACHE_FINISHED', 
+                    success: false,
+                    message: `Caching failed: ${error.message}`,
+                    error: error.message
+                });
+            });
+            break;
+            
         case 'CACHE_MODEL':
             if (data && data.modelUrl) {
                 cacheSpecificModel(data.modelUrl).then(() => {
-                    event.source?.postMessage({ 
+                    port?.postMessage({ 
                         type: 'MODEL_CACHED', 
                         modelUrl: data.modelUrl 
                     });
@@ -376,7 +578,7 @@ self.addEventListener('message', event => {
             
         case 'GET_CACHE_STATUS':
             getCacheStatus().then(status => {
-                event.source?.postMessage({ 
+                port?.postMessage({ 
                     type: 'CACHE_STATUS', 
                     data: status 
                 });
@@ -389,6 +591,14 @@ self.addEventListener('message', event => {
 async function cacheSpecificModel(modelUrl) {
     try {
         const cache = await caches.open(MODEL_CACHE);
+        
+        // Check if already cached
+        const cached = await cache.match(modelUrl);
+        if (cached) {
+            console.log(`[SW] ✅ Model already cached: ${modelUrl}`);
+            return true;
+        }
+        
         const response = await fetch(modelUrl);
         
         if (response.ok) {
@@ -413,7 +623,10 @@ async function getCacheStatus() {
             if (name.startsWith('techno-sutra-')) {
                 const cache = await caches.open(name);
                 const keys = await cache.keys();
-                status[name] = keys.length;
+                status[name] = {
+                    count: keys.length,
+                    urls: keys.map(req => req.url)
+                };
             }
         }
         
