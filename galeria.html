@@ -1709,12 +1709,15 @@
         async function loadCSVData() {
             try {
                 // Carregar chapters.csv
-const langSuffix = currentLanguage === 'en' ? '_en' : '';
+                const langSuffix = currentLanguage === 'en' ? '_en' : '';
+                console.log(`Loading CSV files for language: ${currentLanguage}, suffix: ${langSuffix}`);
+                
                 // Fetch chapters CSV respecting current language
                 const chaptersResponse = await fetch(`summaries/chapters${langSuffix}.csv`);
                 if (chaptersResponse.ok) {
                     const chaptersText = await chaptersResponse.text();
                     const chaptersArray = parseCSV(chaptersText);
+                    console.log(`Chapters CSV loaded successfully. Found ${chaptersArray.length} chapters`);
                     
                     chaptersArray.forEach(row => {
                         if (row && row.length >= 16) {
@@ -1742,10 +1745,12 @@ const langSuffix = currentLanguage === 'en' ? '_en' : '';
                 }
                 
                 // Carregar characters.csv
-const charactersResponse = await fetch(`summaries/characters${langSuffix}.csv`);
+                console.log(`Loading characters CSV: summaries/characters${langSuffix}.csv`);
+                const charactersResponse = await fetch(`summaries/characters${langSuffix}.csv`);
                 if (charactersResponse.ok) {
                     const charactersText = await charactersResponse.text();
                     const charactersArray = parseCSV(charactersText);
+                    console.log(`Characters CSV loaded successfully. Found ${charactersArray.length} characters`);
                     
                     charactersArray.forEach(row => {
                         if (row && row.length >= 16) {
@@ -1773,6 +1778,10 @@ const charactersResponse = await fetch(`summaries/characters${langSuffix}.csv`);
                 }
                 
                 console.log(`📚 Dados carregados: ${Object.keys(chaptersData).length} capítulos, ${Object.keys(charactersData).length} personagens`);
+                
+                // Debug sample data
+                console.log('Sample chapter data:', Object.keys(chaptersData).length > 0 ? chaptersData[Object.keys(chaptersData)[0]] : 'No chapters');
+                console.log('Sample character data:', Object.keys(charactersData).length > 0 ? charactersData[Object.keys(charactersData)[0]] : 'No characters');
                 
             } catch (error) {
                 console.warn('⚠️ Erro ao carregar dados dos CSV:', error);
