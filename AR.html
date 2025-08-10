@@ -11,7 +11,7 @@
     <meta name="author" content="Techno Sutra AR">
     <meta name="robots" content="index, follow">
     <meta name="language" content="Portuguese">
-    <meta name="revisit-after" content="7 days">
+    <meta name="revisit-after" content="2 days">
     <meta name="theme-color" content="#7877c6">
     
     <!-- Open Graph / Facebook -->
@@ -47,12 +47,8 @@
     <link rel="dns-prefetch" href="https://ajax.googleapis.com">
     <link rel="dns-prefetch" href="https://modelviewer.dev">
     <link rel="preconnect" href="https://ajax.googleapis.com" crossorigin>
-    
-    <!-- Progressive Web App -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="preconnect" href="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.css" crossorigin>
+
     
     <!-- Critical CSS inline for faster rendering -->
     <style>
@@ -640,8 +636,6 @@ try {
                 log(`Using automatic GLB to USDZ conversion for iOS QuickLook`);
                 
                 // Enhanced iOS QuickLook attributes for better quality
-                elements.modelViewer.setAttribute('ar-scale', 'auto');
-                elements.modelViewer.setAttribute('camera-target', 'auto auto auto');
                 
 
 
@@ -676,8 +670,10 @@ try {
         function applyIOSColorFix() {
             if (isIOSDevice()) {
                 // Enhanced color settings for iOS devices - more aggressive brightness
-                elements.modelViewer.setAttribute('saturation', '1.0');
-                // iOS Quick Look specific fixes
+                elements.modelViewer.setAttribute('tone-mapping', 'linear');
+
+
+                // iOS Quick Look specific fixes    
             
                 elements.modelViewer.setAttribute('ios-src', usdzSrc);
                 
