@@ -104,7 +104,7 @@ opacity: 0.6;
             pointer-events: none;
             z-index: 1;
         }
-        }
+    
 
         @keyframes zoom {
             0% { transform: scale(1); }
@@ -301,27 +301,212 @@ opacity: 0.6;
             letter-spacing: 0.1em;
         }
 
-        /* PWA Install Button */
-        .install-btn {
+.top-controls {
             position: fixed;
             top: 2vh;
-            right: 50%;
-            background: rgba(157, 0, 255, 0.3);
-            border: 1px solid var(--neon-purple);
-            color: white;
-            padding: 1vmin 2vmin;
-            border-radius: 5px;
-            cursor: pointer;
-            backdrop-filter: blur(5px);
-            font-family: var(--font-secondary);
-            font-size: 1.8vmin;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
             z-index: 100;
+            align-items: center;
+        }
+
+        .control-btn {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--neon-blue);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            font-family: var(--font-secondary);
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 120px;
+        }
+
+        .control-btn .icon {
+            font-size: 1.5em;
+        }
+
+        .control-btn .text {
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .install-btn {
+            border-color: var(--neon-purple);
             display: none; /* Hidden by default, shown by JS */
+        }
+
+        .install-btn:hover {
+            background: rgba(157, 0, 255, 0.4);
+            box-shadow: 0 0 20px var(--neon-purple);
+            transform: translateY(-2px);
+        }
+
+        .qr-btn {
+            border-color: var(--neon-blue);
+        }
+
+        .qr-btn:hover {
+            background: rgba(0, 255, 149, 0.2);
+            box-shadow: 0 0 20px var(--neon-blue);
+            transform: translateY(-2px);
+        }
+
+        /* QR Modal Styles */
+        .qr-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .qr-modal-content {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid var(--neon-blue);
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 0 50px var(--neon-blue);
+        }
+
+        .qr-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .qr-modal-header h3 {
+            color: var(--neon-blue);
+            font-family: var(--font-main);
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .qr-close-btn {
+            background: none;
+            border: none;
+            color: var(--neon-pink);
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
             transition: all 0.3s ease;
         }
-        .install-btn:hover {
-            background: rgba(157, 0, 255, 0.6);
-            box-shadow: var(--glow-pink);
+
+        .qr-close-btn:hover {
+            background: rgba(255, 0, 72, 0.2);
+            box-shadow: 0 0 15px var(--neon-pink);
+        }
+
+        .qr-scanner-container {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .qr-video {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid var(--neon-blue);
+        }
+
+        .qr-scanner-overlay {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            pointer-events: none;
+        }
+
+        .qr-scanner-frame {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            border: 3px solid var(--neon-pink);
+            border-radius: 12px;
+            background: transparent;
+            box-shadow: 0 0 20px var(--neon-pink);
+            animation: pulse 2s infinite;
+        }
+
+        .qr-instruction {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--neon-blue);
+            font-family: var(--font-secondary);
+            margin: 0;
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .qr-manual-input {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-manual-input input {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--neon-blue);
+            color: white;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-family: var(--font-secondary);
+            width: 200px;
+        }
+
+        .qr-manual-input input:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .qr-manual-input button {
+            background: rgba(0, 255, 149, 0.2);
+            border: 1px solid var(--neon-blue);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: var(--font-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .qr-manual-input button:hover {
+            background: rgba(0, 255, 149, 0.4);
+            box-shadow: 0 0 15px var(--neon-blue);
         }
 
         .fade-out {
@@ -370,9 +555,41 @@ opacity: 0.6;
                 font-size: 1.8vmin;
             }
             
-            .install-btn {
-                font-size: 1.6vmin;
-                padding: 0.8vmin 1.5vmin;
+            .top-controls {
+                top: 1vh;
+                gap: 0.5rem;
+            }
+            
+            .control-btn {
+                padding: 0.8rem 1rem;
+                font-size: 12px;
+                min-width: 100px;
+            }
+            
+            .control-btn .icon {
+                font-size: 1.3em;
+            }
+            
+            .control-btn .text {
+                font-size: 0.8em;
+            }
+
+            .qr-modal-content {
+                padding: 1.5rem;
+                width: 95%;
+            }
+            
+            .qr-video {
+                height: 250px;
+            }
+            
+            .qr-scanner-overlay {
+                height: 250px;
+            }
+            
+            .qr-scanner-frame {
+                width: 150px;
+                height: 150px;
             }
         }
         
@@ -408,6 +625,43 @@ opacity: 0.6;
             
             .subtitle {
                 font-size: 1.6vmin;
+            }
+            
+            .top-controls {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .control-btn {
+                padding: 0.7rem;
+                font-size: 11px;
+                min-width: 90px;
+            }
+            
+            .qr-modal-content {
+                padding: 1rem;
+            }
+            
+            .qr-video {
+                height: 200px;
+            }
+            
+            .qr-scanner-overlay {
+                height: 200px;
+            }
+            
+            .qr-scanner-frame {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .qr-manual-input {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .qr-manual-input input {
+                width: 100%;
             }
         }
         
@@ -457,9 +711,21 @@ opacity: 0.6;
             box-shadow: 0 0 20px var(--neon-blue);
         }
         
-        .install-btn:focus {
-            outline: 2px solid var(--neon-purple);
+        .control-btn:focus {
+            outline: 2px solid var(--neon-blue);
             outline-offset: 2px;
+        }
+
+        /* Notification animations */
+        @keyframes slideDown {
+            from {
+                transform: translateX(-50%) translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
         }
         
         /* Print styles */
@@ -521,10 +787,38 @@ opacity: 0.6;
         </div>
     </main>
 
-    <button id="installPWA" class="install-btn">
-        <span class="icon">💾</span> Offline Map e Galeria
-    </button>
-    
+     <!-- Top Control Panel -->
+    <div class="top-controls">
+        <button id="installPWA" class="control-btn install-btn">
+            <span class="icon">💾</span>
+            <span class="text">Install Offline App</span>
+        </button>
+        <button id="qrReaderBtn" class="control-btn qr-btn">
+            <span class="icon">📷</span>
+            <span class="text">QR Scanner</span>
+        </button>
+    </div>
+
+    <!-- QR Code Reader Modal -->
+    <div id="qrModal" class="qr-modal" style="display: none;">
+        <div class="qr-modal-content">
+            <div class="qr-modal-header">
+                <h3>QR Code Scanner</h3>
+                <button id="closeQrModal" class="qr-close-btn">×</button>
+            </div>
+            <div class="qr-scanner-container">
+                <video id="qrVideo" class="qr-video" playsinline></video>
+                <div class="qr-scanner-overlay">
+                    <div class="qr-scanner-frame"></div>
+                    <p class="qr-instruction">Point camera at QR code</p>
+                </div>
+            </div>
+            <div class="qr-manual-input">
+                <input type="number" id="manualModelInput" placeholder="Or enter model number (1-56)" min="1" max="56">
+                <button id="manualModelBtn">Go to Model</button>
+            </div>
+        </div>
+    </div>
     <script>
         // Enhanced error handling
         window.addEventListener('error', (e) => {
@@ -672,6 +966,16 @@ opacity: 0.6;
                 // Enhanced PWA Installation Logic
                 let deferredPrompt;
                 const installButton = document.getElementById('installPWA');
+                                // QR Code Scanner Logic
+                const qrReaderBtn = document.getElementById('qrReaderBtn');
+                const qrModal = document.getElementById('qrModal');
+                const closeQrModal = document.getElementById('closeQrModal');
+                const qrVideo = document.getElementById('qrVideo');
+                const manualModelInput = document.getElementById('manualModelInput');
+                const manualModelBtn = document.getElementById('manualModelBtn');
+                
+                let qrStream = null;
+                let qrVideoStream = null;
 
                 if (installButton) {
                     window.addEventListener('beforeinstallprompt', (e) => {
@@ -691,9 +995,18 @@ opacity: 0.6;
                                 const { outcome } = await deferredPrompt.userChoice;
                                 if (outcome === 'accepted') {
                                     console.log('User accepted the A2HS prompt');
+
+                                    setTimeout(() => {
+                                        triggerCompleteOfflineCaching();
+                                    }, 2000);
+                                } else {
+                                    console.log('User dismissed the A2HS prompt');
                                 }
                                 deferredPrompt = null;
                                 installButton.style.display = 'none';
+                            } else {
+                                // Manual trigger for complete offline caching
+                                triggerCompleteOfflineCaching();
                             }
                         } catch (error) {
                             console.error('PWA installation error:', error);
@@ -718,11 +1031,220 @@ opacity: 0.6;
                         console.error('Standalone detection error:', error);
                     }
                 }
+
+                 // QR Code Scanner Setup
+                if (qrReaderBtn) {
+                    qrReaderBtn.addEventListener('click', openQRScanner);
+                }
+
+                if (closeQrModal) {
+                    closeQrModal.addEventListener('click', closeQRScanner);
+                }
+
+                if (qrModal) {
+                    qrModal.addEventListener('click', (e) => {
+                        if (e.target === qrModal) {
+                            closeQRScanner();
+                        }
+                    });
+                }
+
+                if (manualModelBtn) {
+                    manualModelBtn.addEventListener('click', () => {
+                        const modelNum = parseInt(manualModelInput.value);
+                        if (modelNum >= 1 && modelNum <= 56) {
+                            redirectToModel(modelNum);
+                        } else {
+                            alert('Please enter a valid model number (1-56)');
+                        }
+                    });
+                }
+
+                if (manualModelInput) {
+                    manualModelInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            manualModelBtn.click();
+                        }
+                    });
+                }
                 
             } catch (error) {
                 console.error('Main initialization error:', error);
             }
         });
+
+         // QR Scanner Functions
+        async function openQRScanner() {
+            try {
+                qrModal.style.display = 'flex';
+                
+                // Request camera permission
+                qrStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'environment',
+                        width: { ideal: 400 },
+                        height: { ideal: 300 }
+                    } 
+                });
+                
+                qrVideo.srcObject = qrStream;
+                qrVideo.play();
+                
+                // Start QR code detection
+                startQRDetection();
+                
+            } catch (error) {
+                console.error('Camera access error:', error);
+                alert('Camera access denied. You can still enter the model number manually.');
+            }
+        }
+
+        function closeQRScanner() {
+            qrModal.style.display = 'none';
+            
+            if (qrStream) {
+                qrStream.getTracks().forEach(track => track.stop());
+                qrStream = null;
+            }
+        }
+
+        function startQRDetection() {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            
+            function scanFrame() {
+                if (qrVideo.readyState === qrVideo.HAVE_ENOUGH_DATA && qrModal.style.display === 'flex') {
+                    canvas.width = qrVideo.videoWidth;
+                    canvas.height = qrVideo.videoHeight;
+                    context.drawImage(qrVideo, 0, 0, canvas.width, canvas.height);
+                    
+                    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                    
+                    // Simple QR detection using manual URL parsing
+                    // This is a simplified approach - in production you'd use a proper QR library
+                    try {
+                        // For demo purposes, we'll rely on manual input
+                        // In production, integrate with a QR code library like jsQR
+                        setTimeout(scanFrame, 500);
+                    } catch (error) {
+                        setTimeout(scanFrame, 500);
+                    }
+                } else if (qrModal.style.display === 'flex') {
+                    setTimeout(scanFrame, 100);
+                }
+            }
+            
+            scanFrame();
+        }
+
+        function redirectToModel(modelNum) {
+            console.log(`Redirecting to model ${modelNum}`);
+            closeQRScanner();
+            
+            // Add fade out effect
+            document.body.classList.add('fade-out');
+            setTimeout(() => {
+                window.location.href = `AR.html?model=${modelNum}`;
+            }, 500);
+        }
+
+        // Enhanced PWA Installation with Complete Offline Caching
+        function triggerCompleteOfflineCaching() {
+            if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                console.log('🚀 Triggering complete offline caching for PWA...');
+                
+                // Show loading notification
+                showNotification('📦 Preparing Offline Content', 'Downloading all models and pages for offline use...', 'info', 0);
+                
+                // Send message to service worker
+                const messageChannel = new MessageChannel();
+                
+                messageChannel.port1.onmessage = (event) => {
+                    const { type, success, message } = event.data;
+                    if (type === 'COMPLETE_CACHE_FINISHED') {
+                        hideNotification();
+                        showNotification(
+                            success ? '✅ App Ready Offline!' : '⚠️ Partial Offline Setup',
+                            message || (success ? 'All content cached successfully!' : 'Some content failed to cache'),
+                            success ? 'success' : 'warning',
+                            6000
+                        );
+                    }
+                };
+                
+                navigator.serviceWorker.controller.postMessage({
+                    type: 'FORCE_COMPLETE_CACHE'
+                }, [messageChannel.port2]);
+            }
+        }
+
+        let currentNotification = null;
+
+        function showNotification(title, message, type = 'info', duration = 5000) {
+            // Remove existing notification
+            if (currentNotification) {
+                currentNotification.remove();
+            }
+
+            // Create notification
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <strong>${title}</strong>
+                    <p>${message}</p>
+                </div>
+            `;
+
+            // Styles
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0, 0, 0, 0.95);
+                color: white;
+                border: 2px solid ${getNotificationColor(type)};
+                border-radius: 8px;
+                padding: 1rem;
+                z-index: 1001;
+                max-width: 400px;
+                text-align: center;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 0 30px ${getNotificationColor(type)};
+                animation: slideDown 0.3s ease-out;
+            `;
+
+            document.body.appendChild(notification);
+            currentNotification = notification;
+
+            if (duration > 0) {
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.style.animation = 'slideDown 0.3s ease-out reverse';
+                        setTimeout(() => notification.remove(), 300);
+                    }
+                }, duration);
+            }
+        }
+
+        function hideNotification() {
+            if (currentNotification) {
+                currentNotification.remove();
+                currentNotification = null;
+            }
+        }
+
+        function getNotificationColor(type) {
+            const colors = {
+                info: '#00f4ff',
+                success: '#00ff88',
+                warning: '#ffaa00',
+                error: '#ff4444'
+            };
+            return colors[type] || colors.info;
+        }
+
 
         // Register service worker
         if ('serviceWorker' in navigator) {
@@ -766,6 +1288,7 @@ ctx.fillRect(px, py, 3, 3);
         requestAnimationFrame(render);
     </script>
 
+    <script src="qr-scanner.js"></script>
     <script defer src="2.js"></script>
 </body>
 </html>

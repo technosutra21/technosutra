@@ -38,8 +38,6 @@ const CSS_ASSETS = [
 const DATA_ASSETS = [
     '/summaries/chapters.csv',
     '/summaries/characters.csv',
-    '/summaries/txt/iframe_wrapper_fixed.html',
-    '/summaries/txt/iframe_fullscreen_aggressive.html'
 ];
 
 // Model files pattern - includes all GLB files
@@ -52,9 +50,9 @@ const EXTERNAL_RESOURCES = [
 
 // Cache size limits (in MB)
 const CACHE_LIMITS = {
-    [STATIC_CACHE]: 50,
-    [DYNAMIC_CACHE]: 100,
-    [MODEL_CACHE]: 500
+    [STATIC_CACHE]: 999,
+    [DYNAMIC_CACHE]: 999,
+    [MODEL_CACHE]: 999
 };
 
 // Install event - cache critical resources
