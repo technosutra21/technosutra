@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#000000">
+    <title>Techno Sutra AR - Offline</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a0033 50%, #000000 100%);
+            color: #00ff95;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 600px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff95;
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            box-shadow: 0 0 50px rgba(0, 255, 149, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .cyber-title {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px #00ff95;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px #00ff95; }
+            to { text-shadow: 0 0 30px #00ff95, 0 0 40px #00ff95; }
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #ff0048;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px #ff0048;
+        }
+
+        .message {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .offline-features {
+            background: rgba(0, 255, 149, 0.1);
+            border: 1px solid #00ff95;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .offline-features h3 {
+            color: #00ff95;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .offline-features ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .offline-features li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0, 255, 149, 0.2);
+        }
+
+        .offline-features li:last-child {
+            border-bottom: none;
+        }
+
+        .offline-features li::before {
+            content: "🔮 ";
+            margin-right: 0.5rem;
+        }
+
+        .retry-button {
+            background: linear-gradient(45deg, #00ff95, #00d478);
+            color: #000;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .retry-button:hover {
+            background: linear-gradient(45deg, #00d478, #00ff95);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 149, 0.4);
+        }
+
+        .home-button {
+            background: transparent;
+            color: #ff0048;
+            border: 2px solid #ff0048;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 1rem;
+            text-decoration: none;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .home-button:hover {
+            background: rgba(255, 0, 72, 0.1);
+            box-shadow: 0 0 20px rgba(255, 0, 72, 0.5);
+        }
+
+        .network-status {
+            margin-top: 2rem;
+            padding: 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .online {
+            background: rgba(0, 255, 149, 0.2);
+            border: 1px solid #00ff95;
+            color: #00ff95;
+        }
+
+        .offline {
+            background: rgba(255, 0, 72, 0.2);
+            border: 1px solid #ff0048;
+            color: #ff0048;
+        }
+
+        @media (max-width: 768px) {
+            .cyber-title {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 2rem 1rem;
+                margin: 1rem;
+            }
+            
+            .retry-button, .home-button {
+                display: block;
+                width: 100%;
+                margin: 0.5rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="cyber-title">🔮 TECHNO SUTRA AR</h1>
+        <h2 class="subtitle">Cyber Dharma Experience</h2>
+        
+        <div class="message">
+            <p>Você está atualmente offline. Esta página não está disponível sem conexão com a internet.</p>
+        </div>
+
+        <div class="offline-features">
+            <h3>Recursos Offline Disponíveis:</h3>
+            <ul>
+                <li>Navegação principal da mandala</li>
+                <li>Interface de realidade aumentada</li>
+                <li>Modelos 3D em cache</li>
+                <li>Scanner QR (se previamente carregado)</li>
+                <li>Experiência imersiva completa</li>
+            </ul>
+        </div>
+
+        <div class="network-status" id="networkStatus">
+            <span id="statusText">Verificando conexão...</span>
+        </div>
+
+        <button class="retry-button" onclick="window.location.reload()">
+            🔄 Tentar Novamente
+        </button>
+        
+        <a href="/" class="home-button">
+            🏠 Voltar ao Início
+        </a>
+    </div>
+
+    <script>
+        // Network status detection
+        function updateNetworkStatus() {
+            const statusElement = document.getElementById('networkStatus');
+            const statusText = document.getElementById('statusText');
+            
+            if (navigator.onLine) {
+                statusElement.className = 'network-status online';
+                statusText.textContent = '🌐 Conexão detectada - Clique em "Tentar Novamente"';
+            } else {
+                statusElement.className = 'network-status offline';
+                statusText.textContent = '📴 Sem conexão - Verifique sua internet';
+            }
+        }
+
+        // Initial check
+        updateNetworkStatus();
+
+        // Listen for network changes
+        window.addEventListener('online', updateNetworkStatus);
+        window.addEventListener('offline', updateNetworkStatus);
+
+        // Auto-retry when connection is restored
+        window.addEventListener('online', () => {
+            setTimeout(() => {
+                if (confirm('Conexão restaurada! Deseja recarregar a página?')) {
+                    window.location.reload();
+                }
+            }, 1000);
+        });
+
+        // Keyboard support
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                const retryButton = document.querySelector('.retry-button');
+                if (document.activeElement === retryButton) {
+                    retryButton.click();
+                }
+            }
+        });
+
+        // Service worker messaging
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.addEventListener('message', (event) => {
+                if (event.data.type === 'CACHE_UPDATED') {
+                    updateNetworkStatus();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

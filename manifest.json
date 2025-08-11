@@ -1,83 +1,109 @@
 {
-    "name": "Techno Sutra AR - Avatamsaka Sutra Experience",
-    "short_name": "Techno Sutra AR",
-    "description": "Experiência imersiva em realidade aumentada dos 56 capítulos do Avatamsaka Sutra com modelos 3D interativos",
-    "version": "1.2.0",
-    "start_url": "/index.html",
-    "display": "standalone",
-    "orientation": "portrait-primary",
-    "theme_color": "#000000",
-    "background_color": "#000000",
-    "scope": "/",
-    "lang": "pt-BR",
-    "dir": "ltr",
-    
-    "icons": [
-        {
-            "src": "icon.png",
-            "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "any maskable"
-        },
-        {
-            "src": "icon.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "any"
-        }
-    ],
-    
-    "categories": [
-        "education",
-        "entertainment",
-        "lifestyle"
-    ],
-    
-    "shortcuts": [
-        {
-            "name": "Visualizador AR",
-            "short_name": "AR Viewer",
-            "description": "Abrir experiência de realidade aumentada",
-            "url": "/AR.html",
-            "icons": [
-                {
-                    "src": "icon.png",
-                    "sizes": "96x96"
-                }
-            ]
-        },
-        {
-            "name": "Galeria",
-            "short_name": "Gallery",
-            "description": "Explorar galeria de modelos 3D",
-            "url": "/galeria.html",
-            "icons": [
-                {
-                    "src": "icon.png",
-                    "sizes": "96x96"
-                }
-            ]
-        }
-    ],
-    
-    "share_target": {
-        "action": "/",
-        "method": "GET",
-        "params": {
-            "title": "title",
-            "text": "text",
-            "url": "url"
-        }
+  "name": "Techno Sutra AR - Cyber Dharma Experience",
+  "short_name": "Techno Sutra AR",
+  "description": "Experiência imersiva em realidade aumentada dos 56 capítulos do Avatamsaka Sutra com modelos 3D interativos",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#000000",
+  "background_color": "#000000",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "categories": ["education", "lifestyle", "entertainment"],
+  "icons": [
+    {
+      "src": "icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
     },
-    
-    "prefer_related_applications": false,
-    
-    "protocol_handlers": [
+    {
+      "src": "icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512x512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "QR Scanner",
+      "short_name": "QR",
+      "description": "Scan QR code to access AR models",
+      "url": "/?action=qr",
+      "icons": [
         {
-            "protocol": "techno-sutra",
-            "url": "/index.html?model=%s"
+          "src": "icon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
         }
-    ],
-    
-    "capture_links": "existing-client-navigate"
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "Mandala navigation interface"
+    },
+    {
+      "src": "screenshot2.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "platform": "narrow",
+      "label": "Mobile AR experience"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
 }
