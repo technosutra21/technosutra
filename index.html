@@ -11,6 +11,7 @@
     <meta name="author" content="Techno Sutra Team">
     <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Techno Sutra AR">
@@ -1138,6 +1139,8 @@
             return false; // No redirect
         }
 
+
+
         document.addEventListener('DOMContentLoaded', () => {
             try {
                 // Check for model parameter first
@@ -1458,6 +1461,56 @@
                     });
                 }
 
+                initializeParticleBackground();
+                
+                function initializeParticleBackground() {
+                    const canvas = document.getElementById('dynamicBackgroundCanvas');
+                    if (!canvas) return;
+                    
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                    
+                    let animationId;
+                    
+                    function animate() {
+                        if (!window.RotatingSmallerSphereSort) {
+                            animationId = requestAnimationFrame(animate);
+                            return;
+                        }
+                        
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        
+                        const particles = window.RotatingSmallerSphereSort(50, Date.now(), window.animationController);
+                        
+                        particles.forEach(particle => {
+                            ctx.save();
+                            ctx.globalAlpha = particle.alpha * 0.6;
+                            ctx.fillStyle = `hsl(${particle.hue}, 70%, 60%)`;
+                            ctx.beginPath();
+                            ctx.arc(
+                                (particle.x / 50) * canvas.width,
+                                (particle.y / 50) * canvas.height,
+                                particle.size,
+                                0,
+                                Math.PI * 2
+                            );
+                            ctx.fill();
+                            ctx.restore();
+                        });
+                        
+                        animationId = requestAnimationFrame(animate);
+                    }
+                    
+                    animate();
+                    
+                    window.addEventListener('resize', () => {
+                        canvas.width = window.innerWidth;
+                        canvas.height = window.innerHeight;
+                    });
+                }
+
+
             } catch (error) {
                 console.error('Main initialization error:', error);
             }
@@ -1720,8 +1773,8 @@
 
         if (!isLocal) {
             import(`${basePath}1.js`).then(module => {
-                const RotatingSmallerSphereSort = module.default;
-                const easing = module.easing;
+                window.RotatingSmallerSphereSort = module.default;
+                window.easing = module.easing;
                 console.log('1.js loaded successfully');
             }).catch(err => {
                 console.error('Failed to load 1.js:', err);
@@ -1729,7 +1782,7 @@
 
             import(`${basePath}2.js`).then(module => {
                 const AnimationController = module.default;
-                const controller = new AnimationController(); // Initialize controller
+                window.animationController = new AnimationController(); // Make it global
                 console.log('2.js loaded successfully');
             }).catch(err => {
                 console.error('Failed to load 2.js:', err);
