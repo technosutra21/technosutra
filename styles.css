@@ -207,9 +207,9 @@ body {
 }
 
 .mandala-container {
-    position: absolute;
-    width: clamp(300px, 90vmin, 800px);
-    height: clamp(300px, 90vmin, 800px);
+    position: relative;
+    width: 90vmin;
+    height: 90vmin;
     transform-style: preserve-3d;
     animation: spin 120s linear infinite;
     will-change: transform;
@@ -301,6 +301,8 @@ body {
     transform-origin: center;
     z-index: 10;
     will-change: transform, box-shadow;
+    transform-origin: center;
+    transform: rotate(calc(var(--index) * 120deg)) translate(40vmin) rotate(calc(var(--index) * -120deg));
 }
 
 .mandala-item:hover,
