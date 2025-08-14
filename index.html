@@ -1729,6 +1729,7 @@
 
             import(`${basePath}2.js`).then(module => {
                 const AnimationController = module.default;
+                const controller = new AnimationController(); // Initialize controller
                 console.log('2.js loaded successfully');
             }).catch(err => {
                 console.error('Failed to load 2.js:', err);

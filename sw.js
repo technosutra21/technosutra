@@ -285,6 +285,15 @@ self.addEventListener('message', (event) => {
             self.skipWaiting();
             break;
             
+        case 'CACHE_ALL_ASSETS':
+            caches.open(CACHE_NAME).then(cache => {
+                cache.addAll([...CORE_ASSETS, ...OPTIONAL_ASSETS, ...MODEL_ASSETS, ...EXTERNAL_ASSETS]);
+                console.log('SW: All assets cached successfully');
+            }).catch(error => {
+                console.error('SW: Failed to cache all assets:', error);
+            });
+            break;
+            
         default:
             console.log('SW: Unknown message type:', type);
     }
