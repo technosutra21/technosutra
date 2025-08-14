@@ -706,3 +706,67 @@ body {
         text-shadow: none;
     }
 }
+
+/* Added styles for the offline installation popup */
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid var(--neon-blue);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 0 50px var(--neon-blue);
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    animation: fadeIn 0.5s ease;
+}
+
+.popup-content h2 {
+    color: var(--neon-blue);
+    font-family: var(--font-main);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.popup-content p {
+    color: white;
+    font-family: var(--font-secondary);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.popup-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+}
+
+.popup-content ul li {
+    color: var(--neon-pink);
+    font-family: var(--font-secondary);
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.popup-content button {
+    background: var(--neon-blue);
+    border: none;
+    color: black;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-family: var(--font-secondary);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.popup-content button:hover {
+    background: var(--neon-pink);
+    color: white;
+    box-shadow: 0 0 15px var(--neon-pink);
+}

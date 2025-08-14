@@ -519,34 +519,6 @@
             font-weight: 600;
         }
 
-        .install-btn {
-            border-color: var(--neon-purple);
-            display: inline-flex;
-            /* Always show the button */
-            opacity: 1;
-            /* Default opacity */
-            transition: all 0.3s ease;
-        }
-
-        .install-btn:hover {
-            background: rgba(157, 0, 255, 0.4);
-            box-shadow: 0 0 20px var(--neon-purple);
-            transform: translateY(-2px);
-        }
-
-        /* Installed state styling */
-        .install-btn.installed {
-            opacity: 0.3;
-            pointer-events: none;
-            cursor: default;
-            border-color: rgba(157, 0, 255, 0.5);
-        }
-
-        .install-btn.installed:hover {
-            background: rgba(0, 0, 0, 0.8);
-            box-shadow: none;
-            transform: none;
-        }
 
         .qr-btn {
             border-color: var(--neon-blue);
@@ -947,6 +919,91 @@
                 text-shadow: none;
             }
         }
+
+        /* Popup Styles */
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .popup-content {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid var(--neon-blue);
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 0 50px var(--neon-blue);
+            animation: slideDown 0.5s ease-out;
+        }
+
+        .popup h2 {
+            color: var(--neon-blue);
+            font-family: var(--font-main);
+            margin: 0 0 1rem 0;
+            font-size: 1.8rem;
+        }
+
+        .popup p {
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0 0 1rem 0;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        .popup ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1rem 0;
+            text-align: left;
+        }
+
+        .popup li {
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0.5rem 0;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        .popup li:before {
+            content: '✔️';
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 1.2rem;
+            line-height: 1;
+            color: var(--neon-pink);
+        }
+
+        .popup button {
+            background: var(--neon-blue);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: var(--font-secondary);
+            font-size: 1rem;
+            transition: background 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .popup button:hover {
+            background: var(--neon-purple);
+        }
     </style>
 </head>
 
@@ -1003,10 +1060,6 @@
 
     <!-- Top Control Panel -->
     <div class="top-controls">
-        <button id="installPWA" class="control-btn install-btn">
-            <span class="icon">💾</span>
-            <span class="text">Install Offline App</span>
-        </button>
         <button id="qrReaderBtn" class="control-btn qr-btn">
             <span class="icon">📷</span>
             <span class="text">QR Scanner</span>
@@ -1033,6 +1086,21 @@
             </div>
         </div>
     </div>
+
+    <!-- Offline Installation Instructions Popup -->
+    <div id="offlinePopup" class="popup" style="display: none;">
+        <div class="popup-content">
+            <h2>Install Techno Sutra AR</h2>
+            <p>To use this site offline, follow the instructions below based on your browser:</p>
+            <ul>
+                <li><strong>iOS Safari:</strong> Tap <em>Share</em> and then <em>Add to Home Screen</em>.</li>
+                <li><strong>Android Chrome:</strong> Tap the <em>three dots</em> menu and select <em>Install App</em>.</li>
+                <li><strong>Desktop Chrome:</strong> Click the <em>Install</em> button in the browser's address bar.</li>
+            </ul>
+            <button id="closePopup">Got it!</button>
+        </div>
+    </div>
+
     <script>
         // Enhanced error handling
         window.addEventListener('error', (e) => {
@@ -1620,6 +1688,26 @@
                         type: 'FORCE_CACHE_ALL'
                     });
                 });
+            }
+        });
+
+        // Show the popup if the app is not installed
+        document.addEventListener('DOMContentLoaded', () => {
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+            const popup = document.getElementById('offlinePopup');
+            const closePopup = document.getElementById('closePopup');
+
+            if (!isStandalone && popup) {
+                popup.style.display = 'block';
+
+                closePopup?.addEventListener('click', () => {
+                    popup.style.display = 'none';
+                });
+            } else if (popup) {
+                // Fallback to ensure popup shows
+                setTimeout(() => {
+                    popup.style.display = 'block';
+                }, 1000);
             }
         });
     </script>

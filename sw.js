@@ -44,71 +44,27 @@ const EXTERNAL_ASSETS = [
 // Install event - cache core assets
 self.addEventListener('install', (event) => {
     console.log('SW: Installing service worker...');
-    
+
+    // Pre-cache model, optional, and external assets
     event.waitUntil(
         Promise.all([
-            // Cache core assets - these must be available immediately
             caches.open(CACHE_NAME).then((cache) => {
-                console.log('SW: Caching core assets');
-                return cache.addAll(CORE_ASSETS.filter(asset => asset !== '/offline.html'))
-                    .catch(error => {
-                        console.warn('SW: Failed to cache some core assets:', error);
-                        // Try to cache individually to identify problematic assets
-                        return Promise.allSettled(
-                            CORE_ASSETS.map(asset => cache.add(asset))
-                        );
-                    });
+                console.log('SW: Caching all core and optional assets');
+                return cache.addAll([...CORE_ASSETS, ...OPTIONAL_ASSETS]);
             }),
-            
-            // Create offline fallback
-            caches.open(CACHE_NAME).then((cache) => {
-                return fetch('/offline.html').then(response => {
-                    if (response.ok) {
-                        return cache.put('/offline.html', response);
-                    }
-                }).catch(() => {
-                    // Create a basic offline page if file doesn't exist
-                    const offlineResponse = new Response(`
-                        <!DOCTYPE html>
-                        <html lang="pt-BR">
-                        <head>
-                            <meta charset="UTF-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                            <title>Techno Sutra AR - Offline</title>
-                            <style>
-                                body { 
-                                    font-family: Arial, sans-serif; 
-                                    text-align: center; 
-                                    padding: 2rem;
-                                    background: #000;
-                                    color: #00ff95;
-                                }
-                                .container {
-                                    max-width: 600px;
-                                    margin: 0 auto;
-                                }
-                            </style>
-                        </head>
-                        <body>
-                            <div class="container">
-                                <h1>🔮 Techno Sutra AR</h1>
-                                <h2>Você está offline</h2>
-                                <p>Esta página não está disponível offline. Verifique sua conexão com a internet e tente novamente.</p>
-                                <button onclick="window.location.reload()">Tentar Novamente</button>
-                            </div>
-                        </body>
-                        </html>
-                    `, {
-                        headers: { 'Content-Type': 'text/html' }
-                    });
-                    return cache.put('/offline.html', offlineResponse);
-                });
+            caches.open(MODELS_CACHE).then((cache) => {
+                console.log('SW: Caching all model assets');
+                return cache.addAll(MODEL_ASSETS);
+            }),
+            caches.open(RUNTIME_CACHE).then((cache) => {
+                console.log('SW: Caching all external assets');
+                return cache.addAll(EXTERNAL_ASSETS);
             })
         ]).then(() => {
-            console.log('SW: Core installation completed');
-            self.skipWaiting(); // Activate immediately
+            console.log('SW: Aggressive caching completed');
+            self.skipWaiting();
         }).catch(error => {
-            console.error('SW: Installation failed:', error);
+            console.error('SW: Aggressive caching failed:', error);
         })
     );
 });
@@ -325,18 +281,6 @@ self.addEventListener('message', (event) => {
     const { type, data } = event.data;
     
     switch (type) {
-        case 'FORCE_COMPLETE_CACHE':
-            handleCompleteCache(event);
-            break;
-            
-        case 'CACHE_ALL_ASSETS':
-            handleCacheAllAssets();
-            break;
-            
-        case 'CLEAR_CACHE':
-            handleClearCache();
-            break;
-            
         case 'SKIP_WAITING':
             self.skipWaiting();
             break;
@@ -345,117 +289,6 @@ self.addEventListener('message', (event) => {
             console.log('SW: Unknown message type:', type);
     }
 });
-
-async function handleCompleteCache(event) {
-    console.log('SW: Starting complete cache operation...');
-    
-    try {
-        const results = await Promise.allSettled([
-            // Cache optional assets
-            cacheAssets(OPTIONAL_ASSETS, CACHE_NAME),
-            
-            // Cache model assets (in batches to avoid overwhelming)
-            cacheModelAssetsInBatches(),
-            
-            // Cache external assets
-            cacheAssets(EXTERNAL_ASSETS, RUNTIME_CACHE)
-        ]);
-        
-        const successful = results.filter(r => r.status === 'fulfilled').length;
-        const failed = results.filter(r => r.status === 'rejected').length;
-        
-        console.log(`SW: Complete cache finished. Success: ${successful}, Failed: ${failed}`);
-        
-        // Send result back to main thread
-        event.ports[0].postMessage({
-            type: 'COMPLETE_CACHE_FINISHED',
-            success: failed === 0,
-            message: failed === 0 ? 
-                'All content cached successfully!' : 
-                `Cached with ${failed} failures. App may have limited offline functionality.`
-        });
-        
-    } catch (error) {
-        console.error('SW: Complete cache failed:', error);
-        event.ports[0].postMessage({
-            type: 'COMPLETE_CACHE_FINISHED',
-            success: false,
-            message: 'Caching failed. Check your internet connection.'
-        });
-    }
-}
-
-async function cacheAssets(assets, cacheName) {
-    const cache = await caches.open(cacheName);
-    const results = await Promise.allSettled(
-        assets.map(async (asset) => {
-            try {
-                const response = await fetch(asset);
-                if (response.ok) {
-                    await cache.put(asset, response);
-                    return asset;
-                } else {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-            } catch (error) {
-                console.warn(`SW: Failed to cache ${asset}:`, error.message);
-                throw error;
-            }
-        })
-    );
-    
-    return results;
-}
-
-async function cacheModelAssetsInBatches() {
-    const batchSize = 5; // Cache 5 models at a time
-    const cache = await caches.open(MODELS_CACHE);
-    
-    for (let i = 0; i < MODEL_ASSETS.length; i += batchSize) {
-        const batch = MODEL_ASSETS.slice(i, i + batchSize);
-        await Promise.allSettled(
-            batch.map(async (asset) => {
-                try {
-                    const response = await fetch(asset);
-                    if (response.ok) {
-                        await cache.put(asset, response);
-                    }
-                } catch (error) {
-                    console.warn(`SW: Failed to cache model ${asset}`);
-                }
-            })
-        );
-        
-        // Small delay between batches
-        await new Promise(resolve => setTimeout(resolve, 100));
-    }
-}
-
-async function handleCacheAllAssets() {
-    console.log('SW: Caching all assets...');
-    
-    try {
-        await Promise.all([
-            cacheAssets(OPTIONAL_ASSETS, CACHE_NAME),
-            cacheAssets(EXTERNAL_ASSETS, RUNTIME_CACHE)
-        ]);
-        
-        console.log('SW: All assets cached successfully');
-    } catch (error) {
-        console.error('SW: Failed to cache all assets:', error);
-    }
-}
-
-async function handleClearCache() {
-    console.log('SW: Clearing all caches...');
-    
-    const cacheNames = await caches.keys();
-    await Promise.all(
-        cacheNames.map(cacheName => caches.delete(cacheName))
-    );
-    
-    console.log('SW: All caches cleared');
-}
 
 // Background sync for offline actions (if supported)
 if ('sync' in self.registration) {
