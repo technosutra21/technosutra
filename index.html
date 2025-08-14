@@ -1131,7 +1131,7 @@
                     console.warn(`Invalid model ID: ${modelId}. Must be between 1-56.`);
                     // Remove invalid parameter from URL
                     urlParams.delete('model');
-                    const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+                    const newUrl = window.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
                     window.history.replaceState({}, '', newUrl);
                 }
             }
@@ -1636,8 +1636,8 @@
         }
 
 
-        // Enhanced PWA service worker with update detection
-        if ('serviceWorker' in navigator) {
+        // Check if the environment supports Service Workers
+        if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
             navigator.serviceWorker.register('/sw.js').then(registration => {
                 console.log('SW registered');
 
@@ -1678,6 +1678,8 @@
             }).catch(error => {
                 console.warn('SW registration failed:', error);
             });
+        } else {
+            console.warn('Service Workers are not supported in this environment.');
         }
 
         // Botão para download offline
@@ -1712,85 +1714,27 @@
         });
     </script>
 
-    <!-- Simplified background animation -->
     <script type="module">
-        // Hide error message initially
-        function hideErrorFallback() {
-            const errorFallback = document.getElementById('errorFallback');
-            const canvasFallback = document.getElementById('canvasFallback');
-            if (errorFallback) errorFallback.style.display = 'none';
-            if (canvasFallback) canvasFallback.style.display = 'none';
-        }
+        const isLocal = window.location.protocol === 'file:';
+        const basePath = isLocal ? './' : '/';
 
-        // Show error fallback
-        function showErrorFallback(message) {
-            console.warn('Fallback activated:', message);
-            const errorFallback = document.getElementById('errorFallback');
-            const canvasFallback = document.getElementById('canvasFallback');
+        if (!isLocal) {
+            import(`${basePath}1.js`).then(module => {
+                const RotatingSmallerSphereSort = module.default;
+                const easing = module.easing;
+                console.log('1.js loaded successfully');
+            }).catch(err => {
+                console.error('Failed to load 1.js:', err);
+            });
 
-            if (errorFallback) errorFallback.style.display = 'block';
-            if (canvasFallback) canvasFallback.style.display = 'block';
-
-            const canvas = document.getElementById('dynamicBackgroundCanvas');
-            if (canvas) canvas.style.display = 'none';
-        }
-
-        // Simple working implementation
-        try {
-            const canvas = document.getElementById('dynamicBackgroundCanvas');
-            const ctx = canvas.getContext('2d');
-
-            if (!canvas || !ctx) {
-                throw new Error('Canvas not supported');
-            }
-
-            function resizeCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            }
-
-            window.addEventListener('resize', resizeCanvas);
-            resizeCanvas();
-
-            // Simple animated background
-            let time = 0;
-            function render() {
-                time += 0.016;
-
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                // Draw simple particles
-                for (let i = 0; i < 50; i++) {
-                    const x = (Math.sin(time * 0.5 + i) * 200 + canvas.width / 2);
-                    const y = (Math.cos(time * 0.3 + i) * 150 + canvas.height / 2);
-                    const alpha = 0.5 + 0.5 * Math.sin(time + i);
-
-                    ctx.fillStyle = `rgba(0, 255, 149, ${alpha * 0.3})`;
-                    ctx.beginPath();
-                    ctx.arc(x, y, 2, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-
-                requestAnimationFrame(render);
-            }
-
-            render();
-            hideErrorFallback();
-
-            // Try to load enhanced modules after basic animation is working
-            setTimeout(() => {
-                import('./1.js').then(module1 => {
-                    import('./2.js').then(module2 => {
-                        console.log('Enhanced modules loaded successfully');
-                        // Enhanced version can be activated here if needed
-                    }).catch(() => console.warn('Module 2 failed to load'));
-                }).catch(() => console.warn('Module 1 failed to load'));
-            }, 1000);
-
-        } catch (error) {
-            console.error('Canvas initialization failed:', error);
-            showErrorFallback('Canvas not supported');
+            import(`${basePath}2.js`).then(module => {
+                const AnimationController = module.default;
+                console.log('2.js loaded successfully');
+            }).catch(err => {
+                console.error('Failed to load 2.js:', err);
+            });
+        } else {
+            console.warn('Dynamic imports are not supported in the file:// protocol. Please use a local server.');
         }
     </script>
 
