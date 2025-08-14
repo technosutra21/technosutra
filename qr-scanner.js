@@ -84,6 +84,16 @@ class QRScanner {
             return;
         }
 
+        // Add this check
+        if (typeof jsQR === 'undefined') {
+            console.error('jsQR library not loaded');
+            if (this.onError) {
+                this.onError(new Error('QR scanning library not available'));
+            }
+            this.stop();
+            return;
+        }
+        
         try {
             // Set canvas dimensions to match video
             this.canvas.width = this.video.videoWidth;
