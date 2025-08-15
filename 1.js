@@ -2,7 +2,7 @@
 export default function RotatingSmallerSphereSort(gridSize, currentTime, controller) {
     const particles = [];
     const center = gridSize / 2;
-    const reducedRadius = gridSize / 3;
+    const reducedRadius = gridSize / 2;
     const t = currentTime / 2000;
 
     for (let i = 0; i < gridSize * gridSize; i++) {
@@ -32,7 +32,7 @@ export default function RotatingSmallerSphereSort(gridSize, currentTime, control
             alpha,
             depth,
             hue,
-            size: 1 + depth * 2
+            size: 2 + depth * 2
         });
     }
 
