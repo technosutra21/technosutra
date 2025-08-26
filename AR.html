@@ -656,27 +656,45 @@ try {
         // Start camera with optimization
         async function startCamera() {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({
+                // Add timeout promise
+                const timeoutPromise = new Promise((_, reject) => {
+                    setTimeout(() => reject(new Error('Camera timeout')), 10000);
+                });
+
+                const streamPromise = navigator.mediaDevices.getUserMedia({
                     video: {
                         facingMode: 'environment',
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 }
+                        width: { ideal: 1920, min: 640 },
+                        height: { ideal: 1080, min: 480 },
+                        frameRate: { min: 15, ideal: 30 }
                     }
                 });
+
+                // Race between camera initialization and timeout
+                const stream = await Promise.race([streamPromise, timeoutPromise]);
                 
+                if (!elements.cameraFeed) {
+                    throw new Error('Camera feed element not found');
+                }
+
                 elements.cameraFeed.srcObject = stream;
-                await elements.cameraFeed.play();
+                
+                // Add play promise with timeout
+                const playPromise = elements.cameraFeed.play();
+                await Promise.race([
+                    playPromise,
+                    new Promise((_, reject) => setTimeout(() => reject(new Error('Play timeout')), 5000))
+                ]);
                 
                 state.cameraStream = stream;
                 log('Camera started successfully');
                 return true;
             } catch (error) {
                 log(`Camera error: ${error.message}`);
-                showStatus('Camera access denied', 'error');
+                handleCameraError(error);
                 return false;
             }
         }
-
         async function loadModel() {
             try {
                 const modelPath = `models/model${config.modelId}.glb`;
@@ -921,9 +939,9 @@ try {
                         elements.cameraPermission.classList.remove('hidden');
                     }
                     // Ensure background gradient is visible when camera fails
-                    document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                    document.body.style.background = 'linear-gradient(135deg, ##820909 0%, #764ba2 100%)';
                     if (elements.cameraFeed) {
-                        elements.cameraFeed.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                        elements.cameraFeed.style.background = 'linear-gradient(135deg, #820909 70%, #54084a 30%)';
                     }
                 } else {
                     // Camera started successfully, ensure it's visible
