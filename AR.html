@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <!-- SEO Meta Tags -->
     <title>Techno Sutra AR - Experiência Imersiva em Realidade Aumentada</title>
@@ -48,6 +48,7 @@
     <link rel="dns-prefetch" href="https://modelviewer.dev">
     <link rel="preconnect" href="https://ajax.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.css" crossorigin>
+    
 
     
     <!-- Critical CSS inline for faster rendering -->
@@ -65,12 +66,18 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            z-index: 1;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: block !important;
+            z-index: -1;
+        }
+        
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
         }
         
         model-viewer {
@@ -380,39 +387,29 @@
     
     <!-- 3D Model Viewer with optimizations -->
     <model-viewer
-        id="modelViewer"
-        alt="Modelo 3D Interativo - Techno Sutra AR"
+        id="model-viewer"
         camera-controls
-        touch-action="pan-y"
+        auto-rotate
         ar
-        ar-modes="quick-look webxr scene-viewer"
-        ar-scale="auto"
-        ar-placement="floor"
-        loading="eager"
-        reveal="auto"
-        
-        environment-image="/techno.hdr" 
-        shadow-intensity="1" 
-
-        
-        style="background-color: transparent; --poster-color: transparent;">
-
-        <!-- Custom AR button -->
-        <button slot="ar-button" class="ar-button" id="ar-button">
-            <span>🛞</span>
-            <span>Ver em AR</span>
+        ar-modes="webxr scene-viewer quick-look"
+        ar-scale="fixed"
+        exposure="1"
+        shadow-intensity="1"
+        environment-image="neutral"
+        poster="assets/poster.webp"
+        loading="lazy"
+        reveal="interaction"
+        touch-action="pan-y"
+        min-camera-orbit="auto auto 50%"
+        max-camera-orbit="auto auto 150%"
+        min-field-of-view="30deg"
+        max-field-of-view="90deg">
+        <div slot="error">Error loading 3D model</div>
+        <div slot="poster">Loading...</div>
+        <button slot="ar-button" id="ar-button">
+            <span>📱</span>
+            <span>View in AR</span>
         </button>
-
-        <!-- Progress bar -->
-        <div slot="progress-bar" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 200px; height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 2px; overflow: hidden;">
-            <div style="height: 100%; background: linear-gradient(90deg, #4285f4, #34a853); border-radius: 2px; width: 0%; transition: width 0.3s ease;" id="progress-fill"></div>
-        </div>
-
-        <!-- AR prompt -->
-        <div slot="ar-prompt" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 24px 32px; border-radius: 16px; text-align: center; z-index: 200; backdrop-filter: blur(10px);">
-            <div style="font-size: 32px; margin-bottom: 12px;">📱</div>
-            <div style="font-size: 16px; font-weight: 500;">Mova o dispositivo para encontrar uma superfície</div>
-        </div>
     </model-viewer>
     
     <!-- Model controls -->
@@ -658,54 +655,75 @@ try {
         // Apply iOS-specific color enhancements
         function applyIOSColorFix() {
             if (isIOSDevice()) {
-                log('Applied iOS color enhancement fixes');
+                log('Not applied iOS color enhancement fixes');
             }
         }
 
         // Start camera with optimization
         async function startCamera() {
             try {
-                log('Starting camera...');
-
-                state.cameraStream = await navigator.mediaDevices.getUserMedia(config.cameraConstraints);
-
-                if (!elements.cameraFeed) {
-                    throw new Error('Video element not found');
-                }
-
-                elements.cameraFeed.srcObject = state.cameraStream;
-                elements.cameraFeed.style.display = 'block';
-                elements.cameraFeed.style.opacity = '1';
-                elements.cameraFeed.style.background = 'transparent';
-
-                await new Promise((resolve, reject) => {
-                    elements.cameraFeed.onloadedmetadata = () => {
-                        elements.cameraFeed.play().then(resolve).catch(reject);
-                    };
-                    elements.cameraFeed.onerror = reject;
-                    setTimeout(reject, 8000);
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'environment',
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
+                    }
                 });
-
-                const videoTracks = state.cameraStream.getVideoTracks();
-                const cameraLabel = videoTracks.length > 0 ? videoTracks[0].label : 'Unknown';
-                log(`Camera started: ${cameraLabel}`);
                 
-                // Hide gradient background when camera starts
-                document.body.style.background = 'transparent';
+                elements.cameraFeed.srcObject = stream;
+                await elements.cameraFeed.play();
                 
+                state.cameraStream = stream;
+                log('Camera started successfully');
                 return true;
-
             } catch (error) {
                 log(`Camera error: ${error.message}`);
-
-                // Show gradient background only when camera fails
-                if (elements.cameraFeed) {
-                    elements.cameraFeed.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                    elements.cameraFeed.style.opacity = '1';
-                }
-                document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-
+                showStatus('Camera access denied', 'error');
                 return false;
+            }
+        }
+
+        async function loadModel() {
+            try {
+                const modelPath = `models/model${config.modelId}.glb`;
+                const response = await fetch(modelPath, { method: 'HEAD' });
+                
+                if (!response.ok) {
+                    throw new Error('Model not found');
+                }
+                
+                elements.modelViewer.src = modelPath;
+                elements.modelViewer.setAttribute('ios-src', `models/model${config.modelId}.usdz`);
+                
+                state.modelLoaded = true;
+                updateARButtonState();
+                return true;
+            } catch (error) {
+                log(`Model loading error: ${error.message}`);
+                showStatus('Error loading 3D model', 'error');
+                return false;
+            }
+        }
+
+        function updateARButtonState() {
+            const arButton = elements.arButton;
+            if (!arButton) return;
+
+            const isAvailable = state.modelLoaded && state.arReady;
+            arButton.disabled = !isAvailable;
+            
+            const icon = arButton.querySelector('span:first-child');
+            const text = arButton.querySelector('span:last-child');
+            
+            if (!state.modelLoaded) {
+                icon.textContent = '⏳';
+                text.textContent = 'Loading...';
+            } else if (!state.arReady) {
+                icon.textContent = '❌';
+                text.textContent = 'AR not available';
+            } else {
+                icon.textContent = '📱';
+                text.textContent = 'View in AR';
             }
         }
 
