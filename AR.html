@@ -447,7 +447,7 @@
         
         function cacheElements() {
             elements.cameraFeed = document.getElementById('camera-feed');
-            elements.modelViewer = document.querySelector('#modelViewer');
+            elements.modelViewer = document.querySelector('#model-viewer');
             elements.statusDiv = document.getElementById('status');
             elements.loadingOverlay = document.getElementById('loading-overlay');
             elements.cameraPermission = document.getElementById('camera-permission');
@@ -592,6 +592,11 @@ try {
                 if (arIcon) arIcon.textContent = '📱';
                 if (arText) arText.textContent = 'Ver em AR';
             }
+            
+            // Also update the accessibility label
+            const statusText = elements.arButton.disabled ? 
+                'AR não disponível' : 'Abrir experiência em Realidade Aumentada';
+            elements.arButton.setAttribute('aria-label', statusText);
         }
 
         // Update progress bar
@@ -623,7 +628,7 @@ try {
                 elements.modelViewer.setAttribute('ios-src', usdzSrc);
                 
                 // Set AR scale
-                elements.modelViewer.style.setAttribute('--ar-scale', config.arScale.toString());
+                elements.modelViewer.style.setProperty('--ar-scale', config.arScale.toString());
                 log(`Model configured with AR scale ${config.arScale}x`);
 
                 return true;
@@ -690,48 +695,6 @@ try {
                 log(`Camera error: ${error.message}`);
                 handleCameraError(error);
                 return false;
-            }
-        }
-        async function loadModel() {
-            try {
-                const modelPath = `models/modelo${config.modelId}.glb`;
-                const response = await fetch(modelPath, { method: 'HEAD' });
-                
-                if (!response.ok) {
-                    throw new Error('Model not found');
-                }
-                
-                elements.modelViewer.src = modelPath;
-
-                state.modelLoaded = true;
-                updateARButtonState();
-                return true;
-            } catch (error) {
-                log(`Model loading error: ${error.message}`);
-                showStatus('Error loading 3D model', 'error');
-                return false;
-            }
-        }
-
-        function updateARButtonState() {
-            const arButton = elements.arButton;
-            if (!arButton) return;
-
-            const isAvailable = state.modelLoaded && state.arReady;
-            arButton.disabled = !isAvailable;
-            
-            const icon = arButton.querySelector('span:first-child');
-            const text = arButton.querySelector('span:last-child');
-            
-            if (!state.modelLoaded) {
-                icon.textContent = '⏳';
-                text.textContent = 'Loading...';
-            } else if (!state.arReady) {
-                icon.textContent = '❌';
-                text.textContent = 'AR not available';
-            } else {
-                icon.textContent = '📱';
-                text.textContent = 'View in AR';
             }
         }
 
@@ -935,7 +898,7 @@ try {
                         elements.cameraPermission.classList.remove('hidden');
                     }
                     // Ensure background gradient is visible when camera fails
-                    document.body.style.background = 'linear-gradient(135deg, ##820909 0%, #764ba2 100%)';
+                    document.body.style.background = 'linear-gradient(135deg, #820909 0%, #764ba2 100%)';
                     if (elements.cameraFeed) {
                         elements.cameraFeed.style.background = 'linear-gradient(135deg, #820909 70%, #54084a 30%)';
                     }

@@ -9,6 +9,7 @@ const MODELS_CACHE = 'techno-sutra-models-v1.0.0';
 const CORE_ASSETS = [
     '/',
     '/index.html',
+    '/galeria.html',
     '/styles.css',
     '/main.js',
     '/manifest.json',
@@ -23,6 +24,11 @@ const CORE_ASSETS = [
 // Optional assets - enhance experience but not critical
 const OPTIONAL_ASSETS = [
     '/1.js',
+    '/2.js',
+    '/pwa-install-helper.js',
+    '/home.html',
+    '/map.html',
+    '/navegador-capitulos-updated.html'
 ];
 
 // Generate model URLs (1-56)
