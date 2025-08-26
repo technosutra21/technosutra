@@ -393,7 +393,6 @@
         ar
         ar-modes="webxr scene-viewer quick-look"
         ar-scale="auto"
-        exposure="1"
         shadow-intensity="1"
         environment-image="neutral"
         loading="lazy"
@@ -705,8 +704,7 @@ try {
                 }
                 
                 elements.modelViewer.src = modelPath;
-                elements.modelViewer.setAttribute('ios-src', `usdz/modelo${config.modelId}.usdz`);
-                
+
                 state.modelLoaded = true;
                 updateARButtonState();
                 return true;
