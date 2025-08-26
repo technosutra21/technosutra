@@ -164,11 +164,6 @@
                 border-width: 2px;
                 background: rgba(0, 0, 0, 0.9);
             }
-
-            .item-content h3,
-            .item-content p {
-                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-            }
         }
 
         /* Error fallback styles */
@@ -1187,7 +1182,6 @@
                     });
                 }
 
-                // Initialize background animation
                 initializeParticleBackground();
                 
                 function initializeParticleBackground() {
@@ -1361,16 +1355,41 @@
             }
         }
 
-        // Botão para download offline
-        document.getElementById('offline-button')?.addEventListener('click', () => {
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.ready.then(registration => {
-                    registration.active?.postMessage({
-                        type: 'FORCE_CACHE_ALL'
-                    });
+        // Check if the environment supports Service Workers
+        if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
+            navigator.serviceWorker.register('/sw.js').then(registration => {
+                console.log('SW registered');
+
+                // Check for updates
+                registration.addEventListener('updatefound', () => {
+                    const newWorker = registration.installing;
+                    if (newWorker) {
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                // New version available
+                                alert('App Update Available: New features and improvements are ready!');
+                            }
+                        });
+                    }
                 });
-            }
-        });
+
+                // Force complete cache on first visit
+                registration.active?.postMessage({
+                    type: 'CACHE_ALL_ASSETS'
+                });
+
+                // Listen for update messages
+                navigator.serviceWorker.addEventListener('message', event => {
+                    if (event.data.type === 'UPDATE_AVAILABLE') {
+                        alert('App Updated: New features available! Refresh to update.');
+                    }
+                });
+            }).catch(error => {
+                console.warn('SW registration failed:', error);
+            });
+        } else {
+            console.warn('Service Workers are not supported in this environment.');
+        }
 
         // Show the popup if the app is not installed
         document.addEventListener('DOMContentLoaded', () => {

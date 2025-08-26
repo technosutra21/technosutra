@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
@@ -163,11 +164,6 @@
             .mandala-item {
                 border-width: 2px;
                 background: rgba(0, 0, 0, 0.9);
-            }
-
-            .item-content h3,
-            .item-content p {
-                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
             }
         }
 
@@ -950,6 +946,49 @@
         .popup button:hover {
             background: var(--neon-purple);
         }
+        
+        /* Install Button Styles */
+        .install-btn {
+            position: fixed;
+            top: 1vh;
+            right: 1vh;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--neon-blue);
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            font-family: var(--font-secondary);
+            font-size: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            min-width: 80px;
+            z-index: 100;
+        }
+
+        .install-btn .icon {
+            font-size: 1.5em;
+        }
+
+        .install-btn .text {
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .install-btn.installed {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .install-btn:hover:not(.installed) {
+            background: rgba(0, 255, 149, 0.2);
+            box-shadow: 0 0 20px var(--neon-blue);
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 
@@ -978,7 +1017,7 @@
             </a>
 
             <a href="galeria.html" class="mandala-item" data-title="Gallery" data-index="0" role="button" tabindex="0"
-                aria-label="TECHNOSUTRA - Explore os 56 capítulos do Avatamsaka Sutra">
+                aria-label="Galeria 3D - Explore os 56 capítulos do Avatamsaka Sutra">
                 <div class="item-icon" aria-hidden="true">⁛</div>
                 <div class="item-content">
                     <h3>TECHNOSUTRA</br>GALERIA 3D</h3>
@@ -1001,6 +1040,10 @@
 
     <!-- Top Control Panel -->
     <div class="top-controls">
+        <button id="installButton" class="install-btn">
+            <span class="icon">💾</span>
+            <span class="text">Install Offline App</span>
+        </button>
         <button id="qrReaderBtn" class="control-btn qr-btn">
             <span class="icon">📷</span>
             <span class="text">QR Scanner</span>
@@ -1078,7 +1121,6 @@
             }
             return false; // No redirect
         }
-
 
         document.addEventListener('DOMContentLoaded', () => {
             try {
@@ -1187,7 +1229,50 @@
                     });
                 }
 
-                // Initialize background animation
+                // QR Code Scanner Setup
+                const qrReaderBtn = document.getElementById('qrReaderBtn');
+                const closeQrModal = document.getElementById('closeQrModal');
+                const qrModal = document.getElementById('qrModal');
+                const qrVideo = document.getElementById('qrVideo');
+                const manualModelBtn = document.getElementById('manualModelBtn');
+                const manualModelInput = document.getElementById('manualModelInput');
+                let qrStream = null;
+
+                if (qrReaderBtn) {
+                    qrReaderBtn.addEventListener('click', openQRScanner);
+                }
+
+                if (closeQrModal) {
+                    closeQrModal.addEventListener('click', closeQRScanner);
+                }
+
+                if (qrModal) {
+                    qrModal.addEventListener('click', (e) => {
+                        if (e.target === qrModal) {
+                            closeQRScanner();
+                        }
+                    });
+                }
+
+                if (manualModelBtn) {
+                    manualModelBtn.addEventListener('click', () => {
+                        const modelNum = parseInt(manualModelInput.value);
+                        if (modelNum >= 1 && modelNum <= 56) {
+                            redirectToModel(modelNum);
+                        } else {
+                            alert('Please enter a valid model number (1-56)');
+                        }
+                    });
+                }
+
+                if (manualModelInput) {
+                    manualModelInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            manualModelBtn.click();
+                        }
+                    });
+                }
+
                 initializeParticleBackground();
                 
                 function initializeParticleBackground() {
@@ -1236,7 +1321,6 @@
                         canvas.height = window.innerHeight;
                     });
                 }
-
 
             } catch (error) {
                 console.error('Main initialization error:', error);
@@ -1361,16 +1445,41 @@
             }
         }
 
-        // Botão para download offline
-        document.getElementById('offline-button')?.addEventListener('click', () => {
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.ready.then(registration => {
-                    registration.active?.postMessage({
-                        type: 'FORCE_CACHE_ALL'
-                    });
+        // Service Worker Registration
+        if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
+            navigator.serviceWorker.register('/sw.js').then(registration => {
+                console.log('SW registered');
+
+                // Check for updates
+                registration.addEventListener('updatefound', () => {
+                    const newWorker = registration.installing;
+                    if (newWorker) {
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                // New version available
+                                alert('App Update Available: New features and improvements are ready!');
+                            }
+                        });
+                    }
                 });
-            }
-        });
+
+                // Force complete cache on first visit
+                registration.active?.postMessage({
+                    type: 'CACHE_ALL_ASSETS'
+                });
+
+                // Listen for update messages
+                navigator.serviceWorker.addEventListener('message', event => {
+                    if (event.data.type === 'UPDATE_AVAILABLE') {
+                        alert('App Updated: New features available! Refresh to update.');
+                    }
+                });
+            }).catch(error => {
+                console.warn('SW registration failed:', error);
+            });
+        } else {
+            console.warn('Service Workers are not supported in this environment.');
+        }
 
         // Show the popup if the app is not installed
         document.addEventListener('DOMContentLoaded', () => {
