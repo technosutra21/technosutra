@@ -652,11 +652,6 @@ try {
         }
         
         // Apply iOS-specific color enhancements
-        function applyIOSColorFix() {
-            if (isIOSDevice()) {
-                log('Not applied iOS color enhancement fixes');
-            }
-        }
 
         // Start camera with optimization
         async function startCamera() {
@@ -692,7 +687,7 @@ try {
                 }
                 
                 elements.modelViewer.src = modelPath;
-                elements.modelViewer.setAttribute('ios-src', `models/model${config.modelId}.usdz`);
+                elements.modelViewer.setAttribute('ios-src', `usdz/modelo${config.modelId}.usdz`);
                 
                 state.modelLoaded = true;
                 updateARButtonState();
@@ -787,7 +782,6 @@ try {
                     showControls();
                     
                     // Apply iOS color fixes after model loads
-                    applyIOSColorFix();
                 });
 
                 elements.modelViewer.addEventListener('error', (event) => {
