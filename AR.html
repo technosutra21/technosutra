@@ -697,7 +697,7 @@ try {
         }
         async function loadModel() {
             try {
-                const modelPath = `models/model${config.modelId}.glb`;
+                const modelPath = `modelo${config.modelId}.glb`;
                 const response = await fetch(modelPath, { method: 'HEAD' });
                 
                 if (!response.ok) {
