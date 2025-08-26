@@ -603,8 +603,8 @@ try {
 
         // Load model with error handling
         async function loadModel() {
-            const modelSrc = `modelo${config.modelId}.glb`;
-            const usdzSrc = `usdz/modelo${config.modelId}.usdz`;
+            const modelSrc = `models/modelo${config.modelId}.glb`;
+            const usdzSrc = `models/usdz/modelo${config.modelId}.usdz`;
 
             log(`Loading model: ${modelSrc}, ${usdzSrc}`);
 
@@ -620,7 +620,7 @@ try {
                 }
 
                 elements.modelViewer.src = modelSrc;
-
+                elements.modelViewer.setAttribute('ios-src', usdzSrc);
                 
                 // Set AR scale
                 elements.modelViewer.style.setAttribute('--ar-scale', config.arScale.toString());
@@ -694,7 +694,7 @@ try {
         }
         async function loadModel() {
             try {
-                const modelPath = `modelo${config.modelId}.glb`;
+                const modelPath = `models/modelo${config.modelId}.glb`;
                 const response = await fetch(modelPath, { method: 'HEAD' });
                 
                 if (!response.ok) {

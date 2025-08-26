@@ -1791,7 +1791,7 @@
         // Função para verificar se um modelo existe
         async function checkModelExists(modelId) {
             try {
-                const response = await fetch(`modelo${modelId}.glb`, { method: 'HEAD' });
+                const response = await fetch(`models/modelo${modelId}.glb`, { method: 'HEAD' });
                 return response.ok;
             } catch {
                 return false;
@@ -1867,7 +1867,8 @@
                 <div class="model-viewer-container">
                     ${isAvailable ? `
                         <model-viewer
-                            src="modelo${chapter.id}.glb"
+                            src="models/modelo${chapter.id}.glb"
+                            ios-src="models/usdz/modelo${chapter.id}.usdz"
                             alt="Modelo 3D - ${chapter.name}: ${chapter.title}"
                             camera-controls
                             loading="lazy"
@@ -1917,7 +1918,7 @@
 
         // Função para download do modelo - Enhanced for PWA mobile
         async function downloadModel(modelId) {
-            const modelFile = `modelo${modelId}.glb`;
+            const modelFile = `models/modelo${modelId}.glb`;
             const chapter = chapters[modelId - 1];
             const fileName = `${chapter?.name?.replace(/[^a-zA-Z0-9]/g, '_') || 'modelo'}_${modelId}.glb`;
             
@@ -2473,15 +2474,16 @@
                     
                     <!-- Visualizador 3D -->
                     <div style="${isMobile ? 'height: 40%;' : 'flex: 1;'} background: rgba(0,0,0,0.4); border-radius: 12px; border: 1px solid rgba(120,119,198,0.2); overflow: hidden;">
-                        <model-viewer
-                            src="modelo${modelId}.glb"
-                            alt="Modelo 3D - ${combinedData.name}: ${combinedData.title}"
-                            auto-rotate
-                            camera-controls
-                            environment-image="neutral"
-                            shadow-intensity="0.5"
-                            scale="1 1 1"
-                            orientation="0 0 -90"
+                    <model-viewer
+                    src="models/modelo${modelId}.glb"
+                    ios-src="models/usdz/modelo${modelId}.usdz"
+                    alt="Modelo 3D - ${combinedData.name}: ${combinedData.title}"
+                    auto-rotate
+                    camera-controls
+                    environment-image="neutral"
+                    shadow-intensity="0.5"
+                    scale="1 1 1"
+                    orientation="0 0 -90"
                             style="width: 100%; height: 100%; background: transparent;">
                             <div slot="poster" style="display: flex; align-items: center; justify-content: center; height: 100%; background: rgba(0,0,0,0.1);">
                                 <div style="text-align: center; color: #9ca3af;">
