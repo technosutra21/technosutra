@@ -628,13 +628,11 @@ try {
 
                 elements.modelViewer.src = modelSrc;
                 
-                // Use automatic GLB to USDZ conversion for iOS (model-viewer handles this automatically)
-                log(`Using automatic GLB to USDZ conversion for iOS QuickLook`);
-                
-                // Enhanced iOS QuickLook attributes for better quality
-                
-
-
+                // Set iOS-specific attributes for QuickLook
+                if (isIOSDevice()) {
+                    elements.modelViewer.setAttribute('ios-src', usdzSrc);
+                    log(`iOS USDZ model set: ${usdzSrc}`);
+                }
                 
                 // Set AR scale
                 elements.modelViewer.style.setProperty('--ar-scale', config.arScale.toString());
@@ -665,11 +663,7 @@ try {
         // Apply iOS-specific color enhancements
         function applyIOSColorFix() {
             if (isIOSDevice()) {
-
-            
-                elements.modelViewer.setAttribute('ios-src', usdzSrc);
-                
-                log('Applied aggressive iOS color enhancement fixes');
+                log('Applied iOS color enhancement fixes');
             }
         }
 
