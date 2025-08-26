@@ -626,11 +626,11 @@ try {
 
                 elements.modelViewer.src = modelSrc;
 
-                elements.modelViewer.setProperty('ios-src', usdzSrc);
+                elements.modelViewer.setAttribute('ios-src', usdzSrc);
 
                 
                 // Set AR scale
-                elements.modelViewer.style.setProperty('--ar-scale', config.arScale.toString());
+                elements.modelViewer.style.setAttribute('--ar-scale', config.arScale.toString());
                 log(`Model configured with AR scale ${config.arScale}x`);
 
                 return true;
