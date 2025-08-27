@@ -280,15 +280,24 @@ class ARExperienceController {
                 throw new Error(`Model ${this.config.modelId} not found`);
             }
 
+            // Initialize model viewer if it doesn't exist
             if (!this.elements.modelViewer) {
-                throw new Error('Model viewer not initialized');
+                this.log('Creating model viewer element');
+                this.elements.modelViewer = this.createModelViewer();
+                if (!this.elements.modelViewer) {
+                    throw new Error('Failed to create model viewer');
+                }
             }
 
             this.elements.modelViewer.src = modelSrc;
+            this.elements.modelViewer.setAttribute('ios-src', usdzSrc);
             
             // Set AR scale
             this.elements.modelViewer.style.setProperty('--ar-scale', this.config.arScale.toString());
             this.log(`Model configured with AR scale ${this.config.arScale}x`);
+
+            // Setup model event listeners
+            this.setupModelEventListeners();
 
             return true;
 
@@ -301,6 +310,106 @@ class ARExperienceController {
             this.updateARButtonState();
             return false;
         }
+    }
+
+    /**
+     * Create and configure the model viewer element
+     * @returns {Element} - The created model-viewer element
+     */
+    createModelViewer() {
+        const container = document.getElementById('model-viewer-container');
+        if (!container) {
+            this.log('Model viewer container not found');
+            return null;
+        }
+
+        // Use the integration script if available
+        if (typeof initARModelViewer === 'function') {
+            return initARModelViewer('model-viewer-container', this.config.modelId, {
+                onLoad: (modelId) => {
+                    this.log(`Model ${modelId} loaded via integration script`);
+                    this.state.modelLoaded = true;
+                    this.updateARButtonState();
+                    this.showControls();
+                },
+                onError: (modelId, event) => {
+                    this.log(`Model ${modelId} failed to load:`, event);
+                    this.state.modelLoaded = false;
+                    this.updateARButtonState();
+                }
+            });
+        }
+
+        // Fallback: create manually
+        const modelViewer = document.createElement('model-viewer');
+        
+        const attributes = {
+            'id': 'modelViewer',
+            'alt': `Modelo 3D Interativo - Techno Sutra AR - Capítulo ${this.config.modelId}`,
+            'camera-controls': '',
+            'touch-action': 'pan-y',
+            'ar': '',
+            'ar-modes': 'quick-look webxr scene-viewer',
+            'ar-scale': 'auto',
+            'ar-placement': 'floor',
+            'auto-rotate': '',
+            'rotation-per-second': '15deg',
+            'loading': 'eager',
+            'reveal': 'auto',
+            'field-of-view': '30deg',
+            'min-camera-orbit': 'auto 0deg auto',
+            'max-camera-orbit': 'auto 180deg auto',
+            'tone-mapping': 'linear',
+            'style': 'width: 100%; height: 100vh; background-color: transparent; --poster-color: transparent; position: fixed; top: 0; left: 0; z-index: 2;'
+        };
+
+        Object.entries(attributes).forEach(([key, value]) => {
+            if (value === '') {
+                modelViewer.setAttribute(key, '');
+            } else {
+                modelViewer.setAttribute(key, value);
+            }
+        });
+
+        container.appendChild(modelViewer);
+        return modelViewer;
+    }
+
+    /**
+     * Setup model event listeners
+     */
+    setupModelEventListeners() {
+        if (!this.elements.modelViewer) return;
+
+        this.elements.modelViewer.addEventListener('load', () => {
+            this.log('Model loaded successfully');
+            this.state.modelLoaded = true;
+            this.updateARButtonState();
+            this.showControls();
+        });
+
+        this.elements.modelViewer.addEventListener('error', (event) => {
+            this.log('Model loading error:', event);
+            this.state.modelLoaded = false;
+            this.updateARButtonState();
+        });
+
+        this.elements.modelViewer.addEventListener('progress', (event) => {
+            if (event.detail && event.detail.totalProgress !== undefined) {
+                this.updateProgressBar(event.detail.totalProgress * 100);
+            }
+        });
+
+        this.elements.modelViewer.addEventListener('ar-status', (event) => {
+            this.log('AR status:', event.detail.status);
+            if (event.detail.status === 'session-started') {
+                this.state.arSessionActive = true;
+                this.showStatus('Sessão AR iniciada', 'success');
+            } else if (event.detail.status === 'not-presenting') {
+                this.state.arSessionActive = false;
+                this.showStatus('Sessão AR encerrada', 'info');
+            }
+        });
     }
     
     /**
@@ -437,58 +546,8 @@ class ARExperienceController {
      * Setup event listeners for AR experience
      */
     setupEventListeners() {
-        if (this.elements.modelViewer) {
-            this.elements.modelViewer.addEventListener('load', () => {
-                this.log('Model loaded successfully');
-                this.state.modelLoaded = true;
-                this.updateARButtonState();
-                this.showControls();
-                
-                // Apply iOS color fixes after model loads
-                this.applyIOSColorFix();
-            });
-
-            this.elements.modelViewer.addEventListener('error', (event) => {
-                this.log(`Model error: ${event.detail || 'Unknown error'}`);
-                this.showStatus('Erro no modelo 3D', 'error');
-                this.state.modelLoaded = false;
-                this.updateARButtonState();
-            });
-
-            this.elements.modelViewer.addEventListener('progress', (event) => {
-                if (event.detail && typeof event.detail.totalProgress === 'number') {
-                    const progress = (event.detail.totalProgress * 100);
-                    this.updateProgressBar(progress);
-                    if (progress < 100) {
-                        this.log(`Loading: ${progress.toFixed(0)}%`);
-                    }
-                }
-            });
-
-            this.elements.modelViewer.addEventListener('ar-status', (event) => {
-                const status = event.detail?.status || 'unknown';
-                this.log(`AR Status: ${status}`);
-
-                switch(status) {
-                    case 'session-started':
-                        this.log('AR session started');
-                        this.state.arSessionActive = true;
-                        break;
-                    case 'object-placed':
-                        this.log('Object placed in AR');
-                        break;
-                    case 'failed':
-                        this.log('AR failed');
-                        this.showStatus('Falha no AR', 'error', 2000);
-                        this.state.arSessionActive = false;
-                        break;
-                    case 'not-presenting':
-                        this.log('Exited AR mode');
-                        this.state.arSessionActive = false;
-                        break;
-                }
-            });
-        }
+        // Model viewer event listeners are now handled in setupModelEventListeners()
+        // This method is reserved for other UI events
 
         // Model controls
         if (this.elements.resetCameraBtn) {

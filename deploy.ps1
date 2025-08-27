@@ -6,6 +6,7 @@ Write-Host "🚀 Starting deployment process..." -ForegroundColor Green
 # Add all changes
 Write-Host "📁 Adding all files..." -ForegroundColor Yellow
 git add .
+git add .
 
 # Check if there are changes to commit
 $status = git status --porcelain

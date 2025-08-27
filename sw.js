@@ -45,29 +45,59 @@ const EXTERNAL_ASSETS = [
 self.addEventListener('install', (event) => {
     console.log('SW: Installing service worker...');
 
-    // Pre-cache model, optional, and external assets
+    // Pre-cache only core assets to avoid blocking installation
     event.waitUntil(
-        Promise.all([
-            caches.open(CACHE_NAME).then((cache) => {
-                console.log('SW: Caching all core and optional assets');
-                return cache.addAll([...CORE_ASSETS, ...OPTIONAL_ASSETS]);
-            }),
-            caches.open(MODELS_CACHE).then((cache) => {
-                console.log('SW: Caching all model assets');
-                return cache.addAll(MODEL_ASSETS);
-            }),
-            caches.open(RUNTIME_CACHE).then((cache) => {
-                console.log('SW: Caching all external assets');
-                return cache.addAll(EXTERNAL_ASSETS);
-            })
-        ]).then(() => {
-            console.log('SW: Aggressive caching completed');
+        caches.open(CACHE_NAME).then((cache) => {
+            console.log('SW: Caching core assets');
+            return cache.addAll(CORE_ASSETS.filter(asset => {
+                // Filter out assets that might not exist yet
+                return !asset.includes('icon-') || asset === '/icon.png';
+            }));
+        }).then(() => {
+            console.log('SW: Core caching completed');
             self.skipWaiting();
+            
+            // Cache optional assets in background without blocking installation
+            Promise.all([
+                cacheAssetsWithFallback(OPTIONAL_ASSETS, CACHE_NAME, 'optional assets'),
+                cacheAssetsWithFallback(EXTERNAL_ASSETS, RUNTIME_CACHE, 'external assets')
+            ]).then(() => {
+                console.log('SW: Background caching completed');
+            }).catch(error => {
+                console.warn('SW: Background caching failed:', error);
+            });
+            
         }).catch(error => {
-            console.error('SW: Aggressive caching failed:', error);
+            console.error('SW: Core caching failed:', error);
+            self.skipWaiting(); // Still proceed even if caching fails
         })
     );
 });
+
+// Helper function to cache assets with error handling
+async function cacheAssetsWithFallback(assets, cacheName, description) {
+    try {
+        const cache = await caches.open(cacheName);
+        console.log(`SW: Caching ${description}`);
+        
+        // Cache assets individually to avoid total failure
+        const promises = assets.map(async (asset) => {
+            try {
+                const response = await fetch(asset);
+                if (response.ok) {
+                    await cache.put(asset, response);
+                }
+            } catch (error) {
+                console.warn(`SW: Failed to cache ${asset}:`, error.message);
+            }
+        });
+        
+        await Promise.allSettled(promises);
+        console.log(`SW: ${description} caching completed`);
+    } catch (error) {
+        console.warn(`SW: Failed to cache ${description}:`, error);
+    }
+}
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
@@ -278,14 +308,28 @@ async function getOfflineFallback(request) {
 
 // Message handling for force caching and other commands
 self.addEventListener('message', (event) => {
+    // Check if event.data exists and has the expected structure
+    if (!event.data || typeof event.data !== 'object') {
+        console.warn('SW: Received message with invalid data format:', event.data);
+        return;
+    }
+    
     const { type, data } = event.data;
+    
+    // Ensure type is defined
+    if (!type) {
+        console.warn('SW: Received message without type:', event.data);
+        return;
+    }
     
     switch (type) {
         case 'SKIP_WAITING':
+            console.log('SW: Received SKIP_WAITING command');
             self.skipWaiting();
             break;
             
         case 'CACHE_ALL_ASSETS':
+            console.log('SW: Received CACHE_ALL_ASSETS command');
             caches.open(CACHE_NAME).then(cache => {
                 cache.addAll([...CORE_ASSETS, ...OPTIONAL_ASSETS, ...MODEL_ASSETS, ...EXTERNAL_ASSETS]);
                 console.log('SW: All assets cached successfully');
