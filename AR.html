@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- SEO Meta Tags -->
     <title>Techno Sutra AR - Experiência Imersiva em Realidade Aumentada</title>
@@ -48,7 +48,6 @@
     <link rel="dns-prefetch" href="https://modelviewer.dev">
     <link rel="preconnect" href="https://ajax.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.css" crossorigin>
-    
 
     
     <!-- Critical CSS inline for faster rendering -->
@@ -66,18 +65,12 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             object-fit: cover;
-            z-index: -1;
-        }
-        
-        .controls {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100;
+            z-index: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: block !important;
         }
         
         model-viewer {
@@ -387,27 +380,41 @@
     
     <!-- 3D Model Viewer with optimizations -->
     <model-viewer
-        id="model-viewer"
+        id="modelViewer"
+        alt="Modelo 3D Interativo - Techno Sutra AR"
         camera-controls
-        auto-rotate
-        ar
-        ar-modes="webxr scene-viewer quick-look"
-        ar-scale="auto"
-        shadow-intensity="1"
-        environment-image="neutral"
-        loading="lazy"
-        reveal="interaction"
         touch-action="pan-y"
-        min-camera-orbit="auto auto 50%"
-        max-camera-orbit="auto auto 150%"
-        min-field-of-view="30deg"
-        max-field-of-view="90deg">
-        <div slot="error">Error loading 3D model</div>
-        <div slot="poster">Loading...</div>
-        <button slot="ar-button" id="ar-button">
-            <span>📱</span>
-            <span>View in AR</span>
+        ar
+        ar-modes="quick-look webxr scene-viewer"
+        ar-scale="auto"
+        ar-placement="floor"
+        auto-rotate
+        rotation-per-second="15deg"
+        loading="eager"
+        reveal="auto"
+        field-of-view="30deg"
+        min-camera-orbit="auto 0deg auto"
+        max-camera-orbit="auto 180deg auto"
+        tone-mapping="linear"
+        
+        style="background-color: transparent; --poster-color: transparent;">
+
+        <!-- Custom AR button -->
+        <button slot="ar-button" class="ar-button" id="ar-button">
+            <span>🛞</span>
+            <span>Ver em AR</span>
         </button>
+
+        <!-- Progress bar -->
+        <div slot="progress-bar" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 200px; height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 2px; overflow: hidden;">
+            <div style="height: 100%; background: linear-gradient(90deg, #4285f4, #34a853); border-radius: 2px; width: 0%; transition: width 0.3s ease;" id="progress-fill"></div>
+        </div>
+
+        <!-- AR prompt -->
+        <div slot="ar-prompt" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 24px 32px; border-radius: 16px; text-align: center; z-index: 200; backdrop-filter: blur(10px);">
+            <div style="font-size: 32px; margin-bottom: 12px;">📱</div>
+            <div style="font-size: 16px; font-weight: 500;">Mova o dispositivo para encontrar uma superfície</div>
+        </div>
     </model-viewer>
     
     <!-- Model controls -->
@@ -447,7 +454,7 @@
         
         function cacheElements() {
             elements.cameraFeed = document.getElementById('camera-feed');
-            elements.modelViewer = document.querySelector('#model-viewer');
+            elements.modelViewer = document.querySelector('#modelViewer');
             elements.statusDiv = document.getElementById('status');
             elements.loadingOverlay = document.getElementById('loading-overlay');
             elements.cameraPermission = document.getElementById('camera-permission');
@@ -592,11 +599,6 @@ try {
                 if (arIcon) arIcon.textContent = '📱';
                 if (arText) arText.textContent = 'Ver em AR';
             }
-            
-            // Also update the accessibility label
-            const statusText = elements.arButton.disabled ? 
-                'AR não disponível' : 'Abrir experiência em Realidade Aumentada';
-            elements.arButton.setAttribute('aria-label', statusText);
         }
 
         // Update progress bar
@@ -608,8 +610,8 @@ try {
 
         // Load model with error handling
         async function loadModel() {
-            const modelSrc = `models/modelo${config.modelId}.glb`;
-            const usdzSrc = `models/usdz/modelo${config.modelId}.usdz`;
+            const modelSrc = `modelo${config.modelId}.glb`;
+            const usdzSrc = `usdz/modelo${config.modelId}.usdz`;
 
             log(`Loading model: ${modelSrc}, ${usdzSrc}`);
 
@@ -625,7 +627,14 @@ try {
                 }
 
                 elements.modelViewer.src = modelSrc;
-                elements.modelViewer.setAttribute('ios-src', usdzSrc);
+                
+                // Use automatic GLB to USDZ conversion for iOS (model-viewer handles this automatically)
+                log(`Using automatic GLB to USDZ conversion for iOS QuickLook`);
+                
+                // Enhanced iOS QuickLook attributes for better quality
+                
+
+
                 
                 // Set AR scale
                 elements.modelViewer.style.setProperty('--ar-scale', config.arScale.toString());
@@ -654,46 +663,59 @@ try {
         }
         
         // Apply iOS-specific color enhancements
+        function applyIOSColorFix() {
+            if (isIOSDevice()) {
+
+            
+                elements.modelViewer.setAttribute('ios-src', usdzSrc);
+                
+                log('Applied aggressive iOS color enhancement fixes');
+            }
+        }
 
         // Start camera with optimization
         async function startCamera() {
             try {
-                // Add timeout promise
-                const timeoutPromise = new Promise((_, reject) => {
-                    setTimeout(() => reject(new Error('Camera timeout')), 10000);
-                });
+                log('Starting camera...');
 
-                const streamPromise = navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: 'environment',
-                        width: { ideal: 1920, min: 640 },
-                        height: { ideal: 1080, min: 480 },
-                        frameRate: { min: 15, ideal: 30 }
-                    }
-                });
+                state.cameraStream = await navigator.mediaDevices.getUserMedia(config.cameraConstraints);
 
-                // Race between camera initialization and timeout
-                const stream = await Promise.race([streamPromise, timeoutPromise]);
-                
                 if (!elements.cameraFeed) {
-                    throw new Error('Camera feed element not found');
+                    throw new Error('Video element not found');
                 }
 
-                elements.cameraFeed.srcObject = stream;
+                elements.cameraFeed.srcObject = state.cameraStream;
+                elements.cameraFeed.style.display = 'block';
+                elements.cameraFeed.style.opacity = '1';
+                elements.cameraFeed.style.background = 'transparent';
+
+                await new Promise((resolve, reject) => {
+                    elements.cameraFeed.onloadedmetadata = () => {
+                        elements.cameraFeed.play().then(resolve).catch(reject);
+                    };
+                    elements.cameraFeed.onerror = reject;
+                    setTimeout(reject, 8000);
+                });
+
+                const videoTracks = state.cameraStream.getVideoTracks();
+                const cameraLabel = videoTracks.length > 0 ? videoTracks[0].label : 'Unknown';
+                log(`Camera started: ${cameraLabel}`);
                 
-                // Add play promise with timeout
-                const playPromise = elements.cameraFeed.play();
-                await Promise.race([
-                    playPromise,
-                    new Promise((_, reject) => setTimeout(() => reject(new Error('Play timeout')), 5000))
-                ]);
+                // Hide gradient background when camera starts
+                document.body.style.background = 'transparent';
                 
-                state.cameraStream = stream;
-                log('Camera started successfully');
                 return true;
+
             } catch (error) {
                 log(`Camera error: ${error.message}`);
-                handleCameraError(error);
+
+                // Show gradient background only when camera fails
+                if (elements.cameraFeed) {
+                    elements.cameraFeed.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                    elements.cameraFeed.style.opacity = '1';
+                }
+                document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+
                 return false;
             }
         }
@@ -759,6 +781,7 @@ try {
                     showControls();
                     
                     // Apply iOS color fixes after model loads
+                    applyIOSColorFix();
                 });
 
                 elements.modelViewer.addEventListener('error', (event) => {
@@ -898,9 +921,9 @@ try {
                         elements.cameraPermission.classList.remove('hidden');
                     }
                     // Ensure background gradient is visible when camera fails
-                    document.body.style.background = 'linear-gradient(135deg, #820909 0%, #764ba2 100%)';
+                    document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
                     if (elements.cameraFeed) {
-                        elements.cameraFeed.style.background = 'linear-gradient(135deg, #820909 70%, #54084a 30%)';
+                        elements.cameraFeed.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
                     }
                 } else {
                     // Camera started successfully, ensure it's visible
