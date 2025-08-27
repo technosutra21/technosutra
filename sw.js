@@ -29,8 +29,8 @@ const OPTIONAL_ASSETS = [
 // Generate model URLs (1-56)
 const MODEL_ASSETS = [];
 for (let i = 1; i <= 56; i++) {
-    MODEL_ASSETS.push(`/models/model${i}.glb`);
-    MODEL_ASSETS.push(`/models/model${i}.usdz`);
+    MODEL_ASSETS.push(`/models/modelo${i}.glb`);
+    MODEL_ASSETS.push(`/models/usdz/modelo${i}.usdz`);
     MODEL_ASSETS.push(`/images/chapter${i}.jpg`);
 }
 

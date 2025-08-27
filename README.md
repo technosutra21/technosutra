@@ -1,38 +1,92 @@
-# Techno Sutra
+# Techno Sutra AR
 
 ## Visão Geral do Projeto
 
-Techno Sutra é um projeto que visa popularizar o uso de dispositivos tecnológicos portáteis, como smartphones, para fins dhármicos e de conscientização. Através do desenvolvimento de um aplicativo com recursos de realidade aumentada (AR), o projeto tem como objetivo adornar permanentemente as ruas da cidade de Águas da Prata, SP, com figuras 3D inspiradas nos Sutras Budistas, especialmente aqueles relacionados ao Bodhisattva Manjusri, como o Sutra Gandahyuha.
+Techno Sutra AR é uma experiência imersiva em realidade aumentada que explora os 56 capítulos do Avatamsaka Sutra (Sutra Gandavyuha) através de modelos 3D interativos. O projeto visa popularizar o uso de dispositivos tecnológicos portáteis, como smartphones, para fins dhármicos e de conscientização, criando uma ponte entre a tradição budista e a tecnologia moderna.
 
-O projeto utilizará o Resumo Detalhado do Sutra da Matriz-Tronco como referência para a criação de uma rede de 55 Pontos de Conexão, um para cada capítulo do texto mencionado. O peregrino pode seguir os passos de Suddhana por um caminho físico. Ao chegar a esses Pontos de Conexão, eles encontrarão um código QR que, ao ser escaneado, exibirá na tela de seus celulares, sobrepondo a imagem da câmera, um personagem e outras informações sobre um capítulo específico do sutra mencionado.
+Através do desenvolvimento de uma aplicação web progressiva (PWA) com recursos de realidade aumentada (AR), o projeto permite que usuários visualizem modelos 3D representando os diferentes capítulos e personagens do Sutra, tanto em uma galeria virtual quanto em seu ambiente real através da câmera do dispositivo.
+
+O projeto utiliza o Resumo Detalhado do Sutra da Matriz-Tronco como referência para a criação de uma rede de 56 Pontos de Conexão, um para cada capítulo do texto. Os usuários podem seguir os passos de Suddhana por um caminho físico ou virtual. Ao chegar a esses Pontos de Conexão, eles encontrarão um código QR que, ao ser escaneado, exibirá na tela de seus dispositivos, sobrepondo a imagem da câmera, um personagem 3D e outras informações sobre um capítulo específico do sutra.
 
 ## Recursos
 
-* **Realidade Aumentada:** Exibição de figuras 3D e vídeos em smartphones através da leitura de códigos QR.
+* **Realidade Aumentada:** Visualização de modelos 3D em smartphones através da tecnologia WebXR e model-viewer.
+* **Experiência Imersiva:** Interface intuitiva e envolvente que combina elementos visuais, sonoros e interativos.
+* **Aplicação Web Progressiva (PWA):** Funciona offline e pode ser instalada como um aplicativo nativo.
 * **Peregrinação Interativa:** Uma jornada inspirada em rotas de peregrinação antigas, como as do Japão e o Caminho da Fé no Brasil.
-* **Conteúdo Dhármico:** Textos e imagens baseados no Sutra Gandahyuha e outros textos budistas.
-* **Localização:** O projeto será implementado em Águas da Prata, SP, uma cidade turística conhecida por suas águas termais e trilhas de peregrinação.
+* **Conteúdo Dhármico:** Textos e modelos 3D baseados no Sutra Gandavyuha e outros textos budistas.
+* **Multilíngue:** Suporte para português e inglês, com possibilidade de expansão para outros idiomas.
+* **Responsivo:** Funciona em diversos dispositivos, desde smartphones até tablets e desktops.
 
-## Estrutura do Repositório
+## Tecnologias Utilizadas
 
-* **`/chapters`**: Contém os capítulos do Sutra Gandahyuha em formatos PDF, Markdown e CSV.
-* **`/characters`**: Contém perfis de personagens e scripts para processamento de dados.
-* **`/css`**: Contém as folhas de estilo para o frontend da aplicação.
-* **`/js`**: Contém o código JavaScript para o frontend da aplicação, incluindo a lógica de AR.
-* **`/qr_codes`**: Contém os códigos QR que serão usados para acionar as experiências de AR.
-* **`/usdz`**: Contém os modelos 3D no formato USDZ para a visualização em AR.
-* **`*.py`**: Scripts em Python para tarefas como implantação, processamento de dados e geração de códigos QR.
-* **`index.html`**: O arquivo principal da aplicação web.
+* **Frontend:** HTML5, CSS3, JavaScript (ES6+)
+* **Realidade Aumentada:** model-viewer, WebXR
+* **PWA:** Service Workers, Web App Manifest
+* **3D Models:** glTF/GLB, USDZ (para iOS)
+* **Ferramentas de Desenvolvimento:** Python (scripts de processamento)
 
-## Passos do Projeto
+## Estrutura do Projeto
 
-1. **Edição do Banco de Dados:** Coleta e organização de todos os textos e imagens a serem utilizados no projeto.
-2. **Criação da Rota de Peregrinação:** Definição de 55 Pontos de Conexão em locais físicos.
-3. **Edição Completa do Banco de Dados:** Inclusão das localizações GPS e associação de textos e imagens a cada Ponto de Conexão.
-4. **Desenvolvimento da Aplicação:** Criação da plataforma web/app.
-5. **Promoção, Lançamento e Manutenção:** Divulgação, lançamento e manutenção da aplicação por no mínimo 1 ano.
+* **`/AR.html`**: Página de experiência em realidade aumentada.
+* **`/galeria.html`**: Galeria de modelos 3D interativos.
+* **`/index.html`**: Página inicial da aplicação.
+* **`/offline.html`**: Página exibida quando o usuário está offline.
+* **`/css/`**: Folhas de estilo para o frontend da aplicação.
+  * **`/css/shared.css`**: Estilos compartilhados entre todas as páginas.
+  * **`/css/main.css`**: Estilos específicos para a página inicial.
+* **`/js/`**: Código JavaScript para o frontend da aplicação.
+  * **`/js/utils.js`**: Utilitários compartilhados (tema, idioma, PWA).
+  * **`/js/ar-experience.js`**: Controlador da experiência AR.
+  * **`/js/gallery.js`**: Controlador da galeria de modelos.
+* **`/models/`**: Modelos 3D no formato GLB para visualização em AR.
+* **`/usdz/`**: Modelos 3D no formato USDZ para visualização em iOS.
+* **`/qr_codes/`**: Códigos QR para acesso aos modelos AR.
+* **`/summaries/`**: Resumos dos capítulos do Sutra em diferentes formatos.
+* **`/sw.js`**: Service Worker para funcionalidade offline.
+* **`/manifest.json`**: Manifesto da aplicação web progressiva.
+
+## Instalação e Uso
+
+1. Clone o repositório:
+   ```
+   git clone https://github.com/seu-usuario/technosutra.git
+   ```
+
+2. Navegue até o diretório do projeto:
+   ```
+   cd technosutra
+   ```
+
+3. Inicie um servidor local (exemplo com Python):
+   ```
+   python -m http.server 8000
+   ```
+
+4. Acesse a aplicação em seu navegador:
+   ```
+   http://localhost:8000
+   ```
+
+Para uma experiência completa de AR, recomenda-se acessar a aplicação em um dispositivo móvel com suporte a WebXR ou através de um servidor HTTPS.
+
+## Contribuição
+
+Contribuições são bem-vindas! Se você deseja contribuir com o projeto, siga estas etapas:
+
+1. Faça um fork do repositório
+2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
+3. Faça commit de suas alterações (`git commit -m 'Adiciona nova feature'`)
+4. Faça push para a branch (`git push origin feature/nova-feature`)
+5. Abra um Pull Request
+
+## Licença
+
+Este projeto está licenciado sob a licença MIT - veja o arquivo LICENSE para detalhes.
 
 ## Visão Budista
 
-Techno Buddha, com seus 56 Pontos de Conexão relacionados aos capítulos do Sutra Gandavyuha, será uma trilha aberta ou teia mágica para todos com curiosidade e um dispositivo móvel. Este projeto serve como uma expansão da realidade para os ensinamentos, com o objetivo de utilizar a realidade virtual para avançar em direção à atenção plena e à compaixão infinita.
+Techno Sutra AR, com seus 56 Pontos de Conexão relacionados aos capítulos do Sutra Gandavyuha, serve como uma ponte entre a tradição budista milenar e a tecnologia contemporânea. Este projeto utiliza a realidade aumentada como um meio hábil (upaya) para tornar os ensinamentos mais acessíveis e envolventes, convidando os usuários a explorar os conceitos de interdependência, compaixão e sabedoria através de uma experiência imersiva e interativa.
+
+A jornada de Suddhana, representada nos modelos 3D e nos textos, simboliza a busca espiritual universal e o caminho para a iluminação, agora acessível através da tecnologia moderna. O projeto não busca substituir os métodos tradicionais de estudo e prática, mas complementá-los, oferecendo uma nova porta de entrada para aqueles que possam se beneficiar de uma abordagem mais visual e interativa dos ensinamentos budistas.
 
