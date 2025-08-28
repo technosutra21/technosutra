@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechnoSutra - STEM Array</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --cyber-primary: #ff0000;
+            --cyber-secondary: #ff0080;
+            --cyber-accent: #ffff00;
+            --cyber-dark: #0a0a0a;
+            --cyber-darker: #000000;
+            --cyber-purple: #00ff73;
+            --cyber-green: #00ff41;
+            --cyber-blue: #600000;
+            --neon-glow: 0 0 20px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            box-sizing: border-box;
+	    overflow: hidden;
+	
+        }
+        
+        html, body {
+	    overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background: radial-gradient(ellipse at center, #1a0033 0%, #000000 100%);
+            font-family: 'Rajdhani', sans-serif;
+        }
+        
+        .cyber-container {
+	        overflow: hidden;
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .cyber-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 98px,
+                    rgba(0, 255, 255, 0.02) 100px
+                );
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .fullscreen-iframe {
+            position: absolute;
+            top: -9px; /* Reduced offset to minimize content cut-off */
+            left: 0;
+            width: 100%;
+            height: calc(100% + 30px); /* Compensate for top offset */
+            border: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            z-index: 10;
+            filter: 
+                contrast(1.1) 
+                saturate(1.2) 
+                brightness(0.95)
+                hue-rotate(5deg);
+            transition: filter 0.3s ease;
+        }
+        
+        .fullscreen-iframe:hover {
+            filter: 
+                contrast(1.15) 
+                saturate(1.3) 
+                brightness(1)
+                hue-rotate(10deg);
+        }
+        
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at center, rgba(0, 255, 255, 0.1) 0%, var(--cyber-darker) 70%),
+                linear-gradient(45deg, var(--cyber-darker) 0%, #330000 50%, var(--cyber-darker) 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000000;
+            transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+            backdrop-filter: blur(20px);
+        }
+        
+        .loading-content {
+            text-align: center;
+            font-family: 'Orbitron', monospace;
+            color: var(--cyber-primary);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            position: relative;
+        }
+        
+        .loading-content::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            background: 
+                linear-gradient(45deg, var(--cyber-primary), var(--cyber-secondary), var(--cyber-purple)) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: exclude;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            animation: borderGlow 2s linear infinite;
+        }
+        
+        .cyber-spinner {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+        
+        .cyber-spinner::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            animation: cyberSpin 1.5s linear infinite;
+        }
+        
+        .cyber-spinner::before {
+            width: 100%;
+            height: 100%;
+            border: 3px solid transparent;
+            border-top: 3px solid var(--cyber-primary);
+            border-right: 3px solid var(--cyber-secondary);
+            box-shadow: var(--neon-glow) var(--cyber-primary);
+        }
+        
+        .cyber-spinner::after {
+            width: 60px;
+            height: 60px;
+            top: 10px;
+            left: 10px;
+            border: 2px solid transparent;
+            border-bottom: 2px solid var(--cyber-purple);
+            border-left: 2px solid var(--cyber-accent);
+            animation-direction: reverse;
+            animation-duration: 1s;
+        }
+        
+        .loading-text {
+            font-size: 40px;
+            font-weight: 1200;
+            animation: textPulse 2s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+        
+        .loading-subtitle {
+            font-size: 12px;
+            font-weight: 300;
+            color: var(--cyber-secondary);
+            text-shadow: 0 0 10px var(--cyber-secondary);
+            opacity: 0.8;
+            animation: subtitleFloat 3s ease-in-out infinite;
+        }
+        
+        .cyber-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 1;
+            animation: gridMove 20s linear infinite;
+        }
+        
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.95);
+        }
+        
+        /* CSS to remove Wix elements */
+        .fullscreen-iframe::after {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background: var(--cyber-darker);
+            z-index: 1000;
+            pointer-events: none;
+        }
+        
+        @keyframes cyberSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes textPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+        
+        @keyframes subtitleFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes borderGlow {
+            0%, 100% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(180deg); }
+        }
+        
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .loading-text {
+                font-size: 16px;
+            }
+            .cyber-spinner {
+                width: 60px;
+                height: 60px;
+            }
+            .cyber-spinner::after {
+                width: 40px;
+                height: 40px;
+                top: 10px;
+                left: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .loading-content {
+                letter-spacing: 2px;
+            }
+            .loading-text {
+                font-size: 14px;
+            }
+        }
+
+        /* Desktop Back Button */
+        .desktop-back-btn {
+            position: fixed;
+            top: 0.4%;
+            left: 17%;
+            z-index: 2000;
+            background: rgba(15, 15, 15, 0.9);
+            border: 2px solid var(--cyber-primary);
+            color: var(--cyber-primary);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 0.1em;
+            text-decoration: none;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px var(--cyber-primary);
+            box-shadow: var(--neon-glow) var(--cyber-primary);
+        }
+
+        .desktop-back-btn:hover {
+            background: rgba(255, 0, 0, 0.1);
+            border-color: var(--cyber-secondary);
+            color: var(--cyber-secondary);
+            transform: translateY(-2px) scale(1.05);
+            text-shadow: 0 0 15px var(--cyber-secondary);
+            box-shadow: var(--neon-glow) var(--cyber-secondary);
+        }
+
+        /* Hide back button on mobile */
+        @media (max-width: 768px) {
+            .desktop-back-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Desktop Back Button -->
+    <a href="index.html" class="desktop-back-btn">
+        ← voltar
+    </a>
+
+    <div class="cyber-container">
+        <div class="cyber-grid"></div>
+        
+        <!-- Loading Screen -->
+        <div id="loadingScreen" class="loading-screen">
+            <div class="loading-content">
+                <div class="cyber-spinner"></div>
+                <div class="loading-text">Iniciando TechnoSutra</div>
+                <div class="loading-subtitle">Conectando ao Dharma Digital...</div>
+            </div>
+        </div>
+        
+        <!-- Full-page iframe -->
+        <iframe 
+            id="mainFrame"
+            class="fullscreen-iframe"
+            src="https://technosutra84.wixstudio.com/stem-array"
+            title="TechnoSutra - STEM Array"
+            allowfullscreen
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-downloads allow-modals allow-top-navigation"
+            onload="hideLoading()">
+        </iframe>
+    </div>
+    
+    <script>
+        // Hide loading screen when iframe loads
+        function hideLoading() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            loadingScreen.classList.add('hidden');
+            
+            // Remove loading screen from DOM after transition
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 800);
+            
+            // Remove Wix ads and unwanted elements after iframe loads
+            setTimeout(() => {
+                removeWixElements();
+            }, 1500);
+        }
+        
+        // Function to remove Wix ads and unwanted elements
+        function removeWixElements() {
+            const iframe = document.getElementById('mainFrame');
+            
+            try {
+                // Try to access iframe content (may fail due to CORS)
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                
+                // Remove Wix ads banner
+                const wixAds = iframeDoc.querySelectorAll('[id*="WIX_ADS"], [class*="wix-ads"], [data-wix-ads], .NI6sSq, [class*="freemium"]');
+                wixAds.forEach(ad => {
+                    ad.style.display = 'none !important';
+                    ad.remove();
+                });
+                
+                // Remove white canvas/background elements
+                const whiteElements = iframeDoc.querySelectorAll('[style*="background-color: rgb(255, 255, 255)"], [style*="background: white"], [style*="background: #fff"], [style*="background: #ffffff"]');
+                whiteElements.forEach(el => {
+                    el.style.background = 'transparent !important';
+                    el.style.backgroundColor = 'transparent !important';
+                });
+                
+                // Adjust body and html background
+                if (iframeDoc.body) {
+                    iframeDoc.body.style.background = 'transparent !important';
+                    iframeDoc.body.style.backgroundColor = 'transparent !important';
+                }
+                
+                if (iframeDoc.documentElement) {
+                    iframeDoc.documentElement.style.background = 'transparent !important';
+                    iframeDoc.documentElement.style.backgroundColor = 'transparent !important';
+                }
+                
+            } catch (e) {
+                // CORS prevention - inject CSS instead
+                console.log('Using CSS injection method for Wix removal');
+                injectRemovalCSS();
+            }
+        }
+        
+        // Inject CSS to remove Wix elements (CORS-safe method)
+        function injectRemovalCSS() {
+            const style = document.createElement('style');
+            style.textContent = `
+                iframe {
+                    margin-top: -30px !important;
+                    height: calc(100% + 30px) !important;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Fallback: hide loading screen after 8 seconds if iframe doesn't load
+        setTimeout(() => {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (!loadingScreen.classList.contains('hidden')) {
+                hideLoading();
+            }
+        }, 8000);
+        
+        // Handle iframe errors with cyberpunk styling
+        document.getElementById('mainFrame').onerror = function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const loadingContent = loadingScreen.querySelector('.loading-content');
+            loadingContent.innerHTML = `
+                <div class="loading-text" style="color: var(--cyber-secondary);">CONEXÃO PERDIDA</div>
+                <div class="loading-subtitle">Sistema Offline - <a href="https://technosutra84.wixstudio.com/stem-array" target="_blank" style="color: var(--cyber-primary); text-decoration: none;">Acesso Direto</a></div>
+            `;
+        };
+        
+        // Enhanced context menu prevention
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+        
+        // Handle window resize with enhanced responsiveness
+        window.addEventListener('resize', function() {
+            const iframe = document.getElementById('mainFrame');
+            iframe.style.width = '100%';
+            iframe.style.height = 'calc(100% + 30px)';
+            iframe.style.top = '-30px';
+        });
+        
+        // Periodic cleanup of Wix elements
+        setInterval(() => {
+            removeWixElements();
+        }, 5000);
+        
+        // Add cyberpunk visual effects
+        function addCyberEffects() {
+            // Create floating particles
+            for (let i = 0; i < 20; i++) {
+                createFloatingParticle();
+            }
+        }
+        
+        function createFloatingParticle() {
+            const particle = document.createElement('div');
+            particle.style.cssText = `
+                position: fixed;
+                width: 2px;
+                height: 2px;
+                background: var(--cyber-primary);
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 5;
+                animation: float ${Math.random() * 10 + 5}s linear infinite;
+                left: ${Math.random() * 100}%;
+                top: ${Math.random() * 100}%;
+                box-shadow: 0 0 6px var(--cyber-primary);
+            `;
+            
+            document.body.appendChild(particle);
+            
+            // Remove particle after animation
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, 15000);
+        }
+        
+        // Add CSS animation for particles
+        const particleStyle = document.createElement('style');
+        particleStyle.textContent = `
+            @keyframes float {
+                0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+                10% { opacity: 1; }
+                90% { opacity: 1; }
+                100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(particleStyle);
+        
+        // Initialize effects after page load
+        window.addEventListener('load', () => {
+            setTimeout(addCyberEffects, 2000);
+        });
+    </script>
+</body>
+</html>
