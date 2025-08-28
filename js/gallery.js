@@ -51,29 +51,34 @@ class GalleryController {
     }
     
     /**
-     * Load model data from JSON file or API
+     * Load model data from CSV file or fallback to generated data
      */
     async loadModelData() {
         try {
-            // Available models based on actual GLB files (missing: 7, 8, 27, 43, 52)
-            const unavailableModels = [7, 8, 27, 43, 52];
+            // Try to load characters data from CSV
+            let charactersData = await this.loadCharactersData();
+            
+            // Available models based on actual GLB files (missing: 8, 27, 52)
+            const unavailableModels = [8, 27, 52];
             const availableModels = Array.from({ length: 56 }, (_, i) => i + 1)
                 .filter(id => !unavailableModels.includes(id));
             
             this.models = Array.from({ length: 56 }, (_, i) => {
                 const modelNumber = i + 1;
                 const isAvailable = availableModels.includes(modelNumber);
+                const characterData = charactersData.find(c => c.capitulo == modelNumber);
                 
                 return {
                     id: modelNumber,
-                    title: `Capítulo ${modelNumber}`,
-                    subtitle: `Avatamsaka Sutra - Parte ${modelNumber}`,
-                    description: `Modelo 3D interativo representando o capítulo ${modelNumber} do Avatamsaka Sutra.`,
+                    title: characterData ? characterData.Nome : `Capítulo ${modelNumber}`,
+                    subtitle: characterData ? characterData.Ensinamento : `Avatamsaka Sutra - Parte ${modelNumber}`,
+                    description: characterData ? characterData['Desc. Personagem'] : `Modelo 3D interativo representando o capítulo ${modelNumber} do Avatamsaka Sutra.`,
                     category: this.getDeterministicCategory(modelNumber),
                     available: isAvailable,
                     modelPath: `./models/modelo${modelNumber}.glb`,
-                    usdzPath: `./models/usdz_files/modelo${modelNumber}.usdz`,
-                    thumbnail: `thumbnails/thumb${modelNumber}.jpg`
+                    usdzPath: `./usdz/modelo${modelNumber}.usdz`,
+                    thumbnail: `thumbnails/thumb${modelNumber}.jpg`,
+                    characterData: characterData || {}
                 };
             });
             
@@ -82,8 +87,106 @@ class GalleryController {
             
         } catch (error) {
             console.error('Error loading model data:', error);
-            throw new Error('Failed to load model data');
+            // Create fallback data if CSV loading fails
+            await this.loadFallbackData();
         }
+    }
+
+    /**
+     * Load characters data from CSV file
+     */
+    async loadCharactersData() {
+        try {
+            const response = await fetch('./summaries/characters.csv');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const csvText = await response.text();
+            return this.parseCSV(csvText);
+        } catch (error) {
+            console.warn('Could not load characters.csv:', error);
+            return [];
+        }
+    }
+
+    /**
+     * Parse CSV text into array of objects
+     */
+    parseCSV(csvText) {
+        const lines = csvText.split('\n');
+        const headers = lines[0].split(',').map(h => h.replace(/"/g, ''));
+        const data = [];
+        
+        for (let i = 1; i < lines.length; i++) {
+            const line = lines[i];
+            if (line.trim()) {
+                const values = this.parseCSVLine(line);
+                if (values.length === headers.length) {
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header] = values[index] || '';
+                    });
+                    data.push(row);
+                }
+            }
+        }
+        
+        return data;
+    }
+
+    /**
+     * Parse a single CSV line considering quoted values
+     */
+    parseCSVLine(line) {
+        const result = [];
+        let current = '';
+        let inQuotes = false;
+        
+        for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            
+            if (char === '"') {
+                inQuotes = !inQuotes;
+            } else if (char === ',' && !inQuotes) {
+                result.push(current);
+                current = '';
+            } else {
+                current += char;
+            }
+        }
+        
+        result.push(current);
+        return result;
+    }
+
+    /**
+     * Load fallback data when CSV is not available
+     */
+    async loadFallbackData() {
+        const unavailableModels = [8, 27, 52];
+        const availableModels = Array.from({ length: 56 }, (_, i) => i + 1)
+            .filter(id => !unavailableModels.includes(id));
+        
+        this.models = Array.from({ length: 56 }, (_, i) => {
+            const modelNumber = i + 1;
+            const isAvailable = availableModels.includes(modelNumber);
+            
+            return {
+                id: modelNumber,
+                title: `Capítulo ${modelNumber}`,
+                subtitle: `Avatamsaka Sutra - Parte ${modelNumber}`,
+                description: `Modelo 3D interativo representando o capítulo ${modelNumber} do Avatamsaka Sutra.`,
+                category: this.getDeterministicCategory(modelNumber),
+                available: isAvailable,
+                modelPath: `./models/modelo${modelNumber}.glb`,
+                usdzPath: `./usdz/modelo${modelNumber}.usdz`,
+                thumbnail: `thumbnails/thumb${modelNumber}.jpg`,
+                characterData: {}
+            };
+        });
+        
+        this.filteredModels = [...this.models];
+        this.updateDisplayedModels();
     }
     
     /**
@@ -240,6 +343,10 @@ class GalleryController {
                         <span>📱</span>
                         <span>Ver em AR</span>
                     </a>
+                    <button class="action-btn info-btn" onclick="showModelInfo(${model.id})" ${!model.available ? 'disabled' : ''}>
+                        <span>📖</span>
+                        <span>Ver Mais</span>
+                    </button>
                     <button class="action-btn" onclick="shareModel(${model.id})" ${!model.available ? 'disabled' : ''}>
                         <span>🛞</span>
                         <span>Compartilhar</span>
@@ -468,4 +575,254 @@ function shareModel(modelId) {
             }, 300);
         }, 3000);
     }
+}
+
+// Global function for showing model info modal (for inline onclick handlers)
+function showModelInfo(modelId) {
+    const gallery = window.gallery;
+    if (!gallery) return;
+    
+    const model = gallery.models.find(m => m.id === modelId);
+    if (!model) return;
+    
+    // Create modal overlay
+    const modalOverlay = document.createElement('div');
+    modalOverlay.className = 'modal-overlay';
+    modalOverlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+        backdrop-filter: blur(10px);
+    `;
+    
+    // Create modal content
+    const modalContent = document.createElement('div');
+    modalContent.className = 'modal-content';
+    modalContent.style.cssText = `
+        background: linear-gradient(135deg, rgba(15, 15, 15, 0.95), rgba(30, 30, 30, 0.95));
+        border: 1px solid rgba(120, 119, 198, 0.3);
+        border-radius: 16px;
+        padding: 30px;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        margin: 20px;
+        box-shadow: 0 20px 40px rgba(120, 119, 198, 0.2);
+        position: relative;
+    `;
+    
+    const characterData = model.characterData || {};
+    
+    modalContent.innerHTML = `
+        <button class="modal-close" style="
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(120, 119, 198, 0.2);
+            border: 1px solid rgba(120, 119, 198, 0.5);
+            color: #ffffff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        " onclick="this.closest('.modal-overlay').remove()">
+            ✕
+        </button>
+        
+        <div class="modal-header" style="margin-bottom: 25px; text-align: center;">
+            <div style="
+                font-size: 0.9rem;
+                color: #7877c6;
+                margin-bottom: 10px;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                opacity: 0.8;
+            ">Capítulo ${model.id}</div>
+            <h2 style="
+                color: #ffffff;
+                font-size: 1.8rem;
+                font-weight: 600;
+                margin-bottom: 8px;
+                line-height: 1.3;
+            ">${model.title}</h2>
+            ${characterData.Ocupação ? `<div style="
+                color: #9ca3af;
+                font-size: 1rem;
+                font-style: italic;
+                margin-bottom: 15px;
+            ">${characterData.Ocupação}</div>` : ''}
+        </div>
+        
+        <div class="modal-body">
+            ${characterData.Ensinamento ? `
+                <div class="info-section" style="margin-bottom: 20px;">
+                    <h3 style="
+                        color: #7877c6;
+                        font-size: 1.1rem;
+                        font-weight: 600;
+                        margin-bottom: 10px;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    "><span>🧘</span> Ensinamento Principal</h3>
+                    <p style="
+                        color: #e5e7eb;
+                        line-height: 1.6;
+                        font-size: 0.95rem;
+                    ">${characterData.Ensinamento}</p>
+                </div>
+            ` : ''}
+            
+            ${characterData['Desc. Personagem'] ? `
+                <div class="info-section" style="margin-bottom: 20px;">
+                    <h3 style="
+                        color: #7877c6;
+                        font-size: 1.1rem;
+                        font-weight: 600;
+                        margin-bottom: 10px;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    "><span>👤</span> Descrição do Personagem</h3>
+                    <p style="
+                        color: #e5e7eb;
+                        line-height: 1.6;
+                        font-size: 0.95rem;
+                    ">${characterData['Desc. Personagem']}</p>
+                </div>
+            ` : ''}
+            
+            ${characterData.Significado ? `
+                <div class="info-section" style="margin-bottom: 20px;">
+                    <h3 style="
+                        color: #7877c6;
+                        font-size: 1.1rem;
+                        font-weight: 600;
+                        margin-bottom: 10px;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    "><span>💫</span> Significado</h3>
+                    <p style="
+                        color: #e5e7eb;
+                        line-height: 1.6;
+                        font-size: 0.95rem;
+                    ">${characterData.Significado}</p>
+                </div>
+            ` : ''}
+            
+            ${characterData.Local ? `
+                <div class="info-section" style="margin-bottom: 20px;">
+                    <h3 style="
+                        color: #7877c6;
+                        font-size: 1.1rem;
+                        font-weight: 600;
+                        margin-bottom: 10px;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    "><span>📍</span> Local</h3>
+                    <p style="
+                        color: #e5e7eb;
+                        line-height: 1.6;
+                        font-size: 0.95rem;
+                    ">${characterData.Local}</p>
+                </div>
+            ` : ''}
+            
+            ${characterData['Resumo do Cap. (84000.co)'] ? `
+                <div class="info-section" style="margin-bottom: 20px;">
+                    <h3 style="
+                        color: #7877c6;
+                        font-size: 1.1rem;
+                        font-weight: 600;
+                        margin-bottom: 10px;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    "><span>📚</span> Resumo do Capítulo</h3>
+                    <p style="
+                        color: #e5e7eb;
+                        line-height: 1.6;
+                        font-size: 0.95rem;
+                    ">${characterData['Resumo do Cap. (84000.co)']}</p>
+                </div>
+            ` : ''}
+        </div>
+        
+        <div class="modal-actions" style="
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        ">
+            <a href="AR.html?model=${model.id}" class="modal-action-btn" style="
+                background: linear-gradient(135deg, #7877c6, #9d00ff);
+                color: white;
+                text-decoration: none;
+                border: none;
+                border-radius: 8px;
+                padding: 12px 24px;
+                font-size: 0.9rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            " ${!model.available ? 'style="opacity: 0.5; pointer-events: none;"' : ''}>
+                <span>📱</span>
+                <span>Ver em AR</span>
+            </a>
+            
+            <button class="modal-action-btn" onclick="shareModel(${model.id})" style="
+                background: rgba(120, 119, 198, 0.2);
+                color: #ffffff;
+                border: 1px solid rgba(120, 119, 198, 0.5);
+                border-radius: 8px;
+                padding: 12px 24px;
+                font-size: 0.9rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            " ${!model.available ? 'disabled' : ''}>
+                <span>🛞</span>
+                <span>Compartilhar</span>
+            </button>
+        </div>
+    `;
+    
+    modalOverlay.appendChild(modalContent);
+    document.body.appendChild(modalOverlay);
+    
+    // Close modal when clicking outside
+    modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+            modalOverlay.remove();
+        }
+    });
+    
+    // Close modal with Escape key
+    const escapeHandler = (e) => {
+        if (e.key === 'Escape') {
+            modalOverlay.remove();
+            document.removeEventListener('keydown', escapeHandler);
+        }
+    };
+    document.addEventListener('keydown', escapeHandler);
 }
