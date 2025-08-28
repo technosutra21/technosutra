@@ -51,18 +51,26 @@ class GalleryController {
      */
     async loadModelData() {
         try {
-            // In a real app, this would fetch from an API or JSON file
-            // For now, we'll create sample data
+            // Available models based on actual GLB files (missing: 7, 8, 27, 43, 52)
+            const availableModels = [
+                1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 
+                21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 
+                38, 39, 40, 41, 42, 44, 45, 46, 47, 48, 49, 50, 51, 53, 54, 55, 56
+            ];
+            
             this.models = Array.from({ length: 56 }, (_, i) => {
                 const modelNumber = i + 1;
+                const isAvailable = availableModels.includes(modelNumber);
+                
                 return {
                     id: modelNumber,
                     title: `Capítulo ${modelNumber}`,
                     subtitle: `Avatamsaka Sutra - Parte ${modelNumber}`,
                     description: `Modelo 3D interativo representando o capítulo ${modelNumber} do Avatamsaka Sutra.`,
                     category: this.getRandomCategory(),
-                    available: Math.random() > 0.1, // 90% of models are available
-                    modelPath: `models/modelo${modelNumber}.glb`,
+                    available: isAvailable,
+                    modelPath: `./models/modelo${modelNumber}.glb`,
+                    usdzPath: `./models/usdz_files/modelo${modelNumber}.usdz`,
                     thumbnail: `thumbnails/thumb${modelNumber}.jpg`
                 };
             });
@@ -184,6 +192,7 @@ class GalleryController {
                     ${model.available ? `
                         <model-viewer
                             src="${model.modelPath}"
+                            ios-src="${model.usdzPath}"
                             alt="${model.title}"
                             camera-controls
                             auto-rotate
