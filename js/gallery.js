@@ -869,7 +869,9 @@ function showModelInfo(modelId) {
     const model = gallery.models.find(m => m.id === modelId);
     if (!model) return;
     
-    // Create modal overlay
+    const characterData = model.characterData || {};
+    
+    // Create full-screen modal overlay
     const modalOverlay = document.createElement('div');
     modalOverlay.className = 'modal-overlay';
     modalOverlay.style.cssText = `
@@ -878,214 +880,441 @@ function showModelInfo(modelId) {
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.9);
+        background: rgba(0, 0, 0, 0.98);
         display: flex;
-        justify-content: center;
-        align-items: center;
         z-index: 10000;
-        backdrop-filter: blur(10px);
+        backdrop-filter: blur(20px);
+        opacity: 0;
+        animation: modalFadeIn 0.4s ease-out forwards;
     `;
     
-    // Create modal content
+    // Create full-screen modal content container
     const modalContent = document.createElement('div');
-    modalContent.className = 'modal-content';
+    modalContent.className = 'modal-content-fullscreen';
     modalContent.style.cssText = `
-        background: linear-gradient(135deg, rgba(15, 15, 15, 0.95), rgba(30, 30, 30, 0.95));
-        border: 1px solid rgba(120, 119, 198, 0.3);
-        border-radius: 16px;
-        padding: 30px;
-        max-width: 600px;
-        max-height: 80vh;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, 
+            rgba(5, 5, 5, 0.98) 0%, 
+            rgba(15, 15, 20, 0.98) 30%, 
+            rgba(10, 10, 15, 0.98) 70%, 
+            rgba(5, 5, 5, 0.98) 100%);
         overflow-y: auto;
-        margin: 20px;
-        box-shadow: 0 20px 40px rgba(120, 119, 198, 0.2);
         position: relative;
+        transform: translateY(50px);
+        animation: modalSlideIn 0.5s ease-out forwards;
+        scroll-behavior: smooth;
     `;
     
-    const characterData = model.characterData || {};
+    // Add CSS animations
+    if (!document.getElementById('modal-animations')) {
+        const style = document.createElement('style');
+        style.id = 'modal-animations';
+        style.textContent = `
+            @keyframes modalFadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes modalSlideIn {
+                from { transform: translateY(50px); }
+                to { transform: translateY(0); }
+            }
+            @keyframes sectionSlideIn {
+                from { 
+                    opacity: 0; 
+                    transform: translateY(30px); 
+                }
+                to { 
+                    opacity: 1; 
+                    transform: translateY(0); 
+                }
+            }
+            .modal-section {
+                animation: sectionSlideIn 0.6s ease-out forwards;
+            }
+            .modal-section:nth-child(1) { animation-delay: 0.1s; }
+            .modal-section:nth-child(2) { animation-delay: 0.2s; }
+            .modal-section:nth-child(3) { animation-delay: 0.3s; }
+            .modal-section:nth-child(4) { animation-delay: 0.4s; }
+            .modal-section:nth-child(5) { animation-delay: 0.5s; }
+            .modal-section:nth-child(6) { animation-delay: 0.6s; }
+            .floating-particles {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                z-index: -1;
+            }
+            .floating-particles::before,
+            .floating-particles::after {
+                content: '';
+                position: absolute;
+                width: 200px;
+                height: 200px;
+                background: radial-gradient(circle, rgba(120, 119, 198, 0.1) 0%, transparent 70%);
+                border-radius: 50%;
+                animation: floatParticles 20s infinite linear;
+            }
+            .floating-particles::before {
+                top: 10%;
+                left: 10%;
+                animation-delay: 0s;
+            }
+            .floating-particles::after {
+                top: 60%;
+                right: 15%;
+                animation-delay: 10s;
+                background: radial-gradient(circle, rgba(157, 0, 255, 0.08) 0%, transparent 70%);
+            }
+            @keyframes floatParticles {
+                0% { transform: translate(0, 0) rotate(0deg); }
+                33% { transform: translate(30px, -30px) rotate(120deg); }
+                66% { transform: translate(-20px, 20px) rotate(240deg); }
+                100% { transform: translate(0, 0) rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
     
     modalContent.innerHTML = `
-        <button class="modal-close" style="
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(120, 119, 198, 0.2);
-            border: 1px solid rgba(120, 119, 198, 0.5);
-            color: #ffffff;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        " onclick="this.closest('.modal-overlay').remove()">
-            ✕
-        </button>
+        <div class="floating-particles"></div>
         
-        <div class="modal-header" style="margin-bottom: 25px; text-align: center;">
-            <div style="
-                font-size: 0.9rem;
-                color: #7877c6;
-                margin-bottom: 10px;
-                text-transform: uppercase;
-                letter-spacing: 0.1em;
-                opacity: 0.8;
-            ">Capítulo ${model.id}</div>
-            <h2 style="
+        <!-- Header Section -->
+        <div class="modal-header-fullscreen" style="
+            padding: 40px 40px 60px;
+            background: linear-gradient(135deg, rgba(120, 119, 198, 0.15) 0%, rgba(157, 0, 255, 0.1) 100%);
+            border-bottom: 1px solid rgba(120, 119, 198, 0.2);
+            position: relative;
+            text-align: center;
+        ">
+            <button class="modal-close-fullscreen" style="
+                position: absolute;
+                top: 25px;
+                right: 25px;
+                background: rgba(120, 119, 198, 0.3);
+                border: 2px solid rgba(120, 119, 198, 0.6);
                 color: #ffffff;
-                font-size: 1.8rem;
-                font-weight: 600;
-                margin-bottom: 8px;
-                line-height: 1.3;
-            ">${model.title}</h2>
-            ${characterData.Ocupação ? `<div style="
-                color: #9ca3af;
-                font-size: 1rem;
-                font-style: italic;
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 20px;
+                font-weight: bold;
+                transition: all 0.3s ease;
+                backdrop-filter: blur(10px);
+                z-index: 1001;
+            " onclick="this.closest('.modal-overlay').remove()">
+                ✕
+            </button>
+            
+            <div style="
+                font-size: 1.2rem;
+                color: #7877c6;
                 margin-bottom: 15px;
+                text-transform: uppercase;
+                letter-spacing: 0.15em;
+                font-weight: 600;
+                opacity: 0.9;
+            ">Capítulo ${model.id}</div>
+            
+            <h1 style="
+                color: #ffffff;
+                font-size: clamp(2.5rem, 6vw, 4rem);
+                font-weight: 300;
+                margin-bottom: 15px;
+                line-height: 1.2;
+                background: linear-gradient(135deg, #ffffff 0%, #7877c6 50%, #ffffff 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                text-shadow: 0 0 30px rgba(120, 119, 198, 0.3);
+            ">${model.title}</h1>
+            
+            ${characterData.Ocupação ? `<div style="
+                color: #b8b9d4;
+                font-size: 1.3rem;
+                font-style: italic;
+                font-weight: 300;
+                margin-bottom: 20px;
+                opacity: 0.8;
             ">${characterData.Ocupação}</div>` : ''}
+            
+            <div style="
+                width: 100px;
+                height: 2px;
+                background: linear-gradient(90deg, transparent, #7877c6, transparent);
+                margin: 30px auto 0;
+                border-radius: 1px;
+            "></div>
         </div>
         
-        <div class="modal-body">
+        <!-- Content Body -->
+        <div class="modal-body-fullscreen" style="
+            padding: 60px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        ">
             ${characterData.Ensinamento ? `
-                <div class="info-section" style="margin-bottom: 20px;">
-                    <h3 style="
+                <div class="info-section modal-section" style="
+                    margin-bottom: 50px;
+                    padding: 40px;
+                    background: rgba(15, 15, 15, 0.6);
+                    border: 1px solid rgba(120, 119, 198, 0.2);
+                    border-radius: 20px;
+                    backdrop-filter: blur(10px);
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(135deg, rgba(120, 119, 198, 0.05) 0%, transparent 50%);
+                        pointer-events: none;
+                    "></div>
+                    <h2 style="
                         color: #7877c6;
-                        font-size: 1.1rem;
+                        font-size: 1.8rem;
                         font-weight: 600;
-                        margin-bottom: 10px;
+                        margin-bottom: 25px;
                         display: flex;
                         align-items: center;
-                        gap: 8px;
-                    "><span>🧘</span> Ensinamento Principal</h3>
+                        gap: 15px;
+                        position: relative;
+                    "><span style="font-size: 2rem;">🧘</span> Ensinamento Principal</h2>
                     <p style="
                         color: #e5e7eb;
-                        line-height: 1.6;
-                        font-size: 0.95rem;
+                        line-height: 1.8;
+                        font-size: 1.1rem;
+                        text-align: justify;
+                        position: relative;
+                        font-weight: 300;
                     ">${characterData.Ensinamento}</p>
                 </div>
             ` : ''}
             
             ${characterData['Desc. Personagem'] ? `
-                <div class="info-section" style="margin-bottom: 20px;">
-                    <h3 style="
+                <div class="info-section modal-section" style="
+                    margin-bottom: 50px;
+                    padding: 40px;
+                    background: rgba(15, 15, 15, 0.6);
+                    border: 1px solid rgba(120, 119, 198, 0.2);
+                    border-radius: 20px;
+                    backdrop-filter: blur(10px);
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(135deg, rgba(157, 0, 255, 0.05) 0%, transparent 50%);
+                        pointer-events: none;
+                    "></div>
+                    <h2 style="
                         color: #7877c6;
-                        font-size: 1.1rem;
+                        font-size: 1.8rem;
                         font-weight: 600;
-                        margin-bottom: 10px;
+                        margin-bottom: 25px;
                         display: flex;
                         align-items: center;
-                        gap: 8px;
-                    "><span>👤</span> Descrição do Personagem</h3>
+                        gap: 15px;
+                        position: relative;
+                    "><span style="font-size: 2rem;">👤</span> Descrição do Personagem</h2>
                     <p style="
                         color: #e5e7eb;
-                        line-height: 1.6;
-                        font-size: 0.95rem;
+                        line-height: 1.8;
+                        font-size: 1.1rem;
+                        text-align: justify;
+                        position: relative;
+                        font-weight: 300;
                     ">${characterData['Desc. Personagem']}</p>
                 </div>
             ` : ''}
             
             ${characterData.Significado ? `
-                <div class="info-section" style="margin-bottom: 20px;">
-                    <h3 style="
+                <div class="info-section modal-section" style="
+                    margin-bottom: 50px;
+                    padding: 40px;
+                    background: rgba(15, 15, 15, 0.6);
+                    border: 1px solid rgba(120, 119, 198, 0.2);
+                    border-radius: 20px;
+                    backdrop-filter: blur(10px);
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(135deg, rgba(120, 119, 198, 0.05) 0%, transparent 50%);
+                        pointer-events: none;
+                    "></div>
+                    <h2 style="
                         color: #7877c6;
-                        font-size: 1.1rem;
+                        font-size: 1.8rem;
                         font-weight: 600;
-                        margin-bottom: 10px;
+                        margin-bottom: 25px;
                         display: flex;
                         align-items: center;
-                        gap: 8px;
-                    "><span>💫</span> Significado</h3>
+                        gap: 15px;
+                        position: relative;
+                    "><span style="font-size: 2rem;">💫</span> Significado</h2>
                     <p style="
                         color: #e5e7eb;
-                        line-height: 1.6;
-                        font-size: 0.95rem;
+                        line-height: 1.8;
+                        font-size: 1.1rem;
+                        text-align: justify;
+                        position: relative;
+                        font-weight: 300;
                     ">${characterData.Significado}</p>
                 </div>
             ` : ''}
             
             ${characterData.Local ? `
-                <div class="info-section" style="margin-bottom: 20px;">
-                    <h3 style="
+                <div class="info-section modal-section" style="
+                    margin-bottom: 50px;
+                    padding: 40px;
+                    background: rgba(15, 15, 15, 0.6);
+                    border: 1px solid rgba(120, 119, 198, 0.2);
+                    border-radius: 20px;
+                    backdrop-filter: blur(10px);
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(135deg, rgba(157, 0, 255, 0.05) 0%, transparent 50%);
+                        pointer-events: none;
+                    "></div>
+                    <h2 style="
                         color: #7877c6;
-                        font-size: 1.1rem;
+                        font-size: 1.8rem;
                         font-weight: 600;
-                        margin-bottom: 10px;
+                        margin-bottom: 25px;
                         display: flex;
                         align-items: center;
-                        gap: 8px;
-                    "><span>📍</span> Local</h3>
+                        gap: 15px;
+                        position: relative;
+                    "><span style="font-size: 2rem;">📍</span> Local</h2>
                     <p style="
                         color: #e5e7eb;
-                        line-height: 1.6;
-                        font-size: 0.95rem;
+                        line-height: 1.8;
+                        font-size: 1.1rem;
+                        text-align: justify;
+                        position: relative;
+                        font-weight: 300;
                     ">${characterData.Local}</p>
                 </div>
             ` : ''}
             
             ${characterData['Resumo do Cap. (84000.co)'] ? `
-                <div class="info-section" style="margin-bottom: 20px;">
-                    <h3 style="
+                <div class="info-section modal-section" style="
+                    margin-bottom: 50px;
+                    padding: 40px;
+                    background: rgba(15, 15, 15, 0.6);
+                    border: 1px solid rgba(120, 119, 198, 0.2);
+                    border-radius: 20px;
+                    backdrop-filter: blur(10px);
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(135deg, rgba(120, 119, 198, 0.05) 0%, transparent 50%);
+                        pointer-events: none;
+                    "></div>
+                    <h2 style="
                         color: #7877c6;
-                        font-size: 1.1rem;
+                        font-size: 1.8rem;
                         font-weight: 600;
-                        margin-bottom: 10px;
+                        margin-bottom: 25px;
                         display: flex;
                         align-items: center;
-                        gap: 8px;
-                    "><span>📚</span> Resumo do Capítulo</h3>
+                        gap: 15px;
+                        position: relative;
+                    "><span style="font-size: 2rem;">📚</span> Resumo do Capítulo</h2>
                     <p style="
                         color: #e5e7eb;
-                        line-height: 1.6;
-                        font-size: 0.95rem;
+                        line-height: 1.8;
+                        font-size: 1.1rem;
+                        text-align: justify;
+                        position: relative;
+                        font-weight: 300;
                     ">${characterData['Resumo do Cap. (84000.co)']}</p>
                 </div>
             ` : ''}
         </div>
         
-        <div class="modal-actions" style="
+        <!-- Action Buttons -->
+        <div class="modal-actions-fullscreen" style="
+            padding: 40px;
+            background: rgba(5, 5, 5, 0.8);
+            border-top: 1px solid rgba(120, 119, 198, 0.2);
             display: flex;
-            gap: 12px;
+            gap: 20px;
             justify-content: center;
-            margin-top: 30px;
             flex-wrap: wrap;
+            backdrop-filter: blur(10px);
         ">
-            <a href="AR.html?model=${model.id}" class="modal-action-btn" style="
+            <a href="AR.html?model=${model.id}" class="modal-action-btn-fullscreen" style="
                 background: linear-gradient(135deg, #7877c6, #9d00ff);
                 color: white;
                 text-decoration: none;
                 border: none;
-                border-radius: 8px;
-                padding: 12px 24px;
-                font-size: 0.9rem;
+                border-radius: 15px;
+                padding: 18px 36px;
+                font-size: 1.1rem;
                 font-weight: 600;
                 cursor: pointer;
                 transition: all 0.3s ease;
                 display: flex;
                 align-items: center;
-                gap: 8px;
+                gap: 12px;
+                box-shadow: 0 8px 25px rgba(120, 119, 198, 0.4);
+                backdrop-filter: blur(10px);
+                min-width: 160px;
+                justify-content: center;
             " ${!model.available ? 'style="opacity: 0.5; pointer-events: none;"' : ''}>
-                <span>📱</span>
+                <span style="font-size: 1.3rem;">📱</span>
                 <span>Ver em AR</span>
             </a>
             
-            <button class="modal-action-btn" onclick="shareModel(${model.id})" style="
-                background: rgba(120, 119, 198, 0.2);
+            <button class="modal-action-btn-fullscreen" onclick="shareModel(${model.id})" style="
+                background: rgba(120, 119, 198, 0.3);
                 color: #ffffff;
-                border: 1px solid rgba(120, 119, 198, 0.5);
-                border-radius: 8px;
-                padding: 12px 24px;
-                font-size: 0.9rem;
+                border: 2px solid rgba(120, 119, 198, 0.6);
+                border-radius: 15px;
+                padding: 18px 36px;
+                font-size: 1.1rem;
                 font-weight: 600;
                 cursor: pointer;
                 transition: all 0.3s ease;
                 display: flex;
                 align-items: center;
-                gap: 8px;
+                gap: 12px;
+                backdrop-filter: blur(10px);
+                min-width: 160px;
+                justify-content: center;
             " ${!model.available ? 'disabled' : ''}>
-                <span>🛞</span>
+                <span style="font-size: 1.3rem;">🛞</span>
                 <span>Compartilhar</span>
             </button>
         </div>
@@ -1094,19 +1323,68 @@ function showModelInfo(modelId) {
     modalOverlay.appendChild(modalContent);
     document.body.appendChild(modalOverlay);
     
-    // Close modal when clicking outside
+    // Prevent body scroll while modal is open
+    document.body.style.overflow = 'hidden';
+    
+    // Enhanced button hover effects
+    const actionButtons = modalContent.querySelectorAll('.modal-action-btn-fullscreen');
+    actionButtons.forEach(button => {
+        button.addEventListener('mouseenter', () => {
+            button.style.transform = 'translateY(-3px) scale(1.05)';
+            if (button.style.background.includes('linear-gradient')) {
+                button.style.boxShadow = '0 12px 35px rgba(120, 119, 198, 0.6)';
+            }
+        });
+        
+        button.addEventListener('mouseleave', () => {
+            button.style.transform = 'translateY(0) scale(1)';
+            if (button.style.background.includes('linear-gradient')) {
+                button.style.boxShadow = '0 8px 25px rgba(120, 119, 198, 0.4)';
+            }
+        });
+    });
+    
+    // Enhanced close button hover effect
+    const closeBtn = modalContent.querySelector('.modal-close-fullscreen');
+    closeBtn.addEventListener('mouseenter', () => {
+        closeBtn.style.background = 'rgba(255, 99, 99, 0.8)';
+        closeBtn.style.borderColor = 'rgba(255, 99, 99, 1)';
+        closeBtn.style.transform = 'scale(1.1) rotate(90deg)';
+    });
+    
+    closeBtn.addEventListener('mouseleave', () => {
+        closeBtn.style.background = 'rgba(120, 119, 198, 0.3)';
+        closeBtn.style.borderColor = 'rgba(120, 119, 198, 0.6)';
+        closeBtn.style.transform = 'scale(1) rotate(0deg)';
+    });
+    
+    // Close modal function
+    const closeModal = () => {
+        modalOverlay.style.animation = 'modalFadeIn 0.3s ease-in reverse';
+        modalContent.style.animation = 'modalSlideIn 0.3s ease-in reverse';
+        
+        setTimeout(() => {
+            modalOverlay.remove();
+            document.body.style.overflow = 'auto';
+        }, 300);
+    };
+    
+    // Close modal when clicking outside (on the overlay)
     modalOverlay.addEventListener('click', (e) => {
         if (e.target === modalOverlay) {
-            modalOverlay.remove();
+            closeModal();
         }
     });
     
     // Close modal with Escape key
     const escapeHandler = (e) => {
         if (e.key === 'Escape') {
-            modalOverlay.remove();
+            closeModal();
             document.removeEventListener('keydown', escapeHandler);
         }
     };
     document.addEventListener('keydown', escapeHandler);
+    
+    // Update close button to use enhanced close
+    closeBtn.onclick = closeModal;
 }

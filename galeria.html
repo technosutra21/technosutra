@@ -986,9 +986,40 @@
                 font-size: 0.7rem;
             }
         }
+
+        /* MagnetLines Background */
+        .magnet-lines-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            opacity: 0.3;
+            pointer-events: none;
+            display: grid;
+            grid-template-columns: repeat(20, 1fr);
+            grid-template-rows: repeat(15, 1fr);
+            justify-items: center;
+            align-items: center;
+        }
+
+        .magnet-lines-background span {
+            display: block;
+            transform-origin: center;
+            will-change: transform;
+            transform: rotate(var(--rotate));
+            background-color: tomato;
+            width: 0.3vmin;
+            height: 2vmin;
+            transition: transform 0.1s ease-out;
+        }
     </style>
 </head>
 <body>
+
+    <!-- MagnetLines Background -->
+    <div class="magnet-lines-background" id="magnet-lines-container"></div>
 
     <!-- Progress Bar -->
     <div class="gallery-progress-bar loading" id="gallery-progress-bar"></div>
@@ -1113,6 +1144,62 @@
             </a>
         </div>
     </nav>
+
+    <!-- MagnetLines Background Script -->
+    <script>
+        // MagnetLines functionality converted from React
+        function initializeMagnetLines() {
+            const container = document.getElementById('magnet-lines-container');
+            if (!container) return;
+
+            // Configuration for full-page coverage
+            const rows = 15;
+            const columns = 20;
+            const baseAngle = 0;
+            const total = rows * columns;
+
+            // Create the span elements
+            for (let i = 0; i < total; i++) {
+                const span = document.createElement('span');
+                span.style.setProperty('--rotate', `${baseAngle}deg`);
+                container.appendChild(span);
+            }
+
+            // Get all span elements
+            const items = container.querySelectorAll('span');
+
+            // Pointer move handler
+            const onPointerMove = (event) => {
+                items.forEach((item) => {
+                    const rect = item.getBoundingClientRect();
+                    const centerX = rect.x + rect.width / 2;
+                    const centerY = rect.y + rect.height / 2;
+                    const b = event.clientX - centerX;
+                    const a = event.clientY - centerY;
+                    const c = Math.sqrt(a * a + b * b) || 1;
+                    const r = (Math.acos(b / c) * 180) / Math.PI * (event.clientY > centerY ? 1 : -1);
+                    item.style.setProperty('--rotate', `${r}deg`);
+                });
+            };
+
+            // Add event listener
+            window.addEventListener('pointermove', onPointerMove);
+
+            // Initialize with middle item position if items exist
+            if (items.length) {
+                const middleIndex = Math.floor(items.length / 2);
+                const rect = items[middleIndex].getBoundingClientRect();
+                onPointerMove({ clientX: rect.x, clientY: rect.y });
+            }
+        }
+
+        // Initialize when DOM is loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeMagnetLines);
+        } else {
+            initializeMagnetLines();
+        }
+    </script>
 
     <!-- Load scripts -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
