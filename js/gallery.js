@@ -17,36 +17,126 @@ class GalleryController {
         this.modelsPerPage = 12;
         this.currentPage = 1;
         
-        // DOM elements
+        // Enhanced DOM elements
         this.elements = {
             galleryGrid: document.getElementById('gallery-grid'),
             searchInput: document.getElementById('search-input'),
             filterButtons: document.querySelectorAll('.filter-btn'),
             loadingOverlay: document.getElementById('loading-overlay'),
+            progressBar: document.getElementById('gallery-progress-bar'),
             showMoreBtn: null // Will be created dynamically
+        };
+
+        // Animation and interaction state
+        this.animationState = {
+            loadedModels: 0,
+            totalModels: 56,
+            isAnimating: false,
+            intersectionObserver: null
         };
     }
     
     /**
-     * Initialize the gallery
+     * Initialize the gallery with enhanced animations
      */
     async initialize() {
         try {
-            // Load model data
+            // Initialize enhanced features
+            this.initializeEnhancedFeatures();
+            
+            // Load model data with progress tracking
             await this.loadModelData();
             
-            // Setup event listeners
+            // Setup event listeners including new animations
             this.setupEventListeners();
             
-            // Initial render
+            // Initial render with staggered animations
             this.renderGallery();
             
-            // Hide loading overlay
+            // Hide loading overlay with enhanced animation
             this.hideLoading();
             
         } catch (error) {
             console.error('Gallery initialization error:', error);
             this.showError('Erro ao carregar a galeria');
+        }
+    }
+
+    /**
+     * Initialize enhanced features like intersection observer and progress tracking
+     */
+    initializeEnhancedFeatures() {
+        // Setup intersection observer for scroll animations
+        this.setupIntersectionObserver();
+        
+        // Initialize progress bar animation
+        this.updateProgressBar(0);
+        
+        // Setup 3D tilt effects for cards
+        this.setup3DTiltEffects();
+    }
+
+    /**
+     * Setup intersection observer for scroll animations
+     */
+    setupIntersectionObserver() {
+        if ('IntersectionObserver' in window) {
+            this.animationState.intersectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                        setTimeout(() => {
+                            entry.target.style.transform = 'translateY(0)';
+                            entry.target.style.opacity = '1';
+                        }, Math.random() * 200);
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '50px'
+            });
+        }
+    }
+
+    /**
+     * Setup 3D tilt effects for model cards
+     */
+    setup3DTiltEffects() {
+        document.addEventListener('mousemove', (e) => {
+            if (this.animationState.isAnimating) return;
+            
+            const cards = document.querySelectorAll('.model-card');
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = (y - centerY) / 20;
+                    const rotateY = (centerX - x) / 20;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
+                } else {
+                    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
+                }
+            });
+        });
+    }
+
+    /**
+     * Update progress bar with smooth animation
+     */
+    updateProgressBar(percentage) {
+        if (this.elements.progressBar) {
+            const progressFill = this.elements.progressBar.querySelector('::before');
+            if (percentage >= 100) {
+                setTimeout(() => {
+                    this.elements.progressBar.classList.remove('loading');
+                    this.elements.progressBar.style.opacity = '0';
+                }, 500);
+            }
         }
     }
     
@@ -200,25 +290,38 @@ class GalleryController {
     }
     
     /**
-     * Setup event listeners for gallery functionality
+     * Setup event listeners for enhanced gallery functionality
      */
     setupEventListeners() {
-        // Search input
+        // Enhanced search input with clear button
         if (this.elements.searchInput) {
             this.elements.searchInput.addEventListener('input', (e) => {
                 this.searchTerm = e.target.value.toLowerCase();
                 this.filterModels();
+                this.updateSearchClearButton();
             });
+
+            // Search clear button
+            const searchClear = document.getElementById('search-clear');
+            if (searchClear) {
+                searchClear.addEventListener('click', () => {
+                    this.elements.searchInput.value = '';
+                    this.searchTerm = '';
+                    this.filterModels();
+                    this.updateSearchClearButton();
+                    this.elements.searchInput.focus();
+                });
+            }
         }
         
-        // Filter buttons
+        // Enhanced filter buttons
         if (this.elements.filterButtons) {
             this.elements.filterButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     // Remove active class from all buttons
                     this.elements.filterButtons.forEach(btn => btn.classList.remove('active'));
                     
-                    // Add active class to clicked button
+                    // Add active class to clicked button with animation
                     button.classList.add('active');
                     
                     // Update filter
@@ -227,6 +330,12 @@ class GalleryController {
                 });
             });
         }
+        
+        // Scroll progress indicator
+        window.addEventListener('scroll', this.updateScrollProgress.bind(this));
+        
+        // Intersection observer for performance
+        this.setupPerformanceOptimizations();
         
         // Model viewer loading events
         document.addEventListener('model-viewer-loaded', (e) => {
@@ -237,12 +346,66 @@ class GalleryController {
                 if (loadingSpinner) {
                     loadingSpinner.classList.add('hidden');
                 }
+                
+                // Update progress
+                this.animationState.loadedModels++;
+                this.updateProgressBar((this.animationState.loadedModels / this.animationState.totalModels) * 100);
             }
         });
     }
+
+    /**
+     * Update search clear button visibility
+     */
+    updateSearchClearButton() {
+        const searchClear = document.getElementById('search-clear');
+        if (searchClear) {
+            if (this.elements.searchInput.value.length > 0) {
+                searchClear.style.display = 'flex';
+            } else {
+                searchClear.style.display = 'none';
+            }
+        }
+    }
+
+    /**
+     * Update scroll progress indicator
+     */
+    updateScrollProgress() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const progress = (scrollTop / scrollHeight) * 100;
+        
+        const progressBar = document.querySelector('.scroll-progress');
+        if (progressBar) {
+            progressBar.style.width = `${Math.min(progress, 100)}%`;
+        }
+    }
+
+    /**
+     * Setup performance optimizations
+     */
+    setupPerformanceOptimizations() {
+        // Throttled scroll handler
+        let scrollTimer = null;
+        window.addEventListener('scroll', () => {
+            if (scrollTimer) return;
+            scrollTimer = setTimeout(() => {
+                scrollTimer = null;
+                this.updateScrollProgress();
+            }, 16); // ~60fps
+        });
+
+        // Reduce motion for accessibility
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            document.documentElement.style.setProperty('--transition-normal', 'none');
+            document.documentElement.style.setProperty('--transition-fast', 'none');
+            document.documentElement.style.setProperty('--transition-slow', 'none');
+        }
+    }
     
     /**
-     * Filter models based on current filter and search term
+     * Filter models based on current filter and search term with enhanced stats
      */
     filterModels() {
         this.filteredModels = this.models.filter(model => {
@@ -258,10 +421,68 @@ class GalleryController {
             return categoryMatch && searchMatch;
         });
         
+        // Update filter counts and stats
+        this.updateFilterCounts();
+        this.updateGalleryStats();
+        
         // Reset pagination when filtering
         this.currentPage = 1;
         this.updateDisplayedModels();
         this.renderGallery();
+    }
+
+    /**
+     * Update filter button counts
+     */
+    updateFilterCounts() {
+        const categories = ['all', 'bodhisattva', 'mandala', 'buddha', 'sutra'];
+        
+        categories.forEach(category => {
+            const count = category === 'all' 
+                ? this.models.length
+                : this.models.filter(model => model.category === category).length;
+                
+            const countElement = document.getElementById(`filter-${category}-count`);
+            if (countElement) {
+                countElement.textContent = count;
+                
+                // Animate count update
+                countElement.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    countElement.style.transform = 'scale(1)';
+                }, 150);
+            }
+        });
+    }
+
+    /**
+     * Update gallery statistics display
+     */
+    updateGalleryStats() {
+        // Total models
+        const totalElement = document.getElementById('total-models');
+        if (totalElement) {
+            totalElement.textContent = this.models.length;
+        }
+
+        // Available models
+        const availableElement = document.getElementById('available-models');
+        if (availableElement) {
+            const availableCount = this.models.filter(model => model.available).length;
+            availableElement.textContent = availableCount;
+        }
+
+        // Filtered models
+        const filteredElement = document.getElementById('filtered-models');
+        if (filteredElement) {
+            filteredElement.textContent = this.filteredModels.length;
+            
+            // Animate the filtered count with color change
+            filteredElement.style.color = '#7877c6';
+            setTimeout(() => {
+                filteredElement.style.color = '';
+            }, 1000);
+        }
     }
 
     /**
@@ -274,7 +495,7 @@ class GalleryController {
     }
     
     /**
-     * Render the gallery with filtered models
+     * Render the gallery with enhanced staggered animations
      */
     renderGallery() {
         if (!this.elements.galleryGrid) return;
@@ -294,8 +515,8 @@ class GalleryController {
             return;
         }
         
-        // Add model cards for displayed models only
-        this.displayedModels.forEach(model => {
+        // Add model cards for displayed models with staggered animation
+        this.displayedModels.forEach((model, index) => {
             const modelCard = document.createElement('div');
             modelCard.className = `model-card ${!model.available ? 'unavailable' : ''}`;
             modelCard.dataset.modelId = model.id;
@@ -318,7 +539,7 @@ class GalleryController {
                             auto-rotate
                             rotation-per-second="30deg"
                             loading="lazy"
-                            reveal="interaction"
+                            reveal="auto"
                             ar
                             ar-modes="webxr scene-viewer quick-look"
                             ar-scale="auto"
@@ -354,27 +575,77 @@ class GalleryController {
                 </div>
             `;
             
+            // Apply initial animation state
+            modelCard.style.opacity = '0';
+            modelCard.style.transform = 'translateY(10px)';
+            modelCard.style.transition = 'all 0.2s cubic-bezier(0.23, 1, 0.32, 1)';
+            
             this.elements.galleryGrid.appendChild(modelCard);
+            
+            // Stagger animations
+            setTimeout(() => {
+                modelCard.style.opacity = '1';
+                modelCard.style.transform = 'translateY(0)';
+                
+                // Setup intersection observer for scroll animations
+                if (this.animationState.intersectionObserver) {
+                    this.animationState.intersectionObserver.observe(modelCard);
+                }
+            }, index * 100);
         });
         
-        // Initialize model-viewer elements
-        if (customElements.get('model-viewer')) {
-            const modelViewers = document.querySelectorAll('model-viewer');
-            modelViewers.forEach(viewer => {
-                viewer.addEventListener('load', () => {
-                    const modelCard = viewer.closest('.model-card');
-                    if (modelCard) {
-                        const modelId = modelCard.dataset.modelId;
-                        document.dispatchEvent(new CustomEvent('model-viewer-loaded', {
-                            detail: { modelId }
-                        }));
-                    }
-                });
-            });
-        }
+        // Initialize model-viewer elements after custom element is ready
+        this.initializeModelViewers();
 
         // Handle "Show More" button
         this.handleShowMoreButton();
+    }
+
+    /**
+     * Initialize model-viewer elements after ensuring the custom element is ready
+     */
+    async initializeModelViewers() {
+        // Wait for model-viewer custom element to be registered
+        if (!customElements.get('model-viewer')) {
+            // Wait a bit more for the script to load and register
+            await new Promise(resolve => {
+                const checkElement = () => {
+                    if (customElements.get('model-viewer')) {
+                        resolve();
+                    } else {
+                        setTimeout(checkElement, 100);
+                    }
+                };
+                checkElement();
+            });
+        }
+
+        // Now initialize the model viewers
+        const modelViewers = document.querySelectorAll('model-viewer');
+        modelViewers.forEach(viewer => {
+            viewer.addEventListener('load', () => {
+                const modelCard = viewer.closest('.model-card');
+                if (modelCard) {
+                    const modelId = modelCard.dataset.modelId;
+                    const loadingSpinner = modelCard.querySelector('.loading-spinner');
+                    if (loadingSpinner) {
+                        loadingSpinner.classList.add('hidden');
+                    }
+                    document.dispatchEvent(new CustomEvent('model-viewer-loaded', {
+                        detail: { modelId }
+                    }));
+                }
+            });
+
+            viewer.addEventListener('error', (event) => {
+                console.error('Model viewer error:', event);
+                const modelCard = viewer.closest('.model-card');
+                if (modelCard) {
+                    const modelId = modelCard.dataset.modelId;
+                    console.error(`Error loading model ${modelId}:`, event.detail);
+                }
+            });
+        });
     }
 
     /**
@@ -484,13 +755,26 @@ class GalleryController {
     }
     
     /**
-     * Hide loading overlay
+     * Hide loading overlay with enhanced animation
      */
     hideLoading() {
         this.isLoading = false;
+        
+        // Complete progress bar
+        this.updateProgressBar(100);
+        
+        // Hide loading overlay with fade out
         if (this.elements.loadingOverlay) {
-            this.elements.loadingOverlay.classList.add('hidden');
+            this.elements.loadingOverlay.style.opacity = '0';
+            this.elements.loadingOverlay.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                this.elements.loadingOverlay.classList.add('hidden');
+            }, 500);
         }
+        
+        // Animate in the main content
+        document.body.classList.add('loaded');
     }
     
     /**

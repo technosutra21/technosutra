@@ -50,16 +50,45 @@
     
     <!-- Page-specific CSS -->
     <style>
-        /* Gallery-specific styles */
+        /* Enhanced Gallery-specific styles with improved animations */
         .header {
             position: relative;
             background: rgba(0, 0, 0, 0.95);
             border-bottom: 1px solid rgba(120, 119, 198, 0.1);
             overflow: hidden;
             z-index: 100;
+            backdrop-filter: blur(20px);
         }
 
-        .header::before {
+        /* Particle system background */
+        .header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, rgba(120, 119, 198, 0.4), transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(120, 119, 198, 0.3), transparent),
+                radial-gradient(1px 1px at 90px 40px, rgba(120, 119, 198, 0.2), transparent),
+                radial-gradient(1px 1px at 130px 80px, rgba(120, 119, 198, 0.3), transparent),
+                radial-gradient(2px 2px at 160px 30px, rgba(120, 119, 198, 0.2), transparent);
+            background-repeat: repeat;
+            background-size: 200px 100px;
+            animation: particleFloat 20s linear infinite;
+            opacity: 0.6;
+            z-index: -1;
+        }
+
+        @keyframes particleFloat {
+            0% { transform: translateY(0px) translateX(0px); }
+            33% { transform: translateY(-10px) translateX(10px); }
+            66% { transform: translateY(-5px) translateX(-5px); }
+            100% { transform: translateY(0px) translateX(0px); }
+        }
+
+        .header-glow::before {
             content: '';
             position: absolute;
             top: 0;
@@ -75,7 +104,7 @@
             animation: headerGlow 4s ease-in-out infinite;
         }
 
-        .header::after {
+        .header-sweep::before {
             content: '';
             position: absolute;
             top: 0;
@@ -279,12 +308,34 @@
             padding: 24px;
             border: 1px solid rgba(120, 119, 198, 0.1);
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
             will-change: transform;
             contain: layout style paint;
             animation: fadeInUp 0.6s ease-out;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+        }
+
+        .model-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(120, 119, 198, 0.1),
+                transparent
+            );
+            transition: left 0.5s ease;
+        }
+
+        .model-card:hover::after {
+            left: 100%;
         }
 
         .model-card::before {
@@ -386,23 +437,50 @@
         .loading-spinner {
             width: 40px;
             height: 40px;
-            border: 3px solid rgba(120, 119, 198, 0.2);
-            border-top: 3px solid #7877c6;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
         }
 
+        .loading-spinner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 3px solid transparent;
+            border-top: 3px solid #7877c6;
+            border-radius: 50%;
+            animation: spinPrimary 1s linear infinite;
+        }
+
+        .loading-spinner::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: calc(100% - 6px);
+            height: calc(100% - 6px);
+            border: 2px solid transparent;
+            border-bottom: 2px solid rgba(120, 119, 198, 0.4);
+            border-radius: 50%;
+            animation: spinSecondary 1.5s linear infinite reverse;
+        }
+
         .loading-spinner.hidden {
             display: none;
         }
 
-        @keyframes spin {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        @keyframes spinPrimary {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes spinSecondary {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .model-actions {
@@ -421,7 +499,7 @@
             font-size: 0.85rem;
             font-weight: 500;
             cursor: pointer;
-            transition: var(--transition-normal);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             backdrop-filter: blur(10px);
             display: flex;
             align-items: center;
@@ -429,6 +507,29 @@
             text-decoration: none;
             min-width: 100px;
             justify-content: center;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(120, 119, 198, 0.2),
+                transparent
+            );
+            transition: left 0.5s ease;
+        }
+
+        .action-btn:hover::before {
+            left: 100%;
         }
 
         .action-btn:hover {
@@ -625,9 +726,273 @@
                 font-size: 0.9rem;
             }
         }
+
+        /* Progress Bar for Gallery Loading */
+        .gallery-progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(120, 119, 198, 0.1);
+            z-index: 2000;
+            overflow: hidden;
+        }
+
+        .gallery-progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                rgba(120, 119, 198, 0.8), 
+                rgba(120, 119, 198, 1), 
+                rgba(120, 119, 198, 0.8));
+            transition: left 0.3s ease;
+        }
+
+        .gallery-progress-bar.loading::before {
+            animation: progressShine 1.5s ease-in-out infinite;
+        }
+
+        @keyframes progressShine {
+            0% { left: -100%; }
+            50% { left: 0%; }
+            100% { left: 100%; }
+        }
+
+        /* Enhanced model viewer with tilt effect */
+        .model-viewer-container {
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        }
+
+        .model-viewer-container model-viewer {
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+
+        .model-card:hover .model-viewer-container model-viewer {
+            transform: rotateX(2deg) rotateY(-2deg);
+        }
+
+
+        /* Loaded state animations */
+        body.loaded .header {
+            animation: slideInDown 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        body.loaded .gallery-container {
+            animation: fadeInUp 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.2s both;
+        }
+
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Enhanced hover states with performance optimizations */
+        .model-card {
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+
+        .model-card:hover {
+            transform: translateY(-12px) translateZ(0);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.6),
+                0 0 20px rgba(120, 119, 198, 0.3);
+            border-color: rgba(120, 119, 198, 0.4);
+        }
+
+        /* Filter button enhanced animations */
+        .filter-btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filter-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(120, 119, 198, 0.3), transparent);
+            transition: width 0.4s ease, height 0.4s ease;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+        }
+
+        .filter-btn:hover::after,
+        .filter-btn.active::after {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Search input enhanced focus state */
+        .search-input:focus {
+            transform: scale(1.02);
+        }
+
+        /* Gallery Stats */
+        .gallery-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(15, 15, 15, 0.6);
+            border-radius: 16px;
+            border: 1px solid rgba(120, 119, 198, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-item {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #7877c6;
+            background: linear-gradient(135deg, #7877c6, #9d00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #9ca3af;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* Enhanced Filter Buttons */
+        .filter-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            min-width: 90px;
+        }
+
+        .filter-count {
+            font-size: 0.75rem;
+            background: rgba(120, 119, 198, 0.2);
+            color: #7877c6;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 500;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .filter-btn.active .filter-count {
+            background: rgba(120, 119, 198, 0.4);
+            color: #ffffff;
+        }
+
+        /* Enhanced Search Container */
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 1.2rem;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .search-clear:hover {
+            background: rgba(120, 119, 198, 0.2);
+            color: #ffffff;
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(120, 119, 198, 0.1);
+            z-index: 1000;
+        }
+
+        .scroll-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #7877c6, #9d00ff);
+            width: 0%;
+            transition: width 0.1s ease;
+            box-shadow: 0 0 10px rgba(120, 119, 198, 0.5);
+        }
+
+        /* Responsive adjustments for new elements */
+        @media (max-width: 768px) {
+            .gallery-stats {
+                gap: 15px;
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
+            }
+
+            .stat-label {
+                font-size: 0.8rem;
+            }
+
+            .gallery-filters {
+                grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+                gap: 8px;
+            }
+
+            .filter-btn {
+                min-width: 70px;
+                padding: 8px 12px;
+            }
+
+            .filter-count {
+                font-size: 0.7rem;
+            }
+        }
     </style>
 </head>
 <body>
+
+    <!-- Progress Bar -->
+    <div class="gallery-progress-bar loading" id="gallery-progress-bar"></div>
+
     <!-- Offline Status Header -->
     <div class="offline-header" id="offline-header"></div>
 
@@ -688,24 +1053,46 @@
 
     <!-- Gallery Container -->
     <main class="gallery-container">
+        <!-- Gallery Stats -->
+        <div class="gallery-stats" id="gallery-stats">
+            <div class="stat-item">
+                <span class="stat-number" id="total-models">56</span>
+                <span class="stat-label">Modelos</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="available-models">9</span>
+                <span class="stat-label">Deusas da Noite</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="filtered-models">4</span>
+                <span class="stat-label">Monges</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="filtered-models">4</span>
+                <span class="stat-label">Chefe de Família</span>
+            </div>
+
+        </div>
+
         <!-- Gallery Controls -->
         <div class="gallery-controls">
-            <div class="gallery-filters">
-                <button class="filter-btn active" data-filter="all" data-lang-key="filter_all">Todos</button>
-                <button class="filter-btn" data-filter="mandala" data-lang-key="filter_mandala">Mandalas</button>
-                <button class="filter-btn" data-filter="buddha" data-lang-key="filter_buddha">Budas</button>
-                <button class="filter-btn" data-filter="bodhisattva" data-lang-key="filter_bodhisattva">Bodhisattvas</button>
-                <button class="filter-btn" data-filter="sutra" data-lang-key="filter_sutra">Sutras</button>
-            </div>
             
             <div class="gallery-search">
-                <input type="text" id="search-input" class="search-input" placeholder="Buscar por nome ou descrição..." data-lang-key="search_placeholder">
+                <div class="search-container">
+                    <input type="text" id="search-input" class="search-input" placeholder="🔍 Buscar por nome ou descrição..." data-lang-key="search_placeholder">
+                    <button class="search-clear" id="search-clear" style="display: none;">✕</button>
+                </div>
             </div>
         </div>
         
         <!-- Gallery Grid -->
         <div class="gallery-grid" id="gallery-grid">
             <!-- Models will be dynamically loaded here -->
+        </div>
+
+        <!-- Scroll to Top Indicator -->
+        <div class="scroll-indicator" id="scroll-indicator">
+            <div class="scroll-progress"></div>
         </div>
     </main>
 
@@ -728,9 +1115,8 @@
     </nav>
 
     <!-- Load scripts -->
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js" defer></script>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
     <script src="js/utils.js"></script>
-    <script src="model-viewer-integration.js"></script>
     <script src="js/gallery.js"></script>
 </body>
 </html>
