@@ -10,16 +10,20 @@ class GalleryController {
     constructor() {
         this.models = [];
         this.filteredModels = [];
+        this.displayedModels = [];
         this.currentFilter = 'all';
         this.searchTerm = '';
         this.isLoading = true;
+        this.modelsPerPage = 12;
+        this.currentPage = 1;
         
         // DOM elements
         this.elements = {
             galleryGrid: document.getElementById('gallery-grid'),
             searchInput: document.getElementById('search-input'),
             filterButtons: document.querySelectorAll('.filter-btn'),
-            loadingOverlay: document.getElementById('loading-overlay')
+            loadingOverlay: document.getElementById('loading-overlay'),
+            showMoreBtn: null // Will be created dynamically
         };
     }
     
@@ -52,11 +56,9 @@ class GalleryController {
     async loadModelData() {
         try {
             // Available models based on actual GLB files (missing: 7, 8, 27, 43, 52)
-            const availableModels = [
-                1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 
-                21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 
-                38, 39, 40, 41, 42, 44, 45, 46, 47, 48, 49, 50, 51, 53, 54, 55, 56
-            ];
+            const unavailableModels = [7, 8, 27, 43, 52];
+            const availableModels = Array.from({ length: 56 }, (_, i) => i + 1)
+                .filter(id => !unavailableModels.includes(id));
             
             this.models = Array.from({ length: 56 }, (_, i) => {
                 const modelNumber = i + 1;
@@ -67,7 +69,7 @@ class GalleryController {
                     title: `Capítulo ${modelNumber}`,
                     subtitle: `Avatamsaka Sutra - Parte ${modelNumber}`,
                     description: `Modelo 3D interativo representando o capítulo ${modelNumber} do Avatamsaka Sutra.`,
-                    category: this.getRandomCategory(),
+                    category: this.getDeterministicCategory(modelNumber),
                     available: isAvailable,
                     modelPath: `./models/modelo${modelNumber}.glb`,
                     usdzPath: `./models/usdz_files/modelo${modelNumber}.usdz`,
@@ -76,6 +78,7 @@ class GalleryController {
             });
             
             this.filteredModels = [...this.models];
+            this.updateDisplayedModels();
             
         } catch (error) {
             console.error('Error loading model data:', error);
@@ -84,12 +87,13 @@ class GalleryController {
     }
     
     /**
-     * Get a random category for sample data
-     * @returns {string} - Random category
+     * Get a deterministic category based on model number to avoid random behavior
+     * @param {number} modelNumber - Model number
+     * @returns {string} - Deterministic category
      */
-    getRandomCategory() {
+    getDeterministicCategory(modelNumber) {
         const categories = ['mandala', 'buddha', 'bodhisattva', 'sutra'];
-        return categories[Math.floor(Math.random() * categories.length)];
+        return categories[(modelNumber - 1) % categories.length];
     }
     
     /**
@@ -151,7 +155,19 @@ class GalleryController {
             return categoryMatch && searchMatch;
         });
         
+        // Reset pagination when filtering
+        this.currentPage = 1;
+        this.updateDisplayedModels();
         this.renderGallery();
+    }
+
+    /**
+     * Update displayed models based on pagination
+     */
+    updateDisplayedModels() {
+        const startIndex = 0;
+        const endIndex = this.currentPage * this.modelsPerPage;
+        this.displayedModels = this.filteredModels.slice(startIndex, endIndex);
     }
     
     /**
@@ -171,11 +187,12 @@ class GalleryController {
                     <p style="color: var(--text-muted);">Tente ajustar seus filtros ou termos de busca.</p>
                 </div>
             `;
+            this.hideShowMoreButton();
             return;
         }
         
-        // Add model cards
-        this.filteredModels.forEach(model => {
+        // Add model cards for displayed models only
+        this.displayedModels.forEach(model => {
             const modelCard = document.createElement('div');
             modelCard.className = `model-card ${!model.available ? 'unavailable' : ''}`;
             modelCard.dataset.modelId = model.id;
@@ -248,6 +265,115 @@ class GalleryController {
                 });
             });
         }
+
+        // Handle "Show More" button
+        this.handleShowMoreButton();
+    }
+
+    /**
+     * Handle show more button visibility and functionality
+     */
+    handleShowMoreButton() {
+        const hasMoreModels = this.displayedModels.length < this.filteredModels.length;
+        
+        if (hasMoreModels) {
+            this.showShowMoreButton();
+        } else {
+            this.hideShowMoreButton();
+        }
+    }
+
+    /**
+     * Show the "Show More" button
+     */
+    showShowMoreButton() {
+        let showMoreContainer = document.getElementById('show-more-container');
+        
+        if (!showMoreContainer) {
+            showMoreContainer = document.createElement('div');
+            showMoreContainer.id = 'show-more-container';
+            showMoreContainer.style.cssText = `
+                display: flex;
+                justify-content: center;
+                padding: 40px 20px;
+                margin-top: 20px;
+            `;
+            
+            const showMoreBtn = document.createElement('button');
+            showMoreBtn.className = 'show-more-btn';
+            showMoreBtn.style.cssText = `
+                background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+                color: white;
+                border: none;
+                border-radius: 25px;
+                padding: 12px 30px;
+                font-size: 1.1rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 15px rgba(0, 255, 149, 0.3);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            `;
+            showMoreBtn.textContent = 'Ver Mais';
+            
+            showMoreBtn.addEventListener('mouseover', () => {
+                showMoreBtn.style.transform = 'translateY(-2px)';
+                showMoreBtn.style.boxShadow = '0 6px 20px rgba(0, 255, 149, 0.4)';
+            });
+            
+            showMoreBtn.addEventListener('mouseout', () => {
+                showMoreBtn.style.transform = 'translateY(0)';
+                showMoreBtn.style.boxShadow = '0 4px 15px rgba(0, 255, 149, 0.3)';
+            });
+            
+            showMoreBtn.addEventListener('click', () => {
+                this.loadMoreModels();
+            });
+            
+            showMoreContainer.appendChild(showMoreBtn);
+            
+            // Insert after gallery grid
+            const galleryContainer = this.elements.galleryGrid.parentNode;
+            galleryContainer.insertBefore(showMoreContainer, this.elements.galleryGrid.nextSibling);
+            
+            this.elements.showMoreBtn = showMoreBtn;
+        }
+        
+        showMoreContainer.style.display = 'flex';
+    }
+
+    /**
+     * Hide the "Show More" button
+     */
+    hideShowMoreButton() {
+        const showMoreContainer = document.getElementById('show-more-container');
+        if (showMoreContainer) {
+            showMoreContainer.style.display = 'none';
+        }
+    }
+
+    /**
+     * Load more models when "Show More" is clicked
+     */
+    loadMoreModels() {
+        this.currentPage++;
+        this.updateDisplayedModels();
+        this.renderGallery();
+        
+        // Smooth scroll to new content
+        setTimeout(() => {
+            const newCards = document.querySelectorAll('.model-card');
+            if (newCards.length > 0) {
+                const lastOldIndex = (this.currentPage - 1) * this.modelsPerPage - 1;
+                if (newCards[lastOldIndex]) {
+                    newCards[lastOldIndex].scrollIntoView({ 
+                        behavior: 'smooth',
+                        block: 'nearest'
+                    });
+                }
+            }
+        }, 100);
     }
     
     /**
