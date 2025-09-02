@@ -308,58 +308,14 @@
             padding: 24px;
             border: 1px solid rgba(120, 119, 198, 0.1);
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
-            will-change: transform;
             contain: layout style paint;
-            animation: fadeInUp 0.6s ease-out;
             backdrop-filter: blur(10px);
             cursor: pointer;
         }
 
-        .model-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(120, 119, 198, 0.1),
-                transparent
-            );
-            transition: left 0.5s ease;
-        }
-
-        .model-card:hover::after {
-            left: 100%;
-        }
-
-        .model-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(120, 119, 198, 0.3), transparent);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        .model-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
-            border-color: rgba(120, 119, 198, 0.3);
-        }
-
-        .model-card:hover::before {
-            opacity: 1;
-        }
-
+      
         .model-card.unavailable {
             opacity: 0.4;
             background: rgba(10, 10, 10, 0.6);
@@ -443,31 +399,9 @@
             transform: translate(-50%, -50%);
         }
 
-        .loading-spinner::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 3px solid transparent;
-            border-top: 3px solid #7877c6;
-            border-radius: 50%;
-            animation: spinPrimary 1s linear infinite;
-        }
 
-        .loading-spinner::after {
-            content: '';
-            position: absolute;
-            top: 3px;
-            left: 3px;
-            width: calc(100% - 6px);
-            height: calc(100% - 6px);
-            border: 2px solid transparent;
-            border-bottom: 2px solid rgba(120, 119, 198, 0.4);
-            border-radius: 50%;
-            animation: spinSecondary 1.5s linear infinite reverse;
-        }
+
+
 
         .loading-spinner.hidden {
             display: none;
@@ -727,47 +661,60 @@
             }
         }
 
-        /* Progress Bar for Gallery Loading */
+        /* Progress Bar for Gallery Loading - Fixed on Left Center */
         .gallery-progress-bar {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
+            top: 50%;
+            left: 20px;
+            width: 4px;
+            height: 200px;
             background: rgba(120, 119, 198, 0.1);
             z-index: 2000;
+            transform: translateY(-50%);
+            border-radius: 2px;
             overflow: hidden;
         }
 
-        .gallery-progress-bar::before {
-            content: '';
+        .gallery-progress-bar-fill {
             position: absolute;
             top: 0;
-            left: -100%;
+            left: 0;
             width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, 
+            height: 0%;
+            background: linear-gradient(180deg, 
                 rgba(120, 119, 198, 0.8), 
                 rgba(120, 119, 198, 1), 
                 rgba(120, 119, 198, 0.8));
-            transition: left 0.3s ease;
+            transition: height 0.3s ease;
+            border-radius: 2px;
         }
 
-        .gallery-progress-bar.loading::before {
-            animation: progressShine 1.5s ease-in-out infinite;
+        .gallery-progress-bar.loading .gallery-progress-bar-fill {
+            animation: progressPulse 2s ease-in-out infinite;
         }
 
-        @keyframes progressShine {
-            0% { left: -100%; }
-            50% { left: 0%; }
-            100% { left: 100%; }
+        .gallery-progress-bar.completed .gallery-progress-bar-fill {
+            animation: none;
+            background: linear-gradient(180deg, 
+                rgba(120, 119, 198, 0.6), 
+                rgba(120, 119, 198, 0.8), 
+                rgba(120, 119, 198, 0.6));
+        }
+
+        @keyframes progressPulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* Hide gallery progress bar on mobile (since scroll indicator is shown there) */
+        @media (max-width: 768px) {
+            .gallery-progress-bar {
+                display: none;
+            }
         }
 
         /* Enhanced model viewer with tilt effect */
-        .model-viewer-container {
-            perspective: 1000px;
-            transform-style: preserve-3d;
-        }
+
 
         .model-viewer-container model-viewer {
             transition: all 0.3s ease;
@@ -937,7 +884,7 @@
             color: #ffffff;
         }
 
-        /* Scroll Indicator */
+        /* Scroll Indicator - Mobile Only */
         .scroll-indicator {
             position: fixed;
             top: 0;
@@ -946,6 +893,7 @@
             height: 4px;
             background: rgba(120, 119, 198, 0.1);
             z-index: 1000;
+            display: none; /* Hidden by default */
         }
 
         .scroll-progress {
@@ -954,6 +902,13 @@
             width: 0%;
             transition: width 0.1s ease;
             box-shadow: 0 0 10px rgba(120, 119, 198, 0.5);
+        }
+
+        /* Show scroll indicator only on mobile */
+        @media (max-width: 768px) {
+            .scroll-indicator {
+                display: block;
+            }
         }
 
         /* Responsive adjustments for new elements */
@@ -1022,7 +977,9 @@
     <div class="magnet-lines-background" id="magnet-lines-container"></div>
 
     <!-- Progress Bar -->
-    <div class="gallery-progress-bar loading" id="gallery-progress-bar"></div>
+    <div class="gallery-progress-bar loading" id="gallery-progress-bar">
+        <div class="gallery-progress-bar-fill" id="gallery-progress-bar-fill"></div>
+    </div>
 
     <!-- Offline Status Header -->
     <div class="offline-header" id="offline-header"></div>
@@ -1087,11 +1044,7 @@
         <!-- Gallery Stats -->
         <div class="gallery-stats" id="gallery-stats">
             <div class="stat-item">
-                <span class="stat-number" id="total-models">56</span>
-                <span class="stat-label">Modelos</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-number" id="available-models">9</span>
+                <span class="stat-number" id="filtered-models">9</span>
                 <span class="stat-label">Deusas da Noite</span>
             </div>
             <div class="stat-item">
@@ -1101,6 +1054,23 @@
             <div class="stat-item">
                 <span class="stat-number" id="filtered-models">4</span>
                 <span class="stat-label">Chefe de Família</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="filtered-models">4</span>
+                <span class="stat-label">Bodhisattvas</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="filtered-models">3</span>
+                <span class="stat-label">Mulheres leigas</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="filtered-models">2</span>
+                <span class="stat-label">Reis</span>
+            </div>
+
+            <div class="stat-item">
+                <span class="stat-number" id="filtered-models">+20</span>
+                <span class="stat-label">Outros</span>
             </div>
 
         </div>

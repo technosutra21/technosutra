@@ -50,8 +50,14 @@ class GalleryController {
             // Setup event listeners including new animations
             this.setupEventListeners();
             
+            // Update progress: Setup complete
+            this.updateProgressBar(90);
+            
             // Initial render with staggered animations
             this.renderGallery();
+            
+            // Update progress: Rendering complete
+            this.updateProgressBar(95);
             
             // Hide loading overlay with enhanced animation
             this.hideLoading();
@@ -72,8 +78,7 @@ class GalleryController {
         // Initialize progress bar animation
         this.updateProgressBar(0);
         
-        // Setup 3D tilt effects for cards
-        this.setup3DTiltEffects();
+        // Removed 3D tilt effects for better performance and user experience
     }
 
     /**
@@ -98,44 +103,27 @@ class GalleryController {
         }
     }
 
-    /**
-     * Setup 3D tilt effects for model cards
-     */
-    setup3DTiltEffects() {
-        document.addEventListener('mousemove', (e) => {
-            if (this.animationState.isAnimating) return;
-            
-            const cards = document.querySelectorAll('.model-card');
-            cards.forEach(card => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
-                    const centerX = rect.width / 2;
-                    const centerY = rect.height / 2;
-                    const rotateX = (y - centerY) / 20;
-                    const rotateY = (centerX - x) / 20;
-                    
-                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
-                } else {
-                    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
-                }
-            });
-        });
-    }
+
 
     /**
      * Update progress bar with smooth animation
      */
     updateProgressBar(percentage) {
         if (this.elements.progressBar) {
-            const progressFill = this.elements.progressBar.querySelector('::before');
-            if (percentage >= 100) {
-                setTimeout(() => {
-                    this.elements.progressBar.classList.remove('loading');
-                    this.elements.progressBar.style.opacity = '0';
-                }, 500);
+            const progressFill = document.getElementById('gallery-progress-bar-fill');
+            if (progressFill) {
+                progressFill.style.height = `${Math.min(percentage, 100)}%`;
+                
+                if (percentage >= 100) {
+                    setTimeout(() => {
+                        this.elements.progressBar.classList.remove('loading');
+                        this.elements.progressBar.classList.add('completed');
+                        // Hide progress bar after a delay
+                        setTimeout(() => {
+                            this.elements.progressBar.style.opacity = '0';
+                        }, 1000);
+                    }, 500);
+                }
             }
         }
     }
@@ -145,11 +133,17 @@ class GalleryController {
      */
     async loadModelData() {
         try {
+            // Update progress: Starting data load
+            this.updateProgressBar(10);
+            
             // Try to load characters data from CSV
             let charactersData = await this.loadCharactersData();
             
+            // Update progress: CSV loaded
+            this.updateProgressBar(30);
+            
             // Available models based on actual GLB files (missing: 8, 27, 52)
-            const unavailableModels = [8, 27, 52];
+            const unavailableModels = [52];
             const availableModels = Array.from({ length: 56 }, (_, i) => i + 1)
                 .filter(id => !unavailableModels.includes(id));
             
@@ -172,8 +166,14 @@ class GalleryController {
                 };
             });
             
+            // Update progress: Models processed
+            this.updateProgressBar(60);
+            
             this.filteredModels = [...this.models];
             this.updateDisplayedModels();
+            
+            // Update progress: Gallery data ready
+            this.updateProgressBar(80);
             
         } catch (error) {
             console.error('Error loading model data:', error);

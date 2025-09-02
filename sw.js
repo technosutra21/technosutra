@@ -16,12 +16,15 @@ const CORE_ASSETS = [
     '/icon-192x192.png',
     '/icon-512x512.png',
     '/AR.html',
-    '/offline.html'
+    '/offline.html',
+    '/qr-scanner.js',
+    '/qr-scanner.css',
+    '/ar.js'
+
 ];
 
 // Optional assets - enhance experience but not critical
 const OPTIONAL_ASSETS = [
-    '/qr-scanner.js',
     '/1.js',
     '/2.js'
 ];
@@ -31,7 +34,6 @@ const MODEL_ASSETS = [];
 for (let i = 1; i <= 56; i++) {
     MODEL_ASSETS.push(`/models/modelo${i}.glb`);
     MODEL_ASSETS.push(`/models/usdz/modelo${i}.usdz`);
-    MODEL_ASSETS.push(`/images/chapter${i}.jpg`);
 }
 
 // External assets that need caching
