@@ -107,6 +107,8 @@ def is_ext_interesting(url: str, exts: Set[str]) -> bool:
             return True
     return False
 
+from dataclasses import dataclass
+
 @dataclass
 class Finding:
     file: Path
@@ -114,13 +116,6 @@ class Finding:
     raw: str
     url: str
     resolved: Path
-
-# Python 3.7 compatibility: provide dataclass if not available (but 3.7+ has it)
-try:
-    from dataclasses import dataclass
-except Exception:
-    def dataclass(cls):
-        return cls
 
 
 def scan_file(path: Path, root: Path, exts: Set[str], verbose: bool) -> Tuple[List[Finding], List[Finding]]:
