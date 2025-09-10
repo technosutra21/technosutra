@@ -19,7 +19,8 @@ const CORE_ASSETS = [
     '/offline.html',
     '/js/qr-scanner.js',
     '/js/1.js',
-    '/js/2.js'
+    '/js/2.js',
+    '/js/ar-experience.js'
 ];
 
 
