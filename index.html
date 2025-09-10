@@ -1771,12 +1771,11 @@
         });
     </script>
 
-    <script type="module">
+   <script type="module">
         const isLocal = window.location.protocol === 'file:';
-        const basePath = isLocal ? './' : '/';
 
         if (!isLocal) {
-            import(`${basePath}/js/1.js`).then(module => {
+            import('./js/1.js').then(module => {
                 window.RotatingSmallerSphereSort = module.default;
                 window.easing = module.easing;
                 console.log('1.js loaded successfully');
@@ -1784,9 +1783,9 @@
                 console.error('Failed to load 1.js:', err);
             });
 
-            import(`${basePath}/js/2.js`).then(module => {
+            import('./js/2.js').then(module => {
                 const AnimationController = module.default;
-                window.animationController = new AnimationController(); // Make it global
+                window.animationController = new AnimationController();
                 console.log('2.js loaded successfully');
             }).catch(err => {
                 console.error('Failed to load 2.js:', err);
