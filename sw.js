@@ -1,26 +1,41 @@
 // Service Worker for Techno Sutra AR
 // Enhanced PWA with offline support and complete asset caching
 
-const CACHE_NAME = 'techno-sutra-ar-v1.0.0';
-const RUNTIME_CACHE = 'techno-sutra-runtime-v1.0.0';
-const MODELS_CACHE = 'techno-sutra-models-v1.0.0';
+const CACHE_NAME = 'techno-sutra-ar-v1.0.1';
+const RUNTIME_CACHE = 'techno-sutra-runtime-v1.0.1';
+const MODELS_CACHE = 'techno-sutra-models-v1.0.1';
 
 // Core application shell - critical files for app to work
 const CORE_ASSETS = [
     '/',
     '/index.html',
-    '/styles.css',
-    '/js/main.js',
-    '/manifest.json',
-    '/imgs/icon.png',
-    '/imgs/icon-192x192.png',
-    '/imgs/icon-512x512.png',
     '/AR.html',
+    '/galeria.html',
+    '/map.html',
+    '/home.html',
     '/offline.html',
+
+    // CSS
+    '/styles.css',
+    '/css/shared.css',
+
+    // JS
+    '/js/main.js',
+    '/js/utils.js',
     '/js/qr-scanner.js',
     '/js/1.js',
     '/js/2.js',
-    '/js/ar-experience.js'
+    '/js/ar-experience.js',
+    '/js/model-viewer-integration.js',
+    '/js/gallery.js',
+
+    // PWA
+    '/manifest.json',
+
+    // Icons
+    '/imgs/icon.png',
+    '/imgs/icon-192x192.png',
+    '/imgs/icon-512x512.png'
 ];
 
 
@@ -36,7 +51,17 @@ for (let i = 1; i <= 56; i++) {
 const EXTERNAL_ASSETS = [
     'https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Chakra+Petch:wght@300;400;600;700&display=swap',
     'https://fonts.gstatic.com/s/orbitron/v29/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyrFE.woff2',
-    'https://fonts.gstatic.com/s/chakrapetch/v9/cIf6MapbsEk7TDLdtEz1BwkmmIpny6orMTJsMsw.woff2'
+    'https://fonts.gstatic.com/s/chakrapetch/v9/cIf6MapbsEk7TDLdtEz1BwkmmIpny6orMTJsMsw.woff2',
+
+    // Model Viewer (served via Google CDN)
+    'https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js',
+
+    // MapLibre used in map.html
+    'https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js',
+    'https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css',
+
+    // jsQR used on index.html
+    'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js'
 ];
 
 // Install event - cache core assets
@@ -206,14 +231,19 @@ async function handleFetch(request) {
         }
         
         // Strategy for images - Cache First
-        if (url.pathname.includes('/images/')) {
+        if (url.pathname.includes('/imgs/')) {
             return await cacheFirst(request, MODELS_CACHE);
         }
         
         // Strategy 3: Fonts and external assets - Stale While Revalidate
-        if (url.hostname === 'fonts.googleapis.com' || 
+        if (
+            url.hostname === 'fonts.googleapis.com' || 
             url.hostname === 'fonts.gstatic.com' ||
-            url.hostname === 'modelviewer.dev') {
+            url.hostname === 'modelviewer.dev' ||
+            url.hostname === 'ajax.googleapis.com' ||
+            url.hostname === 'unpkg.com' ||
+            url.hostname === 'cdn.jsdelivr.net'
+        ) {
             return await staleWhileRevalidate(request, RUNTIME_CACHE);
         }
         
@@ -369,12 +399,16 @@ self.addEventListener('message', (event) => {
             
         case 'CACHE_ALL_ASSETS':
             console.log('SW: Received CACHE_ALL_ASSETS command');
-            caches.open(CACHE_NAME).then(cache => {
-                cache.addAll([...CORE_ASSETS, ...MODEL_ASSETS, ...EXTERNAL_ASSETS]);
-                console.log('SW: All assets cached successfully');
-            }).catch(error => {
-                console.error('SW: Failed to cache all assets:', error);
-            });
+            (async () => {
+                try {
+                    await cacheAssetsWithFallback(CORE_ASSETS, CACHE_NAME, 'core assets');
+                    await cacheAssetsWithFallback(EXTERNAL_ASSETS, RUNTIME_CACHE, 'external assets');
+                    await cacheAssetsWithFallback(MODEL_ASSETS, MODELS_CACHE, 'model assets');
+                    console.log('SW: All assets cached successfully (robust)');
+                } catch (error) {
+                    console.error('SW: Failed during CACHE_ALL_ASSETS:', error);
+                }
+            })();
             break;
             
         default:

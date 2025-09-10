@@ -435,7 +435,7 @@ class GalleryController {
      * Update filter button counts
      */
     updateFilterCounts() {
-        const categories = ['all', 'bodhisattva', 'mandala', 'buddha', 'sutra'];
+        const categories = ['all', 'bodhisattva', 'buddha', 'kalyanamitras'];
         
         categories.forEach(category => {
             const count = category === 'all' 
@@ -533,12 +533,7 @@ class GalleryController {
                     ${model.available ? `
                         <model-viewer
                             src="${model.modelPath}"
-                            ios-src="${model.usdzPath}"
                             alt="${model.title}"
-                            camera-controls
-                            auto-rotate
-                            rotation-per-second="30deg"
-                            loading="lazy"
                             reveal="auto"
                             ar
                             ar-modes="webxr scene-viewer quick-look"
@@ -561,11 +556,11 @@ class GalleryController {
                 
                 <div class="model-actions">
                     <a href="AR.html?model=${model.id}" class="action-btn primary" ${!model.available ? 'disabled' : ''}>
-                        <span>📱</span>
+                        <span>⁜</span>
                         <span>Ver em AR</span>
                     </a>
                     <button class="action-btn info-btn" onclick="showModelInfo(${model.id})" ${!model.available ? 'disabled' : ''}>
-                        <span>📖</span>
+                        <span>⁜</span>
                         <span>Ver Mais</span>
                     </button>
                     <button class="action-btn" onclick="shareModel(${model.id})" ${!model.available ? 'disabled' : ''}>
