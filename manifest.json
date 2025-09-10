@@ -82,22 +82,6 @@
       ]
     }
   ],
-  "screenshots": [
-    {
-      "src": "screenshot1.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "platform": "wide",
-      "label": "Mandala navigation interface"
-    },
-    {
-      "src": "screenshot2.png",
-      "sizes": "750x1334",
-      "type": "image/png",
-      "platform": "narrow",
-      "label": "Mobile AR experience"
-    }
-  ],
   "related_applications": [],
   "prefer_related_applications": false,
   "edge_side_panel": {
