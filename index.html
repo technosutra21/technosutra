@@ -23,7 +23,7 @@
         content="Explore os 56 capítulos do Avatamsaka Sutra em realidade aumentada com modelos 3D interativos">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://technosutra.bhumisparshaschool.org/">
-    <meta property="og:image" content="./icon.png">
+    <meta property="og:image" content="./img/icon.png">
     <meta property="og:site_name" content="Techno Sutra AR">
 
     <!-- Twitter Card Meta Tags -->
@@ -31,14 +31,14 @@
     <meta name="twitter:title" content="Techno Sutra AR - Cyber Dharma Experience">
     <meta name="twitter:description"
         content="Experiência imersiva em realidade aumentada dos 56 capítulos do Avatamsaka Sutra">
-    <meta name="twitter:image" content="./icon.png">
+    <meta name="twitter:image" content="./img/icon.png">
 
     <title>Techno Sutra AR - Cyber Dharma Experience</title>
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icon.png">
-    <link rel="shortcut icon" href="icon.png">
+    <link rel="apple-touch-icon" href="/img/icon.png">
+    <link rel="shortcut icon" href="/img/icon.png">
 
     <!-- Preconnections for performance -->
     <link rel="preconnect" href="https://ajax.googleapis.com" crossorigin>
@@ -1030,7 +1030,7 @@
         <div class="mandala-container" id="mandalaContainer">
             <a class="mandala-core" 
                 rel="noopener noreferrer" aria-label="Visit Techno Sutra at Bhumisparsha School">
-                <img src="icon.png" alt="Techno Sutra Logo" class="core-icon">
+                <img src="/img/icon.png" alt="Techno Sutra Logo" class="core-icon">
             </a>
 
             <a href="home.html" class="mandala-item" data-title="Home" data-index="0" role="button" tabindex="0"
@@ -1776,7 +1776,7 @@
         const basePath = isLocal ? './' : '/';
 
         if (!isLocal) {
-            import(`${basePath}1.js`).then(module => {
+            import(`${basePath}/js/1.js`).then(module => {
                 window.RotatingSmallerSphereSort = module.default;
                 window.easing = module.easing;
                 console.log('1.js loaded successfully');
@@ -1784,7 +1784,7 @@
                 console.error('Failed to load 1.js:', err);
             });
 
-            import(`${basePath}2.js`).then(module => {
+            import(`${basePath}/js/2.js`).then(module => {
                 const AnimationController = module.default;
                 window.animationController = new AnimationController(); // Make it global
                 console.log('2.js loaded successfully');
@@ -1797,7 +1797,7 @@
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-    <script src="qr-scanner.js"></script>
+    <script src="/js/qr-scanner.js"></script>
 </body>
 
 </html>

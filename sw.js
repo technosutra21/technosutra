@@ -10,23 +10,23 @@ const CORE_ASSETS = [
     '/',
     '/index.html',
     '/styles.css',
-    '/main.js',
+    '/js/main.js',
     '/manifest.json',
-    '/icon.png',
-    '/icon-192x192.png',
-    '/icon-512x512.png',
+    '/img/icon.png',
+    '/img/icon-192x192.png',
+    '/img/icon-512x512.png',
     '/AR.html',
     '/offline.html',
-    '/qr-scanner.js',
+    '/js/qr-scanner.js',
     '/qr-scanner.css',
-    '/ar.js'
+    '/js/ar.js'
 
 ];
 
 // Optional assets - enhance experience but not critical
 const OPTIONAL_ASSETS = [
-    '/1.js',
-    '/2.js'
+    '/js/1.js',
+    '/js/2.js'
 ];
 
 // Generate model URLs (1-56)
@@ -53,7 +53,7 @@ self.addEventListener('install', (event) => {
             console.log('SW: Caching core assets');
             return cache.addAll(CORE_ASSETS.filter(asset => {
                 // Filter out assets that might not exist yet
-                return !asset.includes('icon-') || asset === '/icon.png';
+                return !asset.includes('icon-') || asset === '/img/icon.png';
             }));
         }).then(() => {
             console.log('SW: Core caching completed');
@@ -408,8 +408,8 @@ self.addEventListener('push', (event) => {
         event.waitUntil(
             self.registration.showNotification(data.title, {
                 body: data.body,
-                icon: '/icon-192x192.png',
-                badge: '/icon-72x72.png',
+                icon: '/img/icon-192x192.png',
+                badge: '/img/icon-72x72.png',
                 tag: 'techno-sutra-notification'
             })
         );
