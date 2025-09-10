@@ -17,10 +17,7 @@ const CORE_ASSETS = [
     '/imgs/icon-512x512.png',
     '/AR.html',
     '/offline.html',
-    '/js/qr-scanner.js',
-    '/qr-scanner.css',
-    '/js/ar.js'
-
+    '/js/qr-scanner.js'
 ];
 
 // Optional assets - enhance experience but not critical
