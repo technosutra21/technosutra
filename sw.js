@@ -12,9 +12,9 @@ const CORE_ASSETS = [
     '/styles.css',
     '/js/main.js',
     '/manifest.json',
-    '/img/icon.png',
-    '/img/icon-192x192.png',
-    '/img/icon-512x512.png',
+    '/imgs/icon.png',
+    '/imgs/icon-192x192.png',
+    '/imgs/icon-512x512.png',
     '/AR.html',
     '/offline.html',
     '/js/qr-scanner.js',
@@ -53,7 +53,7 @@ self.addEventListener('install', (event) => {
             console.log('SW: Caching core assets');
             return cache.addAll(CORE_ASSETS.filter(asset => {
                 // Filter out assets that might not exist yet
-                return !asset.includes('icon-') || asset === '/img/icon.png';
+                return !asset.includes('icon-') || asset === '/imgs/icon.png';
             }));
         }).then(() => {
             console.log('SW: Core caching completed');
@@ -408,8 +408,8 @@ self.addEventListener('push', (event) => {
         event.waitUntil(
             self.registration.showNotification(data.title, {
                 body: data.body,
-                icon: '/img/icon-192x192.png',
-                badge: '/img/icon-72x72.png',
+                icon: '/imgs/icon-192x192.png',
+                badge: '/imgs/icon-72x72.png',
                 tag: 'techno-sutra-notification'
             })
         );
