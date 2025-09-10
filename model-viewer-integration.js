@@ -64,6 +64,59 @@ function initGalleryModelViewer(containerId, modelId, chapterData = {}, options 
 
     modelViewer.addEventListener('error', (event) => {
         console.error(`Error loading gallery model ${modelId}:`, event);
+        
+        // Add fallback behavior for model loading errors
+        const container = modelViewer.parentElement;
+        if (container) {
+            // Create error message element
+            const errorElement = document.createElement('div');
+            errorElement.className = 'model-error';
+            errorElement.innerHTML = `
+                <div class="error-icon">⚠️</div>
+                <div class="error-message">Erro ao carregar modelo 3D</div>
+                <button class="retry-button">Tentar novamente</button>
+            `;
+            
+            // Style the error element
+            errorElement.style.cssText = `
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background: rgba(0, 0, 0, 0.7);
+                color: white;
+                z-index: 10;
+                text-align: center;
+                padding: 20px;
+            `;
+            
+            // Add retry functionality
+            const retryButton = errorElement.querySelector('.retry-button');
+            if (retryButton) {
+                retryButton.style.cssText = `
+                    background: rgba(255, 255, 255, 0.2);
+                    border: 1px solid rgba(255, 255, 255, 0.4);
+                    color: white;
+                    padding: 8px 16px;
+                    margin-top: 16px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                `;
+                retryButton.addEventListener('click', () => {
+                    container.removeChild(errorElement);
+                    // Reload the model
+                    modelViewer.src = `${MODEL_VIEWER_CONFIG.modelBasePath}modelo${modelId}.glb?t=${Date.now()}`;
+                });
+            }
+            
+            container.appendChild(errorElement);
+        }
+        
         if (options.onError) options.onError(modelId, event);
     });
 
@@ -120,15 +173,47 @@ function initARModelViewer(containerId, modelId, options = {}) {
         }
     });
 
-    // Add AR button
+    // Add AR button with improved styling and accessibility
     const arButton = document.createElement('button');
     arButton.setAttribute('slot', 'ar-button');
     arButton.className = 'ar-button';
     arButton.id = 'ar-button';
+    arButton.setAttribute('aria-label', 'Visualizar em Realidade Aumentada');
     arButton.innerHTML = `
-        <span>🛞</span>
-        <span>Ver em AR</span>
+        <span class="ar-icon">📱</span>
+        <span class="ar-text">Ver em AR</span>
     `;
+    
+    // Add button styles if not already in CSS
+    const buttonStyle = document.createElement('style');
+    buttonStyle.textContent = `
+        .ar-button {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 2px solid white;
+            border-radius: 4px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 16px;
+            font-weight: 500;
+            backdrop-filter: blur(4px);
+            transition: all 0.3s ease;
+        }
+        .ar-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+        .ar-button:active {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        .ar-icon {
+            font-size: 1.2em;
+        }
+    `;
+    document.head.appendChild(buttonStyle);
+    
     modelViewer.appendChild(arButton);
 
     // Add progress bar

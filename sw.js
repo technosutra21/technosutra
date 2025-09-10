@@ -169,7 +169,49 @@ async function handleFetch(request) {
         }
         
         // Strategy 2: Model files - Cache First with network fallback
-        if (url.pathname.includes('/models/') || url.pathname.includes('/images/')) {
+        if (url.pathname.includes('/models/')) {
+            // For model files, use a more aggressive caching strategy
+            try {
+                // First check cache
+                const cachedResponse = await caches.match(request, { cacheName: MODELS_CACHE });
+                if (cachedResponse) {
+                    // If in cache, use it but also update cache in background
+                    const fetchPromise = fetch(request)
+                        .then(async (networkResponse) => {
+                            if (networkResponse.ok) {
+                                const cache = await caches.open(MODELS_CACHE);
+                                await cache.put(request, networkResponse.clone());
+                                console.log('SW: Updated cached model:', url.pathname);
+                            }
+                            return networkResponse;
+                        })
+                        .catch(error => {
+                            console.warn('SW: Failed to update model cache:', error);
+                        });
+                    
+                    // Trigger update but don't wait for it
+                    fetchPromise.catch(() => {});
+                    
+                    return cachedResponse;
+                }
+                
+                // If not in cache, fetch from network and cache
+                const networkResponse = await fetch(request);
+                if (networkResponse.ok) {
+                    const cache = await caches.open(MODELS_CACHE);
+                    await cache.put(request, networkResponse.clone());
+                    console.log('SW: Cached new model:', url.pathname);
+                }
+                return networkResponse;
+            } catch (error) {
+                console.error('SW: Model fetch failed:', error);
+                // Return offline fallback if available
+                return caches.match('/offline.html');
+            }
+        }
+        
+        // Strategy for images - Cache First
+        if (url.pathname.includes('/images/')) {
             return await cacheFirst(request, MODELS_CACHE);
         }
         

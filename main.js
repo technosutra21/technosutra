@@ -273,12 +273,30 @@ function startQRDetection() {
             canvas.height = qrVideo.videoHeight;
             context.drawImage(qrVideo, 0, 0, canvas.width, canvas.height);
 
-            // Note: For production, integrate with a proper QR library like jsQR
-            // This is a placeholder for the QR detection logic
+            // Integrate with jsQR library for QR code detection
             try {
-                // Placeholder for QR code detection
+                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                if (window.jsQR) {
+                    const code = window.jsQR(imageData.data, canvas.width, canvas.height, {
+                        inversionAttempts: "dontInvert",
+                    });
+                    
+                    if (code) {
+                        console.log("QR Code detected:", code.data);
+                        // Check if the QR code contains a valid model number
+                        const modelMatch = code.data.match(/model=(\d+)/);
+                        if (modelMatch && modelMatch[1]) {
+                            const modelNum = parseInt(modelMatch[1], 10);
+                            if (validateModelNumber(modelNum)) {
+                                redirectToModel(modelNum);
+                                return; // Stop scanning after successful detection
+                            }
+                        }
+                    }
+                }
                 setTimeout(scanFrame, QR_SCAN_INTERVAL);
             } catch (error) {
+                console.error("QR scanning error:", error);
                 setTimeout(scanFrame, QR_SCAN_INTERVAL);
             }
         } else if (qrModal.style.display === 'flex') {

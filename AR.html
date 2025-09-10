@@ -47,6 +47,14 @@
     <link rel="dns-prefetch" href="https://ajax.googleapis.com">
     <link rel="dns-prefetch" href="https://modelviewer.dev">
     <link rel="preconnect" href="https://ajax.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Preload critical assets -->
+    <link rel="preload" href="js/ar-experience.js" as="script">
+    <link rel="preload" href="js/utils.js" as="script">
+    <link rel="preload" href="model-viewer-integration.js" as="script">
+    <link rel="preload" href="css/shared.css" as="style">
     
     <!-- Shared CSS -->
     <link rel="stylesheet" href="css/shared.css">
@@ -267,6 +275,89 @@
             opacity: 0.7;
             max-width: 400px;
         }
+        
+        /* Camera Permission Dialog */
+        .permission-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .permission-content {
+            background: rgba(30, 30, 40, 0.9);
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 400px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .permission-icon {
+            font-size: 64px;
+            margin-bottom: 24px;
+        }
+        
+        .permission-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        
+        .permission-message {
+            font-size: 16px;
+            margin-bottom: 32px;
+            line-height: 1.5;
+            opacity: 0.8;
+        }
+        
+        .permission-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .permission-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .permission-button:active {
+            transform: translateY(1px);
+        }
+        
+        /* Utility classes */
+        .hidden {
+            display: none !important;
+        }
+        
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
     </style>
 </head>
 <body>
@@ -289,6 +380,21 @@
         <div class="error-404-subtitle" data-lang-key="model_not_found">Modelo não encontrado</div>
         <div class="error-404-message" data-lang-key="model_redirect">
             O modelo solicitado não foi encontrado. Redirecionando para o modelo padrão...
+        </div>
+    </div>
+    
+    <!-- Camera Permission Dialog -->
+    <div class="permission-dialog hidden" id="camera-permission">
+        <div class="permission-content">
+            <div class="permission-icon">📷</div>
+            <div class="permission-title" data-lang-key="camera_permission_title">Permissão de Câmera</div>
+            <div class="permission-message" data-lang-key="camera_permission_message">
+                Para uma experiência AR completa, precisamos de acesso à sua câmera. 
+                Isso permite que os modelos 3D sejam exibidos no ambiente ao seu redor.
+            </div>
+            <button id="camera-button" class="permission-button" data-lang-key="enable_camera">
+                Ativar Câmera
+            </button>
         </div>
     </div>
 
@@ -314,18 +420,18 @@
     </div>
 
     <!-- Mobile Navigation Bar -->
-    <nav class="mobile-nav">
+    <nav class="mobile-nav" aria-label="Navegação principal">
         <div class="mobile-nav-container">
-            <a href="galeria.html" class="mobile-nav-item">
-                <div class="mobile-nav-icon">⁜</div>
+            <a href="galeria.html" class="mobile-nav-item" aria-label="Ir para Galeria">
+                <div class="mobile-nav-icon" aria-hidden="true">⁜</div>
                 <div class="mobile-nav-label" data-lang-key="gallery">Galeria</div>
             </a>
-            <a href="index.html" class="mobile-nav-item center">
-                <div class="mobile-nav-icon">🎵</div>
+            <a href="index.html" class="mobile-nav-item center" aria-label="Ir para Página Inicial">
+                <div class="mobile-nav-icon" aria-hidden="true">🎵</div>
                 <div class="mobile-nav-label" data-lang-key="home">Home</div>
             </a>
-            <a href="AR.html" class="mobile-nav-item active">
-                <div class="mobile-nav-icon">⁜</div>
+            <a href="AR.html" class="mobile-nav-item active" aria-label="Experiência de Realidade Aumentada" aria-current="page">
+                <div class="mobile-nav-icon" aria-hidden="true">⁜</div>
                 <div class="mobile-nav-label" data-lang-key="ar_experience">AR</div>
             </a>
         </div>
@@ -333,9 +439,47 @@
 
     <!-- Load scripts -->
     <script src="js/extension-compatibility.js"></script>
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js" defer></script>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js" 
+        onerror="console.error('Failed to load model-viewer library')"></script>
     <script src="js/utils.js"></script>
     <script src="model-viewer-integration.js"></script>
     <script src="js/ar-experience.js"></script>
+    
+    <!-- Initialize AR Experience -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                // Initialize AR experience when DOM is ready
+                window.arExperience = new ARExperienceController();
+                window.arExperience.initialize();
+                
+                // Setup camera permission button
+                const cameraButton = document.getElementById('camera-button');
+                if (cameraButton) {
+                    cameraButton.addEventListener('click', () => {
+                        if (window.arExperience) {
+                            window.arExperience.startCamera().then(success => {
+                                if (success) {
+                                    const permissionDialog = document.getElementById('camera-permission');
+                                    if (permissionDialog) {
+                                        permissionDialog.classList.add('hidden');
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to initialize AR experience:', error);
+                // Show error message to user
+                const statusDiv = document.getElementById('status');
+                if (statusDiv) {
+                    statusDiv.textContent = 'Erro ao inicializar experiência AR';
+                    statusDiv.className = 'show error';
+                    statusDiv.style.opacity = '1';
+                }
+            }
+        });
+    </script>
 </body>
 </html>
