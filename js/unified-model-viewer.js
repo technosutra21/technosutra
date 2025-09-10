@@ -141,14 +141,14 @@ class UnifiedModelViewer {
     
     setModelSources() {
         const glbPath = `${this.options.modelBasePath}modelo${this.currentModelId}.glb`;
-        const usdzPath = `${this.options.usdzBasePath}modelo${this.currentModelId}.usdz`;
+        //const usdzPath = `${this.options.usdzBasePath}modelo${this.currentModelId}.usdz`;
         
         this.modelViewer.setAttribute('src', glbPath);
         
-        // Set iOS-specific USDZ source for AR Quick Look
-        if (this.isIOS && this.options.arEnabled) {
-            this.modelViewer.setAttribute('ios-src', usdzPath);
-        }
+        //* Set iOS-specific USDZ source for AR Quick Look
+        //if (this.isIOS && this.options.arEnabled) {
+        //    this.modelViewer.setAttribute('ios-src', usdzPath);
+      //  }
     }
     
     setARAttributes() {
