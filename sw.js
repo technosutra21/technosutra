@@ -17,14 +17,12 @@ const CORE_ASSETS = [
     '/imgs/icon-512x512.png',
     '/AR.html',
     '/offline.html',
-    '/js/qr-scanner.js'
-];
-
-// Optional assets - enhance experience but not critical
-const OPTIONAL_ASSETS = [
+    '/js/qr-scanner.js',
     '/js/1.js',
     '/js/2.js'
 ];
+
+
 
 // Generate model URLs (1-56)
 const MODEL_ASSETS = [];
@@ -50,7 +48,7 @@ self.addEventListener('install', (event) => {
             console.log('SW: Caching core assets');
             return cache.addAll(CORE_ASSETS.filter(asset => {
                 // Filter out assets that might not exist yet
-                return !asset.includes('icon-') || asset === '/imgs/icon.png';
+                return !asset.includes('icon') || asset === '/imgs/icon.png';
             }));
         }).then(() => {
             console.log('SW: Core caching completed');
@@ -58,7 +56,6 @@ self.addEventListener('install', (event) => {
             
             // Cache optional assets in background without blocking installation
             Promise.all([
-                cacheAssetsWithFallback(OPTIONAL_ASSETS, CACHE_NAME, 'optional assets'),
                 cacheAssetsWithFallback(EXTERNAL_ASSETS, RUNTIME_CACHE, 'external assets')
             ]).then(() => {
                 console.log('SW: Background caching completed');
@@ -372,7 +369,7 @@ self.addEventListener('message', (event) => {
         case 'CACHE_ALL_ASSETS':
             console.log('SW: Received CACHE_ALL_ASSETS command');
             caches.open(CACHE_NAME).then(cache => {
-                cache.addAll([...CORE_ASSETS, ...OPTIONAL_ASSETS, ...MODEL_ASSETS, ...EXTERNAL_ASSETS]);
+                cache.addAll([...CORE_ASSETS, ...MODEL_ASSETS, ...EXTERNAL_ASSETS]);
                 console.log('SW: All assets cached successfully');
             }).catch(error => {
                 console.error('SW: Failed to cache all assets:', error);
