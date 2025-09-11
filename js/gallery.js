@@ -17,6 +17,9 @@ class GalleryController {
         this.modelsPerPage = 12;
         this.currentPage = 1;
         
+        // Language state
+        this.currentLang = (localStorage.getItem('technosutra-lang') || 'pt');
+        
         // Enhanced DOM elements
         this.elements = {
             galleryGrid: document.getElementById('gallery-grid'),
@@ -27,6 +30,13 @@ class GalleryController {
             showMoreBtn: null // Will be created dynamically
         };
 
+        // React to language changes
+        window.addEventListener('language-changed', async (e) => {
+            this.currentLang = e.detail?.lang || this.getCurrentLang();
+            await this.loadModelData();
+            this.filterModels();
+        });
+
         // Animation and interaction state
         this.animationState = {
             loadedModels: 0,
@@ -34,6 +44,34 @@ class GalleryController {
             isAnimating: false,
             intersectionObserver: null
         };
+    }
+
+    /**
+     * Get current language (persisted by utils.js LanguageManager)
+     */
+    getCurrentLang() {
+        return localStorage.getItem('technosutra-lang') || this.currentLang || 'pt';
+    }
+
+    /**
+     * Small helper for i18n of static labels used in gallery.js
+     */
+    t(key) {
+        const lang = this.getCurrentLang();
+        const dict = {
+            chapter: { pt: 'Capítulo', en: 'Chapter' },
+            part: { pt: 'Parte', en: 'Part' },
+            view_in_ar: { pt: 'Ver em AR', en: 'View in AR' },
+            view_more: { pt: 'Ver Mais', en: 'View More' },
+            share: { pt: 'Compartilhar', en: 'Share' },
+            coming_soon: { pt: 'Em breve', en: 'Coming soon' },
+            no_results_title: { pt: 'Nenhum modelo encontrado', en: 'No models found' },
+            no_results_hint: { pt: 'Tente ajustar seus filtros ou termos de busca.', en: 'Try adjusting your filters or search terms.' },
+            gallery_load_error: { pt: 'Erro ao carregar a galeria', en: 'Error loading gallery' },
+            model_description_prefix: { pt: 'Modelo 3D interativo representando o kalyanamitra', en: 'Interactive 3D model representing kalyanamitra' },
+            of_avatamsaka: { pt: 'do Avatamsaka Sutra.', en: 'of the Avatamsaka Sutra.' }
+        };
+        return (dict[key] && dict[key][lang]) || (dict[key] && dict[key]['pt']) || key;
     }
     
     /**
@@ -64,7 +102,7 @@ class GalleryController {
             
         } catch (error) {
             console.error('Gallery initialization error:', error);
-            this.showError('Erro ao carregar a galeria');
+            this.showError(this.t('gallery_load_error'));
         }
     }
 
@@ -154,9 +192,9 @@ class GalleryController {
                 
                 return {
                     id: modelNumber,
-                    title: characterData ? characterData.Nome : `Capítulo ${modelNumber}`,
-                    subtitle: characterData ? characterData.Ensinamento : `Avatamsaka Sutra - Parte ${modelNumber}`,
-                    description: characterData ? characterData['Desc. Personagem'] : `Modelo 3D interativo representando o capítulo ${modelNumber} do Avatamsaka Sutra.`,
+                    title: characterData ? characterData.Nome : `${this.t('chapter')} ${modelNumber}`,
+                    subtitle: characterData ? characterData.Ensinamento : `Avatamsaka Sutra - ${this.t('part')} ${modelNumber}`,
+                    description: characterData ? characterData['Desc. Personagem'] : `${this.t('model_description_prefix')} ${modelNumber} ${this.t('of_avatamsaka')}`,
                     category: this.getDeterministicCategory(modelNumber),
                     available: isAvailable,
                     modelPath: `./models/modelo${modelNumber}.glb`,
@@ -186,14 +224,24 @@ class GalleryController {
      */
     async loadCharactersData() {
         try {
-            const response = await fetch('./summaries/characters.csv');
+            const lang = this.getCurrentLang();
+            const csvPath = lang === 'en' ? './summaries/characters_en.csv' : './summaries/characters.csv';
+            const response = await fetch(csvPath);
             if (!response.ok) {
+                // If EN fails, fallback to PT
+                if (lang === 'en') {
+                    const fallback = await fetch('./summaries/characters.csv');
+                    if (fallback.ok) {
+                        const csvText = await fallback.text();
+                        return this.parseCSV(csvText);
+                    }
+                }
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const csvText = await response.text();
             return this.parseCSV(csvText);
         } catch (error) {
-            console.warn('Could not load characters.csv:', error);
+            console.warn('Could not load characters CSV:', error);
             return [];
         }
     }
@@ -262,9 +310,9 @@ class GalleryController {
             
             return {
                 id: modelNumber,
-                title: `Capítulo ${modelNumber}`,
-                subtitle: `Avatamsaka Sutra - Parte ${modelNumber}`,
-                description: `Modelo 3D interativo representando o capítulo ${modelNumber} do Avatamsaka Sutra.`,
+                title: `${this.t('chapter')} ${modelNumber}`,
+                subtitle: `Avatamsaka Sutra - ${this.t('part')} ${modelNumber}`,
+                description: `${this.t('model_description_prefix')} ${modelNumber} ${this.t('of_avatamsaka')}`,
                 category: this.getDeterministicCategory(modelNumber),
                 available: isAvailable,
                 modelPath: `./models/modelo${modelNumber}.glb`,
@@ -502,11 +550,13 @@ class GalleryController {
         this.elements.galleryGrid.innerHTML = '';
         
         if (this.filteredModels.length === 0) {
+            const noResultsTitle = this.t('no_results_title');
+            const noResultsHint = this.t('no_results_hint');
             this.elements.galleryGrid.innerHTML = `
                 <div class="no-results" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
                     <div style="font-size: 48px; margin-bottom: 16px;">🔍</div>
-                    <h3 style="font-size: 1.5rem; margin-bottom: 8px;">Nenhum modelo encontrado</h3>
-                    <p style="color: var(--text-muted);">Tente ajustar seus filtros ou termos de busca.</p>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 8px;">${noResultsTitle}</h3>
+                    <p style="color: var(--text-muted);">${noResultsHint}</p>
                 </div>
             `;
             this.hideShowMoreButton();
@@ -522,7 +572,7 @@ class GalleryController {
             
             modelCard.innerHTML = `
                 <div class="model-header">
-                    <div class="model-number">Capítulo ${model.id}</div>
+                    <div class="model-number">${this.t('chapter')} ${model.id}</div>
                     <h3 class="model-title">${model.title}</h3>
                     <div class="model-subtitle">${model.subtitle}</div>
                 </div>
@@ -531,6 +581,7 @@ class GalleryController {
                     ${model.available ? `
                         <model-viewer
                             src="${model.modelPath}"
+                            ios-src="${model.usdzPath}"
                             alt="${model.title}"
                             reveal="auto"
                             ar
@@ -547,7 +598,7 @@ class GalleryController {
                     ` : `
                         <div class="unavailable-overlay">
                             <div class="unavailable-icon">🔒</div>
-                            <div class="unavailable-text">Em breve</div>
+                            <div class="unavailable-text">${this.t('coming_soon')}</div>
                         </div>
                     `}
                 </div>
@@ -555,15 +606,15 @@ class GalleryController {
                 <div class="model-actions">
                     <a href="AR.html?model=${model.id}" class="action-btn primary" ${!model.available ? 'disabled' : ''}>
                         <span>⁜</span>
-                        <span>Ver em AR</span>
+                        <span>${this.t('view_in_ar')}</span>
                     </a>
                     <button class="action-btn info-btn" onclick="showModelInfo(${model.id})" ${!model.available ? 'disabled' : ''}>
                         <span>⁜</span>
-                        <span>Ver Mais</span>
+                        <span>${this.t('view_more')}</span>
                     </button>
                     <button class="action-btn" onclick="shareModel(${model.id})" ${!model.available ? 'disabled' : ''}>
                         <span>🛞</span>
-                        <span>Compartilhar</span>
+                        <span>${this.t('share')}</span>
                     </button>
                 </div>
             `;

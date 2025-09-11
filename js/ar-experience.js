@@ -370,7 +370,8 @@ class ARExperienceController {
         const attributes = {
             'id': 'modelViewer',
             'alt': `Modelo 3D Interativo - Techno Sutra AR - Capítulo ${this.config.modelId}`,
-            'camera-controls': '',
+            'ios-src': `/models/usdz/modelo${this.config.modelId}.usdz`,
+            'src': `/models/modelo${this.config.modelId}.glb`,
             'touch-action': 'pan-y',
             'ar': '',
             'ar-modes': 'quick-look webxr scene-viewer',
@@ -383,7 +384,6 @@ class ARExperienceController {
             'field-of-view': '30deg',
             'min-camera-orbit': 'auto 0deg auto',
             'max-camera-orbit': 'auto 180deg auto',
-            'tone-mapping': 'linear',
             'style': 'width: 100%; height: 100vh; background-color: transparent; --poster-color: transparent; position: fixed; top: 0; left: 0; z-index: 2;'
         };
 
@@ -396,10 +396,8 @@ class ARExperienceController {
         });
         
         // Set model src and iOS Quick Look source
-        const modelId = this.config.modelId;
-        modelViewer.setAttribute('src', `./models/modelo${modelId}.glb`);
-        modelViewer.setAttribute('ios-src', `/models/usdz/modelo${modelId}.usdz`);
-
+    
+        
         container.appendChild(modelViewer);
         return modelViewer;
     }

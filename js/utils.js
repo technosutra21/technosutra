@@ -95,8 +95,15 @@ const LanguageManager = {
             const key = element.getAttribute('data-lang-key');
             if (translations[key] && translations[key][lang]) {
                 element.textContent = translations[key][lang];
+                // Also handle placeholders
+                if (element.placeholder !== undefined && translations[key][lang]) {
+                    element.placeholder = translations[key][lang];
+                }
             }
         });
+        
+        // Notify listeners (e.g., gallery) that language changed
+        window.dispatchEvent(new CustomEvent('language-changed', { detail: { lang } }));
     },
     
     /**
@@ -120,6 +127,14 @@ const translations = {
     'gallery': {
         'pt': 'Galeria',
         'en': 'Gallery'
+    },
+    'map': {
+        'pt': 'Mapa',
+        'en': 'Map'
+    },
+    'search_placeholder': {
+        'pt': '🔍 Buscar por nome ou descrição...',
+        'en': '🔍 Search by name or description...'
     },
     'ar': {
         'pt': 'Realidade Aumentada',
