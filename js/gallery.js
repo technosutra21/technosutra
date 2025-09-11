@@ -141,8 +141,6 @@ class GalleryController {
         }
     }
 
-
-
     /**
      * Update progress bar with smooth animation
      */
@@ -501,6 +499,7 @@ class GalleryController {
         });
     }
 
+    
     /**
      * Update gallery statistics display
      */
@@ -583,11 +582,12 @@ class GalleryController {
                             src="${model.modelPath}"
                             ios-src="${model.usdzPath}"
                             alt="${model.title}"
-                            reveal="auto"
                             ar
                             ar-modes="webxr scene-viewer quick-look"
                             ar-scale="auto"
                             ar-placement="floor"
+                            camera-controls
+                            auto-rotate
                             shadow-intensity="1"
                             environment-image="neutral"
                             exposure="1"
@@ -604,10 +604,10 @@ class GalleryController {
                 </div>
                 
                 <div class="model-actions">
-                    <a href="AR.html?model=${model.id}" class="action-btn primary" ${!model.available ? 'disabled' : ''}>
-                        <span>⁜</span>
+                    <button class="action-btn primary ar-button" onclick="activateModelAR(this)" ${!model.available ? 'disabled' : ''}>
+                        <span>🥽</span>
                         <span>${this.t('view_in_ar')}</span>
-                    </a>
+                    </button>
                     <button class="action-btn info-btn" onclick="showModelInfo(${model.id})" ${!model.available ? 'disabled' : ''}>
                         <span>⁜</span>
                         <span>${this.t('view_more')}</span>
@@ -737,7 +737,7 @@ class GalleryController {
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
             `;
-            showMoreBtn.textContent = 'Ver Mais';
+            showMoreBtn.textContent = this.t('view_more');
             
             showMoreBtn.addEventListener('mouseover', () => {
                 showMoreBtn.style.transform = 'translateY(-2px)';
@@ -858,6 +858,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // Make the controller available globally for debugging
     window.gallery = gallery;
 });
+
+// Global function for activating AR (for inline onclick handlers)
+function activateModelAR(button) {
+    const modelCard = button.closest('.model-card');
+    const modelViewer = modelCard.querySelector('model-viewer');
+    
+    if (modelViewer) {
+        if (modelViewer.canActivateAR) {
+            modelViewer.activateAR().catch(error => {
+                console.error('AR activation failed:', error);
+                // Fallback to AR.html page if direct AR fails
+                const modelId = modelCard.dataset.modelId;
+                window.location.href = `AR.html?model=${modelId}`;
+            });
+        } else {
+            console.log('AR not supported on this device/browser');
+            // Fallback to AR.html page
+            const modelId = modelCard.dataset.modelId;
+            window.location.href = `AR.html?model=${modelId}`;
+        }
+    }
+}
 
 // Global function for sharing a model (for inline onclick handlers)
 function shareModel(modelId) {
