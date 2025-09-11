@@ -443,44 +443,8 @@
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js" 
         onerror="console.error('Failed to load model-viewer library')"></script>
     <script src="/js/utils.js"></script>
-    <script src="/js/model-viewer-integration.js"></script>
     <script src="/js/ar-experience.js"></script>
     
-    <!-- Initialize AR Experience -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            try {
-                // Initialize AR experience when DOM is ready
-                window.arExperience = new ARExperienceController();
-                window.arExperience.initialize();
-                
-                // Setup camera permission button
-                const cameraButton = document.getElementById('camera-button');
-                if (cameraButton) {
-                    cameraButton.addEventListener('click', () => {
-                        if (window.arExperience) {
-                            window.arExperience.startCamera().then(success => {
-                                if (success) {
-                                    const permissionDialog = document.getElementById('camera-permission');
-                                    if (permissionDialog) {
-                                        permissionDialog.classList.add('hidden');
-                                    }
-                                }
-                            });
-                        }
-                    });
-                }
-            } catch (error) {
-                console.error('Failed to initialize AR experience:', error);
-                // Show error message to user
-                const statusDiv = document.getElementById('status');
-                if (statusDiv) {
-                    statusDiv.textContent = 'Erro ao inicializar experiência AR';
-                    statusDiv.className = 'show error';
-                    statusDiv.style.opacity = '1';
-                }
-            }
-        });
-    </script>
+    <!-- Initialization handled by ar-experience.js -->
 </body>
 </html>

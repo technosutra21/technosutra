@@ -160,8 +160,7 @@ class GalleryController {
                     category: this.getDeterministicCategory(modelNumber),
                     available: isAvailable,
                     modelPath: `./models/modelo${modelNumber}.glb`,
-                    usdzPath: `./usdz/modelo${modelNumber}.usdz`,
-                    thumbnail: `thumbnails/thumb${modelNumber}.jpg`,
+                    usdzPath: `./models/usdz/modelo${modelNumber}.usdz`,
                     characterData: characterData || {}
                 };
             });
@@ -269,8 +268,7 @@ class GalleryController {
                 category: this.getDeterministicCategory(modelNumber),
                 available: isAvailable,
                 modelPath: `./models/modelo${modelNumber}.glb`,
-                usdzPath: `./usdz/modelo${modelNumber}.usdz`,
-                thumbnail: `thumbnails/thumb${modelNumber}.jpg`,
+                usdzPath: `./models/usdz/modelo${modelNumber}.usdz`,
                 characterData: {}
             };
         });

@@ -360,24 +360,7 @@ class ARExperienceController {
             return null;
         }
 
-        // Use the integration script if available
-        if (typeof initARModelViewer === 'function') {
-            return initARModelViewer('model-viewer-container', this.config.modelId, {
-                onLoad: (modelId) => {
-                    this.log(`Model ${modelId} loaded via integration script`);
-                    this.state.modelLoaded = true;
-                    this.updateARButtonState();
-                    this.showControls();
-                },
-                onError: (modelId, event) => {
-                    this.log(`Model ${modelId} failed to load:`, event);
-                    this.state.modelLoaded = false;
-                    this.updateARButtonState();
-                }
-            });
-        }
-
-        // Fallback: create manually
+        // Always create manually to ensure full control and iOS Quick Look support
         const modelViewer = document.createElement('model-viewer');
         
         const attributes = {
@@ -407,6 +390,11 @@ class ARExperienceController {
                 modelViewer.setAttribute(key, value);
             }
         });
+        
+        // Set model src and iOS Quick Look source
+        const modelId = this.config.modelId;
+        modelViewer.setAttribute('src', `./models/modelo${modelId}.glb`);
+        modelViewer.setAttribute('ios-src', `/models/usdz/modelo${modelId}.usdz`);
 
         container.appendChild(modelViewer);
         return modelViewer;
