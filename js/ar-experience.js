@@ -117,6 +117,10 @@ class ARExperienceController {
         this.elements.cameraPermission = document.getElementById('camera-permission');
         this.elements.cameraButton = document.getElementById('camera-button');
         this.elements.arButton = document.getElementById('ar-button');
+        if (!this.elements.arButton) {
+            // Fallback: try model-viewer's default AR button if present
+            this.elements.arButton = document.querySelector('model-viewer .ar-button, model-viewer #ar-button');
+        }
         this.elements.progressFill = document.getElementById('progress-fill');
         this.elements.modelControls = document.getElementById('model-controls');
         this.elements.resetCameraBtn = document.getElementById('reset-camera');
@@ -839,6 +843,26 @@ class ARExperienceController {
                 }
                 this.state.isRotating = !this.state.isRotating;
                 this.log(`🔄 Rotation ${this.state.isRotating ? 'enabled' : 'disabled'}`);
+            });
+        }
+
+        // AR button click → triggers model-viewer AR
+        if (this.elements.arButton) {
+            this.elements.arButton.addEventListener('click', () => {
+                if (!this.elements.modelViewer) return;
+                try {
+                    // model-viewer exposes an internal button; click it programmatically
+                    const internalARButton = this.elements.modelViewer.shadowRoot?.querySelector('button[slot="ar-button"], button[aria-label*="AR"], .ar-button');
+                    if (internalARButton) {
+                        internalARButton.click();
+                    } else {
+                        // Fallback: toggle ar attribute to hint AR availability
+                        this.elements.modelViewer.setAttribute('ar', '');
+                        this.elements.modelViewer.dispatchEvent(new CustomEvent('ar-button-pressed'));
+                    }
+                } catch (e) {
+                    this.log(`AR button activation error: ${e.message}`);
+                }
             });
         }
 
