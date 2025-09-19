@@ -52,7 +52,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
     <!-- Preload critical assets -->
-    <link rel="preload" href="/js/ar-experience.js" as="script">
+
     <link rel="preload" href="/js/utils.js" as="script">
     <link rel="preload" href="css/shared.css" as="style">
     
@@ -405,7 +405,22 @@
     <video id="camera-feed" autoplay playsinline muted></video>
     
     <!-- 3D Model Viewer container -->
-    <div id="model-viewer-container"></div>
+    <model-viewer
+        id="modelViewer"
+        alt="Modelo 3D Interativo - Techno Sutra AR"
+        ar
+        ar-modes="webxr scene-viewer quick-look"
+        ar-scale="auto"
+        ar-placement="floor"
+        auto-rotate
+        rotation-per-second="15deg"
+        loading="eager"
+        reveal="auto"
+        field-of-view="30deg"
+        min-camera-orbit="auto 0deg auto"
+        max-camera-orbit="auto 180deg auto"
+        style="width: 100%; height: 100vh; background-color: transparent; --poster-color: transparent; position: fixed; top: 0; left: 0; z-index: 2;">
+    </model-viewer>
 
     <!-- Custom AR button -->
     <button id="ar-button" class="ar-button" aria-label="Ver em AR">
@@ -444,12 +459,84 @@
     </nav>
 
     <!-- Load scripts -->
-    <script src="/js/extension-compatibility.js"></script>
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js" 
-        onerror="console.error('Failed to load model-viewer library')"></script>
+
     <script src="/js/utils.js"></script>
-    <script src="/js/ar-experience.js"></script>
-    
-    <!-- Initialization handled by ar-experience.js -->
+    <!-- model-viewer library -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+
+    <!-- Minimal inline setup: dynamic src/ios-src and AR button -->
+    <script>
+      (function() {
+        const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
+        const qs = new URLSearchParams(location.search);
+        const requested = parseInt(qs.get('model')) || 1;
+        const modelId = clamp(requested, 1, 56);
+
+        const modelViewer = document.getElementById('modelViewer');
+        const arButton = document.getElementById('ar-button');
+        const statusDiv = document.getElementById('status');
+        const error404 = document.getElementById('error-404');
+        const cameraFeed = document.getElementById('camera-feed');
+
+        // Hide unused camera feed to avoid blank overlay
+        if (cameraFeed) cameraFeed.style.display = 'none';
+
+        // Helper to show transient status
+        function showStatus(msg, type = 'info', ms = 2000) {
+          if (!statusDiv) return;
+          statusDiv.textContent = msg;
+          statusDiv.className = `show ${type}`;
+          statusDiv.style.opacity = '1';
+          statusDiv.style.transform = 'translateY(0)';
+          setTimeout(() => {
+            statusDiv.style.opacity = '0';
+            statusDiv.style.transform = 'translateY(-10px)';
+          }, ms);
+        }
+
+        // Build paths
+        const glb = `models/modelo${modelId}.glb`;
+        const usdz = `models/usdz/modelo${modelId}.usdz`;
+        const poster = `models/previews/modelo${modelId}.jpg`;
+
+        // Apply attributes
+        modelViewer.setAttribute('src', glb);
+        modelViewer.setAttribute('ios-src', usdz);
+        modelViewer.setAttribute('poster', poster);
+
+        // Disable AR button until model is ready
+        if (arButton) arButton.disabled = true;
+
+        // Basic events
+        modelViewer.addEventListener('load', () => {
+          if (arButton) arButton.disabled = false;
+          showStatus('Modelo carregado', 'success');
+        });
+
+        modelViewer.addEventListener('error', () => {
+          if (error404) {
+            error404.classList.remove('hidden');
+            setTimeout(() => {
+              location.href = `${location.pathname}?model=1`;
+            }, 2500);
+          } else {
+            showStatus('Erro ao carregar modelo', 'error', 2500);
+          }
+        });
+
+        // Custom AR button integration
+        if (arButton) {
+          arButton.addEventListener('click', async () => {
+            try {
+              if (typeof modelViewer.activateAR === 'function') {
+                await modelViewer.activateAR();
+              }
+            } catch (e) {
+              showStatus('AR indisponível', 'error');
+            }
+          });
+        }
+      })();
+    </script>
 </body>
 </html>

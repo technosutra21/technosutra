@@ -1,0 +1,5584 @@
+1
+00:00:05,359 --> 00:00:11,880
+uma história pode ser contada de muitas
+
+2
+00:00:07,920 --> 00:00:15,200
+formas mas qualquer objeto ou evento
+
+3
+00:00:11,880 --> 00:00:17,039
+observado só pode ser conhecido a partir
+
+4
+00:00:15,200 --> 00:00:19,800
+da visão de um
+
+5
+00:00:17,039 --> 00:00:22,600
+observador quando observamos uma imagem
+
+6
+00:00:19,800 --> 00:00:25,800
+refletida na água de certa forma
+
+7
+00:00:22,600 --> 00:00:28,720
+acreditamos naquela imagem sabemos que
+
+8
+00:00:25,800 --> 00:00:31,920
+naquele momento a água captura e
+
+9
+00:00:28,720 --> 00:00:35,200
+expressa uma outra realidade algo que
+
+10
+00:00:31,920 --> 00:00:38,719
+vai além da sua composição básica a qual
+
+11
+00:00:35,200 --> 00:00:40,960
+convencionamos chamar de H2 o ou seja
+
+12
+00:00:38,719 --> 00:00:45,480
+basicamente moléculas dos elementos
+
+13
+00:00:40,960 --> 00:00:48,640
+hidrogênio e oxigênio mas sabemos também
+
+14
+00:00:45,480 --> 00:00:51,680
+que as águas das diferentes Fontes não
+
+15
+00:00:48,640 --> 00:00:53,559
+são iguais os minerais contidos em
+
+16
+00:00:51,680 --> 00:00:56,520
+certas águas lhe conferem
+
+17
+00:00:53,559 --> 00:00:59,960
+características únicas como sutis
+
+18
+00:00:56,520 --> 00:01:02,600
+alterações de sabor ou a capacidade de
+
+19
+00:00:59,960 --> 00:01:07,159
+inter no funcionamento de órgãos
+
+20
+00:01:02,600 --> 00:01:10,040
+específicos como estômago rins pele e
+
+21
+00:01:07,159 --> 00:01:12,880
+outros assim como um rio cujas águas
+
+22
+00:01:10,040 --> 00:01:15,960
+sempre correm é capaz de refletir uma
+
+23
+00:01:12,880 --> 00:01:19,479
+imagem estática posta na superfície de
+
+24
+00:01:15,960 --> 00:01:22,680
+suas margens como se fosse ele próprio
+
+25
+00:01:19,479 --> 00:01:25,159
+um espelho da mesma forma as águas
+
+26
+00:01:22,680 --> 00:01:28,920
+subterrâneas são capazes de capturar
+
+27
+00:01:25,159 --> 00:01:32,680
+digamos certos minerais das profundezas
+
+28
+00:01:28,920 --> 00:01:35,399
+da terra e transmitir ou carregar pra
+
+29
+00:01:32,680 --> 00:01:39,159
+superfície uma espécie de imagem do
+
+30
+00:01:35,399 --> 00:01:42,159
+próprio solo como toda sua riqueza e
+
+31
+00:01:39,159 --> 00:01:44,920
+diversidade esse fenômeno é possível
+
+32
+00:01:42,159 --> 00:01:47,520
+graças a diversas causas e
+
+33
+00:01:44,920 --> 00:01:50,399
+condições dentre elas está o fato de que
+
+34
+00:01:47,520 --> 00:01:54,040
+a água possui um ciclo quase que fechado
+
+35
+00:01:50,399 --> 00:01:56,799
+na atmosfera terrestre Ou seja a água
+
+36
+00:01:54,040 --> 00:02:00,159
+que nasce nas montanhas torna-se um rio
+
+37
+00:01:56,799 --> 00:02:02,799
+que em algum momento corre pro mar que
+
+38
+00:02:00,159 --> 00:02:05,439
+por sua vez evapora transforma-se em
+
+39
+00:02:02,799 --> 00:02:08,080
+vapor d'água que novamente se condensa
+
+40
+00:02:05,439 --> 00:02:10,479
+como nuvens no céu e eventualmente
+
+41
+00:02:08,080 --> 00:02:13,959
+retorna pra superfície terrestre em
+
+42
+00:02:10,479 --> 00:02:16,959
+forma de chuva que ao penetrar no solo
+
+43
+00:02:13,959 --> 00:02:20,120
+alimenta os aquer de onde jorram as
+
+44
+00:02:16,959 --> 00:02:23,160
+nascentes e o ciclo se repete toda a
+
+45
+00:02:20,120 --> 00:02:26,480
+repetição é relativa aqui temos uma
+
+46
+00:02:23,160 --> 00:02:29,280
+ponte e um rio aparentemente sempre a
+
+47
+00:02:26,480 --> 00:02:32,480
+mesma ponte e sempre o mesmo rio mas a
+
+48
+00:02:29,280 --> 00:02:35,879
+água nunca é a mesma então nunca é o
+
+49
+00:02:32,480 --> 00:02:38,680
+mesmo rim e esse paradoxo nos faz
+
+50
+00:02:35,879 --> 00:02:41,840
+refletir mas Voltando às profundezas da
+
+51
+00:02:38,680 --> 00:02:44,959
+terra de onde jorram os rios podemos nos
+
+52
+00:02:41,840 --> 00:02:48,360
+perguntar que tipo de imagem ou
+
+53
+00:02:44,959 --> 00:02:51,040
+informação essas Águas Profundas estão
+
+54
+00:02:48,360 --> 00:02:53,840
+transmitindo Que história elas estão
+
+55
+00:02:51,040 --> 00:02:58,400
+contando Quem são os personagens Qual é
+
+56
+00:02:53,840 --> 00:03:01,400
+o enredo quem está ouvindo ou vendo essa
+
+57
+00:02:58,400 --> 00:03:04,400
+é uma jornada em busca história da terra
+
+58
+00:03:01,400 --> 00:03:07,680
+contada pela água mas essa história é
+
+59
+00:03:04,400 --> 00:03:11,599
+muito grande praticamente insondável
+
+60
+00:03:07,680 --> 00:03:15,280
+então seremos modestos nossa visão é
+
+61
+00:03:11,599 --> 00:03:17,959
+parcial limitada faremos escolhas
+
+62
+00:03:15,280 --> 00:03:22,120
+arbitrárias e falaremos apenas de Uns
+
+63
+00:03:17,959 --> 00:03:24,640
+poucos lugares pinando datas e cenários
+
+64
+00:03:22,120 --> 00:03:27,879
+assim como a água flui por diferentes
+
+65
+00:03:24,640 --> 00:03:30,920
+ambientes fecundando a vida Esperamos
+
+66
+00:03:27,879 --> 00:03:35,799
+que sua atenção viaje por essas
+
+67
+00:03:30,920 --> 00:03:38,200
+montanhas Vales e planato essa também é
+
+68
+00:03:35,799 --> 00:03:41,200
+uma jornada em busca dessa história da
+
+69
+00:03:38,200 --> 00:03:44,080
+água contada pela terra porque nada é
+
+70
+00:03:41,200 --> 00:03:45,159
+feito sem escolhas e todas as escolhas
+
+71
+00:03:44,080 --> 00:03:47,720
+são
+
+72
+00:03:45,159 --> 00:03:50,640
+arbitrárias Só nos resta fazer nossas
+
+73
+00:03:47,720 --> 00:03:54,200
+próprias escolhas arbitrárias pensando
+
+74
+00:03:50,640 --> 00:03:56,159
+alguns personagens e algumas passagens
+
+75
+00:03:54,200 --> 00:03:59,239
+assim como a chuva fecunda essas
+
+76
+00:03:56,159 --> 00:04:02,280
+montanhas Vales e planalto Esperamos que
+
+77
+00:03:59,239 --> 00:04:05,560
+esse vídeo instigue a sua atenção e
+
+78
+00:04:02,280 --> 00:04:08,799
+talvez quem sabe ative algo que tá
+
+79
+00:04:05,560 --> 00:04:11,879
+adormecido como uma joia rara ou talvez
+
+80
+00:04:08,799 --> 00:04:14,840
+algo radioativo que seja infinito mas
+
+81
+00:04:11,879 --> 00:04:17,359
+que não seja destrutivo algo Belo e
+
+82
+00:04:14,840 --> 00:04:20,280
+precioso capaz de nos ajudar a fazer
+
+83
+00:04:17,359 --> 00:04:23,880
+melhores escolhas menos arbitrárias e
+
+84
+00:04:20,280 --> 00:04:25,960
+limitadas mais compassivas e inclusivas
+
+85
+00:04:23,880 --> 00:04:29,320
+bem-vindo ao prata
+
+86
+00:04:25,960 --> 00:04:31,680
+atin um filme sobre a história deste
+
+87
+00:04:29,320 --> 00:04:35,680
+chão
+
+88
+00:04:31,680 --> 00:04:38,479
+u de sua um filme sobre radiotividade
+
+89
+00:04:35,680 --> 00:04:42,000
+água e
+
+90
+00:04:38,479 --> 00:04:45,360
+descolonização possam todos os seres se
+
+91
+00:04:42,000 --> 00:04:47,560
+beneficiar em nossa cultura ocidental a
+
+92
+00:04:45,360 --> 00:04:51,120
+história daquilo que chamamos de
+
+93
+00:04:47,560 --> 00:04:53,800
+desbravamento e ocupação de terras se
+
+94
+00:04:51,120 --> 00:04:59,639
+intera profundamente com a criação de
+
+95
+00:04:53,800 --> 00:04:59,639
+regimes de e a forma dei
+
+96
+00:05:01,080 --> 00:05:06,720
+materializado nas escrituras de terra é
+
+97
+00:05:04,479 --> 00:05:09,919
+fascinante pensar que em nossa sociedade
+
+98
+00:05:06,720 --> 00:05:13,360
+um pedaço de terra só passa a pertencer
+
+99
+00:05:09,919 --> 00:05:16,080
+a alguém através de um registro escrito
+
+100
+00:05:13,360 --> 00:05:19,080
+um papel Assinado por autoridades mesmo
+
+101
+00:05:16,080 --> 00:05:22,000
+na era dos documentos digitais com a
+
+102
+00:05:19,080 --> 00:05:25,280
+escrita buscamos a perfeição na
+
+103
+00:05:22,000 --> 00:05:29,680
+organização a ocupação e o uso da Terra
+
+104
+00:05:25,280 --> 00:05:32,120
+transformam o espaço físico emo virtu
+
+105
+00:05:29,680 --> 00:05:35,960
+entado por documentos como escritura de
+
+106
+00:05:32,120 --> 00:05:38,160
+terra título de propriedade e outros
+
+107
+00:05:35,960 --> 00:05:41,199
+cada um desses termos carrega as marcas
+
+108
+00:05:38,160 --> 00:05:44,360
+de sua época explorar o processo de
+
+109
+00:05:41,199 --> 00:05:48,080
+ocupação da caldeira vulcânica de Poços
+
+110
+00:05:44,360 --> 00:05:50,600
+de Caldas vai além de desvendar a
+
+111
+00:05:48,080 --> 00:05:53,280
+expansão de um sistema burocrático
+
+112
+00:05:50,600 --> 00:05:55,639
+institucional sobre terras misteriosas
+
+113
+00:05:53,280 --> 00:05:58,400
+devemos lembrar que existem inúmeras
+
+114
+00:05:55,639 --> 00:06:01,319
+maneiras de apropriar-se e utilizar o
+
+115
+00:05:58,400 --> 00:06:04,960
+espaço físico em outras sociedades a
+
+116
+00:06:01,319 --> 00:06:08,759
+posse é coletiva ou individual baseada
+
+117
+00:06:04,960 --> 00:06:12,080
+em tradições escritas ou orais em mitos
+
+118
+00:06:08,759 --> 00:06:14,800
+ou realidades telúricas cada cultura tem
+
+119
+00:06:12,080 --> 00:06:17,840
+suas próprias formas de entender e se
+
+120
+00:06:14,800 --> 00:06:20,120
+relacionar com a Terra ao estudarmos a
+
+121
+00:06:17,840 --> 00:06:23,360
+ocupação da Terra no Planalto alcalino
+
+122
+00:06:20,120 --> 00:06:26,199
+de p de Caldas e região refletimos sobre
+
+123
+00:06:23,360 --> 00:06:29,960
+a diversidade de práticas culturais que
+
+124
+00:06:26,199 --> 00:06:32,440
+dão forma ao nosso mundo aqui a
+
+125
+00:06:29,960 --> 00:06:35,479
+matemática da Posse e da propriedade se
+
+126
+00:06:32,440 --> 00:06:39,599
+mistura com a poesia das tradições e das
+
+127
+00:06:35,479 --> 00:06:42,400
+histórias que a terra guarda em seu seio
+
+128
+00:06:39,599 --> 00:06:45,319
+assim a terra Deixa de ser apenas um
+
+129
+00:06:42,400 --> 00:06:48,120
+espaço físico e se torna um Palco onde
+
+130
+00:06:45,319 --> 00:06:51,160
+se desenrolam dramas humanos histórias
+
+131
+00:06:48,120 --> 00:06:53,880
+de lutas sonhos e conquistas em cada
+
+132
+00:06:51,160 --> 00:06:56,800
+documento uma página da nossa própria
+
+133
+00:06:53,880 --> 00:07:02,560
+história é escrita ligando passado e
+
+134
+00:06:56,800 --> 00:07:02,560
+presente papel e solo cultura e
+
+135
+00:07:06,300 --> 00:07:11,870
+[Música]
+
+136
+00:07:13,640 --> 00:07:16,690
+[Aplausos]
+
+137
+00:07:13,750 --> 00:07:18,160
+[Música]
+
+138
+00:07:16,690 --> 00:07:21,080
+[Aplausos]
+
+139
+00:07:18,160 --> 00:07:23,680
+identidade Este é o Parque Estadual de
+
+140
+00:07:21,080 --> 00:07:25,680
+Águas da Prata outrora conhecido
+
+141
+00:07:23,680 --> 00:07:28,960
+simplesmente como bosque de Águas da
+
+142
+00:07:25,680 --> 00:07:32,080
+Prata Na verdade é assim que moradores e
+
+143
+00:07:28,960 --> 00:07:34,080
+visitantes referem-se ao local ponto de
+
+144
+00:07:32,080 --> 00:07:36,840
+parada quase que obrigatória para
+
+145
+00:07:34,080 --> 00:07:39,840
+turistas e Viajantes em geral uma das
+
+146
+00:07:36,840 --> 00:07:42,240
+principais ameaças que pairam sobre este
+
+147
+00:07:39,840 --> 00:07:45,479
+local considerado Talvez o mais
+
+148
+00:07:42,240 --> 00:07:49,440
+emblemático de Águas da Prata é a de uma
+
+149
+00:07:45,479 --> 00:07:52,720
+hipotética exploração mineral dentro ou
+
+150
+00:07:49,440 --> 00:07:55,560
+próximo à suas fronteiras a presença de
+
+151
+00:07:52,720 --> 00:07:58,360
+minerais radioativos como o urânio no
+
+152
+00:07:55,560 --> 00:08:00,800
+solo do Parque Estadual é conhecido há
+
+153
+00:07:58,360 --> 00:08:03,440
+muito tempo para falarmos mais
+
+154
+00:08:00,800 --> 00:08:06,879
+propriamente disso procuramos alguém que
+
+155
+00:08:03,440 --> 00:08:08,479
+entende do assunto com a palavra o Senor
+
+156
+00:08:06,879 --> 00:08:11,440
+Benedito
+
+157
+00:08:08,479 --> 00:08:13,919
+Pria Breves considerações sobre as águas
+
+158
+00:08:11,440 --> 00:08:15,240
+radioativas de águas da prata a 14 de
+
+159
+00:08:13,919 --> 00:08:17,879
+janeiro de
+
+160
+00:08:15,240 --> 00:08:20,639
+1957 era publicada uma crônica de
+
+161
+00:08:17,879 --> 00:08:23,039
+Ademário Pria no Jornal A Cidade de São
+
+162
+00:08:20,639 --> 00:08:25,240
+João de São João da Boa Vista relatando
+
+163
+00:08:23,039 --> 00:08:28,080
+a descoberta de uma jazida de urânio
+
+164
+00:08:25,240 --> 00:08:30,199
+próximo a fonte Vilela o texto repercute
+
+165
+00:08:28,080 --> 00:08:32,599
+as primeiras pesquisas que poderiam
+
+166
+00:08:30,199 --> 00:08:35,159
+possibilitar a exploração desse mineral
+
+167
+00:08:32,599 --> 00:08:37,560
+radioativo em nossa cidade esta crônica
+
+168
+00:08:35,159 --> 00:08:40,080
+foi reproduzida no meu livro Águas da
+
+169
+00:08:37,560 --> 00:08:42,919
+Prata nas Crônicas de Ademário preza
+
+170
+00:08:40,080 --> 00:08:47,920
+numa edição do autor feita em
+
+171
+00:08:42,919 --> 00:08:50,399
+1994 à página 143 144 em anexo deste
+
+172
+00:08:47,920 --> 00:08:52,720
+livro há também a relação das fontes
+
+173
+00:08:50,399 --> 00:08:55,399
+mais radioativas do mundo onde aparecem
+
+174
+00:08:52,720 --> 00:08:59,640
+as fontes nossa cidade fonte São Bento
+
+175
+00:08:55,399 --> 00:09:02,480
+fonte Vilela 168 São Miguel fonte Vilela
+
+176
+00:08:59,640 --> 00:09:04,680
+São Miguel atualmente pela informação
+
+177
+00:09:02,480 --> 00:09:07,399
+que tenho é apenas consumida a água da
+
+178
+00:09:04,680 --> 00:09:09,600
+fonte Vilela nessa relação acima citada
+
+179
+00:09:07,399 --> 00:09:11,839
+aparecem duas outras fontes radioativas
+
+180
+00:09:09,600 --> 00:09:14,560
+no Brasil situadas em aracha no
+
+181
+00:09:11,839 --> 00:09:16,720
+Triângulo Mineiro felizmente a jazida
+
+182
+00:09:14,560 --> 00:09:19,720
+não se mostrou comercialmente rentável
+
+183
+00:09:16,720 --> 00:09:21,800
+tendo sido suspensa sua prospecção assim
+
+184
+00:09:19,720 --> 00:09:24,079
+a fonte foi preservada para a sorte de
+
+185
+00:09:21,800 --> 00:09:26,240
+centenas de pessoas que diaramente vem
+
+186
+00:09:24,079 --> 00:09:27,760
+buscar a água para o consumo próprio
+
+187
+00:09:26,240 --> 00:09:29,800
+gostaria apenas de observar que se
+
+188
+00:09:27,760 --> 00:09:32,000
+conhece pouco sobre os benefícios e
+
+189
+00:09:29,800 --> 00:09:33,760
+malefícios da água radioativa já foi
+
+190
+00:09:32,000 --> 00:09:36,320
+dito que essa propriedade é muito
+
+191
+00:09:33,760 --> 00:09:38,920
+instável desaparecendo depois de água
+
+192
+00:09:36,320 --> 00:09:41,360
+ter sido colhida na fonte diz-se também
+
+193
+00:09:38,920 --> 00:09:43,160
+que não é indicada para pessoas com
+
+194
+00:09:41,360 --> 00:09:45,360
+câncer pois um dos efeitos da
+
+195
+00:09:43,160 --> 00:09:47,720
+radioatividade é estimular o crescimento
+
+196
+00:09:45,360 --> 00:09:50,519
+das células do nosso organismo e no caso
+
+197
+00:09:47,720 --> 00:09:52,839
+de neoplasia esse desenvolvimento seria
+
+198
+00:09:50,519 --> 00:09:55,120
+nocivo pois a doença se desenvolveria
+
+199
+00:09:52,839 --> 00:09:57,079
+mais rapidamente vê-se que é preciso
+
+200
+00:09:55,120 --> 00:09:59,480
+realizar mais estudos sobre as águas
+
+201
+00:09:57,079 --> 00:10:01,279
+radioativas e felicito os jovens que
+
+202
+00:09:59,480 --> 00:10:03,079
+estão entrando nesse Campo mesmo não
+
+203
+00:10:01,279 --> 00:10:05,160
+realizando estudos acadêmicos e
+
+204
+00:10:03,079 --> 00:10:07,519
+científicos fica o desafio para os
+
+205
+00:10:05,160 --> 00:10:09,839
+futuros pesquisadores para que vem a
+
+206
+00:10:07,519 --> 00:10:11,920
+valorizar a hidroterapia que caiu em
+
+207
+00:10:09,839 --> 00:10:14,440
+desuso diante da pressão da Indústria
+
+208
+00:10:11,920 --> 00:10:16,800
+Farmacêutica Benedito Antonio genofre
+
+209
+00:10:14,440 --> 00:10:20,040
+Pria pratense por adoção Doutor em
+
+210
+00:10:16,800 --> 00:10:22,200
+Ciências Sociais e escritor Águas da
+
+211
+00:10:20,040 --> 00:10:24,920
+Prata quase iniciou uma exploração
+
+212
+00:10:22,200 --> 00:10:27,720
+comercial de urânio no lugar que hoje é
+
+213
+00:10:24,920 --> 00:10:30,519
+o Parque Estadual segundo a opinião de
+
+214
+00:10:27,720 --> 00:10:33,320
+especialistas da área de olia e outros
+
+215
+00:10:30,519 --> 00:10:36,399
+pesquisadores Independentes consultados
+
+216
+00:10:33,320 --> 00:10:39,120
+para este trabalho O Pequeno município
+
+217
+00:10:36,399 --> 00:10:42,440
+escapou por pouco de se tornar uma
+
+218
+00:10:39,120 --> 00:10:44,320
+grande cava de mineração a céu aberto
+
+219
+00:10:42,440 --> 00:10:46,680
+visitamos a região onde acontece a
+
+220
+00:10:44,320 --> 00:10:49,360
+primeira exploração comercial de urânio
+
+221
+00:10:46,680 --> 00:10:52,880
+no Brasil a cidade de Caldas Minas
+
+222
+00:10:49,360 --> 00:10:55,440
+Gerais é nosso próximo destino das
+
+223
+00:10:52,880 --> 00:10:58,200
+margens do rio Prata seguimos para as
+
+224
+00:10:55,440 --> 00:11:00,000
+margens do Rio Verde queríamos ir direto
+
+225
+00:10:58,200 --> 00:11:02,120
+ao centro da
+
+226
+00:11:00,000 --> 00:11:04,200
+já sabemos que a exploração comercial de
+
+227
+00:11:02,120 --> 00:11:07,519
+Urânio em Águas da Prata teria o
+
+228
+00:11:04,200 --> 00:11:09,760
+potencial para destruir totalmente
+
+229
+00:11:07,519 --> 00:11:12,680
+aquilo que hoje conhecemos como Águas da
+
+230
+00:11:09,760 --> 00:11:15,000
+Prata Mas o que aconteceu com caldas
+
+231
+00:11:12,680 --> 00:11:18,200
+nossa cidade irmã e vizinha palco de
+
+232
+00:11:15,000 --> 00:11:21,480
+primeira exploração desse tipo no Brasil
+
+233
+00:11:18,200 --> 00:11:24,519
+Boa noite a todos saudações sustentáveis
+
+234
+00:11:21,480 --> 00:11:26,279
+essa Live é um projeto da ação
+
+235
+00:11:24,519 --> 00:11:28,399
+antinuclear e essa articulação
+
+236
+00:11:26,279 --> 00:11:30,360
+antinuclear da Rede Brasileira e da
+
+237
+00:11:28,399 --> 00:11:32,600
+Justiça ambiental para quem tá
+
+238
+00:11:30,360 --> 00:11:35,160
+acompanhando essa pauta aqui no Planalto
+
+239
+00:11:32,600 --> 00:11:37,120
+de poste Caldas muito importante essa
+
+240
+00:11:35,160 --> 00:11:39,000
+oportunidade Inicialmente nós já
+
+241
+00:11:37,120 --> 00:11:42,519
+disponibilizamos o material sobre o
+
+242
+00:11:39,000 --> 00:11:44,959
+ciclo do da da exploração de 72 até 95
+
+243
+00:11:42,519 --> 00:11:47,480
+no Planalto de caudas particularmente no
+
+244
+00:11:44,959 --> 00:11:49,560
+município de caudas e sobre os impactos
+
+245
+00:11:47,480 --> 00:11:53,079
+que até hoje persistem presentes na
+
+246
+00:11:49,560 --> 00:11:56,120
+nossa eh sociedade dentre elas a eh
+
+247
+00:11:53,079 --> 00:11:58,320
+armazenamento de 12 T me de lío nuclear
+
+248
+00:11:56,120 --> 00:12:01,000
+alguns vazamentos algumas plumas de
+
+249
+00:11:58,320 --> 00:12:03,240
+contaminação para os recursos hídricos
+
+250
+00:12:01,000 --> 00:12:08,079
+então é nessa linha presente conosco
+
+251
+00:12:03,240 --> 00:12:11,160
+aqui é o Adriano Sabino a Marina Barbosa
+
+252
+00:12:08,079 --> 00:12:13,760
+o Adão do metabase e o Levi essa
+
+253
+00:12:11,160 --> 00:12:16,519
+abrangência do ciclo nuclear se iniciou
+
+254
+00:12:13,760 --> 00:12:18,519
+exatamente com a exploração de urânio de
+
+255
+00:12:16,519 --> 00:12:21,000
+urânio no planal de poste Caldas e
+
+256
+00:12:18,519 --> 00:12:23,199
+basicamente o nosso grande problema é o
+
+257
+00:12:21,000 --> 00:12:25,800
+destino dos rejeitos radioativos e o
+
+258
+00:12:23,199 --> 00:12:27,600
+contexto histórico dessa exploração Foi
+
+259
+00:12:25,800 --> 00:12:30,120
+um acordo nuclear do Brasil e da
+
+260
+00:12:27,600 --> 00:12:33,279
+Alemanha de 72 e e com a criação da
+
+261
+00:12:30,120 --> 00:12:36,880
+núcle braas Isso foi em 1988 e
+
+262
+00:12:33,279 --> 00:12:39,160
+atualmente ela eh se se autodenomina e
+
+263
+00:12:36,880 --> 00:12:41,519
+se intitula udc unidade de
+
+264
+00:12:39,160 --> 00:12:43,240
+descomissionamento de caudas Ou seja é
+
+265
+00:12:41,519 --> 00:12:46,519
+um grande passivo uma grande planta
+
+266
+00:12:43,240 --> 00:12:50,000
+industrial que tá sendo desativada e
+
+267
+00:12:46,519 --> 00:12:52,000
+requer muita atenção de todos o caso de
+
+268
+00:12:50,000 --> 00:12:56,399
+município de caudas ela foi iniciada em
+
+269
+00:12:52,000 --> 00:13:00,600
+72 e encerrada emem 95 concomitantemente
+
+270
+00:12:56,399 --> 00:13:03,000
+a isso ela recebeu 12 me toneladas de de
+
+271
+00:13:00,600 --> 00:13:05,160
+de torta dois ou ou Yellow cake tá
+
+272
+00:13:03,000 --> 00:13:07,639
+armazenada ali que não foram produzidas
+
+273
+00:13:05,160 --> 00:13:10,199
+e vieram transferidas para cá como todos
+
+274
+00:13:07,639 --> 00:13:12,079
+sabem isso consta no nosso material aí
+
+275
+00:13:10,199 --> 00:13:14,399
+quais são as consequências ambientais e
+
+276
+00:13:12,079 --> 00:13:17,440
+sociais para o planalto de poste Caldas
+
+277
+00:13:14,399 --> 00:13:20,000
+com relação a esse a essa atividade bem
+
+278
+00:13:17,440 --> 00:13:23,160
+como Andradas e Caldas aqui tem uma
+
+279
+00:13:20,000 --> 00:13:24,880
+placa de radiação e um ponto de
+
+280
+00:13:23,160 --> 00:13:27,199
+monitoramento esse ponto de
+
+281
+00:13:24,880 --> 00:13:30,240
+monitoramento aqui é da da pilha de de
+
+282
+00:13:27,199 --> 00:13:33,120
+rejeitos que que tá com contaminando e
+
+283
+00:13:30,240 --> 00:13:34,880
+por por baixo do do do lenol freático tá
+
+284
+00:13:33,120 --> 00:13:37,120
+indo pro lado do corco da consulta em
+
+285
+00:13:34,880 --> 00:13:39,720
+caudas com uma pluma que tá vazando e
+
+286
+00:13:37,120 --> 00:13:42,079
+essa pluma já é é é público a própria
+
+287
+00:13:39,720 --> 00:13:44,600
+INB e aqu neem também nos seus
+
+288
+00:13:42,079 --> 00:13:47,240
+relatórios foi feito um estudo um estudo
+
+289
+00:13:44,600 --> 00:13:50,079
+e com nesto e esse estudo para poder
+
+290
+00:13:47,240 --> 00:13:52,440
+mapear eh as fraturas geológicas e e
+
+291
+00:13:50,079 --> 00:13:55,199
+tentar desenvolver um procedimento que
+
+292
+00:13:52,440 --> 00:13:57,880
+vai impedir que essa pluma vaze para os
+
+293
+00:13:55,199 --> 00:14:00,320
+recursos hídricos falas de segurança e
+
+294
+00:13:57,880 --> 00:14:02,120
+proteção nuclear então aqui o item um
+
+295
+00:14:00,320 --> 00:14:03,920
+aqui falhas no protocolo de controle
+
+296
+00:14:02,120 --> 00:14:06,000
+problemas no controle de segurança e na
+
+297
+00:14:03,920 --> 00:14:08,720
+proteção radiológica dos trabalhadores e
+
+298
+00:14:06,000 --> 00:14:10,600
+na população local aqui o o nosso colega
+
+299
+00:14:08,720 --> 00:14:12,199
+que vai est vai falar em seguida vai vai
+
+300
+00:14:10,600 --> 00:14:14,160
+explorar melhor esse ponto aqui
+
+301
+00:14:12,199 --> 00:14:16,920
+segurança de barragem de uso múltiplo
+
+302
+00:14:14,160 --> 00:14:18,800
+item dois barragem de rejeito radioativo
+
+303
+00:14:16,920 --> 00:14:21,199
+e seus usos múltiplos uso na região de
+
+304
+00:14:18,800 --> 00:14:23,320
+Caldas risco de sobrecarga nas barragens
+
+305
+00:14:21,199 --> 00:14:26,519
+com água além do nível Mimo ou seja ali
+
+306
+00:14:23,320 --> 00:14:29,440
+tem barragem de sólido e e assada
+
+307
+00:14:26,519 --> 00:14:31,560
+algumas algumas de uso mfo que que estão
+
+308
+00:14:29,440 --> 00:14:34,480
+nas Cabeceiras do do tanto de Caldas
+
+309
+00:14:31,560 --> 00:14:37,399
+quanto e de poste caudas que basicamente
+
+310
+00:14:34,480 --> 00:14:39,320
+são o os recursos ritos os nossos Rios
+
+311
+00:14:37,399 --> 00:14:42,279
+ela é entregue o o seu afluente é
+
+312
+00:14:39,320 --> 00:14:44,959
+entregue de acordo com a própria INB
+
+313
+00:14:42,279 --> 00:14:47,880
+dentro da conoma 357 né ou seja ele é
+
+314
+00:14:44,959 --> 00:14:50,160
+tratado mas de todo modo é sabido Como
+
+315
+00:14:47,880 --> 00:14:52,800
+já foi dito de de uma contaminação
+
+316
+00:14:50,160 --> 00:14:54,680
+subterrânea lá que tá eh denominada uma
+
+317
+00:14:52,800 --> 00:14:57,000
+pluma já no item três aqui a zona de
+
+318
+00:14:54,680 --> 00:14:59,199
+autossalvamento qual que é o conceito da
+
+319
+00:14:57,000 --> 00:15:01,079
+zona de aut saav momento as medidas
+
+320
+00:14:59,199 --> 00:15:03,800
+preventivas e o impacto de segurança nas
+
+321
+00:15:01,079 --> 00:15:06,120
+comunidades afetadas eh ali no no logo
+
+322
+00:15:03,800 --> 00:15:08,720
+na barragem de Águas Claras tem um um
+
+323
+00:15:06,120 --> 00:15:12,240
+aglomerado urbano que ele não nasceu da
+
+324
+00:15:08,720 --> 00:15:14,839
+noite pro dia pessoas Residem ali logo a
+
+325
+00:15:12,240 --> 00:15:18,000
+50 m da da bacia de Águas Claras e é o
+
+326
+00:15:14,839 --> 00:15:20,320
+volume razoável de água e e é uma
+
+327
+00:15:18,000 --> 00:15:22,360
+barragem de fiscalização da da Agência
+
+328
+00:15:20,320 --> 00:15:24,120
+Nacional de águas ou seja tem a
+
+329
+00:15:22,360 --> 00:15:26,800
+legislação com a mudança da da
+
+330
+00:15:24,120 --> 00:15:29,360
+legislação essa permanece ainda e sobre
+
+331
+00:15:26,800 --> 00:15:31,000
+a fiscalização da Ana por outro lado a
+
+332
+00:15:29,360 --> 00:15:32,519
+zona de aut salvamento requer uma
+
+333
+00:15:31,000 --> 00:15:34,639
+atenção principalmente em caso de
+
+334
+00:15:32,519 --> 00:15:37,079
+rompimento dessa barragem e da mancha de
+
+335
+00:15:34,639 --> 00:15:39,519
+inundação para todo o o ribeirão de
+
+336
+00:15:37,079 --> 00:15:41,839
+caudas até chegar aqui em Post caudas
+
+337
+00:15:39,519 --> 00:15:44,199
+tem um prazo lá de de 9 minutos que todo
+
+338
+00:15:41,839 --> 00:15:46,240
+o processo de de contingência tem que
+
+339
+00:15:44,199 --> 00:15:48,040
+ser cumprido para poder vidas serem
+
+340
+00:15:46,240 --> 00:15:50,120
+salvas e o menor Impacto possível mas
+
+341
+00:15:48,040 --> 00:15:52,480
+por isso as fiscalizações ocorrem
+
+342
+00:15:50,120 --> 00:15:54,440
+passivos ambientais e sociais aqui um
+
+343
+00:15:52,480 --> 00:15:56,319
+ponto importante que as próximas
+
+344
+00:15:54,440 --> 00:15:57,880
+gerações deverão estar falando eu tô
+
+345
+00:15:56,319 --> 00:15:59,759
+colocando no futuro porque não é uma
+
+346
+00:15:57,880 --> 00:16:02,399
+coisa simples de de de ser solucionada
+
+347
+00:15:59,759 --> 00:16:04,519
+eh destruição ambiental e violação dos
+
+348
+00:16:02,399 --> 00:16:06,399
+Direitos Humanos dos moradores e já a
+
+349
+00:16:04,519 --> 00:16:08,000
+área da da da udc da unidade
+
+350
+00:16:06,399 --> 00:16:11,680
+descondicionamento é uma área muito
+
+351
+00:16:08,000 --> 00:16:13,639
+grande e aí tem lá tem sólido tem os
+
+352
+00:16:11,680 --> 00:16:15,360
+recursos hídricos a chuva que precipita
+
+353
+00:16:13,639 --> 00:16:17,639
+ali então tem todo aquele processo de
+
+354
+00:16:15,360 --> 00:16:20,560
+bombeamento diário que é feito lá hoje
+
+355
+00:16:17,639 --> 00:16:21,759
+na na na na planta se eu eu se me
+
+356
+00:16:20,560 --> 00:16:24,360
+perguntarem Qual que é a principal
+
+357
+00:16:21,759 --> 00:16:26,079
+atividade lá é bomba bombeamento de água
+
+358
+00:16:24,360 --> 00:16:27,839
+isso para quem conhece lá percebe o
+
+359
+00:16:26,079 --> 00:16:29,880
+tanto que a água é movimentada de um
+
+360
+00:16:27,839 --> 00:16:32,000
+lado pro outro lá é é os problemas
+
+361
+00:16:29,880 --> 00:16:35,120
+atuais eu já fui eu já disse no começo
+
+362
+00:16:32,000 --> 00:16:37,040
+são o as 12 tel me de armazenamento lá
+
+363
+00:16:35,120 --> 00:16:39,480
+de resíduo né que veio de São Paulo para
+
+364
+00:16:37,040 --> 00:16:41,720
+lá e e e as barragens com risco de
+
+365
+00:16:39,480 --> 00:16:44,360
+transbordamento e suas fissuras já diz
+
+366
+00:16:41,720 --> 00:16:47,040
+também que por baixo foram mapeadas 37
+
+367
+00:16:44,360 --> 00:16:48,759
+km de de fraturas geológicas que estão
+
+368
+00:16:47,040 --> 00:16:52,079
+sendo estudadas e a solução também
+
+369
+00:16:48,759 --> 00:16:54,279
+pontos de atenção e riscos associados ao
+
+370
+00:16:52,079 --> 00:16:56,279
+rompimento das barragem a extensão da
+
+371
+00:16:54,279 --> 00:16:58,120
+contaminação Esse é um ponto principal
+
+372
+00:16:56,279 --> 00:17:00,199
+ambiental humano rompimento já falei
+
+373
+00:16:58,120 --> 00:17:02,360
+isso aqui sobre uma uma um desastre
+
+374
+00:17:00,199 --> 00:17:05,000
+ambiental ao pé da letra um desastre
+
+375
+00:17:02,360 --> 00:17:07,120
+ambiental ainda mais contendo resíduos
+
+376
+00:17:05,000 --> 00:17:08,799
+radioativos e é sabido que e que também
+
+377
+00:17:07,120 --> 00:17:11,120
+que as barragens estão assoreadas então
+
+378
+00:17:08,799 --> 00:17:13,360
+aquele volume de massa ali deslocando a
+
+379
+00:17:11,120 --> 00:17:15,240
+gente não sabe eh o tamanho disso o
+
+380
+00:17:13,360 --> 00:17:17,160
+impacto a saúde pública a gente e já
+
+381
+00:17:15,240 --> 00:17:19,120
+disse alguma coisa há pouco sobre a
+
+382
+00:17:17,160 --> 00:17:21,400
+exposição de materiais radioativos Como
+
+383
+00:17:19,120 --> 00:17:23,559
+Urano pode causar câncer e malformações
+
+384
+00:17:21,400 --> 00:17:25,839
+em bebês esses problemas acontece mesmo
+
+385
+00:17:23,559 --> 00:17:28,120
+em pequena quantidade e e e por isso é
+
+386
+00:17:25,839 --> 00:17:29,840
+essencial ter esse controle e Algumas
+
+387
+00:17:28,120 --> 00:17:32,200
+casas de causa por exemplo já foi
+
+388
+00:17:29,840 --> 00:17:34,480
+monitorada e fez parte de um estúdio que
+
+389
+00:17:32,200 --> 00:17:36,160
+está disponível no site da kinem eh
+
+390
+00:17:34,480 --> 00:17:38,080
+radiação eem Horizonte acad de
+
+391
+00:17:36,160 --> 00:17:39,880
+decaimento Duran aqui a estabilidade do
+
+392
+00:17:38,080 --> 00:17:41,559
+urânio a emissão de partículas alfas
+
+393
+00:17:39,880 --> 00:17:43,919
+Beta e radiação Gama são de extrema
+
+394
+00:17:41,559 --> 00:17:46,720
+preocupação já que afeta o DNA como no
+
+395
+00:17:43,919 --> 00:17:49,799
+no próprio item um aqui e causa impactos
+
+396
+00:17:46,720 --> 00:17:51,880
+reversível a saúde humana já foi dito
+
+397
+00:17:49,799 --> 00:17:55,159
+aqui é sobre o descomissionamento das
+
+398
+00:17:51,880 --> 00:17:57,520
+barragens que que requer um processo de
+
+399
+00:17:55,159 --> 00:17:59,559
+tratamento de movimentação não uma coisa
+
+400
+00:17:57,520 --> 00:18:01,520
+barata a a a as barragens estão
+
+401
+00:17:59,559 --> 00:18:03,679
+assoreadas lá então isso faz parte do
+
+402
+00:18:01,520 --> 00:18:06,400
+pro do processo e alguns estudos como a
+
+403
+00:18:03,679 --> 00:18:09,000
+própria udc já manifestou que tá tá em
+
+404
+00:18:06,400 --> 00:18:11,120
+andamento outros outros não e ameaça a
+
+405
+00:18:09,000 --> 00:18:12,679
+segurança alimentar e recursos hídricos
+
+406
+00:18:11,120 --> 00:18:15,760
+aqui é um ponto que eu chamo atenção
+
+407
+00:18:12,679 --> 00:18:18,480
+sobre o o consumo e o uso dessa dessa
+
+408
+00:18:15,760 --> 00:18:20,440
+água para para eventualmente é um gado
+
+409
+00:18:18,480 --> 00:18:23,200
+que vai entrar na nas nas dependências
+
+410
+00:18:20,440 --> 00:18:25,200
+lá consumir essa água ou até mesmo um
+
+411
+00:18:23,200 --> 00:18:27,600
+capim e por isso que lá é uma área de
+
+412
+00:18:25,200 --> 00:18:31,159
+segurança e requer essa essa
+
+413
+00:18:27,600 --> 00:18:33,360
+fiscalização permanente e e e impedir
+
+414
+00:18:31,159 --> 00:18:35,520
+que esse tipo de coisa aconteça e
+
+415
+00:18:33,360 --> 00:18:38,600
+eventualmente se se usar essa água para
+
+416
+00:18:35,520 --> 00:18:40,960
+irrigar o consumo de alimentos eh um
+
+417
+00:18:38,600 --> 00:18:42,559
+peixe eventualmente é isso falta de
+
+418
+00:18:40,960 --> 00:18:44,280
+estudos abrangentes eu já disse alguma
+
+419
+00:18:42,559 --> 00:18:46,320
+coisa sobre as fraturas geológicas né a
+
+420
+00:18:44,280 --> 00:18:48,240
+escassez de pesquisa nessa área então
+
+421
+00:18:46,320 --> 00:18:51,039
+tem coisas que estão sendo desenvolvidas
+
+422
+00:18:48,240 --> 00:18:53,400
+E aí é em cito naquele local que tá
+
+423
+00:18:51,039 --> 00:18:55,080
+sendo testad as pesquisas e eh
+
+424
+00:18:53,400 --> 00:18:57,360
+eventualmente a gente recebe algum
+
+425
+00:18:55,080 --> 00:18:59,559
+estudo que foi desenvolvido ali e esse é
+
+426
+00:18:57,360 --> 00:19:01,679
+um processo que Como eu disse as
+
+427
+00:18:59,559 --> 00:19:03,760
+próximas gerações estarão discutindo
+
+428
+00:19:01,679 --> 00:19:05,799
+esse assunto porque a solução não é tão
+
+429
+00:19:03,760 --> 00:19:07,799
+simples urgência em aplicação de medidas
+
+430
+00:19:05,799 --> 00:19:09,600
+na política nacional de segurança de
+
+431
+00:19:07,799 --> 00:19:11,919
+barragem é imperativo Que sej
+
+432
+00:19:09,600 --> 00:19:14,039
+implementadas medidas eficazes para
+
+433
+00:19:11,919 --> 00:19:15,760
+prevenir acidentes e proteger as
+
+434
+00:19:14,039 --> 00:19:17,840
+comunidades particularmente as barragens
+
+435
+00:19:15,760 --> 00:19:19,880
+de rejeito radioativo cuja negligência
+
+436
+00:19:17,840 --> 00:19:21,600
+pode ter consequências catastróficas
+
+437
+00:19:19,880 --> 00:19:23,679
+zonas de autossalvamento e preparação
+
+438
+00:19:21,600 --> 00:19:25,960
+Comunitária então aqui é um ponto
+
+439
+00:19:23,679 --> 00:19:29,080
+importante Vamos considerar que tem
+
+440
+00:19:25,960 --> 00:19:30,919
+algum algum morador naquele próximo à
+
+441
+00:19:29,080 --> 00:19:33,440
+barragem de Águas Claras ali e eventual
+
+442
+00:19:30,919 --> 00:19:35,600
+e rompimento se aquela pessoa for surda
+
+443
+00:19:33,440 --> 00:19:38,280
+ou tiver algum problema de locomoção
+
+444
+00:19:35,600 --> 00:19:40,679
+certamente isso deve fazer parte do
+
+445
+00:19:38,280 --> 00:19:42,960
+plano do plano de contingência lá porque
+
+446
+00:19:40,679 --> 00:19:45,120
+até chegar um carro de som ou a sirene
+
+447
+00:19:42,960 --> 00:19:46,919
+que ela não vai ser ouvida isso é um
+
+448
+00:19:45,120 --> 00:19:49,039
+ponto de preocupação e a gente deve
+
+449
+00:19:46,919 --> 00:19:51,840
+considerar tudo isso aqui em termos de
+
+450
+00:19:49,039 --> 00:19:54,880
+de de de ações para mitigar os danos de
+
+451
+00:19:51,840 --> 00:19:56,840
+eventual rompimento Boa noite para todos
+
+452
+00:19:54,880 --> 00:19:59,320
+que acompanham essa Live tão importante
+
+453
+00:19:56,840 --> 00:20:01,520
+muito prazer eu sou a Marina Rosa eu sou
+
+454
+00:19:59,320 --> 00:20:05,039
+bióloga Educadora ambiental há mais de
+
+455
+00:20:01,520 --> 00:20:06,919
+13 anos ativista sócioambiental aqui eu
+
+456
+00:20:05,039 --> 00:20:08,960
+também ocupo esse espaço como
+
+457
+00:20:06,919 --> 00:20:11,480
+representante da frente popular de luta
+
+458
+00:20:08,960 --> 00:20:13,919
+antinuclear de Caldas e também presto
+
+459
+00:20:11,480 --> 00:20:15,720
+Assessoria Técnica pra rede sapo que é a
+
+460
+00:20:13,919 --> 00:20:18,240
+rede dos saberes ancestrais dos copos
+
+461
+00:20:15,720 --> 00:20:22,720
+clol atuando com comunidades
+
+462
+00:20:18,240 --> 00:20:25,200
+tradicionais bom a gente Eh vive um caos
+
+463
+00:20:22,720 --> 00:20:27,039
+né e isso é algo Mundial pensando nas
+
+464
+00:20:25,200 --> 00:20:30,200
+questões ambientais né nas crises
+
+465
+00:20:27,039 --> 00:20:32,080
+climáticas e caudas está na centralidade
+
+466
+00:20:30,200 --> 00:20:34,840
+disso também quando a gente pensa né em
+
+467
+00:20:32,080 --> 00:20:37,720
+todo esse material radioativo em todo um
+
+468
+00:20:34,840 --> 00:20:40,240
+histórico né que vem aí de longa data e
+
+469
+00:20:37,720 --> 00:20:43,280
+que a gente enxerga grandes dificuldades
+
+470
+00:20:40,240 --> 00:20:47,000
+de disso ser solucionado e começar a
+
+471
+00:20:43,280 --> 00:20:49,919
+partir de algum lugar eh de efetivamente
+
+472
+00:20:47,000 --> 00:20:51,600
+haver mudanças né Eu morei 4 anos no
+
+473
+00:20:49,919 --> 00:20:53,760
+município de Caldas hoje eu estou aqui
+
+474
+00:20:51,600 --> 00:20:56,760
+em São José do rard que é bem próximo
+
+475
+00:20:53,760 --> 00:20:59,159
+uma cidade também afetada pela INB né
+
+476
+00:20:56,760 --> 00:21:00,799
+então já estou aqui para trazendo
+
+477
+00:20:59,159 --> 00:21:02,559
+tentando buscar mais pessoas dessa
+
+478
+00:21:00,799 --> 00:21:04,600
+região também para fazer parte desse
+
+479
+00:21:02,559 --> 00:21:07,080
+movimento que a gente tá falando de de
+
+480
+00:21:04,600 --> 00:21:08,960
+um material que vai se espalhar pelo
+
+481
+00:21:07,080 --> 00:21:11,240
+Brasil todo como é de conhecimento de
+
+482
+00:21:08,960 --> 00:21:14,480
+todo mundo podendo se espalhar para fora
+
+483
+00:21:11,240 --> 00:21:17,279
+do país Caso haja mesmo né o movimento
+
+484
+00:21:14,480 --> 00:21:19,640
+barragem a gente sabe que isso não é uma
+
+485
+00:21:17,279 --> 00:21:21,919
+fantasia nossa né Gostaríamos muito que
+
+486
+00:21:19,640 --> 00:21:24,159
+fosse um exagero nosso mas a gente sabe
+
+487
+00:21:21,919 --> 00:21:26,760
+que não é bom eh dentro da minha
+
+488
+00:21:24,159 --> 00:21:29,240
+articulação na frente popular de mutante
+
+489
+00:21:26,760 --> 00:21:31,679
+nuclear meu trabalho é voltado bastante
+
+490
+00:21:29,240 --> 00:21:33,400
+para pro cuidado pra informação pra
+
+491
+00:21:31,679 --> 00:21:35,159
+articulação com a comunidade Eu também
+
+492
+00:21:33,400 --> 00:21:38,679
+sou liderança Comunitária e o que a
+
+493
+00:21:35,159 --> 00:21:41,400
+gente vê eh é um esforço muito grande né
+
+494
+00:21:38,679 --> 00:21:43,880
+até do próprio município e não no caso
+
+495
+00:21:41,400 --> 00:21:46,679
+município de Caldas e não ser objetivo
+
+496
+00:21:43,880 --> 00:21:49,279
+nas informações pra comunidade né não
+
+497
+00:21:46,679 --> 00:21:52,559
+haver um esforço real de que a
+
+498
+00:21:49,279 --> 00:21:55,159
+comunidade participe das discussões né
+
+499
+00:21:52,559 --> 00:21:58,039
+de que a comunidade Ela entenda os
+
+500
+00:21:55,159 --> 00:22:00,679
+meandros né as a a a gravidade com que
+
+501
+00:21:58,039 --> 00:22:03,279
+ela já é exposta pensa na radiação para
+
+502
+00:22:00,679 --> 00:22:05,480
+além de um rompimento de barragem eh o
+
+503
+00:22:03,279 --> 00:22:07,200
+ano passado eu fui escolhida para
+
+504
+00:22:05,480 --> 00:22:10,840
+representar a comunidade a frente
+
+505
+00:22:07,200 --> 00:22:13,679
+Popular numa visita técnica na INB e
+
+506
+00:22:10,840 --> 00:22:15,799
+construir um documento né relatando as
+
+507
+00:22:13,679 --> 00:22:18,240
+minhas observações lá dentro um
+
+508
+00:22:15,799 --> 00:22:20,520
+documento que ele contém fotos também de
+
+509
+00:22:18,240 --> 00:22:22,240
+uma de outras das outras integrantes que
+
+510
+00:22:20,520 --> 00:22:24,679
+estavam também na visita técnica então
+
+511
+00:22:22,240 --> 00:22:26,760
+assim é chocante muito mesmo e alguns
+
+512
+00:22:24,679 --> 00:22:28,679
+dos apontamentos que eu coloquei nesse
+
+513
+00:22:26,760 --> 00:22:30,679
+documento e acho considero importante
+
+514
+00:22:28,679 --> 00:22:32,840
+gente né Compartilhar aqui é pensando
+
+515
+00:22:30,679 --> 00:22:34,919
+também nos animais silvestres a gente
+
+516
+00:22:32,840 --> 00:22:37,679
+pouco Escuta as pessoas falarem sobre a
+
+517
+00:22:34,919 --> 00:22:40,559
+fauna que circunda que pertence a essa
+
+518
+00:22:37,679 --> 00:22:43,200
+região da INB O que foi relatado pela
+
+519
+00:22:40,559 --> 00:22:45,559
+responsável bióloga da INB que eu não
+
+520
+00:22:43,200 --> 00:22:48,080
+posso afirmar se ainda é a mesma é que
+
+521
+00:22:45,559 --> 00:22:51,279
+não há um levantamento de fauna e então
+
+522
+00:22:48,080 --> 00:22:54,120
+não tem como quantificar contabilizar né
+
+523
+00:22:51,279 --> 00:22:55,799
+o reflexo mesmo em números em dados a
+
+524
+00:22:54,120 --> 00:22:59,000
+esses animais que pertencem a essa
+
+525
+00:22:55,799 --> 00:23:00,640
+região eh isso é algo muito grave que
+
+526
+00:22:59,000 --> 00:23:04,679
+a gente tá vendo a nossa fauna embora
+
+527
+00:23:00,640 --> 00:23:06,919
+também de forma muito grave e silenciosa
+
+528
+00:23:04,679 --> 00:23:10,000
+silenciada na verdade né que foi
+
+529
+00:23:06,919 --> 00:23:13,600
+relatado nas perguntas que eu fiz foi se
+
+530
+00:23:10,000 --> 00:23:16,080
+havia um plano de manejo Não havia não
+
+531
+00:23:13,600 --> 00:23:18,799
+vou colocar sempre em 2023 porque
+
+532
+00:23:16,080 --> 00:23:20,679
+atualmente eu não li não tivemos
+
+533
+00:23:18,799 --> 00:23:23,480
+resposta se Isso mudou em algum aspecto
+
+534
+00:23:20,679 --> 00:23:26,320
+então não há um plano de marjo animais
+
+535
+00:23:23,480 --> 00:23:29,440
+que caem nas bacias contaminadas quando
+
+536
+00:23:26,320 --> 00:23:31,760
+são vistos né a tempo eles são retirados
+
+537
+00:23:29,440 --> 00:23:34,120
+mas são soltos né então animais que
+
+538
+00:23:31,760 --> 00:23:36,600
+estão contaminados que Muito
+
+539
+00:23:34,120 --> 00:23:38,360
+provavelmente fatalmente impossível eles
+
+540
+00:23:36,600 --> 00:23:40,200
+terem qualidade de vida provavelmente
+
+541
+00:23:38,360 --> 00:23:42,080
+vão morrer lentamente e sair
+
+542
+00:23:40,200 --> 00:23:43,840
+contaminando aí as comunidades que eles
+
+543
+00:23:42,080 --> 00:23:45,720
+vivem Esses animais eles são
+
+544
+00:23:43,840 --> 00:23:48,480
+simplesmente retirados das bacias e são
+
+545
+00:23:45,720 --> 00:23:51,360
+soltos isso tanto para animais silvestre
+
+546
+00:23:48,480 --> 00:23:55,039
+quanto para animais e não silvestres né
+
+547
+00:23:51,360 --> 00:23:57,120
+cães enfim gatos que ali também como é
+
+548
+00:23:55,039 --> 00:23:59,520
+uma área habitada por pessoas então
+
+549
+00:23:57,120 --> 00:24:01,240
+atrai também esses animais que vivem
+
+550
+00:23:59,520 --> 00:24:02,960
+soltos vamos dizer assim então isso é
+
+551
+00:24:01,240 --> 00:24:05,279
+algo muito chocante precisa muito ser
+
+552
+00:24:02,960 --> 00:24:08,039
+explanado então convido outros biólogos
+
+553
+00:24:05,279 --> 00:24:09,559
+que permeiam essa essa parte eu acho que
+
+554
+00:24:08,039 --> 00:24:12,039
+nem dá para chamar de bem-estar animal
+
+555
+00:24:09,559 --> 00:24:13,919
+mas de proteção mesmo a fauna e aos
+
+556
+00:24:12,039 --> 00:24:16,000
+animais não silvestres também então foi
+
+557
+00:24:13,919 --> 00:24:18,120
+uma das coisas que chocou bastante
+
+558
+00:24:16,000 --> 00:24:20,000
+Quantos anos a NB está instalada ali
+
+559
+00:24:18,120 --> 00:24:22,880
+essa profissional em questão ela tá mais
+
+560
+00:24:20,000 --> 00:24:25,399
+de 7 anos na NB eh não to também a
+
+561
+00:24:22,880 --> 00:24:27,399
+culpabilizando que a gente sabe que
+
+562
+00:24:25,399 --> 00:24:28,880
+muitas camadas precisam ser acessadas
+
+563
+00:24:27,399 --> 00:24:31,159
+para que a gente consiga fazer um bom
+
+564
+00:24:28,880 --> 00:24:32,279
+projeto num espaço como esse em qualquer
+
+565
+00:24:31,159 --> 00:24:33,399
+espaço na verdade mas é um
+
+566
+00:24:32,279 --> 00:24:35,480
+questionamento que precisa ser feito
+
+567
+00:24:33,399 --> 00:24:38,760
+porque ela é responsável por esse setor
+
+568
+00:24:35,480 --> 00:24:41,679
+eh as bacias elas não têm cercamento
+
+569
+00:24:38,760 --> 00:24:43,760
+Então o que implica isso não há
+
+570
+00:24:41,679 --> 00:24:46,000
+segurança volta a dizer para animais e
+
+571
+00:24:43,760 --> 00:24:48,159
+também não há segurança para pessoas né
+
+572
+00:24:46,000 --> 00:24:50,279
+se alguém se se houver algum acidente ou
+
+573
+00:24:48,159 --> 00:24:52,480
+se já houve algum acidente de pessoas ou
+
+574
+00:24:50,279 --> 00:24:54,279
+animais caindo nessas bacias não tem a
+
+575
+00:24:52,480 --> 00:24:55,840
+mínima segurança eu estive lá eu fiz a
+
+576
+00:24:54,279 --> 00:24:57,840
+visita junto com outras pessoas e a
+
+577
+00:24:55,840 --> 00:25:00,640
+gente constata isso então não há um
+
+578
+00:24:57,840 --> 00:25:02,960
+certament não há a mínima segurança para
+
+579
+00:25:00,640 --> 00:25:04,799
+quem precisa seja por uma visita técnica
+
+580
+00:25:02,960 --> 00:25:07,440
+ou seja os próprios funcionários de de
+
+581
+00:25:04,799 --> 00:25:10,200
+estar naquelas áreas ali existe também
+
+582
+00:25:07,440 --> 00:25:12,640
+uma área dentro da imv onde há um
+
+583
+00:25:10,200 --> 00:25:15,120
+extravazamento de uma água que é
+
+584
+00:25:12,640 --> 00:25:18,720
+contaminada essa água que é altamente
+
+585
+00:25:15,120 --> 00:25:21,520
+tóxica ela sai por uma um cano e ela é
+
+586
+00:25:18,720 --> 00:25:24,799
+jorrada no chão mesmo ali no solo não há
+
+587
+00:25:21,520 --> 00:25:27,080
+cercamento não há o isolamento é um
+
+588
+00:25:24,799 --> 00:25:30,840
+espaço bem Sombrio anb a gente não
+
+589
+00:25:27,080 --> 00:25:32,799
+escuta aves né cantando e é assombroso
+
+590
+00:25:30,840 --> 00:25:34,600
+mesmo que a gente vê ali então um dos
+
+591
+00:25:32,799 --> 00:25:37,480
+pontos que eu considero mais importantes
+
+592
+00:25:34,600 --> 00:25:40,559
+eh elevar nessa minha participação nessa
+
+593
+00:25:37,480 --> 00:25:42,840
+Live são esses porque eu não vejo muitas
+
+594
+00:25:40,559 --> 00:25:45,039
+outras pessoas levantando essa questão e
+
+595
+00:25:42,840 --> 00:25:46,720
+para Além disso voltando também agora
+
+596
+00:25:45,039 --> 00:25:50,039
+mais para trabalho como ativista social
+
+597
+00:25:46,720 --> 00:25:53,200
+é a gente pensar que que Caldas é um
+
+598
+00:25:50,039 --> 00:25:55,520
+município Rural né uma cidade pequena e
+
+599
+00:25:53,200 --> 00:25:57,320
+ali como todo o município grande ou
+
+600
+00:25:55,520 --> 00:26:00,600
+pequeno mas a gente vê que nos pequenos
+
+601
+00:25:57,320 --> 00:26:03,120
+municípios municípios isso é maior né a
+
+602
+00:26:00,600 --> 00:26:04,679
+gente vê uma dificuldade dos acessos
+
+603
+00:26:03,120 --> 00:26:07,600
+chegar paraas comunidades né então
+
+604
+00:26:04,679 --> 00:26:09,919
+caudas tem Periferia precisa muito de
+
+605
+00:26:07,600 --> 00:26:12,360
+melhorias como em toda a cidade caudas
+
+606
+00:26:09,919 --> 00:26:13,760
+tem comunidades indígenas comunidades
+
+607
+00:26:12,360 --> 00:26:16,120
+clom bolas então a gente tá falando de
+
+608
+00:26:13,760 --> 00:26:18,840
+comunidades que infelizmente né
+
+609
+00:26:16,120 --> 00:26:21,600
+estruturalmente já vivem n nesse lugar
+
+610
+00:26:18,840 --> 00:26:24,360
+de vulnerabilidade social de fragilidade
+
+611
+00:26:21,600 --> 00:26:26,360
+em alguns aspectos Então o chamamento
+
+612
+00:26:24,360 --> 00:26:29,320
+que eu faço aqui também é para lembrar
+
+613
+00:26:26,360 --> 00:26:31,000
+que se essas pessoas já vivem em uma
+
+614
+00:26:29,320 --> 00:26:33,440
+condição de fragilidade de
+
+615
+00:26:31,000 --> 00:26:36,559
+vulnerabilidade social Apesar delas
+
+616
+00:26:33,440 --> 00:26:39,399
+estarem a quilômetros né da INB mais de
+
+617
+00:26:36,559 --> 00:26:42,080
+uma hora as pessoas precisam conseguir
+
+618
+00:26:39,399 --> 00:26:44,320
+relacionar as coisas por mais que a água
+
+619
+00:26:42,080 --> 00:26:46,000
+o rejeito não chegue até elas o
+
+620
+00:26:44,320 --> 00:26:48,679
+município a região vai ser
+
+621
+00:26:46,000 --> 00:26:50,279
+desestruturada se há um acidente desso
+
+622
+00:26:48,679 --> 00:26:52,679
+que na minha concepção nem dá para
+
+623
+00:26:50,279 --> 00:26:55,799
+chamar de acidente né é um crime mesmo e
+
+624
+00:26:52,679 --> 00:26:58,520
+essas comunidades que já vivem com pouco
+
+625
+00:26:55,799 --> 00:27:00,399
+acesso com dificuldade de recursos Isso
+
+626
+00:26:58,520 --> 00:27:02,320
+vai ser desestruturado muito mais porque
+
+627
+00:27:00,399 --> 00:27:04,480
+se o município que não está passando por
+
+628
+00:27:02,320 --> 00:27:05,720
+esse por um rompimento de barragem né
+
+629
+00:27:04,480 --> 00:27:08,320
+que é uma das nossas maiores
+
+630
+00:27:05,720 --> 00:27:10,960
+preocupações não consegue levar recursos
+
+631
+00:27:08,320 --> 00:27:13,039
+suficiente para essas comunidades se há
+
+632
+00:27:10,960 --> 00:27:14,919
+esse desastre humano porque ele não é
+
+633
+00:27:13,039 --> 00:27:17,480
+ambiental é um desastre humo essas
+
+634
+00:27:14,919 --> 00:27:19,480
+comunidades elas vão mais uma vez sofrer
+
+635
+00:27:17,480 --> 00:27:21,600
+ao quadrado que elas já sofrem
+
+636
+00:27:19,480 --> 00:27:23,240
+cotidianamente então é muito importante
+
+637
+00:27:21,600 --> 00:27:24,799
+lembrar disso também e para finalizar
+
+638
+00:27:23,240 --> 00:27:27,039
+minha fala dar espaço paraos outros
+
+639
+00:27:24,799 --> 00:27:29,120
+colegas eu quero pontuar aqui também um
+
+640
+00:27:27,039 --> 00:27:31,399
+trabalho muito importante que eu
+
+641
+00:27:29,120 --> 00:27:33,840
+participei tive a honra de participar da
+
+642
+00:27:31,399 --> 00:27:35,840
+minha colega também bióloga Vivian Costa
+
+643
+00:27:33,840 --> 00:27:38,320
+que fez um trabalho importantíssimo da
+
+644
+00:27:35,840 --> 00:27:40,279
+cós dela a pesquisa dela era voltada
+
+645
+00:27:38,320 --> 00:27:42,519
+para conversar com a comunidade entrar
+
+646
+00:27:40,279 --> 00:27:44,559
+num diálogo para saber o que as pessoas
+
+647
+00:27:42,519 --> 00:27:47,720
+estavam acompanhando de toda essa
+
+648
+00:27:44,559 --> 00:27:50,279
+questão voltada para INB e o lixo
+
+649
+00:27:47,720 --> 00:27:51,880
+radioativo radioatividade enfim e a
+
+650
+00:27:50,279 --> 00:27:54,600
+gente ficou muito chocado porque a
+
+651
+00:27:51,880 --> 00:27:56,799
+comunidade acredita que a maior parte
+
+652
+00:27:54,600 --> 00:27:59,559
+dela tem pessoas que vivem a poucos
+
+653
+00:27:56,799 --> 00:28:03,000
+metros das Bas tem pessoas que vivem a
+
+654
+00:27:59,559 --> 00:28:05,080
+poucos metros da INB poucos metros mesmo
+
+655
+00:28:03,000 --> 00:28:07,039
+e mesmo assim elas não acreditam
+
+656
+00:28:05,080 --> 00:28:09,640
+acreditam algumas acreditam cegamente
+
+657
+00:28:07,039 --> 00:28:12,399
+que a INB tá sendo honesta que não há
+
+658
+00:28:09,640 --> 00:28:15,159
+risco tem pessoas que nadam no rio passa
+
+659
+00:28:12,399 --> 00:28:18,200
+na lateral ali que eles né falam que a
+
+660
+00:28:15,159 --> 00:28:21,240
+água não não contém radioatividade e e
+
+661
+00:28:18,200 --> 00:28:23,039
+defendem que elas não têm risco né e
+
+662
+00:28:21,240 --> 00:28:26,399
+alguns municípios a gente fez pesquisas
+
+663
+00:28:23,039 --> 00:28:29,200
+também no bairro São Pedro Laranjeiras
+
+664
+00:28:26,399 --> 00:28:32,080
+nos distritos esses distritos que estão
+
+665
+00:28:29,200 --> 00:28:34,760
+longe da cidade Eles não sabiam nem do
+
+666
+00:28:32,080 --> 00:28:37,320
+que tá acontecendo e infelizmente a
+
+667
+00:28:34,760 --> 00:28:40,120
+maior parte quando a gente situava eles
+
+668
+00:28:37,320 --> 00:28:42,720
+da situação eles descredito eles não
+
+669
+00:28:40,120 --> 00:28:44,440
+acreditam que isso possa acontecer e nem
+
+670
+00:28:42,720 --> 00:28:47,519
+que eles já estão expostos né a
+
+671
+00:28:44,440 --> 00:28:49,679
+radioatividade então Eh é preciso não só
+
+672
+00:28:47,519 --> 00:28:51,200
+ser feito um trabalho eh de
+
+673
+00:28:49,679 --> 00:28:53,480
+sensibilização das pessoas porque a
+
+674
+00:28:51,200 --> 00:28:55,840
+gente vai tentando fazer né nós cada um
+
+675
+00:28:53,480 --> 00:28:57,440
+dentro das suas forças e das suas redes
+
+676
+00:28:55,840 --> 00:28:58,919
+de articulação a gente tem mas a gente
+
+677
+00:28:57,440 --> 00:29:00,919
+sente uma grande dificuldade porque o
+
+678
+00:28:58,919 --> 00:29:03,159
+próprio município não abraça isso e
+
+679
+00:29:00,919 --> 00:29:05,720
+Existem várias questões que fazem com
+
+680
+00:29:03,159 --> 00:29:08,039
+que o município não abrace e não informe
+
+681
+00:29:05,720 --> 00:29:10,279
+a população Caldas é um município que tá
+
+682
+00:29:08,039 --> 00:29:12,360
+tentando encabeçar aí um turismo a
+
+683
+00:29:10,279 --> 00:29:15,120
+comunidade é colocada numa situação de
+
+684
+00:29:12,360 --> 00:29:17,279
+risco os turistas estão lá na cidade
+
+685
+00:29:15,120 --> 00:29:19,799
+deles querendo um dia de lazer um dia
+
+686
+00:29:17,279 --> 00:29:21,799
+prazeroso com a família e então a gente
+
+687
+00:29:19,799 --> 00:29:24,000
+pede e cobra para que o levantamento
+
+688
+00:29:21,799 --> 00:29:26,480
+seja feito uma pesquisa séria seja feita
+
+689
+00:29:24,000 --> 00:29:29,159
+para que ou seja colocada placas
+
+690
+00:29:26,480 --> 00:29:32,600
+finalizando a proibição do banho ou que
+
+691
+00:29:29,159 --> 00:29:34,159
+seja né de forma honesta descartada essa
+
+692
+00:29:32,600 --> 00:29:37,080
+possibilidade e as pessoas tenham como
+
+693
+00:29:34,159 --> 00:29:37,080
+desfrutar com
+
+694
+00:29:41,880 --> 00:29:47,240
+segurança Boa noite a todos primeira ma
+
+695
+00:29:44,799 --> 00:29:49,519
+honra est participando aqui hoje nessa
+
+696
+00:29:47,240 --> 00:29:52,080
+nesse evento tão importante eu queria
+
+697
+00:29:49,519 --> 00:29:55,360
+falar com o pessoal que eu moro h mais
+
+698
+00:29:52,080 --> 00:29:58,039
+ou menos 20 Km da inp bem da minha corta
+
+699
+00:29:55,360 --> 00:30:02,440
+tem uma montanha depois a montanha já é
+
+700
+00:29:58,039 --> 00:30:05,120
+a in e nós fomos lá o ano passado na na
+
+701
+00:30:02,440 --> 00:30:08,960
+na visita técnica foi eu e o Valdeir
+
+702
+00:30:05,120 --> 00:30:11,360
+aqui também é do movimento Ant nuclear E
+
+703
+00:30:08,960 --> 00:30:14,640
+na verdade a gente ia lá para fazer uma
+
+704
+00:30:11,360 --> 00:30:17,120
+manifestação né pegamos a for para
+
+705
+00:30:14,640 --> 00:30:19,799
+manifestar na hora que eu cheguei lá com
+
+706
+00:30:17,120 --> 00:30:22,240
+o Valdeir eu dei a minha carteirinha da
+
+707
+00:30:19,799 --> 00:30:24,760
+OAB e falei com segurança falei eu vin
+
+708
+00:30:22,240 --> 00:30:26,840
+reunião e eu não sei se a segurança lá
+
+709
+00:30:24,760 --> 00:30:30,600
+não é muito boa pensou que nós era
+
+710
+00:30:26,840 --> 00:30:33,480
+convidado né entramos na na na na in sem
+
+711
+00:30:30,600 --> 00:30:36,760
+est com nome na b e o que eu vi lá eu
+
+712
+00:30:33,480 --> 00:30:40,080
+fiquei apavorado porque eu imaginava que
+
+713
+00:30:36,760 --> 00:30:43,640
+Eles teriam um controle saberia como
+
+714
+00:30:40,080 --> 00:30:46,679
+tava funcionando uma análise na áa uma
+
+715
+00:30:43,640 --> 00:30:50,480
+análise no solo uma análise no ar né o
+
+716
+00:30:46,679 --> 00:30:53,840
+radon que emanda lá na daquela relação
+
+717
+00:30:50,480 --> 00:30:56,320
+tudo rapazes Eles Não Sabem Nada eles
+
+718
+00:30:53,840 --> 00:30:59,279
+estão arrumando uma universidade para
+
+719
+00:30:56,320 --> 00:31:01,799
+poder fazer um estudo para ver se vai
+
+720
+00:30:59,279 --> 00:31:04,440
+contaminar o soro se tá contaminando ou
+
+721
+00:31:01,799 --> 00:31:06,760
+não pelo amor de Deus né então assim a
+
+722
+00:31:04,440 --> 00:31:08,440
+minha fala vai ser bem rápido é só isso
+
+723
+00:31:06,760 --> 00:31:10,799
+mesmo que eu vou falar hoje mas é só
+
+724
+00:31:08,440 --> 00:31:13,399
+para falar que é um absurdo a inp não
+
+725
+00:31:10,799 --> 00:31:17,360
+sabe nada ele não tem relatório de nada
+
+726
+00:31:13,399 --> 00:31:21,120
+você vai lá é tudo abandonado é uma
+
+727
+00:31:17,360 --> 00:31:25,720
+nossa é uma situação só a pessoa indo lá
+
+728
+00:31:21,120 --> 00:31:29,200
+vê o o o caus que é essa in E aí agora
+
+729
+00:31:25,720 --> 00:31:31,000
+vem o governo querendo mais cuzina
+
+730
+00:31:29,200 --> 00:31:34,480
+nuclear ainda lá
+
+731
+00:31:31,000 --> 00:31:37,880
+em hoje nós temos energia solar temos
+
+732
+00:31:34,480 --> 00:31:41,320
+muita tecnologia nova e nós vamos manter
+
+733
+00:31:37,880 --> 00:31:43,360
+esse esse urânio esse lixo nuclear não
+
+734
+00:31:41,320 --> 00:31:46,519
+tem jeito gente e o pessoal que mora em
+
+735
+00:31:43,360 --> 00:31:49,720
+volta aqui tem noção o risco que nós
+
+736
+00:31:46,519 --> 00:31:53,639
+estamos correndo aquilo lá ele ele entra
+
+737
+00:31:49,720 --> 00:31:55,519
+na na na na no lençol naol soato e Nós
+
+738
+00:31:53,639 --> 00:31:58,399
+não sabemos se tá contaminando ou não
+
+739
+00:31:55,519 --> 00:32:00,840
+porque a inp também não sabe certo Então
+
+740
+00:31:58,399 --> 00:32:04,080
+o que eu ia falar para vocês é só isso
+
+741
+00:32:00,840 --> 00:32:05,919
+que é um repúdio a essa situação e nós
+
+742
+00:32:04,080 --> 00:32:09,240
+vamos lutar por isso nós vamos a outro
+
+743
+00:32:05,919 --> 00:32:12,320
+co n nó Não podemos aceitar isso Tá
+
+744
+00:32:09,240 --> 00:32:15,159
+certo ok obrigado boa noite então meu
+
+745
+00:32:12,320 --> 00:32:18,200
+nome é Levi sou músico e produtor
+
+746
+00:32:15,159 --> 00:32:20,679
+cultural e artístico também sou ativista
+
+747
+00:32:18,200 --> 00:32:23,039
+climático faço parte do coletivo
+
+748
+00:32:20,679 --> 00:32:25,679
+Guardiões da terra aqui em Águas da
+
+749
+00:32:23,039 --> 00:32:28,559
+Prata já há 10 anos também faz parte da
+
+750
+00:32:25,679 --> 00:32:30,519
+frente popular de luta Ant nuclear e
+
+751
+00:32:28,559 --> 00:32:33,919
+também recentemente a gente produziu um
+
+752
+00:32:30,519 --> 00:32:37,159
+filme Um documentário sobre essa questão
+
+753
+00:32:33,919 --> 00:32:40,120
+de água e radioatividade aqui no
+
+754
+00:32:37,159 --> 00:32:42,760
+Planalto alcalino eh eu acho que aqui da
+
+755
+00:32:40,120 --> 00:32:44,919
+minha parte hoje eu venho assim trazer
+
+756
+00:32:42,760 --> 00:32:47,639
+um pouco brevemente preocupação da
+
+757
+00:32:44,919 --> 00:32:51,039
+comunidade pratense e de outras cidades
+
+758
+00:32:47,639 --> 00:32:54,120
+que em volta da região talvez com sorte
+
+759
+00:32:51,039 --> 00:32:57,159
+também instigar um pouquinho de mais
+
+760
+00:32:54,120 --> 00:33:00,360
+pessoas para se juntarem também eh
+
+761
+00:32:57,159 --> 00:33:03,600
+acompanhar esse assunto mais de perto e
+
+762
+00:33:00,360 --> 00:33:05,399
+buscar soluções coletivas acho que
+
+763
+00:33:03,600 --> 00:33:07,960
+muitas pessoas talvez a maioria sabem
+
+764
+00:33:05,399 --> 00:33:11,880
+que Águas da Prata que é conhecida por
+
+765
+00:33:07,960 --> 00:33:14,639
+ter a fonte Vilela que é uma das e águas
+
+766
+00:33:11,880 --> 00:33:18,279
+mais radioativas naturalmente na fonte e
+
+767
+00:33:14,639 --> 00:33:21,559
+isso tá assim na raiz da da importância
+
+768
+00:33:18,279 --> 00:33:23,880
+histórica e cultural da cidade e a gente
+
+769
+00:33:21,559 --> 00:33:25,639
+tá muito preocupado assim com duas
+
+770
+00:33:23,880 --> 00:33:28,559
+coisas por um lado essa questão da
+
+771
+00:33:25,639 --> 00:33:31,000
+barragem toda essa essa essa polêmica
+
+772
+00:33:28,559 --> 00:33:33,720
+essa fragilidade de dados de
+
+773
+00:33:31,000 --> 00:33:36,240
+transparência e etc e por outro lado
+
+774
+00:33:33,720 --> 00:33:39,720
+também a questão da própria mineração em
+
+775
+00:33:36,240 --> 00:33:42,399
+si porque a gente vê o governo tentando
+
+776
+00:33:39,720 --> 00:33:44,279
+voltar com a exploração de urânio né
+
+777
+00:33:42,399 --> 00:33:46,840
+construção de novas usinas a gente sabe
+
+778
+00:33:44,279 --> 00:33:49,240
+que tendo mais usinas funcionando a
+
+779
+00:33:46,840 --> 00:33:52,880
+gente tem aquela pressão para produzir
+
+780
+00:33:49,240 --> 00:33:55,159
+também mais matéria-prima e a gente sabe
+
+781
+00:33:52,880 --> 00:33:58,000
+tudo que que isso pode significar para
+
+782
+00:33:55,159 --> 00:34:00,760
+comunidades como a nossa que dependem é
+
+783
+00:33:58,000 --> 00:34:03,919
+tão intrinsecamente tanto da saúde das
+
+784
+00:34:00,760 --> 00:34:06,080
+águas quanto do ecossistema como um todo
+
+785
+00:34:03,919 --> 00:34:07,559
+a gente é muito dependente disso e a
+
+786
+00:34:06,080 --> 00:34:10,480
+gente fica também com essa preocupação
+
+787
+00:34:07,559 --> 00:34:12,760
+da questão da contaminação lá em cima
+
+788
+00:34:10,480 --> 00:34:15,480
+porque como foi dito aqui anteriormente
+
+789
+00:34:12,760 --> 00:34:18,240
+a gente não sabe até que ponto essas
+
+790
+00:34:15,480 --> 00:34:21,760
+contaminações ou possíveis contaminações
+
+791
+00:34:18,240 --> 00:34:24,919
+né Podem est afetando áreas de recarga
+
+792
+00:34:21,760 --> 00:34:28,000
+cargas de de acuíferos etc e mesmo
+
+793
+00:34:24,919 --> 00:34:29,720
+contaminações através da fauna né dos
+
+794
+00:34:28,000 --> 00:34:32,760
+animais que transitam de um lugar para
+
+795
+00:34:29,720 --> 00:34:35,879
+outro então tem uma série de de riscos
+
+796
+00:34:32,760 --> 00:34:38,240
+assim uma cadeia inteira né Realmente
+
+797
+00:34:35,879 --> 00:34:40,480
+assim preocupam bastante e eu queria
+
+798
+00:34:38,240 --> 00:34:43,320
+trazer assim eh sobre esse material que
+
+799
+00:34:40,480 --> 00:34:45,800
+foi lançado foram propostas ali no final
+
+800
+00:34:43,320 --> 00:34:47,760
+algumas sugestões eu achei muito
+
+801
+00:34:45,800 --> 00:34:50,399
+interessante que foi levantado assim a
+
+802
+00:34:47,760 --> 00:34:53,280
+necessidade de uma articulação entre os
+
+803
+00:34:50,399 --> 00:34:55,599
+municípios né então eu acho que assim da
+
+804
+00:34:53,280 --> 00:34:58,359
+minha parte eu não vou me alongar muito
+
+805
+00:34:55,599 --> 00:35:01,160
+mas eu gostaria sim de mais uma uma vez
+
+806
+00:34:58,359 --> 00:35:05,280
+chamar mesmo assim convidar inclusive
+
+807
+00:35:01,160 --> 00:35:08,680
+cientistas e artistas para somarem força
+
+808
+00:35:05,280 --> 00:35:10,480
+nisso pra gente poder destrinchar esses
+
+809
+00:35:08,680 --> 00:35:13,040
+relatórios porque às vezes a gente
+
+810
+00:35:10,480 --> 00:35:15,680
+precisa de desse suporte técnico né da
+
+811
+00:35:13,040 --> 00:35:17,920
+parte de cientistas e tal chegar junto
+
+812
+00:35:15,680 --> 00:35:20,160
+mesmo com a comunidade destrinchar esses
+
+813
+00:35:17,920 --> 00:35:23,280
+relatórios e mais a fundo porque muitas
+
+814
+00:35:20,160 --> 00:35:25,880
+vezes o que a gente vê é que eles
+
+815
+00:35:23,280 --> 00:35:28,720
+cumprem certos protocolos lá entrega
+
+816
+00:35:25,880 --> 00:35:31,520
+papel carimba aqui ali tá tudo certo e a
+
+817
+00:35:28,720 --> 00:35:33,680
+coisa passa mas na prática a gente sabe
+
+818
+00:35:31,520 --> 00:35:37,400
+que o que tá escrito ali no papel nem
+
+819
+00:35:33,680 --> 00:35:39,599
+sempre corresponde né ou é factível ou é
+
+820
+00:35:37,400 --> 00:35:41,560
+funcional ou vai resolver ou tá
+
+821
+00:35:39,599 --> 00:35:43,359
+realmente resolvendo Então eu queria
+
+822
+00:35:41,560 --> 00:35:46,079
+assim mais uma vez aproveitar para
+
+823
+00:35:43,359 --> 00:35:49,240
+chamar assim eh cientistas pessoas
+
+824
+00:35:46,079 --> 00:35:51,920
+qualificadas para se somarem ajudar a a
+
+825
+00:35:49,240 --> 00:35:54,200
+gente a traduzir essas informações pro
+
+826
+00:35:51,920 --> 00:35:56,880
+público e convidar também os artistas
+
+827
+00:35:54,200 --> 00:36:00,119
+para se mobilizarem também e e ajudar a
+
+828
+00:35:56,880 --> 00:36:02,880
+levar essa informação é um assunto muito
+
+829
+00:36:00,119 --> 00:36:05,040
+importante muito grave que é de longo
+
+830
+00:36:02,880 --> 00:36:08,880
+prazo da mesma forma que vem se
+
+831
+00:36:05,040 --> 00:36:12,280
+arrastando há muitos anos eh não tem uma
+
+832
+00:36:08,880 --> 00:36:14,240
+uma uma solução de curto prazo e muitas
+
+833
+00:36:12,280 --> 00:36:16,560
+vezes acho que a última coisa que eu
+
+834
+00:36:14,240 --> 00:36:19,160
+gostaria de colocar aqui talvez é que
+
+835
+00:36:16,560 --> 00:36:22,280
+muitas vezes eh por a gente ser aqui de
+
+836
+00:36:19,160 --> 00:36:24,119
+uma região ligado ao turismo Ecológico
+
+837
+00:36:22,280 --> 00:36:26,560
+Às vezes as pessoas têm medo de falar
+
+838
+00:36:24,119 --> 00:36:28,920
+sobre certos assuntos que como esses
+
+839
+00:36:26,560 --> 00:36:31,520
+problemas e riscos né aqui pra nossa
+
+840
+00:36:28,920 --> 00:36:33,800
+região tem medo de de repente atrapalhar
+
+841
+00:36:31,520 --> 00:36:35,880
+uma atividade econômica alguma coisa mas
+
+842
+00:36:33,800 --> 00:36:38,280
+eu acho que deveria ser o contrário né
+
+843
+00:36:35,880 --> 00:36:40,839
+porque se a gente quer realmente
+
+844
+00:36:38,280 --> 00:36:44,000
+valorizar tanto o turismo Ecológico Como
+
+845
+00:36:40,839 --> 00:36:45,839
+o modo de vida e das Comunidades aqui
+
+846
+00:36:44,000 --> 00:36:47,640
+etc eu acho que a gente precisa
+
+847
+00:36:45,839 --> 00:36:49,880
+enfrentar de frente também esses
+
+848
+00:36:47,640 --> 00:36:52,440
+problemas né que são graves que a gente
+
+849
+00:36:49,880 --> 00:36:54,480
+tem e se unir porque às vezes a gente
+
+850
+00:36:52,440 --> 00:36:56,319
+ouve assim por exemplo aqui em Águas da
+
+851
+00:36:54,480 --> 00:36:58,920
+Prata mesmo a gente teve um movimento
+
+852
+00:36:56,319 --> 00:37:01,800
+forte que foi o chomin minadoras em 2012
+
+853
+00:36:58,920 --> 00:37:03,880
+2013 a gente conseguiu impedir a entrada
+
+854
+00:37:01,800 --> 00:37:06,599
+de mineradoras né Principalmente de
+
+855
+00:37:03,880 --> 00:37:10,040
+bauxita e alumínio na cidade através de
+
+856
+00:37:06,599 --> 00:37:12,680
+uma uma mobilização grande mas após isso
+
+857
+00:37:10,040 --> 00:37:15,079
+houve assim um um certo esfriamento né e
+
+858
+00:37:12,680 --> 00:37:17,720
+muitas pessoas não se solidarizam não
+
+859
+00:37:15,079 --> 00:37:19,800
+não não acompanham as questões em outras
+
+860
+00:37:17,720 --> 00:37:21,760
+cidades vizinhas né e acha que estão a
+
+861
+00:37:19,800 --> 00:37:25,040
+salvos na sua própria cidade ali então
+
+862
+00:37:21,760 --> 00:37:26,760
+eu queria só encerrando isso chamar eh
+
+863
+00:37:25,040 --> 00:37:28,680
+mais uma vez esse reforço para essa
+
+864
+00:37:26,760 --> 00:37:31,319
+união entre entre as cidades aqui da
+
+865
+00:37:28,680 --> 00:37:34,040
+região e a gente procurar encarar essa
+
+866
+00:37:31,319 --> 00:37:36,599
+questão toda como um assunto de todos
+
+867
+00:37:34,040 --> 00:37:39,240
+nós juntos né e enfrentar isso daí da
+
+868
+00:37:36,599 --> 00:37:41,319
+melhor forma possível Obrigado aí pelo
+
+869
+00:37:39,240 --> 00:37:44,599
+espaço muito obrigado pelo convite
+
+870
+00:37:41,319 --> 00:37:46,160
+edberto Doutor as ora também parabenizo
+
+871
+00:37:44,599 --> 00:37:48,760
+os colegas que falaram antes de mim aí a
+
+872
+00:37:46,160 --> 00:37:50,960
+Marina o Levi o Adriano né boa noite a
+
+873
+00:37:48,760 --> 00:37:53,000
+todos e todas que estão aí no YouTube
+
+874
+00:37:50,960 --> 00:37:55,680
+compartilhando aí essas informações e
+
+875
+00:37:53,000 --> 00:37:57,880
+querendo saber a verdade bem meu nome é
+
+876
+00:37:55,680 --> 00:38:00,520
+Adão cal fonito eh estou aqui anos na
+
+877
+00:37:57,880 --> 00:38:02,800
+INB né portanto sou um adolescente
+
+878
+00:38:00,520 --> 00:38:05,079
+Rebelde lá temos aí trabalhadores com
+
+879
+00:38:02,800 --> 00:38:07,560
+mais de 40 anos de serviço há 7 anos no
+
+880
+00:38:05,079 --> 00:38:10,000
+sindicato como diretor e nesse trabalho
+
+881
+00:38:07,560 --> 00:38:12,280
+de proteger e lutar paraos direitos do
+
+882
+00:38:10,000 --> 00:38:14,599
+trabalhador aqui de caudas do Dc O que
+
+883
+00:38:12,280 --> 00:38:16,760
+foi falado aqui até agora aqui
+
+884
+00:38:14,599 --> 00:38:19,280
+antecipadamente do doutor e todas as
+
+885
+00:38:16,760 --> 00:38:22,520
+falas aqui tem razão todo mundo tem a
+
+886
+00:38:19,280 --> 00:38:24,000
+sua a sua verdade por quê Porque a a NB
+
+887
+00:38:22,520 --> 00:38:26,000
+tem um problema que ela foi feita na
+
+888
+00:38:24,000 --> 00:38:28,160
+época da ditadura militar então portanto
+
+889
+00:38:26,000 --> 00:38:30,160
+ela nasceu na mentira e uma empresa que
+
+890
+00:38:28,160 --> 00:38:31,800
+con não é mentira para deixar de mentir
+
+891
+00:38:30,160 --> 00:38:33,599
+é um trabalho muito duro Então essa
+
+892
+00:38:31,800 --> 00:38:36,119
+busca da Transparência é que nós
+
+893
+00:38:33,599 --> 00:38:38,160
+cobramos passamos por governos eh
+
+894
+00:38:36,119 --> 00:38:39,800
+anterior aí que não estava né
+
+895
+00:38:38,160 --> 00:38:42,800
+interessado na transparência quando
+
+896
+00:38:39,800 --> 00:38:44,640
+fechou a mina eh em 95 a intenção do
+
+897
+00:38:42,800 --> 00:38:46,640
+governo naela época era passar o cadeado
+
+898
+00:38:44,640 --> 00:38:49,280
+e fechar então não tinha nenhuma
+
+899
+00:38:46,640 --> 00:38:51,560
+importância se ia contaminar ou não
+
+900
+00:38:49,280 --> 00:38:54,040
+tanto é que ter trabalhadores foram
+
+901
+00:38:51,560 --> 00:38:56,400
+aposentando saindo então teve uma ter
+
+902
+00:38:54,040 --> 00:38:58,319
+terceirização do serviço do do trabalho
+
+903
+00:38:56,400 --> 00:39:00,440
+também que afetou essa essa qualidade de
+
+904
+00:38:58,319 --> 00:39:02,200
+trabalho como entrei em 2009 quando
+
+905
+00:39:00,440 --> 00:39:04,960
+começou o concurso aqui em Caldas com
+
+906
+00:39:02,200 --> 00:39:06,760
+novos e trabalhadores orgânicos efetivos
+
+907
+00:39:04,960 --> 00:39:09,040
+que buscam um corpo técnico agora com
+
+908
+00:39:06,760 --> 00:39:11,319
+qualidade tentar resolver isso que foi
+
+909
+00:39:09,040 --> 00:39:13,760
+feito lá atrás né não foi minha geração
+
+910
+00:39:11,319 --> 00:39:15,520
+que fez isso aqui né no no exim da da
+
+911
+00:39:13,760 --> 00:39:17,079
+culpa né Lógico não mas não foi Nossa
+
+912
+00:39:15,520 --> 00:39:19,839
+geração nós estamos aqui para tentar
+
+913
+00:39:17,079 --> 00:39:22,200
+resolver a o corpo do Trabalhador daqui
+
+914
+00:39:19,839 --> 00:39:24,040
+tem essa boa vontade mas depende da
+
+915
+00:39:22,200 --> 00:39:26,720
+gestão da gestão e de políticos que
+
+916
+00:39:24,040 --> 00:39:29,760
+fazem tentar fazer porque aqui nac eh
+
+917
+00:39:26,720 --> 00:39:32,359
+fala é uma unidade descomer camento só
+
+918
+00:39:29,760 --> 00:39:34,920
+que aqui não tem um poder de de fala de
+
+919
+00:39:32,359 --> 00:39:36,440
+fala de poder de até de dinheiro porque
+
+920
+00:39:34,920 --> 00:39:38,839
+não produz então aqui é visto como um
+
+921
+00:39:36,440 --> 00:39:40,839
+gasto né então V como um gasto a empresa
+
+922
+00:39:38,839 --> 00:39:43,079
+nenhuma empresa quer gastar nemum do
+
+923
+00:39:40,839 --> 00:39:44,960
+governo não que ela que é culpada disso
+
+924
+00:39:43,079 --> 00:39:46,359
+né o governo lá atrás fez isso mas não
+
+925
+00:39:44,960 --> 00:39:48,599
+quer gastar é esse que é o problema né
+
+926
+00:39:46,359 --> 00:39:51,000
+terá cortes de verbas né então um
+
+927
+00:39:48,599 --> 00:39:53,359
+contingenciamento de 25% de gastos então
+
+928
+00:39:51,000 --> 00:39:55,560
+isso implica sim né nesse tratamento no
+
+929
+00:39:53,359 --> 00:39:57,599
+no desenvolvimento dessa tratamento da
+
+930
+00:39:55,560 --> 00:39:59,000
+água então de outras coisas o que trazer
+
+931
+00:39:57,599 --> 00:40:01,280
+de informações agora porque tem uma
+
+932
+00:39:59,000 --> 00:40:03,000
+licitação para venda de torta do não se
+
+933
+00:40:01,280 --> 00:40:04,359
+o andamento Se conseguiu vender se vai
+
+934
+00:40:03,000 --> 00:40:06,839
+conseguir vender isso ou não muito
+
+935
+00:40:04,359 --> 00:40:09,560
+provável que quem queira comprar a China
+
+936
+00:40:06,839 --> 00:40:11,680
+se for vendido se livra de um passivo
+
+937
+00:40:09,560 --> 00:40:13,960
+ambiental aqui mas quanto isso tá
+
+938
+00:40:11,680 --> 00:40:15,920
+fazendo reformas né Tá reformas lá nos
+
+939
+00:40:13,960 --> 00:40:18,240
+telhados As Piscinas que onde foi jogado
+
+940
+00:40:15,920 --> 00:40:19,839
+o tort dois ão estão fazendo piscinas eu
+
+941
+00:40:18,240 --> 00:40:21,640
+esqueci de falar minha função técnico
+
+942
+00:40:19,839 --> 00:40:24,040
+químico ão trabalhi no laboratório e
+
+943
+00:40:21,640 --> 00:40:25,800
+depois eu fui transferido para área de
+
+944
+00:40:24,040 --> 00:40:27,560
+operações no tratamento de água onde que
+
+945
+00:40:25,800 --> 00:40:30,040
+eu também sou técnico de radioproteção
+
+946
+00:40:27,560 --> 00:40:32,800
+então tenho entrado no carrefur né
+
+947
+00:40:30,040 --> 00:40:34,920
+tomado dose de radiação lá sim né Então
+
+948
+00:40:32,800 --> 00:40:37,400
+esse é o risco aí então estou por dentro
+
+949
+00:40:34,920 --> 00:40:39,560
+de toda a operação faço parte desse
+
+950
+00:40:37,400 --> 00:40:41,280
+tratamento sei as dificuldades sei da
+
+951
+00:40:39,560 --> 00:40:42,800
+Boa Vontade dos trabalhadores novos que
+
+952
+00:40:41,280 --> 00:40:44,960
+querem fazer isso tem os antigos também
+
+953
+00:40:42,800 --> 00:40:46,480
+que não são cupados foram gestores
+
+954
+00:40:44,960 --> 00:40:48,240
+antigos que fizeram isso n não
+
+955
+00:40:46,480 --> 00:40:50,640
+trabalhadores há uma uma licitação
+
+956
+00:40:48,240 --> 00:40:52,599
+também de venda dos bota foras 4 e8 e o
+
+957
+00:40:50,640 --> 00:40:54,480
+Duca o Duca é o que resultado do
+
+958
+00:40:52,599 --> 00:40:56,200
+resultado da água tratada nós manda pra
+
+959
+00:40:54,480 --> 00:40:58,119
+cava da mina de novo então tá passando
+
+960
+00:40:56,200 --> 00:41:00,280
+outro tá gerando outro do passivo que é
+
+961
+00:40:58,119 --> 00:41:01,680
+ali tem urânio nesse duc então el tá uma
+
+962
+00:41:00,280 --> 00:41:03,800
+licitação não sei se vai conseguir
+
+963
+00:41:01,680 --> 00:41:05,280
+também vender sees botar fora 4 e o não
+
+964
+00:41:03,800 --> 00:41:07,000
+sei se vai conseguir vender se vender
+
+965
+00:41:05,280 --> 00:41:09,280
+esse bota fora também vai poder poder
+
+966
+00:41:07,000 --> 00:41:11,599
+tirar esse bota fora das Nascentes então
+
+967
+00:41:09,280 --> 00:41:13,839
+isso vai poder facilitar mais a menos a
+
+968
+00:41:11,599 --> 00:41:16,319
+contaminação da da água ali fizeram a
+
+969
+00:41:13,839 --> 00:41:19,079
+licitação e vai começar a dragagem da D4
+
+970
+00:41:16,319 --> 00:41:21,359
+e assim só que não entendo já que vai
+
+971
+00:41:19,079 --> 00:41:23,520
+fazer uma dragagem ali vai tirar a o
+
+972
+00:41:21,359 --> 00:41:25,880
+resíduo aí por que não faz 100% fez
+
+973
+00:41:23,520 --> 00:41:28,319
+parcial aproveitar essa essa demanda
+
+974
+00:41:25,880 --> 00:41:30,480
+fazer fez parcial devia fazer inteiro né
+
+975
+00:41:28,319 --> 00:41:32,160
+fez uma obra de de desvio de água então
+
+976
+00:41:30,480 --> 00:41:34,480
+quer dizer água que é tratada no nosso
+
+977
+00:41:32,160 --> 00:41:36,599
+ação do tratamento tá indo direto agora
+
+978
+00:41:34,480 --> 00:41:38,079
+lá pro pra bacia das Aras quas tá
+
+979
+00:41:36,599 --> 00:41:41,359
+passando pelas bacias antes de cantava
+
+980
+00:41:38,079 --> 00:41:43,720
+na D qu D3 ali vem decantando agora tá
+
+981
+00:41:41,359 --> 00:41:45,560
+indo direto pra bacia das asas quaras o
+
+982
+00:41:43,720 --> 00:41:47,760
+problema da nossa água nós trata a
+
+983
+00:41:45,560 --> 00:41:49,640
+tabela periódica inteira né é uma água
+
+984
+00:41:47,760 --> 00:41:51,960
+complicada de tratar e esse tratamento
+
+985
+00:41:49,640 --> 00:41:54,680
+de fluente tá ultrapassado tá tá
+
+986
+00:41:51,960 --> 00:41:56,640
+ultrapassado tem projetos para ser
+
+987
+00:41:54,680 --> 00:42:00,040
+instalado uma nov novo tratamento de
+
+988
+00:41:56,640 --> 00:42:02,440
+influente mas é um custo é um custo e
+
+989
+00:42:00,040 --> 00:42:05,160
+vem vemos governos empurrando com a
+
+990
+00:42:02,440 --> 00:42:06,800
+barriga empurrando com a barriga porque
+
+991
+00:42:05,160 --> 00:42:09,079
+das triples relação o que os trabalhador
+
+992
+00:42:06,800 --> 00:42:11,240
+pode fazer naquela na na área aqui você
+
+993
+00:42:09,079 --> 00:42:13,440
+tem ide Hoje nós estamos uma estiagem né
+
+994
+00:42:11,240 --> 00:42:15,240
+estamos estiagem não chove e mesmo assim
+
+995
+00:42:13,440 --> 00:42:18,119
+tem água lá para tratar ainda muita água
+
+996
+00:42:15,240 --> 00:42:20,520
+ainda ali na bota foraa Quad na bnf tem
+
+997
+00:42:18,119 --> 00:42:22,200
+que ligar a bomba 24 horas por dia é
+
+998
+00:42:20,520 --> 00:42:24,440
+pouco intervalo dela ali você fica no
+
+999
+00:42:22,200 --> 00:42:27,400
+perío da manhã tarde noite mas Seme tá
+
+1000
+00:42:24,440 --> 00:42:29,200
+rodando na D5 ali que é do bot for A8
+
+1001
+00:42:27,400 --> 00:42:32,119
+também tá aqui ligado também diariamente
+
+1002
+00:42:29,200 --> 00:42:34,440
+a min então a bomba é 24 anos abaixou
+
+1003
+00:42:32,119 --> 00:42:36,480
+assim incrível que parece que abaixou
+
+1004
+00:42:34,440 --> 00:42:40,280
+tanto assim que trabalha lá fal Nossa tá
+
+1005
+00:42:36,480 --> 00:42:43,319
+muito baixa mas tá com nível de 1321 M
+
+1006
+00:42:40,280 --> 00:42:45,880
+quer dizer é muita água é muita água
+
+1007
+00:42:43,319 --> 00:42:49,359
+nosso limite ali quando chava muito 1329
+
+1008
+00:42:45,880 --> 00:42:52,200
+32 no limite para na acendem né então
+
+1009
+00:42:49,359 --> 00:42:53,920
+fica inviável ali é muita o problema até
+
+1010
+00:42:52,200 --> 00:42:56,280
+fala da do carrefur que é um problema al
+
+1011
+00:42:53,920 --> 00:42:59,200
+sim mas é um problema que tá ali parado
+
+1012
+00:42:56,280 --> 00:43:01,160
+não chegando mais teve a eh no outro
+
+1013
+00:42:59,200 --> 00:43:03,040
+governo trazer o resto de São Paulo aqui
+
+1014
+00:43:01,160 --> 00:43:05,200
+pra calda sim tinha essa intenção de
+
+1015
+00:43:03,040 --> 00:43:07,599
+fazer aqui um depósito de lixo nuclear
+
+1016
+00:43:05,200 --> 00:43:10,119
+com esses residos mas com ação de de
+
+1017
+00:43:07,599 --> 00:43:11,960
+causas cidades isso daí da An
+
+1018
+00:43:10,119 --> 00:43:14,280
+antinuclear foi bem feito isso aí foi
+
+1019
+00:43:11,960 --> 00:43:16,640
+brocado isso aí então Essa gestão agora
+
+1020
+00:43:14,280 --> 00:43:19,359
+não não vejo conversas pelo menos assim
+
+1021
+00:43:16,640 --> 00:43:21,760
+nem paralelas nem boatos de trazer esse
+
+1022
+00:43:19,359 --> 00:43:23,640
+material para cá para Caldas né sim tem
+
+1023
+00:43:21,760 --> 00:43:26,359
+essa licitação para venda aí sero é
+
+1024
+00:43:23,640 --> 00:43:28,520
+vendido aqui de Caldas e e de São Paulo
+
+1025
+00:43:26,359 --> 00:43:30,200
+mas assim deixa aqui aberto para ter
+
+1026
+00:43:28,520 --> 00:43:32,720
+mais perguntas mais específicas para
+
+1027
+00:43:30,200 --> 00:43:34,160
+fazer o grande problema aqui da da odc
+
+1028
+00:43:32,720 --> 00:43:35,880
+que eu vejo é o tratamento de água mesmo
+
+1029
+00:43:34,160 --> 00:43:39,000
+a nossa tratamento de frente hoje é para
+
+1030
+00:43:35,880 --> 00:43:41,440
+trar o máximo 300 m c porh isso em tempo
+
+1031
+00:43:39,000 --> 00:43:43,640
+não não de chuva de estiagem eh tudo bem
+
+1032
+00:43:41,440 --> 00:43:46,599
+mas em tempo de chuva chega colocar uma
+
+1033
+00:43:43,640 --> 00:43:48,480
+carga na tratamento de 450 M passando
+
+1034
+00:43:46,599 --> 00:43:50,200
+150 m que qualidade de água que sair
+
+1035
+00:43:48,480 --> 00:43:52,960
+dessa aí né esse que é o preocupante por
+
+1036
+00:43:50,200 --> 00:43:55,240
+isso que acou tudo ali a D4 resíduos que
+
+1037
+00:43:52,960 --> 00:43:57,359
+o tratamento tá sendo eficaz nesse nesse
+
+1038
+00:43:55,240 --> 00:43:59,319
+momento a Marina teve conosco aqui na
+
+1039
+00:43:57,359 --> 00:44:01,160
+tava junto com ela na nessa visita né
+
+1040
+00:43:59,319 --> 00:44:03,640
+não não lem se foi nesse dia que ela
+
+1041
+00:44:01,160 --> 00:44:05,440
+pode ver os peixes mortos na bacia de
+
+1042
+00:44:03,640 --> 00:44:06,920
+éguas Claras né Não sei se foi nesse dia
+
+1043
+00:44:05,440 --> 00:44:08,520
+ou se foi em outra visita agora não
+
+1044
+00:44:06,920 --> 00:44:10,800
+lembro se ela tava junto mas teve
+
+1045
+00:44:08,520 --> 00:44:13,720
+mortandade de peixe naquele dia lá ela
+
+1046
+00:44:10,800 --> 00:44:15,440
+viu né o cara citou naquele Onde tem um
+
+1047
+00:44:13,720 --> 00:44:17,359
+vazamento de água ali onde tem uma água
+
+1048
+00:44:15,440 --> 00:44:20,000
+ali é uma C de tório eles pegaram
+
+1049
+00:44:17,359 --> 00:44:21,559
+antigamente tório de tório jogaram
+
+1050
+00:44:20,000 --> 00:44:24,000
+abriram um buraco vamos dizer assim
+
+1051
+00:44:21,559 --> 00:44:26,400
+buraco né que uma bacia um buraco E
+
+1052
+00:44:24,000 --> 00:44:28,119
+jogaram T lá o que se faz é pó né então
+
+1053
+00:44:26,400 --> 00:44:30,880
+o vento vai e contaminar tudo que você
+
+1054
+00:44:28,119 --> 00:44:33,559
+faz o operador vai lá Põe água Põe água
+
+1055
+00:44:30,880 --> 00:44:35,520
+para deixar estabilizado tudo ali mas de
+
+1056
+00:44:33,559 --> 00:44:37,079
+tempos em tempos seca Então você tem que
+
+1057
+00:44:35,520 --> 00:44:39,720
+sempre manter o nível de água ali aí eu
+
+1058
+00:44:37,079 --> 00:44:41,559
+pergunto seca mas dá para onde onde já
+
+1059
+00:44:39,720 --> 00:44:44,079
+vai não pode evaporar assim tão rápido
+
+1060
+00:44:41,559 --> 00:44:46,599
+né então pode ter assim vazamentos Então
+
+1061
+00:44:44,079 --> 00:44:50,000
+é isso que é é essa busca de fechar
+
+1062
+00:44:46,599 --> 00:44:52,000
+esses vazamentos né da da B que a gente
+
+1063
+00:44:50,000 --> 00:44:54,520
+foi tratado do jeito ali que teve um
+
+1064
+00:44:52,000 --> 00:44:57,480
+pulsamento público do Ministério Público
+
+1065
+00:44:54,520 --> 00:45:00,200
+da justiça e assim infelizmente a NB só
+
+1066
+00:44:57,480 --> 00:45:03,400
+funciona na justiça já falamos sindicato
+
+1067
+00:45:00,200 --> 00:45:05,520
+cobra of fí Ofício toda hora mas a NB só
+
+1068
+00:45:03,400 --> 00:45:07,800
+funciona infelizmente na justiça né
+
+1069
+00:45:05,520 --> 00:45:09,599
+sendo empurrado hoje nós temos um outro
+
+1070
+00:45:07,800 --> 00:45:11,760
+governo uma outra gestão que tenha um
+
+1071
+00:45:09,599 --> 00:45:13,119
+diálogo pelo menos tenha um diálogo né
+
+1072
+00:45:11,760 --> 00:45:15,400
+ainda tá com esse problema da
+
+1073
+00:45:13,119 --> 00:45:16,880
+Transparência ainda tem ser mais eficaz
+
+1074
+00:45:15,400 --> 00:45:19,359
+nessa transparência nessa comunicação
+
+1075
+00:45:16,880 --> 00:45:21,680
+acho né acredito que na comunicação eh
+
+1076
+00:45:19,359 --> 00:45:23,720
+tem que ser melhor para poder tirar né
+
+1077
+00:45:21,680 --> 00:45:25,880
+tirar boado e tirar dúvidas totalmente
+
+1078
+00:45:23,720 --> 00:45:27,800
+tanto do Trabalhador como da sociedade
+
+1079
+00:45:25,880 --> 00:45:29,400
+da comunidade né cobrado para você ter
+
+1080
+00:45:27,800 --> 00:45:31,520
+uma ideia agora assim a nós somamos da
+
+1081
+00:45:29,400 --> 00:45:33,400
+ipar agora nós somamos na Hold né então
+
+1082
+00:45:31,520 --> 00:45:35,319
+estamos a ipar que faz parte Taipu
+
+1083
+00:45:33,400 --> 00:45:37,760
+eletronuclear né então estão som todos
+
+1084
+00:45:35,319 --> 00:45:40,520
+cor imãos agora né E a bpar assim agora
+
+1085
+00:45:37,760 --> 00:45:42,359
+eh lançou um projeto e participando de
+
+1086
+00:45:40,520 --> 00:45:43,880
+Lux e resultados e uma das metas que ela
+
+1087
+00:45:42,359 --> 00:45:45,280
+cobra muito é política pública e o que
+
+1088
+00:45:43,880 --> 00:45:47,559
+seria a política pública seria o
+
+1089
+00:45:45,280 --> 00:45:49,960
+descomissionamento de caudas Há uma luz
+
+1090
+00:45:47,559 --> 00:45:52,640
+no final do túnel né vejo isso no não
+
+1091
+00:45:49,960 --> 00:45:54,160
+sou aqui para trazer Matos notícias
+
+1092
+00:45:52,640 --> 00:45:57,280
+pessimismo e também não tô aqui para
+
+1093
+00:45:54,160 --> 00:45:59,720
+enganar também né contar a história aqui
+
+1094
+00:45:57,280 --> 00:46:01,520
+todo mundo iludido também mas há um uma
+
+1095
+00:45:59,720 --> 00:46:03,800
+luz no final do túnel o problema é o
+
+1096
+00:46:01,520 --> 00:46:06,480
+túnel que tá muito cumprido né Ah em vez
+
+1097
+00:46:03,800 --> 00:46:08,040
+de curtar essa distância da luz né para
+
+1098
+00:46:06,480 --> 00:46:11,040
+resolver Porque temos problema de
+
+1099
+00:46:08,040 --> 00:46:13,000
+dinheiro essa é a verdade né então a
+
+1100
+00:46:11,040 --> 00:46:14,920
+essa participação de lucros tá aí na
+
+1101
+00:46:13,000 --> 00:46:16,920
+descomissionamento então pode ser feito
+
+1102
+00:46:14,920 --> 00:46:18,520
+a com a participação do Trabalhador o
+
+1103
+00:46:16,920 --> 00:46:20,160
+trabalhador vai entregar resultados quer
+
+1104
+00:46:18,520 --> 00:46:22,319
+dizer um estímulo a mais a o trabalhador
+
+1105
+00:46:20,160 --> 00:46:24,359
+da NB para entregar esse serviço AC
+
+1106
+00:46:22,319 --> 00:46:26,559
+contend já entregava mesmo sem essa
+
+1107
+00:46:24,359 --> 00:46:28,359
+participação na parção do núcleos né mas
+
+1108
+00:46:26,559 --> 00:46:29,760
+é uma forma de cobrar mais ainda também
+
+1109
+00:46:28,359 --> 00:46:31,960
+o governo que é uma parte agora
+
+1110
+00:46:29,760 --> 00:46:34,079
+importante Nossa então esse problema
+
+1111
+00:46:31,960 --> 00:46:35,599
+agora da Saúde porlo nós estamos com PDV
+
+1112
+00:46:34,079 --> 00:46:37,559
+agora para sair né que é a demissão
+
+1113
+00:46:35,599 --> 00:46:39,960
+voluntária dos trabalhadores a NB vai
+
+1114
+00:46:37,559 --> 00:46:41,760
+pagar só 3 anos de assistência médica né
+
+1115
+00:46:39,960 --> 00:46:43,520
+quer dizer o trabalhador tem validade 3
+
+1116
+00:46:41,760 --> 00:46:44,920
+anos depois de 3 anos ele vai ficar sem
+
+1117
+00:46:43,520 --> 00:46:46,400
+assistência médica né que o que nós
+
+1118
+00:46:44,920 --> 00:46:47,920
+estamos lutando é a assistência médica
+
+1119
+00:46:46,400 --> 00:46:49,640
+vitalícia pro trabalhador que ele teve
+
+1120
+00:46:47,920 --> 00:46:52,200
+contato direto com essa radiação é mais
+
+1121
+00:46:49,640 --> 00:46:53,520
+que justo isso não estão pedindo milhões
+
+1122
+00:46:52,200 --> 00:46:56,040
+não nós est pedindo só um plano de saúde
+
+1123
+00:46:53,520 --> 00:46:58,319
+vitalício e a NB nesse PDV se propõe a
+
+1124
+00:46:56,040 --> 00:47:00,200
+pagar infeliz mente só TR anos plano de
+
+1125
+00:46:58,319 --> 00:47:02,319
+saúde e depois que o trabalhador vai se
+
+1126
+00:47:00,200 --> 00:47:05,119
+virar aí se ficar doente contrair um
+
+1127
+00:47:02,319 --> 00:47:07,319
+câncer estou aberto aqui a a perguntas a
+
+1128
+00:47:05,119 --> 00:47:09,400
+algumas informações que eu pudesse Se eu
+
+1129
+00:47:07,319 --> 00:47:11,400
+não puder trazer no momento e eu posso
+
+1130
+00:47:09,400 --> 00:47:13,599
+buscar depois e passar aí pro grupo eu
+
+1131
+00:47:11,400 --> 00:47:15,720
+agradeço a participação Muito obrigado o
+
+1132
+00:47:13,599 --> 00:47:18,800
+que hoje entendemos como município de
+
+1133
+00:47:15,720 --> 00:47:22,240
+Águas da Prata é esta faixa ocidental da
+
+1134
+00:47:18,800 --> 00:47:24,800
+borda da cratera vulcânica enquanto
+
+1135
+00:47:22,240 --> 00:47:28,160
+Poços de caudas está mais ao norte desta
+
+1136
+00:47:24,800 --> 00:47:31,119
+grande elevação circular Andradas está
+
+1137
+00:47:28,160 --> 00:47:34,319
+mais ao sul e caudas ocupa a maior parte
+
+1138
+00:47:31,119 --> 00:47:37,839
+da área Central além de certa porção
+
+1139
+00:47:34,319 --> 00:47:40,960
+oriental Onde está seu centro Urbano
+
+1140
+00:47:37,839 --> 00:47:42,079
+toda esta região foi palco de intensas
+
+1141
+00:47:40,960 --> 00:47:44,559
+disputas
+
+1142
+00:47:42,079 --> 00:47:47,480
+territoriais não apenas aquelas entre
+
+1143
+00:47:44,559 --> 00:47:50,040
+paulistas e mineiros que são mais
+
+1144
+00:47:47,480 --> 00:47:53,720
+comumente citadas no contexto da
+
+1145
+00:47:50,040 --> 00:47:55,960
+Revolução de 32 as disputas envolvendo o
+
+1146
+00:47:53,720 --> 00:47:57,520
+Marco divisório dos estados de São Paulo
+
+1147
+00:47:55,960 --> 00:48:00,119
+e Minas Gerais
+
+1148
+00:47:57,520 --> 00:48:03,480
+foram extremamente significativas por
+
+1149
+00:48:00,119 --> 00:48:07,040
+aqui desde o final do século XV
+
+1150
+00:48:03,480 --> 00:48:09,359
+Bandeirantes Paulistas descobriram ouro
+
+1151
+00:48:07,040 --> 00:48:12,079
+no território que mais tarde se tornaria
+
+1152
+00:48:09,359 --> 00:48:15,319
+Minas Gerais mas como o Brasil era uma
+
+1153
+00:48:12,079 --> 00:48:18,319
+colônia a coroa tinha planos audaciosos
+
+1154
+00:48:15,319 --> 00:48:22,160
+para controlar a produção e aquisição
+
+1155
+00:48:18,319 --> 00:48:25,079
+dessa riqueza e o resto é história para
+
+1156
+00:48:22,160 --> 00:48:28,079
+escoar esse ouro também investiu-se em
+
+1157
+00:48:25,079 --> 00:48:31,119
+caminhos que ficaram conos como caminhos
+
+1158
+00:48:28,079 --> 00:48:33,240
+do ouro e ao longo destes caminhos foram
+
+1159
+00:48:31,119 --> 00:48:35,720
+instalados postos militares e de
+
+1160
+00:48:33,240 --> 00:48:39,119
+controle fiscal além daqueles que já
+
+1161
+00:48:35,720 --> 00:48:41,599
+existiam para outros fins entre o atual
+
+1162
+00:48:39,119 --> 00:48:44,079
+Bairro do Marco divisório e o centro
+
+1163
+00:48:41,599 --> 00:48:47,480
+urbano de Águas da Prata havia pelo
+
+1164
+00:48:44,079 --> 00:48:50,079
+menos um destes postos fiscais assim
+
+1165
+00:48:47,480 --> 00:48:53,000
+como uma enorme tranqueira feita com
+
+1166
+00:48:50,079 --> 00:48:55,839
+troncos de árvore amplamente documentada
+
+1167
+00:48:53,000 --> 00:48:58,319
+em registros escritos da época
+
+1168
+00:48:55,839 --> 00:49:01,200
+infelizmente Não será possível nos
+
+1169
+00:48:58,319 --> 00:49:05,280
+aprofundarmos nas emocionantes histórias
+
+1170
+00:49:01,200 --> 00:49:07,799
+registradas em cartas e ofícios as quais
+
+1171
+00:49:05,280 --> 00:49:11,319
+tivemos acesso durante nossa pesquisa
+
+1172
+00:49:07,799 --> 00:49:14,119
+para este filme seria muito extenso mas
+
+1173
+00:49:11,319 --> 00:49:16,960
+quem sabe na próxima mas vale lembrar
+
+1174
+00:49:14,119 --> 00:49:19,400
+que obviamente se existe hoje um estado
+
+1175
+00:49:16,960 --> 00:49:23,400
+chamado Minas Gerais é porque houve
+
+1176
+00:49:19,400 --> 00:49:25,839
+intensa mineração nesse território porém
+
+1177
+00:49:23,400 --> 00:49:27,280
+antes disso ele já era habitado por
+
+1178
+00:49:25,839 --> 00:49:29,839
+outros povos
+
+1179
+00:49:27,280 --> 00:49:32,359
+que viviam nele de forma diferente com
+
+1180
+00:49:29,839 --> 00:49:35,200
+outros tipos de interesses outras
+
+1181
+00:49:32,359 --> 00:49:38,920
+ocupações e outras visões de mundo como
+
+1182
+00:49:35,200 --> 00:49:40,799
+os indígenas Caiapó em poos de Caldas e
+
+1183
+00:49:38,920 --> 00:49:44,599
+tantos outros em todo o território
+
+1184
+00:49:40,799 --> 00:49:48,000
+nacional aqui não era diferente então
+
+1185
+00:49:44,599 --> 00:49:51,920
+vieram colonizadores especiarias
+
+1186
+00:49:48,000 --> 00:49:55,480
+madeiras pigmentos frutos terra água
+
+1187
+00:49:51,920 --> 00:49:58,520
+gente corpo e tempo a fome do
+
+1188
+00:49:55,480 --> 00:50:00,839
+colonialismo é grande mas voltando à
+
+1189
+00:49:58,520 --> 00:50:03,280
+nossa história Vamos dar um salto no
+
+1190
+00:50:00,839 --> 00:50:07,079
+tempo e aterrissar no começo do século
+
+1191
+00:50:03,280 --> 00:50:09,680
+XIX mas precisamente na década de
+
+1192
+00:50:07,079 --> 00:50:12,119
+1870 a história recente de Águas da
+
+1193
+00:50:09,680 --> 00:50:15,680
+Prata nos remete a um personagem mais ou
+
+1194
+00:50:12,119 --> 00:50:18,599
+menos misterioso chamado Rufino Luiz de
+
+1195
+00:50:15,680 --> 00:50:20,880
+Castro Gavião não encontramos muitas
+
+1196
+00:50:18,599 --> 00:50:23,280
+informações sobre ele no início de nossa
+
+1197
+00:50:20,880 --> 00:50:25,520
+pesquisa Mas aos poucos conforme
+
+1198
+00:50:23,280 --> 00:50:28,040
+mergulhamos nas poucas informações
+
+1199
+00:50:25,520 --> 00:50:31,559
+disponíveis fomos percebendo que se
+
+1200
+00:50:28,040 --> 00:50:34,079
+tratava de um personagem ímpar que
+
+1201
+00:50:31,559 --> 00:50:35,839
+merecia maior destaque infelizmente não
+
+1202
+00:50:34,079 --> 00:50:38,040
+poderemos nos aprofundar em sua
+
+1203
+00:50:35,839 --> 00:50:40,720
+biografia neste momento mas há algumas
+
+1204
+00:50:38,040 --> 00:50:42,640
+coisas que precisam ser ditas Rufino de
+
+1205
+00:50:40,720 --> 00:50:46,400
+Castro Gavião nasceu em
+
+1206
+00:50:42,640 --> 00:50:49,000
+1823 em Cabo Verde Minas Gerais segundo
+
+1207
+00:50:46,400 --> 00:50:52,079
+as poucas informações disponíveis era
+
+1208
+00:50:49,000 --> 00:50:53,960
+negro em um tempo pré Abolição ainda
+
+1209
+00:50:52,079 --> 00:50:57,559
+assim viveu e trabalhou em São João da
+
+1210
+00:50:53,960 --> 00:51:00,240
+Boa Vista como Alfaiate dentista curador
+
+1211
+00:50:57,559 --> 00:51:03,880
+secretário e vereador em
+
+1212
+00:51:00,240 --> 00:51:06,160
+1876 aos 53 anos de idade enquanto
+
+1213
+00:51:03,880 --> 00:51:08,400
+caçava na fazenda do coronel Gabriel
+
+1214
+00:51:06,160 --> 00:51:11,280
+Ferreira Rufino observou que havia um
+
+1215
+00:51:08,400 --> 00:51:13,480
+veio d'água às Beiras do Ribeirão da
+
+1216
+00:51:11,280 --> 00:51:16,160
+Prata que era especialmente procurado
+
+1217
+00:51:13,480 --> 00:51:18,319
+pelos animais que ali iam saciar sua
+
+1218
+00:51:16,160 --> 00:51:20,880
+sede em vez de fazê-lo nas águas do
+
+1219
+00:51:18,319 --> 00:51:22,720
+Ribeirão ao beber desta água percebeu
+
+1220
+00:51:20,880 --> 00:51:24,359
+que suas frequentes indisposições
+
+1221
+00:51:22,720 --> 00:51:27,079
+estomacais
+
+1222
+00:51:24,359 --> 00:51:29,920
+desapareceram convivendo com trabalho
+
+1223
+00:51:27,079 --> 00:51:32,880
+da estrada de ferro Mogiana e comunidade
+
+1224
+00:51:29,920 --> 00:51:35,240
+local espalhou a notícia dos benefícios
+
+1225
+00:51:32,880 --> 00:51:37,520
+dessa água mas a grandiosidade de sua
+
+1226
+00:51:35,240 --> 00:51:41,160
+descoberta só foi reconhecida em
+
+1227
+00:51:37,520 --> 00:51:44,119
+1910 ou seja mais de 20 anos após sua
+
+1228
+00:51:41,160 --> 00:51:46,839
+morte naquela época um laboratório em
+
+1229
+00:51:44,119 --> 00:51:49,680
+São Paulo confirmou que a água era
+
+1230
+00:51:46,839 --> 00:51:53,280
+alcalina e de alta mineralização
+
+1231
+00:51:49,680 --> 00:51:55,400
+semelhante vi na França as nascentes de
+
+1232
+00:51:53,280 --> 00:51:57,640
+Águas da Prata foram arrendadas para a
+
+1233
+00:51:55,400 --> 00:52:00,799
+iniciativa privada em
+
+1234
+00:51:57,640 --> 00:52:03,599
+1913 a história de Rufino foi descoberta
+
+1235
+00:52:00,799 --> 00:52:06,119
+graças ao Historiador Rodrigo Falcone
+
+1236
+00:52:03,599 --> 00:52:08,799
+autor do livro logradouros de São João
+
+1237
+00:52:06,119 --> 00:52:11,240
+da boav vista mas ainda merece estudos
+
+1238
+00:52:08,799 --> 00:52:13,599
+mais aprofundados Águas da Prata
+
+1239
+00:52:11,240 --> 00:52:15,680
+tornou-se famosa mundialmente pela
+
+1240
+00:52:13,599 --> 00:52:18,559
+qualidade da água que produz há mais de
+
+1241
+00:52:15,680 --> 00:52:20,559
+um século isso moldou sua história
+
+1242
+00:52:18,559 --> 00:52:23,000
+fazendo com que houvesse uma certa
+
+1243
+00:52:20,559 --> 00:52:27,160
+preservação Geral de boa parte de suas
+
+1244
+00:52:23,000 --> 00:52:29,040
+matas Rios nascentes e cachoeiras
+
+1245
+00:52:27,160 --> 00:52:32,119
+algumas atividades econômicas
+
+1246
+00:52:29,040 --> 00:52:34,599
+consideradas relativamente ecológicas
+
+1247
+00:52:32,119 --> 00:52:37,160
+puderam desenvolver-se e outras
+
+1248
+00:52:34,599 --> 00:52:39,920
+consideradas mais destruidoras foram
+
+1249
+00:52:37,160 --> 00:52:43,440
+evitadas dizem que esta vocação
+
+1250
+00:52:39,920 --> 00:52:46,680
+ecológica é sua maior bênção Entretanto
+
+1251
+00:52:43,440 --> 00:52:49,480
+é verdade também que a comunidade local
+
+1252
+00:52:46,680 --> 00:52:52,280
+viu muitas de suas fontes
+
+1253
+00:52:49,480 --> 00:52:54,599
+desaparecerem dentre os motivos parecem
+
+1254
+00:52:52,280 --> 00:52:57,440
+estar o descaso com entornos de
+
+1255
+00:52:54,599 --> 00:53:00,720
+nascentes Córregos e e rios o
+
+1256
+00:52:57,440 --> 00:53:02,240
+desmatamento a urbanização etc
+
+1257
+00:53:00,720 --> 00:53:04,839
+ambientalistas e ativistas
+
+1258
+00:53:02,240 --> 00:53:07,000
+socioambientais afirmam também que as
+
+1259
+00:53:04,839 --> 00:53:09,880
+empresas engarrafadoras poderiam estar
+
+1260
+00:53:07,000 --> 00:53:12,599
+fazendo mais pela preservação de seus
+
+1261
+00:53:09,880 --> 00:53:15,319
+Mananciais eles reclamam da falta de
+
+1262
+00:53:12,599 --> 00:53:17,440
+apoio a projetos ambientais por exemplo
+
+1263
+00:53:15,319 --> 00:53:20,280
+Esperamos que este filme ajude a
+
+1264
+00:53:17,440 --> 00:53:22,559
+incentivar alguma melhora nesse sentido
+
+1265
+00:53:20,280 --> 00:53:25,319
+já que coisas incríveis podem surgir a
+
+1266
+00:53:22,559 --> 00:53:28,599
+partir da união de Uma postura mais
+
+1267
+00:53:25,319 --> 00:53:30,559
+colaborativa Além disso algumas empresas
+
+1268
+00:53:28,599 --> 00:53:32,799
+têm propriedades onde encontram-se
+
+1269
+00:53:30,559 --> 00:53:36,040
+elementos com imensurável valor
+
+1270
+00:53:32,799 --> 00:53:39,480
+histórico além do ambiental como restos
+
+1271
+00:53:36,040 --> 00:53:42,160
+de antigos fontanários e praças de lazer
+
+1272
+00:53:39,480 --> 00:53:44,599
+frequentadas por turistas e Moradores no
+
+1273
+00:53:42,160 --> 00:53:47,440
+século passado alguns locais
+
+1274
+00:53:44,599 --> 00:53:50,520
+encontram-se abandonados ou mesmo sendo
+
+1275
+00:53:47,440 --> 00:53:53,480
+lentamente descaracterizados e apagados
+
+1276
+00:53:50,520 --> 00:53:55,839
+do território se não forem preservados
+
+1277
+00:53:53,480 --> 00:53:57,079
+desaparecem como se nunca tivessem
+
+1278
+00:53:55,839 --> 00:53:59,640
+existido
+
+1279
+00:53:57,079 --> 00:54:01,880
+resgatar a história desses locais
+
+1280
+00:53:59,640 --> 00:54:04,200
+preservando e restaurando seus
+
+1281
+00:54:01,880 --> 00:54:07,280
+ecossistemas estejam eles dentro do
+
+1282
+00:54:04,200 --> 00:54:09,839
+perímetro urbano ou fora dele parece ser
+
+1283
+00:54:07,280 --> 00:54:13,040
+uma resposta adequada aos esforços deste
+
+1284
+00:54:09,839 --> 00:54:15,319
+notável personagem Rufino Gavião
+
+1285
+00:54:13,040 --> 00:54:18,720
+Pioneiro na valorização do Poder
+
+1286
+00:54:15,319 --> 00:54:22,359
+curativo das águas desse singular local
+
+1287
+00:54:18,720 --> 00:54:24,880
+que hoje conhecemos como Águas da Prata
+
+1288
+00:54:22,359 --> 00:54:28,799
+ele soube observar os sinais do tempo e
+
+1289
+00:54:24,880 --> 00:54:31,520
+os sinais do espaço leu e entendeu o
+
+1290
+00:54:28,799 --> 00:54:34,200
+comportamento dos animais encontrou
+
+1291
+00:54:31,520 --> 00:54:36,559
+pistas para agir também em favor de seu
+
+1292
+00:54:34,200 --> 00:54:39,559
+próprio bem-estar compartilhou com
+
+1293
+00:54:36,559 --> 00:54:43,319
+outros aquilo que descobriu e desse ato
+
+1294
+00:54:39,559 --> 00:54:46,680
+de generosidade nasceu toda uma cidade
+
+1295
+00:54:43,319 --> 00:54:49,839
+salve Rufino salve Os Guardiões da terra
+
+1296
+00:54:46,680 --> 00:54:53,319
+que é de onde brotam as
+
+1297
+00:54:49,839 --> 00:54:56,640
+águas a noite está chegando mais um dia
+
+1298
+00:54:53,319 --> 00:54:59,880
+está se acabando a noite está chegando
+
+1299
+00:54:56,640 --> 00:55:04,280
+mais um dia está se acabando e veremos
+
+1300
+00:54:59,880 --> 00:55:08,040
+no céu estrel estrel e
+
+1301
+00:55:04,280 --> 00:55:11,559
+Lu a arte é a linguagem Universal que
+
+1302
+00:55:08,040 --> 00:55:14,240
+nos conecta a algo maior em Águas da
+
+1303
+00:55:11,559 --> 00:55:17,559
+Prata em Caldas e diversas outras
+
+1304
+00:55:14,240 --> 00:55:20,000
+cidades da região artistas expressam sua
+
+1305
+00:55:17,559 --> 00:55:22,760
+conexão com a água e as montanhas onde
+
+1306
+00:55:20,000 --> 00:55:27,119
+elas nascem criando uma ponte entre o
+
+1307
+00:55:22,760 --> 00:55:27,119
+coração e a mente
+
+1308
+00:55:27,340 --> 00:55:32,160
+[Aplausos]
+
+1309
+00:55:28,760 --> 00:55:35,319
+aqui a água é também uma Musa
+
+1310
+00:55:32,160 --> 00:55:38,799
+inspiradora comunicação é a ponte entre
+
+1311
+00:55:35,319 --> 00:55:40,839
+a ciência e a comunidade é através do
+
+1312
+00:55:38,799 --> 00:55:43,880
+Diálogo que as pessoas entendem os
+
+1313
+00:55:40,839 --> 00:55:46,839
+riscos e benefícios e através da
+
+1314
+00:55:43,880 --> 00:55:51,079
+Resistência que defendem suas terras e
+
+1315
+00:55:46,839 --> 00:55:53,440
+águas a água é nossa vida precisamos
+
+1316
+00:55:51,079 --> 00:55:56,359
+protegê-la a radioatividade é um
+
+1317
+00:55:53,440 --> 00:55:59,240
+fenômeno natural mas o uso que fazemos
+
+1318
+00:55:56,359 --> 00:56:02,039
+dela é uma escolha social desde seu
+
+1319
+00:55:59,240 --> 00:56:04,000
+descobrimento no final do século X a
+
+1320
+00:56:02,039 --> 00:56:07,599
+radioatividade tem sido usada para
+
+1321
+00:56:04,000 --> 00:56:10,599
+diversos fins sua utilização na medicina
+
+1322
+00:56:07,599 --> 00:56:13,160
+por exemplo trouxe avanços gigantescos
+
+1323
+00:56:10,599 --> 00:56:16,359
+tanto na área de exames quanto de
+
+1324
+00:56:13,160 --> 00:56:19,520
+tratamentos em outros contextos seu uso
+
+1325
+00:56:16,359 --> 00:56:22,119
+descuidado também tem deixado rastro de
+
+1326
+00:56:19,520 --> 00:56:24,119
+destruição como nos acidentes nucleares
+
+1327
+00:56:22,119 --> 00:56:27,240
+ou mesmo No Impacto gerado para a
+
+1328
+00:56:24,119 --> 00:56:30,920
+obtenção de sua matéria prima E falando
+
+1329
+00:56:27,240 --> 00:56:34,200
+nisso nesse exato momento o Brasil está
+
+1330
+00:56:30,920 --> 00:56:37,200
+prestes a definir seu futuro
+
+1331
+00:56:34,200 --> 00:56:39,079
+energético o Governo está decidindo
+
+1332
+00:56:37,200 --> 00:56:42,760
+sobre temas importantes como a
+
+1333
+00:56:39,079 --> 00:56:45,160
+construção da Usina Nuclear Angra 3 O
+
+1334
+00:56:42,760 --> 00:56:48,359
+que levanta sérias questões sobre riscos
+
+1335
+00:56:45,160 --> 00:56:50,480
+ambientais e a saúde pública cada vez
+
+1336
+00:56:48,359 --> 00:56:53,039
+mais pessoas afirmam que a hora de
+
+1337
+00:56:50,480 --> 00:56:55,520
+considerar se a energia nuclear
+
+1338
+00:56:53,039 --> 00:56:58,039
+realmente é necessária para garantir
+
+1339
+00:56:55,520 --> 00:57:02,760
+nossa segur
+
+1340
+00:56:58,039 --> 00:57:06,280
+novas US forem criadas mais matria será
+
+1341
+00:57:02,760 --> 00:57:10,440
+necessrio e locais como Águas da Prata
+
+1342
+00:57:06,280 --> 00:57:14,960
+tão dependentes do seu ecossistema local
+
+1343
+00:57:10,440 --> 00:57:19,119
+como florestas Campos rios e nascentes
+
+1344
+00:57:14,960 --> 00:57:23,880
+podem não resistir à fome por minério em
+
+1345
+00:57:19,119 --> 00:57:25,160
+Caldas no sul de Minas Gerais oen inado
+
+1346
+00:57:23,880 --> 00:57:28,000
+de resíduos
+
+1347
+00:57:25,160 --> 00:57:31,559
+nucleares impacta a comunidade e o meio
+
+1348
+00:57:28,000 --> 00:57:34,599
+ambiente por décadas sem solução de
+
+1349
+00:57:31,559 --> 00:57:38,440
+curto prazo no horizonte o risco de
+
+1350
+00:57:34,599 --> 00:57:41,599
+contaminação do solo da água e do ar é
+
+1351
+00:57:38,440 --> 00:57:44,640
+uma preocupação constante a água é mais
+
+1352
+00:57:41,599 --> 00:57:48,480
+do que uma necessidade é a essência de
+
+1353
+00:57:44,640 --> 00:57:51,000
+cada função cada reação cada batida Viva
+
+1354
+00:57:48,480 --> 00:57:53,799
+cada batida de vida no corpo humano
+
+1355
+00:57:51,000 --> 00:57:56,640
+hidratar-se é mais do que um ato físico
+
+1356
+00:57:53,799 --> 00:58:00,420
+é um cuidado com o delicado equilíbrio
+
+1357
+00:57:56,640 --> 00:58:03,920
+que mantém a existência humana
+
+1358
+00:58:00,420 --> 00:58:03,920
+[Música]
+
+1359
+00:58:11,960 --> 00:58:19,559
+fluindo a água é a vida a água é Sagrada
+
+1360
+00:58:16,359 --> 00:58:22,720
+água está em tudo sem ela não tem nada a
+
+1361
+00:58:19,559 --> 00:58:26,160
+água está na terra e também tá no ar a
+
+1362
+00:58:22,720 --> 00:58:28,440
+água está nas nuvens e também tá no mar
+
+1363
+00:58:26,160 --> 00:58:31,160
+água está no sangue do animal e tá na
+
+1364
+00:58:28,440 --> 00:58:33,960
+folha a água está nos olhos de quem vê e
+
+1365
+00:58:31,160 --> 00:58:36,319
+tá no chão sem água Ninguém Vive é morte
+
+1366
+00:58:33,960 --> 00:58:38,720
+certa não tem escolha não tem preço que
+
+1367
+00:58:36,319 --> 00:58:41,799
+pague n é mercado pra exploração
+
+1368
+00:58:38,720 --> 00:58:44,200
+dinheiro não se bebe minério também não
+
+1369
+00:58:41,799 --> 00:58:46,599
+se Terra os malote não vai nascer um
+
+1370
+00:58:44,200 --> 00:58:49,559
+tustão Sem Floresta não tem água Eu
+
+1371
+00:58:46,599 --> 00:58:53,000
+repito não tem não prote a nossa água
+
+1372
+00:58:49,559 --> 00:58:56,200
+vamos entre em Ação dinheiro não se bebe
+
+1373
+00:58:53,000 --> 00:58:58,400
+minério também não se Terra os malotes
+
+1374
+00:58:56,200 --> 00:59:01,039
+não vai nascer um tustão Sem Floresta
+
+1375
+00:58:58,400 --> 00:59:04,119
+não tem água Eu repito não tem não
+
+1376
+00:59:01,039 --> 00:59:07,119
+proteja a nossa água vamos entre em Ação
+
+1377
+00:59:04,119 --> 00:59:10,280
+as monoculturas destróem as florestas e
+
+1378
+00:59:07,119 --> 00:59:13,160
+Sem Floresta você sabe nadar nos rest
+
+1379
+00:59:10,280 --> 00:59:16,720
+veneno que põe na planta volta pra terra
+
+1380
+00:59:13,160 --> 00:59:19,359
+Esse transgênico é o que te alimenta
+
+1381
+00:59:16,720 --> 00:59:22,359
+Eucaliptos indústrias e
+
+1382
+00:59:19,359 --> 00:59:25,240
+urbanização perguntas foram feitas para
+
+1383
+00:59:22,359 --> 00:59:26,599
+explicações se a Sec toma conta ou a
+
+1384
+00:59:25,240 --> 00:59:28,920
+contamina
+
+1385
+00:59:26,599 --> 00:59:32,079
+a pergunta que eu faço e as futuras
+
+1386
+00:59:28,920 --> 00:59:34,799
+gerações dinheiro não se bebe minério
+
+1387
+00:59:32,079 --> 00:59:37,240
+também não se terr os malote não vai
+
+1388
+00:59:34,799 --> 00:59:40,079
+nascer um tustão Sem Floresta não tem
+
+1389
+00:59:37,240 --> 00:59:43,200
+água Eu repito não tem não proteja a
+
+1390
+00:59:40,079 --> 00:59:46,319
+nossa água vamos entre em Ação dinheiro
+
+1391
+00:59:43,200 --> 00:59:49,640
+não se bebe minério também não se Terra
+
+1392
+00:59:46,319 --> 00:59:52,240
+os malote não vai nascerão Sem Floresta
+
+1393
+00:59:49,640 --> 00:59:55,440
+não tem água Eu repito não tem não
+
+1394
+00:59:52,240 --> 00:59:58,650
+proteja a nossa água vamos entre em Ação
+
+1395
+00:59:55,440 --> 01:00:01,820
+em ação n
+
+1396
+00:59:58,650 --> 01:00:01,820
+[Música]
+

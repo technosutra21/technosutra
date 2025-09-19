@@ -316,7 +316,7 @@ class ARExperienceController {
             // Apply model sources with cache-busting for better reliability
             const cacheBuster = `?t=${Date.now()}`;
             this.elements.modelViewer.src = `${modelSrc}${cacheBuster}`;
-            //this.elements.modelViewer.setAttribute('ios-src', `${usdzSrc}`);
+            this.elements.modelViewer.setAttribute('ios-src', `${usdzSrc}`);
             
             // Set AR scale with device-specific adjustments
             const arScale = this.getOptimalARScale();
