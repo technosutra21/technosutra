@@ -426,9 +426,6 @@
         document.addEventListener('touchend', (e) => {
             const touchEndX = e.changedTouches[0].clientX;
             const diff = touchStartX - touchEndX;
-            if (Math.abs(diff) > 50) {
-                changeModel(diff > 0 ? 1 : -1);
-            }
         });
 
         // Camera background helpers
