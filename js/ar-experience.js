@@ -323,9 +323,7 @@ class ARExperienceController {
             this.elements.modelViewer.style.setProperty('--ar-scale', arScale.toString());
             this.log(`Model configured with AR scale ${arScale}x`);
             
-            // Set poster (preview image) if available
-            const posterSrc = `models/previews/modelo${modelId}.jpg`;
-            this.elements.modelViewer.setAttribute('poster', posterSrc);
+      
             
             // Set environment lighting based on device capabilities
             if (this.isHighEndDevice()) {

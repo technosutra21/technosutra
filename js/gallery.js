@@ -588,9 +588,7 @@ class GalleryController {
                             ar-placement="floor"
                             camera-controls
                             auto-rotate
-                            shadow-intensity="1"
                             environment-image="neutral"
-                            exposure="1"
                             style="width: 100%; height: 100%;">
                             
                             <div class="loading-spinner"></div>
