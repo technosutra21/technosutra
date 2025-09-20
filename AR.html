@@ -246,13 +246,32 @@
     <!-- Camera background video (inline preview) -->
     <video id="cameraBackground" autoplay playsinline muted></video>
     
+    <script>
+        async function activateModelAR() {
+            const modelViewer = document.getElementById('modelViewer');
+            if (!modelViewer) return;
+
+            try {
+                if (modelViewer.canActivateAR) {
+                    const ok = await modelViewer.activateAR?.();
+                    if (ok === false) {
+                        console.warn('Falha ao iniciar AR');
+                    }
+                } else {
+                    console.log('AR não suportado neste dispositivo/navegador');
+                }
+            } catch (error) {
+                console.error('AR activation failed:', error);
+            }
+        }
+    </script>
     <!-- Model viewer -->
     <model-viewer
         id="modelViewer"
         alt="Modelo 3D Interativo"
         ar
         ar-placement="floor"
-        ar-modes="webxr scene-viewer quick-look"
+        ar-modes="quick-look webxr scene-viewer"
         xr-environment
         camera-controls 
         touch-action="pan-y"
@@ -260,9 +279,9 @@
         auto-rotate
         reveal="auto"
         shadow-intensity="1"
-        style="--progress-bar-color: white;">
+        style="--progress-bar-color: black;">
         <!-- Use the recommended AR button slot so availability is handled by model-viewer -->
-        <button slot="ar-button" class="btn ar-btn" onclick="activateAR()">📲 Abrir em AR</button>
+        <button slot="ar-button" class="btn ar-btn">📲 Abrir em AR</button>
 
     </model-viewer>
     
