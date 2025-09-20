@@ -34,15 +34,12 @@ function initGalleryModelViewer(containerId, modelId, chapterData = {}, options 
         'alt': `Modelo 3D - ${chapterData.name || `Capítulo ${modelId}`}: ${chapterData.title || ''}`,
         'camera-controls': '',
         'loading': 'lazy',
-        'reveal': 'manual',
-        'environment-image': 'neutral',
         'shadow-intensity': '0.5',
-        'scale': '1.0 1.0 1.0',
+        'scale': '2.0 2.0 2.0',
         'min-camera-orbit': 'auto auto 1.2m',
         'max-camera-orbit': 'auto auto 5m',
         'camera-orbit': '0deg 70deg 2.5m',
         'field-of-view': '45deg',
-        'tone-mapping': 'neutral',
         'orientation': '0 0 -90',
         'style': 'width: 100%; height: 100%; background-color: transparent; --poster-color: transparent;'
     };

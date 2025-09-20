@@ -178,7 +178,6 @@ class UnifiedModelViewer {
             'camera-orbit': '0deg 70deg 2.5m',
             'min-camera-orbit': 'auto auto 1.2m',
             'max-camera-orbit': 'auto auto 5m',
-            'environment-image': 'neutral',
             'shadow-intensity': '0.5',
             'scale': '1.0 1.0 1.0'
         };
