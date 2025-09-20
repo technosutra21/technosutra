@@ -57,8 +57,23 @@
             100% { transform: rotate(360deg); }
         }
         
+        /* Camera background video */
+        #cameraBackground {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: 0;
+            background: #000;
+            display: none; /* shown when stream is active */
+        }
+        
         /* Model viewer */
         model-viewer {
+            position: relative;
+            z-index: 1; /* above camera video */
             width: 100%;
             height: 100vh;
             background-color: transparent;
@@ -216,19 +231,23 @@
     
     <!-- Status -->
     <div class="status" id="status"></div>
+
+    <!-- Camera background video (inline preview) -->
+    <video id="cameraBackground" autoplay playsinline muted></video>
     
     <!-- Model viewer -->
     <model-viewer
         id="modelViewer"
         alt="Modelo 3D Interativo"
         ar
-        ar-modes="webxr scene-viewer quick-look"
+        ar-placement="floor"
+        ar-modes="webxr quick-look scene-viewer"
+        camera-controls 
+        touch-action="pan-y"
         ar-scale="auto"
         auto-rotate
-        loading="eager"
         reveal="auto"
-        field-of-view="30deg">
-    </model-viewer>
+        shadow-intensity="2"></model-viewer>
     
     <!-- Navigation arrows -->
     <button class="nav-arrow left" id="prevBtn" onclick="changeModel(-1)">‹</button>
@@ -259,12 +278,17 @@
         const error = document.getElementById('error');
         const status = document.getElementById('status');
         const arBtn = document.getElementById('arBtn');
+        const cameraVideo = document.getElementById('cameraBackground');
+        let cameraStream = null;
         
         // Initialize
         function init() {
             const params = new URLSearchParams(window.location.search);
             const requestedModel = parseInt(params.get('model')) || 1;
             currentModel = Math.max(1, Math.min(requestedModel, totalModels));
+
+            // Start inline camera background by default
+            startCameraBackground();
             
             loadModel(currentModel);
         }
@@ -302,14 +326,25 @@
         // Activate AR
         async function activateAR() {
             try {
-                if (modelViewer.activateAR) {
-                    await modelViewer.activateAR();
-                } else {
-                    showStatus('AR não suportado neste dispositivo', 'error');
+                // Check AR capability before trying to start
+                if (!modelViewer.canActivateAR) {
+                    showStatus('AR não suportado neste dispositivo ou contexto (use HTTPS/dispositivo compatível)', 'error', 3000);
+                    return;
+                }
+                // Pause inline camera preview when entering AR
+                stopCameraBackground();
+                const result = await (modelViewer.activateAR?.());
+                // Some browsers return false instead of throwing
+                if (result === false) {
+                    showStatus('Falha ao iniciar AR (verifique HTTPS e compatibilidade)', 'error', 3000);
+                    // Restart inline camera preview if AR didn’t start
+                    startCameraBackground();
                 }
             } catch (e) {
-                showStatus('Erro ao ativar AR', 'error');
+                showStatus('Erro ao ativar AR', 'error', 3000);
                 console.error('AR Error:', e);
+                // Restart inline camera preview on error
+                startCameraBackground();
             }
         }
         
@@ -333,8 +368,9 @@
         // Event listeners
         modelViewer.addEventListener('load', () => {
             loading.classList.add('hidden');
-            arBtn.disabled = false;
-            showStatus(`Modelo ${currentModel} carregado`);
+            // Enable AR button only if AR is actually available
+            arBtn.disabled = !modelViewer.canActivateAR;
+            showStatus(`Modelo ${currentModel} carregado${modelViewer.canActivateAR ? '' : ' (AR indisponível)'}`);
         });
         
         modelViewer.addEventListener('error', (e) => {
@@ -354,8 +390,12 @@
         modelViewer.addEventListener('ar-status', (event) => {
             if (event.detail.status === 'session-started') {
                 showStatus('Sessão AR iniciada');
+                // Hide inline camera background while in AR
+                hideCameraBackground();
             } else if (event.detail.status === 'not-presenting') {
                 showStatus('Sessão AR encerrada');
+                // Restore inline camera background when exiting AR
+                startCameraBackground();
             }
         });
         
@@ -382,15 +422,37 @@
         document.addEventListener('touchend', (e) => {
             const touchEndX = e.changedTouches[0].clientX;
             const diff = touchStartX - touchEndX;
-            
-            if (Math.abs(diff) > 50) { // Minimum swipe distance
-                if (diff > 0) {
-                    changeModel(1); // Swipe left = next
-                } else {
-                    changeModel(-1); // Swipe right = previous
-                }
+            if (Math.abs(diff) > 50) {
+                changeModel(diff > 0 ? 1 : -1);
             }
         });
+
+        // Camera background helpers
+        async function startCameraBackground() {
+            try {
+                // Prefer rear camera on mobile
+                cameraStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: { ideal: 'environment' } },
+                    audio: false
+                });
+                cameraVideo.srcObject = cameraStream;
+                cameraVideo.style.display = 'block';
+            } catch (err) {
+                console.warn('Camera background unavailable:', err);
+                cameraVideo.style.display = 'none';
+            }
+        }
+        function hideCameraBackground() {
+            cameraVideo.style.display = 'none';
+        }
+        function stopCameraBackground() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(t => t.stop());
+                cameraStream = null;
+            }
+            cameraVideo.srcObject = null;
+            cameraVideo.style.display = 'none';
+        }
         
         // Initialize app
         init();
