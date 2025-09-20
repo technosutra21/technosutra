@@ -98,16 +98,6 @@
             align-items: center;
             gap: 8px;
         }
-
-        /* AR button positioning */
-        .ar-btn {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            top: calc(50% - 25px);
-            bottom: 20px;
-            z-index: 3;
-        }
         
         .btn:hover:not(:disabled) {
             background: rgba(255, 255, 255, 0.1);
@@ -120,7 +110,15 @@
             cursor: not-allowed;
         }
 
-
+        /* Place the slotted AR button near bottom center of the viewer */
+        model-viewer > [slot="ar-button"] {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 20px;
+            z-index: 3;
+        }
+        
         /* Controls */
         .controls {
             position: fixed;
@@ -263,9 +261,9 @@
         reveal="auto"
         shadow-intensity="1"
         style="--progress-bar-color: white;">
-        
         <!-- Use the recommended AR button slot so availability is handled by model-viewer -->
         <button slot="ar-button" class="btn ar-btn" onclick="activateAR()">📲 Abrir em AR</button>
+
     </model-viewer>
     
     <!-- Navigation arrows -->
@@ -274,6 +272,7 @@
     
     <!-- Controls (no explicit AR button here; the slotted one above is used) -->
     <div class="controls">
+        <button class="btn" onclick="resetCamera()">🔄 Reset</button>
         <a href="index.html" class="btn">🏠 Home</a>
     </div>
     
