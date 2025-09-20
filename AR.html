@@ -15,7 +15,7 @@
         
         body {
             font-family: system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #000; /* Fallback while aguardando câmera */
             min-height: 100vh;
             overflow-x: hidden;
         }
@@ -76,21 +76,12 @@
             z-index: 1; /* above camera video */
             width: 100%;
             height: 100vh;
-            background-color: transparent;
+            background-color: transparent; /* allow camera video underneath */
             --poster-color: transparent;
+            display: block;
         }
-        
-        /* Controls */
-        .controls {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 15px;
-            z-index: 100;
-        }
-        
+
+        /* Provide a nice look to the slotted AR button (uses model-viewer slot) */
         .btn {
             background: rgba(0, 0, 0, 0.8);
             color: white;
@@ -117,6 +108,26 @@
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+        }
+
+        /* Place the slotted AR button near bottom center of the viewer */
+        model-viewer > [slot="ar-button"] {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 20px;
+            z-index: 3;
+        }
+        
+        /* Controls */
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 100;
         }
         
         /* Navigation arrows */
@@ -241,29 +252,28 @@
         alt="Modelo 3D Interativo"
         ar
         ar-placement="floor"
-        ar-modes="webxr quick-look scene-viewer"
+        ar-modes="webxr scene-viewer quick-look"
+        xr-environment
         camera-controls 
         touch-action="pan-y"
         ar-scale="auto"
         auto-rotate
         reveal="auto"
-        shadow-intensity="2"></model-viewer>
+        shadow-intensity="1"
+        style="--progress-bar-color: white;">
+        
+        <!-- Use the recommended AR button slot so availability is handled by model-viewer -->
+        <button slot="ar-button" class="btn" id="inlineArButton">📱 Ver em AR</button>
+    </model-viewer>
     
     <!-- Navigation arrows -->
     <button class="nav-arrow left" id="prevBtn" onclick="changeModel(-1)">‹</button>
     <button class="nav-arrow right" id="nextBtn" onclick="changeModel(1)">›</button>
     
-    <!-- Controls -->
+    <!-- Controls (no explicit AR button here; the slotted one above is used) -->
     <div class="controls">
-        <button class="btn" id="arBtn" disabled onclick="activateAR()">
-            📱 Ver em AR
-        </button>
-        <button class="btn" onclick="resetCamera()">
-            🔄 Reset
-        </button>
-        <a href="index.html" class="btn">
-            🏠 Home
-        </a>
+        <button class="btn" onclick="resetCamera()">🔄 Reset</button>
+        <a href="index.html" class="btn">🏠 Home</a>
     </div>
     
     <!-- Scripts -->
@@ -277,7 +287,6 @@
         const loading = document.getElementById('loading');
         const error = document.getElementById('error');
         const status = document.getElementById('status');
-        const arBtn = document.getElementById('arBtn');
         const cameraVideo = document.getElementById('cameraBackground');
         let cameraStream = null;
         
@@ -287,7 +296,7 @@
             const requestedModel = parseInt(params.get('model')) || 1;
             currentModel = Math.max(1, Math.min(requestedModel, totalModels));
 
-            // Start inline camera background by default
+            // Start inline camera background by default (if permissions allow)
             startCameraBackground();
             
             loadModel(currentModel);
@@ -308,9 +317,6 @@
             
             // Update title
             document.title = `Techno Sutra AR - Modelo ${modelId}`;
-            
-            // Reset AR button
-            arBtn.disabled = true;
         }
         
         // Change model
@@ -323,18 +329,16 @@
             }
         }
         
-        // Activate AR
+        // Activate AR (for keyboard shortcut)
         async function activateAR() {
             try {
-                // Check AR capability before trying to start
-                if (!modelViewer.canActivateAR) {
+                if (!('activateAR' in modelViewer) || (modelViewer.canActivateAR === false)) {
                     showStatus('AR não suportado neste dispositivo ou contexto (use HTTPS/dispositivo compatível)', 'error', 3000);
                     return;
                 }
                 // Pause inline camera preview when entering AR
                 stopCameraBackground();
                 const result = await (modelViewer.activateAR?.());
-                // Some browsers return false instead of throwing
                 if (result === false) {
                     showStatus('Falha ao iniciar AR (verifique HTTPS e compatibilidade)', 'error', 3000);
                     // Restart inline camera preview if AR didn’t start
@@ -350,8 +354,8 @@
         
         // Reset camera
         function resetCamera() {
-            modelViewer.resetTurntableRotation();
-            modelViewer.jumpCameraToGoal();
+            modelViewer.resetTurntableRotation?.();
+            modelViewer.jumpCameraToGoal?.();
             showStatus('Câmera resetada');
         }
         
@@ -364,13 +368,12 @@
                 status.className = 'status';
             }, duration);
         }
-        
-        // Event listeners
+
+        // When model loads
         modelViewer.addEventListener('load', () => {
             loading.classList.add('hidden');
-            // Enable AR button only if AR is actually available
-            arBtn.disabled = !modelViewer.canActivateAR;
-            showStatus(`Modelo ${currentModel} carregado${modelViewer.canActivateAR ? '' : ' (AR indisponível)'}`);
+            const arAvailable = (modelViewer.canActivateAR !== false);
+            showStatus(`Modelo ${currentModel} carregado${arAvailable ? '' : ' (AR indisponível)'}`);
         });
         
         modelViewer.addEventListener('error', (e) => {
@@ -387,6 +390,7 @@
             }
         });
         
+        // AR session lifecycle
         modelViewer.addEventListener('ar-status', (event) => {
             if (event.detail.status === 'session-started') {
                 showStatus('Sessão AR iniciada');
@@ -398,7 +402,7 @@
                 startCameraBackground();
             }
         });
-        
+
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
@@ -429,18 +433,30 @@
 
         // Camera background helpers
         async function startCameraBackground() {
+            // If already running, do nothing
+            if (cameraStream && cameraStream.active) {
+                cameraVideo.style.display = 'block';
+                return;
+            }
             try {
-                // Prefer rear camera on mobile
-                cameraStream = await navigator.mediaDevices.getUserMedia({
+                // Prefer rear camera on mobile, fallback to any camera
+                const constraints = {
                     video: { facingMode: { ideal: 'environment' } },
                     audio: false
-                });
-                cameraVideo.srcObject = cameraStream;
-                cameraVideo.style.display = 'block';
+                };
+                cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
             } catch (err) {
-                console.warn('Camera background unavailable:', err);
-                cameraVideo.style.display = 'none';
+                // Fallback: try without facingMode hint
+                try {
+                    cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                } catch (err2) {
+                    console.warn('Camera background unavailable:', err2);
+                    cameraVideo.style.display = 'none';
+                    return;
+                }
             }
+            cameraVideo.srcObject = cameraStream;
+            cameraVideo.style.display = 'block';
         }
         function hideCameraBackground() {
             cameraVideo.style.display = 'none';
@@ -453,6 +469,9 @@
             cameraVideo.srcObject = null;
             cameraVideo.style.display = 'none';
         }
+
+        // Stop camera when leaving the page
+        window.addEventListener('beforeunload', stopCameraBackground);
         
         // Initialize app
         init();
