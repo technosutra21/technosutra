@@ -3,94 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Techno Sutra AR - Experiência Imersiva</title>
+    <meta name="description" content="Explore os 56 capítulos do Avatamsaka Sutra em realidade aumentada">
     
-    <!-- SEO Meta Tags -->
-    <title>Techno Sutra AR - Experiência Imersiva em Realidade Aumentada</title>
-    <meta name="description" content="Experiência imersiva em realidade aumentada dos 56 capítulos do Avatamsaka Sutra com modelos 3D interativos. Explore o dharma através da tecnologia moderna.">
-
-    <meta name="author" content="Techno Sutra AR">
-    <meta name="robots" content="index, follow">
-    <meta name="language" content="Portuguese">
-
-    <meta name="theme-color" content="#7877c6">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://technosutra.bhumisparshaschool.org/AR.html">
-    <meta property="og:title" content="Techno Sutra AR - Experiência Imersiva em Realidade Aumentada">
-    <meta property="og:description" content="Explore os 56 capítulos do Avatamsaka Sutra através de modelos 3D em realidade aumentada. Uma experiência imersiva única que combina tradição budista com tecnologia avançada.">
-    <meta property="og:image" content="https://technosutra.com/imgs/icon.png">
-    <meta property="og:site_name" content="Techno Sutra AR">
-    <meta property="og:locale" content="pt_BR">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://technosutra.bhumisparshaschool.org/AR.html">
-    <meta property="twitter:title" content="Techno Sutra AR - Experiência Imersiva em Realidade Aumentada">
-    <meta property="twitter:description" content="Explore os 56 capítulos do Avatamsaka Sutra através de modelos 3D em realidade aumentada.">
-    <meta property="twitter:image" content="https://technosutra.com/imgs/icon.png">
-    
-    <!-- PWA Meta Tags -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="canonical" href="https://technosutra.bhumisparshaschool.org/AR.html">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Techno Sutra AR">
-    <link rel="apple-touch-icon" href="/imgs/icon.png">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/imgs/icon.png">
-    <link rel="shortcut icon" href="/imgs/icon.png">
-    
-    <!-- Performance optimizations -->
-    <link rel="preload" href="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js" as="script" crossorigin="anonymous">
-    <link rel="dns-prefetch" href="https://ajax.googleapis.com">
-    <link rel="dns-prefetch" href="https://modelviewer.dev">
-    <link rel="preconnect" href="https://ajax.googleapis.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
-    <!-- Preload critical assets -->
-
-    <link rel="preload" href="/js/utils.js" as="script">
-    <link rel="preload" href="css/shared.css" as="style">
-    
-    <!-- Shared CSS -->
-    <link rel="stylesheet" href="css/shared.css">
-    
-    <!-- Page-specific CSS -->
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
-            overflow: hidden;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            position: relative;
+            box-sizing: border-box;
         }
         
-        #camera-feed {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            object-fit: cover;
-            z-index: 1;
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: block !important;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
         
-        model-viewer {
+        /* Loading */
+        .loading {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100vh;
-            --poster-color: transparent;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Model viewer */
+        model-viewer {
+            width: 100%;
+            height: 100vh;
             background-color: transparent;
-            z-index: 2;
-            pointer-events: auto;
+            --poster-color: transparent;
+        }
+        
+        /* Controls */
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+        
+        .btn {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
         
         /* Navigation arrows */
@@ -101,442 +112,288 @@
             background: rgba(0, 0, 0, 0.8);
             color: white;
             border: 2px solid rgba(255, 255, 255, 0.3);
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            font-size: 24px;
+            font-size: 20px;
             cursor: pointer;
-            transition: var(--transition-normal);
-            z-index: 150;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(20px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .nav-arrow:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.5);
-            transform: translateY(-50%) scale(1.1);
-            box-shadow: var(--shadow-md);
-        }
-
-        .nav-arrow.left {
-            left: 20px;
-        }
-
-        .nav-arrow.right {
-            right: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .nav-arrow {
-                width: 50px;
-                height: 50px;
-                font-size: 20px;
-            }
-            
-            .nav-arrow.left {
-                left: 10px;
-            }
-            
-            .nav-arrow.right {
-                right: 10px;
-            }
-        }
-        
-        /* AR button */
-        .ar-button {
-            position: absolute;
-            bottom: 25%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            padding: 16px 24px;
-            border-radius: 24px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition-normal);
+            backdrop-filter: blur(10px);
             z-index: 100;
             display: flex;
             align-items: center;
-            gap: 8px;
-            min-width: 140px;
             justify-content: center;
-            backdrop-filter: blur(20px);
-            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
         }
-
-        .ar-button:hover:not(:disabled) {
+        
+        .nav-arrow:hover {
             background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.5);
-            transform: translateX(-50%) translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .ar-button:disabled {
-            background: rgba(0, 0, 0, 0.5);
-            border-color: rgba(255, 255, 255, 0.1);
-            cursor: not-allowed;
-            opacity: 0.6;
+            transform: translateY(-50%) scale(1.1);
         }
         
-        /* Model controls */
-        #model-controls {
-            position: absolute;
-            bottom: 120px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 16px;
-            z-index: 50;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
+        .nav-arrow.left { left: 15px; }
+        .nav-arrow.right { right: 15px; }
         
-        .model-control-btn {
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 50%;
-            cursor: pointer;
-            backdrop-filter: blur(20px);
-            width: 48px;
-            height: 48px;
-            font-size: 18px;
-            transition: var(--transition-normal);
-        }
-        
-        .model-control-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: scale(1.1);
-        }
-        
-        /* Status message */
-        #status {
-            position: absolute;
+        /* Status */
+        .status {
+            position: fixed;
             top: 20px;
             left: 20px;
             right: 20px;
             background: rgba(0, 0, 0, 0.8);
             color: white;
-            padding: 12px 16px;
-            border-radius: 16px;
-            font-size: 13px;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 14px;
             text-align: center;
-            z-index: 100;
-            backdrop-filter: blur(20px);
-            transition: all 0.3s ease;
-            opacity: 0;
+            backdrop-filter: blur(10px);
+            z-index: 200;
+            transform: translateY(-100px);
+            transition: transform 0.3s ease;
         }
         
-        /* Error 404 overlay */
-        .error-404 {
+        .status.show {
+            transform: translateY(0);
+        }
+        
+        /* Error */
+        .error {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: 100vh;
             background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
-            display: flex;
+            display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            color: white;
+            text-align: center;
             z-index: 1001;
-            color: white;
-            text-align: center;
-            padding: 20px;
         }
         
-        .error-404-icon {
-            font-size: 120px;
-            margin-bottom: 24px;
-        }
-        
-        .error-404-title {
-            font-size: 48px;
-            font-weight: 700;
-            margin-bottom: 16px;
-        }
-        
-        .error-404-subtitle {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 32px;
-        }
-        
-        .error-404-message {
-            font-size: 16px;
-            opacity: 0.7;
-            max-width: 400px;
-        }
-        
-        /* Camera Permission Dialog */
-        .permission-dialog {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+        .error.show {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
         }
         
-        .permission-content {
-            background: rgba(30, 30, 40, 0.9);
-            border-radius: 24px;
-            padding: 32px;
-            max-width: 400px;
-            text-align: center;
-            color: white;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .permission-icon {
-            font-size: 64px;
-            margin-bottom: 24px;
-        }
-        
-        .permission-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 16px;
-        }
-        
-        .permission-message {
-            font-size: 16px;
-            margin-bottom: 32px;
-            line-height: 1.5;
-            opacity: 0.8;
-        }
-        
-        .permission-button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            color: white;
-            padding: 14px 28px;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .permission-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-        }
-        
-        .permission-button:active {
-            transform: translateY(1px);
-        }
-        
-        /* Utility classes */
-        .hidden {
-            display: none !important;
-        }
-        
-        .visually-hidden {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
+        /* Responsive */
+        @media (max-width: 768px) {
+            .controls {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .btn {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+            
+            .nav-arrow {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+            
+            .nav-arrow.left { left: 10px; }
+            .nav-arrow.right { right: 10px; }
         }
     </style>
 </head>
 <body>
-    <!-- Offline Status Header -->
-    <div class="offline-header" id="offline-header"></div>
-
-    <!-- Loading overlay -->
-    <div class="loading-overlay" id="loading-overlay">
-        <div class="loading-content">
-            <div class="loading-title">Techno Sutra AR</div>
-            <div class="loading-subtitle" data-lang-key="loading_ar">Preparando experiência imersiva...</div>
-            <div class="loading-spinner"></div>
-        </div>
-    </div>
-
-    <!-- Error 404 overlay -->
-    <div class="error-404 hidden" id="error-404">
-        <div class="error-404-icon">🤖</div>
-        <div class="error-404-title">404</div>
-        <div class="error-404-subtitle" data-lang-key="model_not_found">Modelo não encontrado</div>
-        <div class="error-404-message" data-lang-key="model_redirect">
-            O modelo solicitado não foi encontrado. Redirecionando para o modelo padrão...
-        </div>
+    <!-- Loading -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <h2>Techno Sutra AR</h2>
+        <p>Preparando experiência...</p>
     </div>
     
-    <!-- Camera Permission Dialog -->
-    <div class="permission-dialog hidden" id="camera-permission">
-        <div class="permission-content">
-            <div class="permission-icon">📷</div>
-            <div class="permission-title" data-lang-key="camera_permission_title">Permissão de Câmera</div>
-            <div class="permission-message" data-lang-key="camera_permission_message">
-                Para uma experiência AR completa, precisamos de acesso à sua câmera. 
-                Isso permite que os modelos 3D sejam exibidos no ambiente ao seu redor.
-            </div>
-            <button id="camera-button" class="permission-button" data-lang-key="enable_camera">
-                Ativar Câmera
-            </button>
-        </div>
+    <!-- Error -->
+    <div class="error" id="error">
+        <h1 style="font-size: 4rem; margin-bottom: 1rem;">404</h1>
+        <h2>Modelo não encontrado</h2>
+        <p>Redirecionando para o modelo padrão...</p>
     </div>
-
-    <!-- Status message -->
-    <div id="status" class="hidden"></div>
-
-    <!-- Camera feed -->
-    <video id="camera-feed" autoplay playsinline muted></video>
     
-    <!-- 3D Model Viewer container -->
+    <!-- Status -->
+    <div class="status" id="status"></div>
+    
+    <!-- Model viewer -->
     <model-viewer
         id="modelViewer"
-        alt="Modelo 3D Interativo - Techno Sutra AR"
+        alt="Modelo 3D Interativo"
         ar
         ar-modes="webxr scene-viewer quick-look"
         ar-scale="auto"
-        ar-placement="floor"
         auto-rotate
-        rotation-per-second="15deg"
         loading="eager"
         reveal="auto"
-        field-of-view="30deg"
-        min-camera-orbit="auto 0deg auto"
-        max-camera-orbit="auto 180deg auto"
-        style="width: 100%; height: 100vh; background-color: transparent; --poster-color: transparent; position: fixed; top: 0; left: 0; z-index: 2;">
+        field-of-view="30deg">
     </model-viewer>
-
-    <!-- Custom AR button -->
-    <button id="ar-button" class="ar-button" aria-label="Ver em AR">
-        <span aria-hidden="true">📱</span>
-        <span>Ver em AR</span>
-    </button>
     
-    <!-- Model controls -->
-    <div id="model-controls" class="hidden">
-        <button id="reset-camera" class="model-control-btn" aria-label="Reset camera position">
-            <span aria-hidden="true">🔄</span>
-            <span class="visually-hidden">Reset Camera</span>
+    <!-- Navigation arrows -->
+    <button class="nav-arrow left" id="prevBtn" onclick="changeModel(-1)">‹</button>
+    <button class="nav-arrow right" id="nextBtn" onclick="changeModel(1)">›</button>
+    
+    <!-- Controls -->
+    <div class="controls">
+        <button class="btn" id="arBtn" disabled onclick="activateAR()">
+            📱 Ver em AR
         </button>
-        <button id="toggle-rotate" class="model-control-btn" aria-label="Toggle model rotation">
-            <span aria-hidden="true">⏸️</span>
-            <span class="visually-hidden">Toggle Rotation</span>
+        <button class="btn" onclick="resetCamera()">
+            🔄 Reset
         </button>
+        <a href="index.html" class="btn">
+            🏠 Home
+        </a>
     </div>
-
-    <!-- Mobile Navigation Bar -->
-    <nav class="mobile-nav" aria-label="Navegação principal">
-        <div class="mobile-nav-container">
-            <a href="galeria.html" class="mobile-nav-item" aria-label="Ir para Galeria">
-                <div class="mobile-nav-icon" aria-hidden="true">⁜</div>
-                <div class="mobile-nav-label" data-lang-key="gallery">Galeria</div>
-            </a>
-            <a href="index.html" class="mobile-nav-item center" aria-label="Ir para Página Inicial">
-                <div class="mobile-nav-icon" aria-hidden="true">🎵</div>
-                <div class="mobile-nav-label" data-lang-key="home">Home</div>
-            </a>
-            <a href="AR.html" class="mobile-nav-item active" aria-label="Experiência de Realidade Aumentada" aria-current="page">
-                <div class="mobile-nav-icon" aria-hidden="true">⁜</div>
-                <div class="mobile-nav-label" data-lang-key="ar_experience">AR</div>
-            </a>
-        </div>
-    </nav>
-
-    <!-- Load scripts -->
-
-    <script src="/js/utils.js"></script>
-    <!-- model-viewer library -->
+    
+    <!-- Scripts -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
-
-    <!-- Minimal inline setup: dynamic src/ios-src and AR button -->
+    
     <script>
-      (function() {
-        const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
-        const qs = new URLSearchParams(location.search);
-        const requested = parseInt(qs.get('model')) || 1;
-        const modelId = clamp(requested, 1, 56);
-
+        // Global variables
+        let currentModel = 1;
+        const totalModels = 56;
         const modelViewer = document.getElementById('modelViewer');
-        const arButton = document.getElementById('ar-button');
-        const statusDiv = document.getElementById('status');
-        const error404 = document.getElementById('error-404');
-        const cameraFeed = document.getElementById('camera-feed');
-
-        // Hide unused camera feed to avoid blank overlay
-        if (cameraFeed) cameraFeed.style.display = 'none';
-
-        // Helper to show transient status
-        function showStatus(msg, type = 'info', ms = 2000) {
-          if (!statusDiv) return;
-          statusDiv.textContent = msg;
-          statusDiv.className = `show ${type}`;
-          statusDiv.style.opacity = '1';
-          statusDiv.style.transform = 'translateY(0)';
-          setTimeout(() => {
-            statusDiv.style.opacity = '0';
-            statusDiv.style.transform = 'translateY(-10px)';
-          }, ms);
+        const loading = document.getElementById('loading');
+        const error = document.getElementById('error');
+        const status = document.getElementById('status');
+        const arBtn = document.getElementById('arBtn');
+        
+        // Initialize
+        function init() {
+            const params = new URLSearchParams(window.location.search);
+            const requestedModel = parseInt(params.get('model')) || 1;
+            currentModel = Math.max(1, Math.min(requestedModel, totalModels));
+            
+            loadModel(currentModel);
         }
-
-        // Build paths
-        const glb = `models/modelo${modelId}.glb`;
-        const usdz = `models/usdz/modelo${modelId}.usdz`;
-        const poster = `models/previews/modelo${modelId}.jpg`;
-
-        // Apply attributes
-        modelViewer.setAttribute('src', glb);
-        modelViewer.setAttribute('ios-src', usdz);
-        modelViewer.setAttribute('poster', poster);
-
-        // Disable AR button until model is ready
-        if (arButton) arButton.disabled = true;
-
-        // Basic events
-        modelViewer.addEventListener('load', () => {
-          if (arButton) arButton.disabled = false;
-          showStatus('Modelo carregado', 'success');
-        });
-
-        modelViewer.addEventListener('error', () => {
-          if (error404) {
-            error404.classList.remove('hidden');
-            setTimeout(() => {
-              location.href = `${location.pathname}?model=1`;
-            }, 2500);
-          } else {
-            showStatus('Erro ao carregar modelo', 'error', 2500);
-          }
-        });
-
-        // Custom AR button integration
-        if (arButton) {
-          arButton.addEventListener('click', async () => {
-            try {
-              if (typeof modelViewer.activateAR === 'function') {
-                await modelViewer.activateAR();
-              }
-            } catch (e) {
-              showStatus('AR indisponível', 'error');
+        
+        // Load model
+        function loadModel(modelId) {
+            const glbPath = `models/modelo${modelId}.glb`;
+            const usdzPath = `models/usdz/modelo${modelId}.usdz`;
+            
+            // Update model viewer
+            modelViewer.setAttribute('src', glbPath);
+            modelViewer.setAttribute('ios-src', usdzPath);
+            
+            // Update URL
+            const newUrl = `${window.location.pathname}?model=${modelId}`;
+            window.history.replaceState({}, '', newUrl);
+            
+            // Update title
+            document.title = `Techno Sutra AR - Modelo ${modelId}`;
+            
+            // Reset AR button
+            arBtn.disabled = true;
+        }
+        
+        // Change model
+        function changeModel(direction) {
+            const newModel = currentModel + direction;
+            if (newModel >= 1 && newModel <= totalModels) {
+                currentModel = newModel;
+                loadModel(currentModel);
+                showStatus(`Modelo ${currentModel}/${totalModels}`);
             }
-          });
         }
-      })();
+        
+        // Activate AR
+        async function activateAR() {
+            try {
+                if (modelViewer.activateAR) {
+                    await modelViewer.activateAR();
+                } else {
+                    showStatus('AR não suportado neste dispositivo', 'error');
+                }
+            } catch (e) {
+                showStatus('Erro ao ativar AR', 'error');
+                console.error('AR Error:', e);
+            }
+        }
+        
+        // Reset camera
+        function resetCamera() {
+            modelViewer.resetTurntableRotation();
+            modelViewer.jumpCameraToGoal();
+            showStatus('Câmera resetada');
+        }
+        
+        // Show status message
+        function showStatus(message, type = 'info', duration = 2000) {
+            status.textContent = message;
+            status.className = `status show ${type}`;
+            
+            setTimeout(() => {
+                status.className = 'status';
+            }, duration);
+        }
+        
+        // Event listeners
+        modelViewer.addEventListener('load', () => {
+            loading.classList.add('hidden');
+            arBtn.disabled = false;
+            showStatus(`Modelo ${currentModel} carregado`);
+        });
+        
+        modelViewer.addEventListener('error', (e) => {
+            console.error('Model loading error:', e);
+            
+            if (currentModel !== 1) {
+                error.classList.add('show');
+                setTimeout(() => {
+                    window.location.href = `${window.location.pathname}?model=1`;
+                }, 2500);
+            } else {
+                loading.classList.add('hidden');
+                showStatus('Erro ao carregar modelo', 'error', 3000);
+            }
+        });
+        
+        modelViewer.addEventListener('ar-status', (event) => {
+            if (event.detail.status === 'session-started') {
+                showStatus('Sessão AR iniciada');
+            } else if (event.detail.status === 'not-presenting') {
+                showStatus('Sessão AR encerrada');
+            }
+        });
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+                changeModel(-1);
+            } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+                changeModel(1);
+            } else if (e.key === 'r' || e.key === 'R') {
+                resetCamera();
+            } else if (e.key === ' ') {
+                e.preventDefault();
+                activateAR();
+            }
+        });
+        
+        // Touch gestures for mobile
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        });
+        
+        document.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].clientX;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > 50) { // Minimum swipe distance
+                if (diff > 0) {
+                    changeModel(1); // Swipe left = next
+                } else {
+                    changeModel(-1); // Swipe right = previous
+                }
+            }
+        });
+        
+        // Initialize app
+        init();
     </script>
 </body>
 </html>
