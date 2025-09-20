@@ -860,24 +860,19 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Global function for activating AR (for inline onclick handlers)
-function activateModelAR(button) {
+function activateModelAR(button, modelId, event) {
+    if (event) event.preventDefault();
     const modelCard = button.closest('.model-card');
     const modelViewer = modelCard.querySelector('model-viewer');
     
-    if (modelViewer) {
-        if (modelViewer.canActivateAR) {
-            modelViewer.activateAR().catch(error => {
-                console.error('AR activation failed:', error);
-                // Fallback to AR.html page if direct AR fails
-                const modelId = modelCard.dataset.modelId;
-                window.location.href = `AR.html?model=${modelId}`;
-            });
-        } else {
-            console.log('AR not supported on this device/browser');
-            // Fallback to AR.html page
-            const modelId = modelCard.dataset.modelId;
+    if (modelViewer && modelViewer.canActivateAR) {
+        modelViewer.activateAR().catch(error => {
+            console.error('AR activation failed:', error);
             window.location.href = `AR.html?model=${modelId}`;
-        }
+        });
+    } else {
+        console.log('AR not supported on this device/browser');
+        window.location.href = `AR.html?model=${modelId}`;
     }
 }
 
@@ -1340,7 +1335,7 @@ function showModelInfo(modelId) {
             flex-wrap: wrap;
             backdrop-filter: blur(10px);
         ">
-            <a href="AR.html?model=${model.id}" class="modal-action-btn-fullscreen" style="
+            <button type="button" class="modal-action-btn-fullscreen" onclick="activateModelAR(this, ${model.id}, event)" style="
                 background: linear-gradient(135deg, #7877c6, #9d00ff);
                 color: white;
                 text-decoration: none;
@@ -1361,7 +1356,7 @@ function showModelInfo(modelId) {
             " ${!model.available ? 'style="opacity: 0.5; pointer-events: none;"' : ''}>
                 <span style="font-size: 1.3rem;">📱</span>
                 <span>Ver em AR</span>
-            </a>
+            </button>
             
             <button class="modal-action-btn-fullscreen" onclick="shareModel(${model.id})" style="
                 background: rgba(120, 119, 198, 0.3);
