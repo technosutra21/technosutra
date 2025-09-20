@@ -325,15 +325,7 @@ class ARExperienceController {
             
       
             
-            // Set environment lighting based on device capabilities
-            if (this.isHighEndDevice()) {
-                this.elements.modelViewer.setAttribute('environment-image', 'neutral');
-                this.elements.modelViewer.setAttribute('shadow-intensity', '1');
-            } else {
-                // Use simpler lighting for lower-end devices
-                this.elements.modelViewer.setAttribute('environment-image', 'neutral');
-                this.elements.modelViewer.setAttribute('shadow-intensity', '0');
-            }
+   
 
             // Setup model event listeners
             this.setupModelEventListeners();
@@ -382,7 +374,7 @@ class ARExperienceController {
             'field-of-view': '30deg',
             'min-camera-orbit': 'auto 0deg auto',
             'max-camera-orbit': 'auto 180deg auto',
-            'style': 'width: 100%; height: 100vh; background-color: transparent; --poster-color: transparent; position: fixed; top: 0; left: 0; z-index: 2;'
+            'style': 'width: 100%; height: 100vh; background-color: transparent; position: fixed; top: 0; left: 0; z-index: 2;'
         };
 
         Object.entries(attributes).forEach(([key, value]) => {
