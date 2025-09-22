@@ -601,7 +601,7 @@ class GalleryController {
                 </div>
                 
                 <div class="model-actions">
-                    <button class="action-btn primary ar-button" onclick="activateModelAR(this)" ${!model.available ? 'disabled' : ''}>
+                    <button class="action-btn primary ar-button" onclick="activateModelAR(this, ${model.id}, event)" ${!model.available ? 'disabled' : ''}>
                         <span>🥽</span>
                         <span>${this.t('view_in_ar')}</span>
                     </button>
