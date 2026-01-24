@@ -1158,6 +1158,16 @@
     <!-- Load scripts -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
     <script src="/js/utils.js"></script>
+    
+    <script>
+        // iOS AR optimization: Use GitHub Pages USDZ directly
+        // This script runs before gallery.js to ensure model-viewer uses proper paths
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) {
+            console.log('iOS detected - using pre-generated USDZ files from GitHub Pages');
+        }
+    </script>
+    
     <script src="/js/gallery.js"></script>
 </body>
 </html>
