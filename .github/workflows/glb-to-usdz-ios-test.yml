@@ -279,9 +279,12 @@ jobs:
           
           [ -f "docs/test-ios/models.json" ] && echo "✓ models.json created successfully" || { echo "❌ models.json not found"; exit 1; }
       
-      - name: Create test-ios HTML viewer
+      - name: Create test-ios HTML viewer and .nojekyll
         run: |
+          set -e
           echo "[$(date '+%H:%M:%S')] Creating HTML viewer..."
+          mkdir -p docs/test-ios
+          
           cat > docs/test-ios/index.html << 'HTMLEOF'
           <!DOCTYPE html>
           <html lang="pt-BR">
@@ -421,6 +424,13 @@ jobs:
           HTMLEOF
           echo "[$(date '+%H:%M:%S')] ✓ HTML viewer created"
       
+      - name: Create Jekyll marker files
+        run: |
+          set -e
+          touch docs/.nojekyll
+          touch docs/test-ios/.nojekyll
+          echo "✓ Created .nojekyll markers"
+      
       - name: Create README
         run: |
           cat > docs/test-ios/README.md << 'MDEOF'
@@ -472,6 +482,9 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs
+          destination_dir: test-ios
+          force_orphan: false
+          cname: technosutra.bhumisparshaschool.org
       
       - name: Debug - List all docs content
         if: always()
