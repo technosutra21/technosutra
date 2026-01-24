@@ -416,9 +416,9 @@ jobs:
           </html>
           HTMLEOF
           echo "[$(date '+%H:%M:%S')] ✓ HTML viewer created"
-          
-          - name: Create README
-          run: |
+      
+      - name: Create README
+        run: |
           cat > docs/test-ios/README.md << 'MDEOF'
           # iOS AR Test Viewer
           
