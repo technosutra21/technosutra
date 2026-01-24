@@ -385,8 +385,7 @@
         // When model loads
         modelViewer.addEventListener('load', () => {
             loading.classList.add('hidden');
-            const arAvailable = (modelViewer.canActivateAR !== false);
-            showStatus(`Modelo ${currentModel} carregado${arAvailable ? '' : ' (AR indisponível)'}`);
+            showStatus(`Modelo ${currentModel} carregado`);
         });
         
         modelViewer.addEventListener('error', (e) => {
