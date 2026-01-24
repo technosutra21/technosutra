@@ -209,14 +209,21 @@ jobs:
         id: conversion-check
         run: |
           set -e
+          echo "[$(date '+%H:%M:%S')] Verifying USDZ output..."
+          if [ ! -d "models/usdz" ]; then
+            echo "❌ Directory models/usdz does not exist"
+            exit 1
+          fi
+          
           usdz_count=$(find models/usdz -name "*.usdz" 2>/dev/null | wc -l)
           [ $usdz_count -eq 0 ] && { echo "❌ No USDZ files created"; exit 1; }
           
           echo "✓ Created: $usdz_count USDZ files"
-          ls -lh models/usdz/*.usdz | awk '{printf "  %-40s %8s\n", $9, $5}'
+          ls -lh models/usdz/*.usdz | head -10 | awk '{printf "  %-40s %8s\n", $9, $5}'
           
           echo "success=true" >> $GITHUB_OUTPUT
           echo "count=$usdz_count" >> $GITHUB_OUTPUT
+          echo "[$(date '+%H:%M:%S')] Verification complete"
       
       - name: Create docs directory structure
         run: |
@@ -235,8 +242,9 @@ jobs:
       - name: Generate model inventory JSON
         run: |
           set -e
+          echo "[$(date '+%H:%M:%S')] Generating model inventory..."
           
-          [ ! -d "docs/test-ios/models" ] && { echo "❌ models directory not found"; exit 1; }
+          [ ! -d "docs/test-ios/models" ] && { echo "❌ models directory not found"; ls -la docs/test-ios/ 2>&1 || echo "docs/test-ios doesn't exist"; exit 1; }
           
           python3 << 'PYSCRIPT'
           import json

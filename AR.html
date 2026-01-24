@@ -265,12 +265,22 @@
         }
     </script>
     <!-- Model viewer -->
+    <!-- FIXES APPLIED:
+         1. ar-usdz-max-texture-size="2048" - increases USDZ texture resolution (default 1024)
+            Reduces desaturation from texture encoding issues
+         2. Note: Additional fixes require Blender export changes:
+            - Export with "Normals" enabled to avoid faceted/dark appearance
+            - Ensure sRGB color space for textures
+            - Apply smooth shading to all objects
+         3. For iOS color issues, consider pre-converting to USDZ with Xcode Reality Converter
+    -->
     <model-viewer
         id="modelViewer"
         alt="Modelo 3D Interativo"
         ar
         ar-placement="floor"
         ar-modes="quick-look webxr scene-viewer"
+        ar-usdz-max-texture-size="2048"
         xr-environment
         camera-controls 
         touch-action="pan-y"

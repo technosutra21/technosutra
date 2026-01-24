@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Techno Sutra AR Debug - Test Model</title>
+    <meta name="description" content="Debug AR rendering with color space and contrast analysis">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: system-ui, -apple-system, monospace;
+            background: #1a1a1a;
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            height: 100vh;
+            gap: 10px;
+            padding: 10px;
+            background: #000;
+        }
+        
+        .viewer-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        model-viewer {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #2a2a2a, #1a1a1a);
+            border: 2px solid #444;
+            border-radius: 8px;
+        }
+        
+        .controls-top {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.8);
+            padding: 12px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .sidebar {
+            background: rgba(20, 20, 20, 0.95);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-y: auto;
+            max-height: 100vh;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .debug-group {
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .debug-group:last-child {
+            border-bottom: none;
+        }
+        
+        .debug-group h4 {
+            color: #4da6ff;
+            margin-bottom: 8px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .debug-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+        
+        .debug-label {
+            color: #888;
+            font-size: 11px;
+        }
+        
+        .debug-value {
+            color: #0f0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        
+        .slider-group label {
+            font-size: 11px;
+            color: #aaa;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: #333;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #0f0;
+            cursor: pointer;
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #0f0;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .btn {
+            background: rgba(0, 100, 200, 0.8);
+            color: white;
+            border: 1px solid rgba(100, 150, 255, 0.5);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        
+        .btn:hover {
+            background: rgba(0, 120, 220, 1);
+            border-color: rgba(150, 200, 255, 1);
+        }
+        
+        .btn-ar {
+            background: rgba(200, 0, 0, 0.8);
+            border-color: rgba(255, 100, 100, 0.5);
+        }
+        
+        .btn-ar:hover {
+            background: rgba(220, 0, 0, 1);
+            border-color: rgba(255, 150, 150, 1);
+        }
+        
+        .info-box {
+            background: rgba(0, 100, 50, 0.2);
+            border-left: 3px solid #0f0;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #aaa;
+        }
+        
+        .warning-box {
+            background: rgba(255, 150, 0, 0.1);
+            border-left: 3px solid #ff9600;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #ffb366;
+        }
+        
+        .error-box {
+            background: rgba(255, 0, 0, 0.1);
+            border-left: 3px solid #ff0000;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #ff6b6b;
+        }
+        
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                max-height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="viewer-section">
+            <div class="controls-top">
+                <button class="btn" onclick="resetView()">⟳ Reset Camera</button>
+                <button class="btn btn-ar" onclick="activateAR()">📲 Launch AR</button>
+                <select class="btn" id="modelSelect" onchange="loadSelectedModel()">
+                    <option value="1">Model 1</option>
+                    <option value="2">Model 2</option>
+                    <option value="6">Model 6</option>
+                    <option value="10">Model 10</option>
+                </select>
+                <button class="btn" onclick="copyDebugInfo()">📋 Copy Debug Info</button>
+            </div>
+            
+            <model-viewer
+                id="modelViewer"
+                alt="Debug Test Model"
+                ar
+                ar-placement="floor"
+                ar-modes="quick-look webxr scene-viewer"
+                ar-usdz-max-texture-size="2048"
+                xr-environment
+                camera-controls
+                touch-action="pan-y"
+                ar-scale="auto"
+                auto-rotate
+                reveal="auto"
+                environment-image="">
+            </model-viewer>
+        </div>
+        
+        <div class="sidebar">
+            <div class="debug-group">
+                <h4>🔧 Texture Size</h4>
+                <div class="slider-group">
+                    <label for="texSizeSlider">USDZ Max Texture Size</label>
+                    <input type="range" id="texSizeSlider" min="512" max="4096" step="256" value="2048" onchange="updateTextureSize()">
+                    <div class="debug-value" id="texSizeValue">2048px</div>
+                </div>
+            </div>
+            
+            <div class="debug-group">
+                <h4>🎨 Color Adjustments</h4>
+                <div class="slider-group">
+                    <label for="saturationSlider">Saturation Boost</label>
+                    <input type="range" id="saturationSlider" min="0.8" max="2.0" step="0.1" value="1.0" onchange="updateColorAdjustments()">
+                    <div class="debug-value" id="saturationValue">100%</div>
+                </div>
+                <div class="slider-group">
+                    <label for="contrastSlider">Contrast Boost</label>
+                    <input type="range" id="contrastSlider" min="0.8" max="2.0" step="0.1" value="1.0" onchange="updateColorAdjustments()">
+                    <div class="debug-value" id="contrastValue">100%</div>
+                </div>
+                <div class="slider-group">
+                    <label for="exposureSlider">Exposure</label>
+                    <input type="range" id="exposureSlider" min="0.5" max="2.0" step="0.1" value="1.0" onchange="updateColorAdjustments()">
+                    <div class="debug-value" id="exposureValue">1.0</div>
+                </div>
+            </div>
+            
+            <div class="debug-group">
+                <h4>📊 Model Info</h4>
+                <div class="debug-item">
+                    <span class="debug-label">Status</span>
+                    <span class="debug-value" id="debugStatus">Loading...</span>
+                </div>
+                <div class="debug-item">
+                    <span class="debug-label">Vertices</span>
+                    <span class="debug-value" id="debugVertices">-</span>
+                </div>
+                <div class="debug-item">
+                    <span class="debug-label">Triangles</span>
+                    <span class="debug-value" id="debugTriangles">-</span>
+                </div>
+                <div class="debug-item">
+                    <span class="debug-label">Meshes</span>
+                    <span class="debug-value" id="debugMeshes">-</span>
+                </div>
+            </div>
+            
+            <div class="debug-group">
+                <h4>🖼️ Materials</h4>
+                <div class="debug-item">
+                    <span class="debug-label">Has Vertex Colors</span>
+                    <span class="debug-value" id="debugVertexColors">-</span>
+                </div>
+                <div class="debug-item">
+                    <span class="debug-label">Has Normal Map</span>
+                    <span class="debug-value" id="debugNormalMap">-</span>
+                </div>
+                <div class="debug-item">
+                    <span class="debug-label">Has PBR</span>
+                    <span class="debug-value" id="debugPBR">-</span>
+                </div>
+            </div>
+            
+            <div class="debug-group">
+                <h4>🌐 AR Support</h4>
+                <div class="debug-item">
+                    <span class="debug-label">AR Available</span>
+                    <span class="debug-value" id="debugARSupport">-</span>
+                </div>
+                <div class="debug-item">
+                    <span class="debug-label">Current Mode</span>
+                    <span class="debug-value" id="debugARMode">Idle</span>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                💡 <strong>Tip:</strong> Adjust "Texture Size" and "Color Adjustments" to find optimal settings for your device. Lower texture size = faster conversion but lower quality.
+            </div>
+            
+            <div class="warning-box">
+                ⚠️ iOS: Quick Look renders with Apple's tone mapping. USDZ colors won't exactly match WebGL preview.
+            </div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@r128/examples/jsm/loaders/GLTFLoader.js';
+        
+        const modelViewer = document.getElementById('modelViewer');
+        let currentConfig = {
+            saturation: 1.0,
+            contrast: 1.0,
+            exposure: 1.0,
+            textureSize: 2048
+        };
+        
+        // Initialize
+        async function init() {
+            updateModelViewerAttributes();
+            loadSelectedModel();
+            setupEventListeners();
+            checkARSupport();
+        }
+        
+        function updateModelViewerAttributes() {
+            modelViewer.setAttribute('ar-usdz-max-texture-size', currentConfig.textureSize.toString());
+        }
+        
+        function loadSelectedModel() {
+            const modelId = document.getElementById('modelSelect').value;
+            const path = `../models/modelo${modelId}.glb`;
+            modelViewer.setAttribute('src', path);
+            document.getElementById('debugStatus').textContent = 'Loading...';
+        }
+        
+        function resetView() {
+            modelViewer.resetTurntableRotation?.();
+            modelViewer.jumpCameraToGoal?.();
+        }
+        
+        async function activateAR() {
+            try {
+                if (!modelViewer.canActivateAR) {
+                    alert('AR not supported on this device/browser');
+                    return;
+                }
+                const result = await modelViewer.activateAR?.();
+                if (result === false) {
+                    console.warn('AR activation failed');
+                }
+            } catch (error) {
+                console.error('AR Error:', error);
+            }
+        }
+        
+        function updateTextureSize() {
+            const value = parseInt(document.getElementById('texSizeSlider').value);
+            currentConfig.textureSize = value;
+            document.getElementById('texSizeValue').textContent = value + 'px';
+            updateModelViewerAttributes();
+        }
+        
+        function updateColorAdjustments() {
+            const saturation = parseFloat(document.getElementById('saturationSlider').value);
+            const contrast = parseFloat(document.getElementById('contrastSlider').value);
+            const exposure = parseFloat(document.getElementById('exposureSlider').value);
+            
+            currentConfig.saturation = saturation;
+            currentConfig.contrast = contrast;
+            currentConfig.exposure = exposure;
+            
+            document.getElementById('saturationValue').textContent = Math.round(saturation * 100) + '%';
+            document.getElementById('contrastValue').textContent = Math.round(contrast * 100) + '%';
+            document.getElementById('exposureValue').textContent = exposure.toFixed(1);
+            
+            applyColorAdjustments();
+        }
+        
+        function applyColorAdjustments() {
+            const scene = modelViewer.model?.scene;
+            if (!scene) return;
+            
+            const { saturation, contrast, exposure } = currentConfig;
+            
+            scene.traverse(child => {
+                if (child.isMesh && child.material) {
+                    const mat = child.material;
+                    
+                    // Apply exposure
+                    if (mat.color) {
+                        mat.emissiveIntensity = exposure;
+                    }
+                    
+                    // Note: Full saturation boost requires three.js shader customization
+                    // This is a simplified approach that works better on WebGL preview
+                    if (mat.emissive) {
+                        mat.emissiveIntensity = Math.min(mat.emissiveIntensity * saturation, 2.0);
+                    }
+                }
+            });
+        }
+        
+        function setupEventListeners() {
+            modelViewer.addEventListener('load', () => {
+                document.getElementById('debugStatus').textContent = 'Loaded ✓';
+                analyzeModel();
+                applyColorAdjustments();
+            });
+            
+            modelViewer.addEventListener('error', (e) => {
+                document.getElementById('debugStatus').textContent = 'Error loading model';
+                console.error('Model error:', e);
+            });
+            
+            modelViewer.addEventListener('ar-status', (event) => {
+                const status = event.detail.status;
+                document.getElementById('debugARMode').textContent = 
+                    status === 'session-started' ? 'In AR Session' : 'Idle';
+            });
+        }
+        
+        function analyzeModel() {
+            const scene = modelViewer.model?.scene;
+            if (!scene) return;
+            
+            let vertexCount = 0;
+            let triangleCount = 0;
+            let meshCount = 0;
+            let hasVertexColors = false;
+            let hasNormalMap = false;
+            let hasPBR = false;
+            
+            scene.traverse(child => {
+                if (child.isMesh) {
+                    meshCount++;
+                    
+                    // Count vertices
+                    if (child.geometry.attributes.position) {
+                        vertexCount += child.geometry.attributes.position.count;
+                    }
+                    
+                    // Count triangles
+                    if (child.geometry.index) {
+                        triangleCount += child.geometry.index.count / 3;
+                    } else if (child.geometry.attributes.position) {
+                        triangleCount += child.geometry.attributes.position.count / 3;
+                    }
+                    
+                    // Check for vertex colors
+                    if (child.geometry.attributes.color) {
+                        hasVertexColors = true;
+                    }
+                    
+                    // Check material properties
+                    const mat = child.material;
+                    if (mat?.normalMap) hasNormalMap = true;
+                    if (mat?.roughnessMap || mat?.metalnessMap) hasPBR = true;
+                }
+            });
+            
+            document.getElementById('debugVertices').textContent = vertexCount.toLocaleString();
+            document.getElementById('debugTriangles').textContent = Math.round(triangleCount).toLocaleString();
+            document.getElementById('debugMeshes').textContent = meshCount;
+            document.getElementById('debugVertexColors').textContent = hasVertexColors ? 'Yes ✓' : 'No';
+            document.getElementById('debugNormalMap').textContent = hasNormalMap ? 'Yes ✓' : 'No';
+            document.getElementById('debugPBR').textContent = hasPBR ? 'Yes ✓' : 'No';
+        }
+        
+        function checkARSupport() {
+            const hasAR = modelViewer.canActivateAR !== false;
+            document.getElementById('debugARSupport').textContent = hasAR ? 'Yes ✓' : 'No ✗';
+        }
+        
+        function copyDebugInfo() {
+            const info = `
+Techno Sutra AR Debug Report
+============================
+Status: ${document.getElementById('debugStatus').textContent}
+Model: modelo${document.getElementById('modelSelect').value}
+Vertices: ${document.getElementById('debugVertices').textContent}
+Triangles: ${document.getElementById('debugTriangles').textContent}
+Meshes: ${document.getElementById('debugMeshes').textContent}
+
+Materials:
+- Vertex Colors: ${document.getElementById('debugVertexColors').textContent}
+- Normal Map: ${document.getElementById('debugNormalMap').textContent}
+- PBR: ${document.getElementById('debugPBR').textContent}
+
+AR Support: ${document.getElementById('debugARSupport').textContent}
+
+Configuration:
+- Texture Size: ${currentConfig.textureSize}px
+- Saturation: ${Math.round(currentConfig.saturation * 100)}%
+- Contrast: ${Math.round(currentConfig.contrast * 100)}%
+- Exposure: ${currentConfig.exposure}
+            `.trim();
+            
+            navigator.clipboard.writeText(info).then(() => {
+                alert('Debug info copied to clipboard');
+            }).catch(() => {
+                alert('Failed to copy. Check browser console.');
+                console.log(info);
+            });
+        }
+        
+        // Start
+        init();
+    </script>
+    
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+</body>
+</html>
