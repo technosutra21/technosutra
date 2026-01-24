@@ -84,11 +84,10 @@ jobs:
               
               # Run Node.js converter
               result = subprocess.run(
-                  ["node", "/tmp/converter/convert.js", glb_file, usdz_file],
+                  ["node", "/tmp/converter/convert.js", os.path.abspath(glb_file), os.path.abspath(usdz_file)],
                   capture_output=True,
                   text=True,
-                  timeout=300,
-                  cwd="/tmp/converter"
+                  timeout=300
               )
               
               if result.returncode != 0:
