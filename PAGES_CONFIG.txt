@@ -1,0 +1,20 @@
+CRITICAL: Configure GitHub Pages Settings
+
+Go to: https://github.com/technosutra21/technosutra/settings/pages
+
+1. Source: Select "Deploy from a branch"
+2. Branch: Select "gh-pages" from dropdown
+3. Folder: Keep as "/ (root)"
+4. Custom domain: Make sure "technosutra.bhumisparshaschool.org" is set
+5. Enforce HTTPS: Keep checked
+
+SAVE - This is required for GitHub Pages to work!
+
+After saving:
+- GitHub Pages will deploy from gh-pages branch
+- Files will be served at https://technosutra.bhumisparshaschool.org/
+- The workflow will push to gh-pages automatically
+
+Wait 1-2 minutes after saving, then test:
+- https://technosutra.bhumisparshaschool.org/test-ios/
+- https://technosutra.bhumisparshaschool.org/test-ios/models/modelo1.usdz
