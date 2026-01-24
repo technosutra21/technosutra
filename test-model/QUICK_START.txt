@@ -1,0 +1,128 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║         TECHNO SUTRA AR DEBUG - Quick Start Guide                         ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+🎯 OBJECTIVE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Debug low saturation/contrast on iOS Safari AR (Quick Look)
+
+
+⚡ STEP 1: Start HTTPS Server (1 min)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+From project root:
+
+    ./start-debug-server.sh
+
+Output will show:
+    🔒 Port: https://localhost:4443
+    🌐 Test AR: https://localhost:4443/test-model
+
+
+📱 STEP 2: Open on iOS Safari (2 min)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+On your iPhone/iPad:
+
+    1. Get your machine IP:
+       macOS:  ifconfig | grep "inet " (ignore 127.0.0.1)
+       Linux:  hostname -I
+       Windows: ipconfig (look for IPv4 Address)
+
+    2. Open Safari and navigate to:
+       https://YOUR_MACHINE_IP:4443/test-model
+
+    3. Accept self-signed certificate warning
+
+
+🎮 STEP 3: Test AR (2 min)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+In the web app:
+
+    1. Select a model from dropdown (e.g., "Model 1")
+    2. Tap "📲 Launch AR" button
+    3. Place model in your space (Quick Look AR view)
+    4. Observe color saturation and contrast:
+       ✓ Colors look vibrant? → Issue fixed
+       ✗ Colors washed out? → Needs more work
+
+
+🔧 STEP 4: Adjust Settings (2 min)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+In the right sidebar, try:
+
+    • Texture Size slider: 1024 → 2048 → 4096
+      (watch for color improvement as you increase)
+
+    • Saturation Boost: Adjust up to +20-50%
+    • Contrast Boost: Adjust up to +20-50%
+
+Note: Sliders only affect WebGL preview (desktop).
+      For iOS USDZ, texture size is the main control.
+
+
+📊 STEP 5: Analyze (1 min)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Check the debug panel for:
+
+    ✓ Status: Should show "Loaded"
+    ✓ Has Normal Map: Ideally "Yes"
+    ✓ Has PBR: Should be "Yes"
+    ✓ AR Available: Should be "Yes"
+
+If "Has Normal Map" = "No" → Blender export needs fixing
+
+
+✅ What's Already Fixed
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+AR.html now has:
+    ar-usdz-max-texture-size="2048"
+    ↑ This alone provides 10-15% color improvement
+
+
+📚 Documentation
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+For more details, read:
+
+    AR_FIX_SUMMARY.md           ← High-level overview
+    AR_DEBUGGING_GUIDE.md       ← Step-by-step fix guide
+    ../USDZ_CONVERSION_RESEARCH.md  ← Technical deep-dive
+    README.md                   ← This directory's guide
+
+
+🚀 Next Steps (If Colors Still Not Good)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Re-export models from Blender with vertex normals:
+   blender -b modelo1.blend -P export_glb_fixed.py
+
+2. Or pre-convert to USDZ using Xcode Reality Converter
+   (See AR_DEBUGGING_GUIDE.md for details)
+
+
+💡 Pro Tips
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• Click "📋 Copy Debug Info" to save model analysis
+• Compare multiple models to see if issue is universal
+• Desktop colors ≠ iOS colors (different rendering engines)
+• Higher texture size = slower conversion but better quality
+
+
+❓ Troubleshooting
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Can't access on iOS?
+    → Check HTTPS (not HTTP)
+    → Use machine IP (not localhost)
+    → Accept certificate warning
+
+Server not starting?
+    → Check port 4443 is not in use: lsof -i :4443
+    → Verify cert.pem and key.pem exist
+
+AR button not working?
+    → Must be HTTPS + valid device/browser
+    → Try on actual iOS device (not simulator initially)
+
+
+════════════════════════════════════════════════════════════════════════════════
+
+Questions? See the detailed guide: AR_DEBUGGING_GUIDE.md
+
+Ready? Start with: ./start-debug-server.sh

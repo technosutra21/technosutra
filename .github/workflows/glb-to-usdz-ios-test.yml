@@ -228,16 +228,27 @@ jobs:
       - name: Create docs directory structure
         run: |
           set -e
+          echo "[$(date '+%H:%M:%S')] Creating docs structure..."
           mkdir -p docs/test-ios/models
           
-          if ! find models/usdz -name "*.usdz" -print -quit | grep -q .; then
-            echo "❌ No USDZ files found"
+          if [ ! -d "models/usdz" ]; then
+            echo "❌ models/usdz directory doesn't exist"
             exit 1
           fi
           
-          cp models/usdz/*.usdz docs/test-ios/models/ 2>/dev/null || { echo "❌ Failed to copy USDZ files"; exit 1; }
+          usdz_count=$(find models/usdz -name "*.usdz" 2>/dev/null | wc -l)
+          if [ "$usdz_count" -eq 0 ]; then
+            echo "❌ No USDZ files found in models/usdz"
+            ls -la models/usdz 2>&1 || echo "Directory listing failed"
+            exit 1
+          fi
+          
+          echo "ℹ️  Copying $usdz_count USDZ files..."
+          cp models/usdz/*.usdz docs/test-ios/models/ || { echo "❌ Failed to copy USDZ files"; exit 1; }
+          
           touch docs/.nojekyll
           touch docs/test-ios/.nojekyll
+          echo "[$(date '+%H:%M:%S')] ✓ Docs structure created"
       
       - name: Generate model inventory JSON
         run: |
@@ -250,25 +261,25 @@ jobs:
           import json
           import os
           from pathlib import Path
-          
+
           models_dir = "docs/test-ios/models"
           models = []
-          
+
           if os.path.exists(models_dir):
-              for usdz_file in sorted(os.listdir(models_dir)):
-                  if usdz_file.endswith('.usdz'):
-                      size_mb = os.path.getsize(os.path.join(models_dir, usdz_file)) / (1024 * 1024)
-                      models.append({
-                          "name": Path(usdz_file).stem,
-                          "file": usdz_file,
-                          "size_mb": round(size_mb, 2),
-                          "path": f"./models/{usdz_file}"
-                      })
-          
+          for usdz_file in sorted(os.listdir(models_dir)):
+          if usdz_file.endswith('.usdz'):
+           size_mb = os.path.getsize(os.path.join(models_dir, usdz_file)) / (1024 * 1024)
+           models.append({
+               "name": Path(usdz_file).stem,
+               "file": usdz_file,
+               "size_mb": round(size_mb, 2),
+               "path": f"./models/{usdz_file}"
+           })
+
           output = "docs/test-ios/models.json"
           with open(output, 'w') as f:
-              json.dump({"models": models, "count": len(models), "generated": True}, f, indent=2)
-          
+          json.dump({"models": models, "count": len(models), "generated": True}, f, indent=2)
+
           print(f"✓ Generated {output} with {len(models)} models")
           PYSCRIPT
       
@@ -463,6 +474,15 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs
           force_orphan: true
+      
+      - name: Debug - List all docs content
+        if: always()
+        run: |
+          echo "=== Workspace Structure ===" 
+          find docs -type f 2>/dev/null | head -20 || echo "docs not found"
+          echo ""
+          echo "=== models/usdz Content ===" 
+          ls -lh models/usdz/ 2>/dev/null | head -10 || echo "models/usdz not found"
       
       - name: Create conversion summary
         if: always()
