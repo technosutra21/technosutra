@@ -229,7 +229,7 @@ jobs:
         run: |
           set -e
           echo "[$(date '+%H:%M:%S')] Creating docs structure..."
-          mkdir -p docs/test-ios/models
+          mkdir -p docs/test-ios/models || { echo "❌ Failed to create docs/test-ios/models"; exit 1; }
           
           if [ ! -d "models/usdz" ]; then
             echo "❌ models/usdz directory doesn't exist"
@@ -243,11 +243,19 @@ jobs:
             exit 1
           fi
           
-          echo "ℹ️  Copying $usdz_count USDZ files..."
-          cp models/usdz/*.usdz docs/test-ios/models/ || { echo "❌ Failed to copy USDZ files"; exit 1; }
+          echo "ℹ️  Copying $usdz_count USDZ files to docs/test-ios/models/"
+          if ! cp models/usdz/*.usdz docs/test-ios/models/; then
+            echo "❌ Failed to copy USDZ files"
+            echo "Source: $(ls -lh models/usdz/ | head -3)"
+            echo "Dest: $(ls -lh docs/test-ios/ 2>&1)"
+            exit 1
+          fi
           
-          touch docs/.nojekyll
-          touch docs/test-ios/.nojekyll
+          touch docs/.nojekyll || { echo "⚠️  Failed to create docs/.nojekyll"; }
+          touch docs/test-ios/.nojekyll || { echo "⚠️  Failed to create docs/test-ios/.nojekyll"; }
+          
+          echo "✓ Copied $usdz_count files"
+          ls -lh docs/test-ios/models/ | head -5
           echo "[$(date '+%H:%M:%S')] ✓ Docs structure created"
       
       - name: Generate model inventory JSON
@@ -255,33 +263,18 @@ jobs:
           set -e
           echo "[$(date '+%H:%M:%S')] Generating model inventory..."
           
-          [ ! -d "docs/test-ios/models" ] && { echo "❌ models directory not found"; ls -la docs/test-ios/ 2>&1 || echo "docs/test-ios doesn't exist"; exit 1; }
+          if [ ! -d "docs/test-ios/models" ]; then
+            echo "❌ models directory not found"
+            ls -la docs/test-ios/ 2>&1 || echo "docs/test-ios doesn't exist"
+            exit 1
+          fi
           
-          python3 << 'PYSCRIPT'
-          import json
-          import os
-          from pathlib import Path
-
-          models_dir = "docs/test-ios/models"
-          models = []
-
-          if os.path.exists(models_dir):
-          for usdz_file in sorted(os.listdir(models_dir)):
-          if usdz_file.endswith('.usdz'):
-           size_mb = os.path.getsize(os.path.join(models_dir, usdz_file)) / (1024 * 1024)
-           models.append({
-               "name": Path(usdz_file).stem,
-               "file": usdz_file,
-               "size_mb": round(size_mb, 2),
-               "path": f"./models/{usdz_file}"
-           })
-
-          output = "docs/test-ios/models.json"
-          with open(output, 'w') as f:
-          json.dump({"models": models, "count": len(models), "generated": True}, f, indent=2)
-
-          print(f"✓ Generated {output} with {len(models)} models")
-          PYSCRIPT
+          file_count=$(find docs/test-ios/models -name "*.usdz" | wc -l)
+          echo "ℹ️  Found $file_count USDZ files in docs/test-ios/models/"
+          
+          python3 generate_models_json.py || { echo "❌ Failed to generate models.json"; exit 1; }
+          
+          [ -f "docs/test-ios/models.json" ] && echo "✓ models.json created successfully" || { echo "❌ models.json not found"; exit 1; }
       
       - name: Create test-ios HTML viewer
         run: |
