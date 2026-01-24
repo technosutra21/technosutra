@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Techno Sutra - iOS AR Test Viewer</title>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header { text-align: center; color: white; margin-bottom: 40px; }
+        h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { font-size: 1.1em; opacity: 0.9; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; }
+        .model-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: transform 0.3s ease; }
+        .model-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.3); }
+        .model-viewer-container { width: 100%; height: 400px; background: #f5f5f5; }
+        model-viewer { width: 100%; height: 100%; }
+        .model-info { padding: 20px; }
+        .model-name { font-size: 1.2em; font-weight: 600; color: #333; margin-bottom: 10px; }
+        .model-details { font-size: 0.9em; color: #666; margin-bottom: 15px; }
+        .model-details span { display: block; }
+        .button-group { display: flex; gap: 10px; }
+        button, a.btn { flex: 1; padding: 12px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; text-decoration: none; text-align: center; }
+        .btn-ar { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+        .btn-ar:hover { transform: scale(1.05); }
+        .btn-download { background: #f0f0f0; color: #333; border: 2px solid #ddd; }
+        .btn-download:hover { background: #e0e0e0; }
+        .stats { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 20px; border-radius: 12px; color: white; margin-bottom: 40px; text-align: center; }
+        .stats-item { display: inline-block; margin: 0 30px; }
+        .stats-number { font-size: 2em; font-weight: bold; color: #ffd700; }
+        .conversion-info { background: #e8f5e9; border-left: 4px solid #4caf50; padding: 15px; margin-bottom: 20px; color: #2e7d32; }
+        .loading { text-align: center; padding: 40px; }
+        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } h1 { font-size: 1.8em; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌟 Techno Sutra AR Viewer</h1>
+            <p class="subtitle">iOS AR Test - USDZ Models</p>
+        </header>
+        
+        <div class="conversion-info">
+            ✓ Models converted with three.js USDZExporter<br>
+            ✓ Optimized for iOS AR Quick Look<br>
+            ✓ Full sRGB color space support
+        </div>
+        
+        <div class="stats">
+            <div class="stats-item">
+                <div class="stats-number" id="modelCount">-</div>
+                <div class="stats-label">Models</div>
+            </div>
+            <div class="stats-item">
+                <div class="stats-number" id="totalSize">-</div>
+                <div class="stats-label">Total Size</div>
+            </div>
+        </div>
+        
+        <div id="modelGrid" class="grid">
+            <div class="loading">Loading models...</div>
+        </div>
+    </div>
+    
+    <script>
+        async function loadModels() {
+            try {
+                const response = await fetch('./models.json');
+                const data = await response.json();
+                
+                if (!data.models || data.models.length === 0) {
+                    document.getElementById('modelGrid').innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 40px;">No models found</p>';
+                    return;
+                }
+                
+                await renderModels(data.models);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('modelGrid').innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 40px; color: red;">Error loading models</p>';
+            }
+        }
+        
+        async function renderModels(models) {
+            const grid = document.getElementById('modelGrid');
+            let totalSize = 0;
+            
+            const html = models.map(model => {
+                totalSize += model.size_mb;
+                return `
+                    <div class="model-card">
+                        <div class="model-viewer-container">
+                            <model-viewer
+                                src="${model.path}"
+                                ios-src="${model.path}"
+                                ar
+                                ar-placement="floor"
+                                ar-modes="quick-look webxr scene-viewer"
+                                ar-usdz-max-texture-size="2048"
+                                camera-controls
+                                auto-rotate
+                                reveal="auto"
+                                exposure="1.5">
+                            </model-viewer>
+                        </div>
+                        <div class="model-info">
+                            <div class="model-name">${model.name}</div>
+                            <div class="model-details">
+                                <span>📦 ${model.size_mb} MB</span>
+                                <span>✓ iOS AR Ready</span>
+                            </div>
+                            <div class="button-group">
+                                <button class="btn-ar" onclick="launchAR(event)">📲 AR</button>
+                                <a href="${model.path}" download class="btn-download">⬇️ Download</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            grid.innerHTML = html;
+            document.getElementById('modelCount').textContent = models.length;
+            document.getElementById('totalSize').textContent = totalSize.toFixed(1) + ' MB';
+        }
+        
+        function launchAR(event) {
+            const modelViewer = event.target.closest('.model-card').querySelector('model-viewer');
+            if (modelViewer) modelViewer.activateAR();
+        }
+        
+        loadModels();
+    </script>
+</body>
+</html>

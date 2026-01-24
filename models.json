@@ -1,0 +1,372 @@
+{
+  "models": [
+    {
+      "name": "cosmic-buddha",
+      "file": "cosmic-buddha.usdz",
+      "size_mb": 14.75,
+      "path": "./models/cosmic-buddha.usdz"
+    },
+    {
+      "name": "cosmic",
+      "file": "cosmic.usdz",
+      "size_mb": 19.11,
+      "path": "./models/cosmic.usdz"
+    },
+    {
+      "name": "fat-buddha",
+      "file": "fat-buddha.usdz",
+      "size_mb": 4.59,
+      "path": "./models/fat-buddha.usdz"
+    },
+    {
+      "name": "modelo-dragao",
+      "file": "modelo-dragao.usdz",
+      "size_mb": 6.26,
+      "path": "./models/modelo-dragao.usdz"
+    },
+    {
+      "name": "modelo1",
+      "file": "modelo1.usdz",
+      "size_mb": 4.06,
+      "path": "./models/modelo1.usdz"
+    },
+    {
+      "name": "modelo10",
+      "file": "modelo10.usdz",
+      "size_mb": 11.67,
+      "path": "./models/modelo10.usdz"
+    },
+    {
+      "name": "modelo11",
+      "file": "modelo11.usdz",
+      "size_mb": 4.46,
+      "path": "./models/modelo11.usdz"
+    },
+    {
+      "name": "modelo12",
+      "file": "modelo12.usdz",
+      "size_mb": 4.66,
+      "path": "./models/modelo12.usdz"
+    },
+    {
+      "name": "modelo13",
+      "file": "modelo13.usdz",
+      "size_mb": 11.97,
+      "path": "./models/modelo13.usdz"
+    },
+    {
+      "name": "modelo14",
+      "file": "modelo14.usdz",
+      "size_mb": 1.12,
+      "path": "./models/modelo14.usdz"
+    },
+    {
+      "name": "modelo15",
+      "file": "modelo15.usdz",
+      "size_mb": 4.46,
+      "path": "./models/modelo15.usdz"
+    },
+    {
+      "name": "modelo16",
+      "file": "modelo16.usdz",
+      "size_mb": 11.12,
+      "path": "./models/modelo16.usdz"
+    },
+    {
+      "name": "modelo17",
+      "file": "modelo17.usdz",
+      "size_mb": 4.43,
+      "path": "./models/modelo17.usdz"
+    },
+    {
+      "name": "modelo18",
+      "file": "modelo18.usdz",
+      "size_mb": 3.92,
+      "path": "./models/modelo18.usdz"
+    },
+    {
+      "name": "modelo19",
+      "file": "modelo19.usdz",
+      "size_mb": 4.54,
+      "path": "./models/modelo19.usdz"
+    },
+    {
+      "name": "modelo2",
+      "file": "modelo2.usdz",
+      "size_mb": 4.26,
+      "path": "./models/modelo2.usdz"
+    },
+    {
+      "name": "modelo20",
+      "file": "modelo20.usdz",
+      "size_mb": 4.3,
+      "path": "./models/modelo20.usdz"
+    },
+    {
+      "name": "modelo21",
+      "file": "modelo21.usdz",
+      "size_mb": 4.52,
+      "path": "./models/modelo21.usdz"
+    },
+    {
+      "name": "modelo22",
+      "file": "modelo22.usdz",
+      "size_mb": 4.83,
+      "path": "./models/modelo22.usdz"
+    },
+    {
+      "name": "modelo23",
+      "file": "modelo23.usdz",
+      "size_mb": 4.32,
+      "path": "./models/modelo23.usdz"
+    },
+    {
+      "name": "modelo24",
+      "file": "modelo24.usdz",
+      "size_mb": 4.64,
+      "path": "./models/modelo24.usdz"
+    },
+    {
+      "name": "modelo25",
+      "file": "modelo25.usdz",
+      "size_mb": 8.33,
+      "path": "./models/modelo25.usdz"
+    },
+    {
+      "name": "modelo26",
+      "file": "modelo26.usdz",
+      "size_mb": 4.41,
+      "path": "./models/modelo26.usdz"
+    },
+    {
+      "name": "modelo27",
+      "file": "modelo27.usdz",
+      "size_mb": 11.6,
+      "path": "./models/modelo27.usdz"
+    },
+    {
+      "name": "modelo28",
+      "file": "modelo28.usdz",
+      "size_mb": 4.43,
+      "path": "./models/modelo28.usdz"
+    },
+    {
+      "name": "modelo29",
+      "file": "modelo29.usdz",
+      "size_mb": 2.53,
+      "path": "./models/modelo29.usdz"
+    },
+    {
+      "name": "modelo3",
+      "file": "modelo3.usdz",
+      "size_mb": 4.32,
+      "path": "./models/modelo3.usdz"
+    },
+    {
+      "name": "modelo30",
+      "file": "modelo30.usdz",
+      "size_mb": 4.83,
+      "path": "./models/modelo30.usdz"
+    },
+    {
+      "name": "modelo31",
+      "file": "modelo31.usdz",
+      "size_mb": 4.05,
+      "path": "./models/modelo31.usdz"
+    },
+    {
+      "name": "modelo32",
+      "file": "modelo32.usdz",
+      "size_mb": 4.2,
+      "path": "./models/modelo32.usdz"
+    },
+    {
+      "name": "modelo33",
+      "file": "modelo33.usdz",
+      "size_mb": 11.52,
+      "path": "./models/modelo33.usdz"
+    },
+    {
+      "name": "modelo34",
+      "file": "modelo34.usdz",
+      "size_mb": 11.95,
+      "path": "./models/modelo34.usdz"
+    },
+    {
+      "name": "modelo35",
+      "file": "modelo35.usdz",
+      "size_mb": 4.12,
+      "path": "./models/modelo35.usdz"
+    },
+    {
+      "name": "modelo36",
+      "file": "modelo36.usdz",
+      "size_mb": 3.67,
+      "path": "./models/modelo36.usdz"
+    },
+    {
+      "name": "modelo37",
+      "file": "modelo37.usdz",
+      "size_mb": 4.42,
+      "path": "./models/modelo37.usdz"
+    },
+    {
+      "name": "modelo38",
+      "file": "modelo38.usdz",
+      "size_mb": 4.03,
+      "path": "./models/modelo38.usdz"
+    },
+    {
+      "name": "modelo39",
+      "file": "modelo39.usdz",
+      "size_mb": 4.18,
+      "path": "./models/modelo39.usdz"
+    },
+    {
+      "name": "modelo4",
+      "file": "modelo4.usdz",
+      "size_mb": 3.85,
+      "path": "./models/modelo4.usdz"
+    },
+    {
+      "name": "modelo40",
+      "file": "modelo40.usdz",
+      "size_mb": 11.4,
+      "path": "./models/modelo40.usdz"
+    },
+    {
+      "name": "modelo41",
+      "file": "modelo41.usdz",
+      "size_mb": 4.81,
+      "path": "./models/modelo41.usdz"
+    },
+    {
+      "name": "modelo42",
+      "file": "modelo42.usdz",
+      "size_mb": 4.88,
+      "path": "./models/modelo42.usdz"
+    },
+    {
+      "name": "modelo44",
+      "file": "modelo44.usdz",
+      "size_mb": 4.16,
+      "path": "./models/modelo44.usdz"
+    },
+    {
+      "name": "modelo45",
+      "file": "modelo45.usdz",
+      "size_mb": 4.73,
+      "path": "./models/modelo45.usdz"
+    },
+    {
+      "name": "modelo46",
+      "file": "modelo46.usdz",
+      "size_mb": 4.14,
+      "path": "./models/modelo46.usdz"
+    },
+    {
+      "name": "modelo47",
+      "file": "modelo47.usdz",
+      "size_mb": 4.56,
+      "path": "./models/modelo47.usdz"
+    },
+    {
+      "name": "modelo48",
+      "file": "modelo48.usdz",
+      "size_mb": 5.77,
+      "path": "./models/modelo48.usdz"
+    },
+    {
+      "name": "modelo49",
+      "file": "modelo49.usdz",
+      "size_mb": 3.81,
+      "path": "./models/modelo49.usdz"
+    },
+    {
+      "name": "modelo5",
+      "file": "modelo5.usdz",
+      "size_mb": 4.01,
+      "path": "./models/modelo5.usdz"
+    },
+    {
+      "name": "modelo50",
+      "file": "modelo50.usdz",
+      "size_mb": 4.27,
+      "path": "./models/modelo50.usdz"
+    },
+    {
+      "name": "modelo51",
+      "file": "modelo51.usdz",
+      "size_mb": 4.08,
+      "path": "./models/modelo51.usdz"
+    },
+    {
+      "name": "modelo53",
+      "file": "modelo53.usdz",
+      "size_mb": 11.88,
+      "path": "./models/modelo53.usdz"
+    },
+    {
+      "name": "modelo54",
+      "file": "modelo54.usdz",
+      "size_mb": 3.25,
+      "path": "./models/modelo54.usdz"
+    },
+    {
+      "name": "modelo55",
+      "file": "modelo55.usdz",
+      "size_mb": 4.32,
+      "path": "./models/modelo55.usdz"
+    },
+    {
+      "name": "modelo56",
+      "file": "modelo56.usdz",
+      "size_mb": 4.26,
+      "path": "./models/modelo56.usdz"
+    },
+    {
+      "name": "modelo6",
+      "file": "modelo6.usdz",
+      "size_mb": 3.78,
+      "path": "./models/modelo6.usdz"
+    },
+    {
+      "name": "modelo7",
+      "file": "modelo7.usdz",
+      "size_mb": 11.86,
+      "path": "./models/modelo7.usdz"
+    },
+    {
+      "name": "modelo8",
+      "file": "modelo8.usdz",
+      "size_mb": 9.78,
+      "path": "./models/modelo8.usdz"
+    },
+    {
+      "name": "modelo9",
+      "file": "modelo9.usdz",
+      "size_mb": 9.78,
+      "path": "./models/modelo9.usdz"
+    },
+    {
+      "name": "nsrinha",
+      "file": "nsrinha.usdz",
+      "size_mb": 3.68,
+      "path": "./models/nsrinha.usdz"
+    },
+    {
+      "name": "test-trigger",
+      "file": "test-trigger.usdz",
+      "size_mb": 1.0,
+      "path": "./models/test-trigger.usdz"
+    },
+    {
+      "name": "test-trigger2",
+      "file": "test-trigger2.usdz",
+      "size_mb": 0.0,
+      "path": "./models/test-trigger2.usdz"
+    }
+  ],
+  "count": 61,
+  "generated": true
+}
