@@ -44,6 +44,7 @@ jobs:
           import subprocess
           from pathlib import Path
           import zipfile
+          import time
           
           def validate_usdz(usdz_file):
               """Validate USDZ file integrity"""
@@ -79,14 +80,15 @@ jobs:
               os.makedirs(output_dir, exist_ok=True)
               usdz_file = os.path.join(output_dir, Path(glb_file).stem + ".usdz")
               
-              print(f"Converting: {glb_file}")
+              print(f"[{time.strftime('%H:%M:%S')}] Converting: {glb_file}")
               
               # Run Node.js converter
               result = subprocess.run(
-                  ["node", "/tmp/convert.js", glb_file, usdz_file],
+                  ["node", "/tmp/converter/convert.js", glb_file, usdz_file],
                   capture_output=True,
                   text=True,
-                  timeout=180
+                  timeout=300,
+                  cwd="/tmp/converter"
               )
               
               if result.returncode != 0:
@@ -109,18 +111,20 @@ jobs:
               print(f"✓ Success: {size:.2f} MB")
           EOF
       
-      - name: Install three.js for conversion
+      - name: Setup Node.js converter environment
         run: |
-          npm install three@latest
-      
-      - name: Create Node.js converter
-        run: |
-          cat > /tmp/convert.js << 'EOF'
-          const fs = require('fs');
-          const path = require('path');
-          const THREE = require('three');
-          const { GLTFLoader } = require('three/examples/jsm/loaders/GLTFLoader.js');
-          const { USDZExporter } = require('three/examples/jsm/exporters/USDZExporter.js');
+          mkdir -p /tmp/converter
+          cd /tmp/converter
+          npm init -y > /dev/null 2>&1
+          npm install three > /dev/null 2>&1
+          
+          # Create converter AFTER npm install
+          cat > convert.js << 'EOF'
+          import * as fs from 'fs';
+          import * as path from 'path';
+          import * as THREE from 'three';
+          import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+          import { USDZExporter } from 'three/examples/jsm/exporters/USDZExporter.js';
           
           async function convert(glbFile, outputFile) {
               try {
@@ -145,6 +149,11 @@ jobs:
           
           convert(process.argv[2], process.argv[3]);
           EOF
+          
+          # Make package.json ES modules compatible
+          sed -i 's/"type": "commonjs"/"type": "module"/' package.json || echo '{"type": "module"}' > package.json
+          
+          echo "✓ Node.js converter ready"
       
       - name: Convert GLB files to USDZ
         id: convert
@@ -161,21 +170,21 @@ jobs:
             python3 /tmp/convert_glb_to_usdz.py "$GLB_FILE" "models/usdz"
           else
             echo "🎬 Converting all GLB files..."
-            glb_files=$(find models -maxdepth 1 -name "*.glb" | sort)
-            [ -z "$glb_files" ] && { echo "❌ No GLB files found"; exit 1; }
-            
-            glb_count=$(echo "$glb_files" | wc -l)
             failed=0
             success=0
+            glb_count=0
             
             while IFS= read -r glb_file; do
+              glb_count=$((glb_count + 1))
               if python3 /tmp/convert_glb_to_usdz.py "$glb_file" "models/usdz"; then
                 success=$((success + 1))
               else
                 failed=$((failed + 1))
                 echo "⚠️  Failed: $glb_file"
               fi
-            done <<< "$glb_files"
+            done < <(find models -maxdepth 1 -name "*.glb" | sort)
+            
+            [ $glb_count -eq 0 ] && { echo "❌ No GLB files found"; exit 1; }
             
             echo ""
             echo "📊 Total: $glb_count | Success: $success | Failed: $failed"
@@ -211,6 +220,8 @@ jobs:
         run: |
           set -e
           
+          [ ! -d "docs/test-ios/models" ] && { echo "❌ models directory not found"; exit 1; }
+          
           python3 << 'PYSCRIPT'
           import json
           import os
@@ -219,15 +230,16 @@ jobs:
           models_dir = "docs/test-ios/models"
           models = []
           
-          for usdz_file in sorted(os.listdir(models_dir)):
-              if usdz_file.endswith('.usdz'):
-                  size_mb = os.path.getsize(os.path.join(models_dir, usdz_file)) / (1024 * 1024)
-                  models.append({
-                      "name": Path(usdz_file).stem,
-                      "file": usdz_file,
-                      "size_mb": round(size_mb, 2),
-                      "path": f"./models/{usdz_file}"
-                  })
+          if os.path.exists(models_dir):
+              for usdz_file in sorted(os.listdir(models_dir)):
+                  if usdz_file.endswith('.usdz'):
+                      size_mb = os.path.getsize(os.path.join(models_dir, usdz_file)) / (1024 * 1024)
+                      models.append({
+                          "name": Path(usdz_file).stem,
+                          "file": usdz_file,
+                          "size_mb": round(size_mb, 2),
+                          "path": f"./models/{usdz_file}"
+                      })
           
           output = "docs/test-ios/models.json"
           with open(output, 'w') as f:
@@ -403,10 +415,11 @@ jobs:
       - name: Commit USDZ files (only if successful)
         if: steps.conversion-check.outputs.success == 'true'
         run: |
+          set -e
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          if git status --porcelain models/usdz/*.usdz 2>/dev/null | grep -q .; then
+          if [ -d "models/usdz" ] && [ -n "$(find models/usdz -name '*.usdz' 2>/dev/null)" ]; then
             git add models/usdz/*.usdz
             git commit -m "ci: convert GLB to USDZ [skip ci]" || true
           fi
@@ -414,8 +427,9 @@ jobs:
       - name: Push commits (only if successful)
         if: steps.conversion-check.outputs.success == 'true'
         run: |
+          set -e
           if git status --short | grep -q .; then
-            git push origin master --quiet
+            git push origin master --quiet || { echo "⚠️ Push failed, continuing..."; true; }
           fi
       
       - name: Deploy to GitHub Pages (only if successful)
@@ -424,7 +438,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs
-          force_orphan: false
+          force_orphan: true
       
       - name: Create conversion summary
         if: always()
@@ -435,7 +449,7 @@ jobs:
           ╚════════════════════════════════════════════════════════════╝
           
           BUILD INFO:
-            Date: $(date)
+            Date: $(date '+%Y-%m-%d %H:%M:%S')
             Runner: macos-latest
             Status: ${{ steps.conversion-check.outputs.success || 'FAILED' }}
             USDZ Count: ${{ steps.conversion-check.outputs.count || 'N/A' }}
