@@ -25,6 +25,9 @@ jobs:
         with:
           fetch-depth: 0
       
+      - name: Ensure docs directory exists
+        run: mkdir -p docs
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -220,10 +223,12 @@ jobs:
           set -e
           mkdir -p docs/test-ios/models
           
-          usdz_count=$(find models/usdz -name "*.usdz" 2>/dev/null | wc -l)
-          [ $usdz_count -eq 0 ] && { echo "❌ No USDZ files"; exit 1; }
+          if ! find models/usdz -name "*.usdz" -print -quit | grep -q .; then
+            echo "❌ No USDZ files found"
+            exit 1
+          fi
           
-          cp models/usdz/*.usdz docs/test-ios/models/
+          cp models/usdz/*.usdz docs/test-ios/models/ 2>/dev/null || { echo "❌ Failed to copy USDZ files"; exit 1; }
           touch docs/.nojekyll
           touch docs/test-ios/.nojekyll
       
