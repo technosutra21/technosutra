@@ -476,15 +476,51 @@ jobs:
             git push origin master --quiet || { echo "⚠️ Push failed, continuing..."; true; }
           fi
       
+      - name: Prepare docs for deployment
+        if: steps.conversion-check.outputs.success == 'true'
+        run: |
+          set -e
+          mkdir -p /tmp/docs-deploy
+          cp -r docs/test-ios/* /tmp/docs-deploy/
+          ls -la /tmp/docs-deploy/ | head -10
+          echo "✓ Docs prepared for deployment"
+      
       - name: Deploy to GitHub Pages (only if successful)
         if: steps.conversion-check.outputs.success == 'true'
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs
-          destination_dir: test-ios
-          force_orphan: false
-          cname: technosutra.bhumisparshaschool.org
+        run: |
+          set -e
+          echo "[$(date '+%H:%M:%S')] Deploying to GitHub Pages..."
+          
+          # Configure git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Create and switch to gh-pages branch
+          if git rev-parse --verify gh-pages >/dev/null 2>&1; then
+            echo "✓ gh-pages branch exists, fetching..."
+            git fetch origin gh-pages
+            git checkout gh-pages
+            git reset --hard origin/gh-pages 2>/dev/null || git reset --hard HEAD~0
+          else
+            echo "Creating new gh-pages branch..."
+            git checkout --orphan gh-pages
+            git rm -rf . 2>/dev/null || true
+          fi
+          
+          # Copy docs/test-ios content to root of gh-pages
+          cp -r /tmp/docs-deploy/* .
+          
+          # Add CNAME for custom domain
+          echo "technosutra.bhumisparshaschool.org" > CNAME
+          
+          # Create .nojekyll to skip Jekyll processing
+          touch .nojekyll
+          
+          # Commit and push
+          git add -A
+          git commit -m "chore: deploy USDZ models and AR viewer [skip ci]" || echo "Nothing to commit"
+          git push origin gh-pages -f --quiet
+          echo "✓ Successfully deployed to gh-pages branch"
       
       - name: Debug - List all docs content
         if: always()
