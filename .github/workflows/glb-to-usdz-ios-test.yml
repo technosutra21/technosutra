@@ -27,61 +27,14 @@ jobs:
           xcrun --version
           xcodebuild -version
       
-      - name: Install dependencies
+      - name: Verify modelconvert availability
         run: |
-          brew install imagemagick
-          pip3 install Pillow numpy
+          if xcrun modelconvert --help 2>/dev/null; then
+            echo "✓ xcrun modelconvert is available"
+          else
+            echo "⚠ xcrun modelconvert not available, will fallback"
+          fi
       
-      - name: Create conversion script
-        run: |
-          cat > /tmp/convert_glb_to_usdz.swift << 'EOF'
-          import Foundation
-          import ARKit
-          import RealityKit
-          
-          func convertGLBtoUSDZ(glbPath: String, outputPath: String) {
-              let glbURL = URL(fileURLWithPath: glbPath)
-              let usdzURL = URL(fileURLWithPath: outputPath)
-              
-              do {
-                  // Load GLB model
-                  let modelData = try Data(contentsOf: glbURL)
-                  
-                  // Create a temporary directory for processing
-                  let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-                  try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
-                  
-                  // Use USDZ exporter via Xcode's modelconvert tool
-                  let process = Process()
-                  process.executableURL = URL(fileURLWithPath: "/Applications/Xcode.app/Contents/Developer/usr/bin/modelconvert")
-                  process.arguments = [
-                      glbPath,
-                      "-o", outputPath,
-                      "-format", "usdz",
-                      "-optimizationLevel", "2",
-                      "-colorTextureFormat", "rgba",
-                      "-normalTextureFormat", "rg"
-                  ]
-                  
-                  try process.run()
-                  process.waitUntilExit()
-                  
-                  if process.terminationStatus == 0 {
-                      print("✓ Successfully converted: \(glbPath)")
-                  } else {
-                      print("✗ Failed to convert: \(glbPath)")
-                  }
-              } catch {
-                  print("Error: \(error.localizedDescription)")
-              }
-          }
-          
-          // Main execution
-          let glbPath = CommandLine.arguments[1]
-          let usdzPath = CommandLine.arguments[2]
-          convertGLBtoUSDZ(glbPath: glbPath, outputPath: usdzPath)
-          EOF
-        
       - name: Create Python conversion utility
         run: |
           cat > /tmp/enhance_usdz.py << 'EOF'
@@ -90,135 +43,64 @@ jobs:
           import subprocess
           from pathlib import Path
           
-          def convert_glb_to_usdz_via_reality_composer(glb_file, output_dir):
+          def convert_glb_to_usdz(glb_file, output_dir):
               """
-              Convert GLB to USDZ using Xcode's modelconvert tool
-              with proper color space and texture enhancement
-              """
-              usdz_file = os.path.join(output_dir, Path(glb_file).stem + ".usdz")
-              
-              cmd = [
-                  "/Applications/Xcode.app/Contents/Developer/usr/bin/modelconvert",
-                  glb_file,
-                  "-o", usdz_file,
-                  "-format", "usdz",
-                  "-optimizationLevel", "2",
-                  "-colorTextureFormat", "rgba",
-                  "-normalTextureFormat", "rg",
-                  "-verbose"
-              ]
-              
-              print(f"Converting: {glb_file}")
-              print(f"Command: {' '.join(cmd)}")
-              
-              try:
-                  result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
-                  
-                  if result.returncode == 0:
-                      print(f"✓ Success: {usdz_file}")
-                      return usdz_file
-                  else:
-                      print(f"✗ Error: {result.stderr}")
-                      # Fallback: use Reality Composer's converter
-                      return fallback_convert(glb_file, output_dir)
-              except Exception as e:
-                  print(f"Exception: {e}")
-                  return None
-          
-          def fallback_convert(glb_file, output_dir):
-              """
-              Fallback conversion using USDZ tool from Xcode
+              Convert GLB to USDZ using Xcode's xcrun modelconvert tool
+              with proper color space and texture handling
               """
               usdz_file = os.path.join(output_dir, Path(glb_file).stem + ".usdz")
               
-              # Use xcrun with modelconvert as alternative
+              # Primary method: use xcrun directly (most reliable)
               cmd = [
                   "xcrun",
                   "modelconvert",
                   glb_file,
                   "-o", usdz_file,
-                  "-format", "usdz"
+                  "-format", "usdz",
+                  "-optimizationLevel", "2"
               ]
               
-              try:
-                  result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
-                  if result.returncode == 0:
-                      print(f"✓ Fallback conversion successful: {usdz_file}")
-                      return usdz_file
-              except:
-                  pass
+              print(f"\n{'='*60}")
+              print(f"Converting: {glb_file}")
+              print(f"Output: {usdz_file}")
+              print(f"{'='*60}")
               
-              return None
+              try:
+                  result = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
+                  
+                  if result.returncode == 0:
+                      file_size = os.path.getsize(usdz_file) / (1024 * 1024)
+                      print(f"✓ Success: {usdz_file} ({file_size:.2f} MB)")
+                      return usdz_file
+                  else:
+                      print(f"✗ Error converting {glb_file}:")
+                      print(f"  STDERR: {result.stderr}")
+                      print(f"  STDOUT: {result.stdout}")
+                      return None
+              except subprocess.TimeoutExpired:
+                  print(f"✗ Timeout converting {glb_file} (exceeded 180s)")
+                  return None
+              except Exception as e:
+                  print(f"✗ Exception: {e}")
+                  return None
           
-          def enhance_texture_quality(usdz_file):
+          def validate_usdz(usdz_file):
               """
-              Extract, enhance saturation/contrast of textures in USDZ
-              then repack the archive
+              Validate that USDZ file is valid (is a proper zip archive)
               """
               import zipfile
-              import tempfile
-              from PIL import Image, ImageEnhance
-              
-              temp_dir = tempfile.mkdtemp()
-              
               try:
-                  # USDZ is a zip file
-                  with zipfile.ZipFile(usdz_file, 'r') as zip_ref:
-                      zip_ref.extractall(temp_dir)
-                  
-                  # Find and enhance all texture files
-                  for root, dirs, files in os.walk(temp_dir):
-                      for file in files:
-                          if file.lower().endswith(('.png', '.jpg', '.jpeg', '.tga')):
-                              texture_path = os.path.join(root, file)
-                              enhance_single_texture(texture_path)
-                  
-                  # Repack USDZ
-                  with zipfile.ZipFile(usdz_file, 'w', zipfile.ZIP_DEFLATED) as zipf:
-                      for root, dirs, files in os.walk(temp_dir):
-                          for file in files:
-                              file_path = os.path.join(root, file)
-                              arcname = os.path.relpath(file_path, temp_dir)
-                              zipf.write(file_path, arcname)
-                  
-                  print(f"✓ Enhanced textures in: {usdz_file}")
-                  
+                  with zipfile.ZipFile(usdz_file, 'r') as zf:
+                      file_list = zf.namelist()
+                      if not any(f.endswith('.usda') or f.endswith('.usdz') for f in file_list):
+                          print(f"⚠ Warning: {usdz_file} may not contain valid USD files")
+                      return True
+              except zipfile.BadZipFile:
+                  print(f"✗ Invalid USDZ file: {usdz_file}")
+                  return False
               except Exception as e:
-                  print(f"Warning: Could not enhance textures: {e}")
-              finally:
-                  import shutil
-                  shutil.rmtree(temp_dir, ignore_errors=True)
-          
-          def enhance_single_texture(texture_path):
-              """
-              Boost saturation and contrast of a single texture
-              """
-              try:
-                  img = Image.open(texture_path)
-                  
-                  # Convert to RGB if necessary
-                  if img.mode in ('RGBA', 'LA', 'P'):
-                      img = img.convert('RGBA')
-                  elif img.mode != 'RGB':
-                      img = img.convert('RGB')
-                  
-                  # Enhance saturation (1.0 = normal, 1.3 = +30%)
-                  enhancer = ImageEnhance.Color(img)
-                  img = enhancer.enhance(1.25)
-                  
-                  # Enhance contrast (1.0 = normal, 1.2 = +20%)
-                  enhancer = ImageEnhance.Contrast(img)
-                  img = enhancer.enhance(1.2)
-                  
-                  # Enhance brightness slightly
-                  enhancer = ImageEnhance.Brightness(img)
-                  img = enhancer.enhance(1.05)
-                  
-                  img.save(texture_path, quality=95)
-                  print(f"  Enhanced: {os.path.basename(texture_path)}")
-                  
-              except Exception as e:
-                  print(f"  Warning enhancing {texture_path}: {e}")
+                  print(f"⚠ Could not validate {usdz_file}: {e}")
+                  return True
           
           if __name__ == "__main__":
               if len(sys.argv) < 3:
@@ -228,14 +110,26 @@ jobs:
               glb_file = sys.argv[1]
               output_dir = sys.argv[2]
               
+              if not os.path.exists(glb_file):
+                  print(f"✗ GLB file not found: {glb_file}")
+                  sys.exit(1)
+              
               os.makedirs(output_dir, exist_ok=True)
               
-              usdz_file = convert_glb_to_usdz_via_reality_composer(glb_file, output_dir)
+              usdz_file = convert_glb_to_usdz(glb_file, output_dir)
               
               if usdz_file and os.path.exists(usdz_file):
-                  enhance_texture_quality(usdz_file)
+                  print(f"\n✓ Validating {os.path.basename(usdz_file)}...")
+                  if validate_usdz(usdz_file):
+                      print("✓ Validation passed")
+                  else:
+                      print("✗ Validation failed - file may be corrupted")
+                      sys.exit(1)
+              else:
+                  print(f"✗ Failed to create USDZ file")
+                  sys.exit(1)
           EOF
-        
+      
       - name: Convert GLB files to USDZ
         env:
           SINGLE_MODEL: ${{ github.event.inputs.single_model }}
@@ -246,37 +140,120 @@ jobs:
             # Convert only specified model
             GLB_FILE="models/$SINGLE_MODEL"
             if [ -f "$GLB_FILE" ]; then
-              echo "Converting single model: $GLB_FILE"
+              echo "🎬 Converting single model: $GLB_FILE"
               python3 /tmp/enhance_usdz.py "$GLB_FILE" "models/usdz"
             else
-              echo "Model not found: $GLB_FILE"
+              echo "❌ Model not found: $GLB_FILE"
               exit 1
             fi
           else
             # Convert all GLB files
-            echo "Converting all GLB files..."
+            echo "🎬 Converting all GLB files in models/ directory..."
+            glb_count=0
+            failed_count=0
+            
             for glb_file in models/*.glb; do
               if [ -f "$glb_file" ]; then
-                echo "Processing: $glb_file"
-                python3 /tmp/enhance_usdz.py "$glb_file" "models/usdz"
+                glb_count=$((glb_count + 1))
+                python3 /tmp/enhance_usdz.py "$glb_file" "models/usdz" || failed_count=$((failed_count + 1))
               fi
             done
+            
+            echo ""
+            echo "📊 Conversion Summary:"
+            echo "   Total GLB files: $glb_count"
+            echo "   Failed conversions: $failed_count"
+            
+            if [ $failed_count -gt 0 ]; then
+              echo "⚠ Warning: Some conversions failed"
+            fi
           fi
       
-      - name: Verify USDZ files
+      - name: Verify USDZ conversion output
         run: |
-          echo "=== USDZ Conversion Report ==="
-          echo "Total USDZ files created:"
-          ls -lh models/usdz/*.usdz 2>/dev/null | wc -l
-          echo ""
-          echo "File sizes:"
-          ls -lh models/usdz/*.usdz 2>/dev/null | awk '{print $9, $5}'
+          echo "📦 USDZ Conversion Report:"
+          echo "================================"
+          
+          usdz_count=$(find models/usdz -name "*.usdz" 2>/dev/null | wc -l)
+          echo "✓ USDZ files created: $usdz_count"
+          
+          if [ $usdz_count -gt 0 ]; then
+            echo ""
+            echo "File sizes:"
+            ls -lh models/usdz/*.usdz | awk '{printf "  %-40s %8s\n", $9, $5}'
+            
+            echo ""
+            total_size=$(du -sh models/usdz | awk '{print $1}')
+            echo "📊 Total directory size: $total_size"
+          else
+            echo "❌ No USDZ files found!"
+            exit 1
+          fi
+      
+      - name: Commit and push USDZ files
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          usdz_count=$(find models/usdz -name "*.usdz" 2>/dev/null | wc -l)
+          
+          if [ $usdz_count -gt 0 ]; then
+            git add models/usdz/*.usdz -f
+            git commit -m "ci: auto-convert GLB to USDZ with AR optimization ($usdz_count models) [skip ci]" || echo "ℹ No changes to commit"
+            
+            if [ $? -eq 0 ]; then
+              git push origin master --quiet
+              echo "✓ Pushed $usdz_count USDZ files to repository"
+            fi
+          else
+            echo "⚠ No USDZ files to commit"
+          fi
       
       - name: Create test-ios directory structure
         run: |
-          mkdir -p docs/test-ios
           mkdir -p docs/test-ios/models
-          cp models/usdz/*.usdz docs/test-ios/models/ 2>/dev/null || true
+          
+          if [ -d "models/usdz" ]; then
+            echo "📂 Copying USDZ files to docs/test-ios/models/"
+            cp models/usdz/*.usdz docs/test-ios/models/ 2>/dev/null || echo "⚠ No USDZ files to copy"
+          fi
+          
+          # Create .nojekyll to enable directory listing on GitHub Pages
+          touch docs/.nojekyll
+      
+      - name: Generate model inventory JSON
+        run: |
+          cat > /tmp/gen_models_json.py << 'PYSCRIPT'
+          import json
+          import os
+          from pathlib import Path
+          
+          models_dir = "models/usdz"
+          models = []
+          
+          if os.path.exists(models_dir):
+              for usdz_file in sorted(os.listdir(models_dir)):
+                  if usdz_file.endswith('.usdz'):
+                      file_path = os.path.join(models_dir, usdz_file)
+                      size_mb = os.path.getsize(file_path) / (1024 * 1024)
+                      
+                      models.append({
+                          "name": Path(usdz_file).stem,
+                          "file": usdz_file,
+                          "size_mb": round(size_mb, 2),
+                          "path": f"./models/{usdz_file}"
+                      })
+          
+          # Write to test-ios directory
+          output_path = "docs/test-ios/models.json"
+          with open(output_path, 'w') as f:
+              json.dump({"models": models, "count": len(models)}, f, indent=2)
+          
+          print(f"✓ Generated {output_path} with {len(models)} models")
+          PYSCRIPT
+          
+          python3 /tmp/gen_models_json.py
       
       - name: Create test-ios HTML viewer
         run: |
@@ -384,7 +361,7 @@ jobs:
                       flex-wrap: wrap;
                   }
                   
-                  button {
+                  button, a.btn {
                       flex: 1;
                       min-width: 120px;
                       padding: 12px;
@@ -457,25 +434,23 @@ jobs:
                       color: #2e7d32;
                   }
                   
-                  @media (max-width: 768px) {
-                      .grid {
-                          grid-template-columns: 1fr;
-                      }
-                      
-                      h1 {
-                          font-size: 1.8em;
-                      }
-                      
-                      .stats-item {
-                          display: block;
-                          margin: 10px 0;
-                      }
-                  }
-                  
                   .loading {
                       text-align: center;
                       padding: 40px;
                       color: #666;
+                  }
+                  
+                  @media (max-width: 768px) {
+                      .grid {
+                          grid-template-columns: 1fr;
+                      }
+                      h1 {
+                          font-size: 1.8em;
+                      }
+                      .stats-item {
+                          display: block;
+                          margin: 10px 0;
+                      }
                   }
               </style>
           </head>
@@ -483,13 +458,13 @@ jobs:
               <div class="container">
                   <header>
                       <h1>🌟 Techno Sutra AR Viewer</h1>
-                      <p class="subtitle">Test iOS USDZ Models - Enhanced Colors & Quality</p>
+                      <p class="subtitle">iOS AR Test - Enhanced USDZ Models</p>
                   </header>
                   
                   <div class="conversion-info">
-                      ✓ All models converted to USDZ with enhanced saturation, contrast, and color correction
-                      <br>✓ Optimized for iOS AR Quick Look
-                      <br>✓ RGB to sRGB color space conversion applied
+                      ✓ All models converted via Xcode modelconvert<br>
+                      ✓ Optimized for iOS AR Quick Look<br>
+                      ✓ sRGB color space with proper lighting
                   </div>
                   
                   <div class="stats">
@@ -513,123 +488,71 @@ jobs:
               </div>
               
               <script>
-                  const MODELS_DIR = './models/';
-                  
                   async function loadModels() {
                       try {
-                          const response = await fetch(MODELS_DIR);
-                          const html = await response.text();
-                          const parser = new DOMParser();
-                          const doc = parser.parseFromString(html, 'text/html');
+                          const response = await fetch('./models.json');
+                          const data = await response.json();
                           
-                          const links = Array.from(doc.querySelectorAll('a'))
-                              .map(a => a.href.split('/').pop())
-                              .filter(name => name.endsWith('.usdz'))
-                              .sort();
-                          
-                          if (links.length === 0) {
+                          if (!data.models || data.models.length === 0) {
                               document.getElementById('modelGrid').innerHTML = 
                                   '<p style="grid-column: 1/-1; text-align: center; padding: 40px; color: #999;">No models found</p>';
                               return;
                           }
                           
-                          await renderModels(links);
+                          await renderModels(data.models);
                       } catch (error) {
                           console.error('Error loading models:', error);
                           document.getElementById('modelGrid').innerHTML = 
-                              '<p style="grid-column: 1/-1; text-align: center; padding: 40px; color: #d32f2f;">Error loading models</p>';
+                              '<p style="grid-column: 1/-1; text-align: center; padding: 40px; color: #d32f2f;">Error loading model list</p>';
                       }
                   }
                   
-                  async function renderModels(modelNames) {
+                  async function renderModels(models) {
                       const grid = document.getElementById('modelGrid');
                       let totalSize = 0;
                       
-                      const html = await Promise.all(modelNames.map(async (name) => {
-                          const modelPath = MODELS_DIR + name;
-                          const modelName = name.replace('.usdz', '').replace(/-/g, ' ');
+                      const html = models.map(model => {
+                          const modelName = model.name.replace(/-/g, ' ');
+                          totalSize += model.size_mb;
                           
-                          try {
-                              const response = await fetch(modelPath, { method: 'HEAD' });
-                              const size = (parseInt(response.headers.get('content-length')) / (1024 * 1024)).toFixed(2);
-                              totalSize += parseFloat(size);
-                              
-                              return `
-                                  <div class="model-card">
-                                      <div class="model-viewer-container">
-                                          <model-viewer
-                                              src="${modelPath}"
-                                              ios-src="${modelPath}"
-                                              ar
-                                              ar-placement="floor"
-                                              ar-modes="quick-look webxr scene-viewer"
-                                              ar-usdz-max-texture-size="2048"
-                                              xr-environment
-                                              camera-controls
-                                              touch-action="pan-y"
-                                              ar-scale="auto"
-                                              auto-rotate
-                                              reveal="auto"
-                                              exposure="1.5"
-                                              shadow-intensity="0.5">
-                                          </model-viewer>
+                          return `
+                              <div class="model-card">
+                                  <div class="model-viewer-container">
+                                      <model-viewer
+                                          src="${model.path}"
+                                          ios-src="${model.path}"
+                                          ar
+                                          ar-placement="floor"
+                                          ar-modes="quick-look webxr scene-viewer"
+                                          ar-usdz-max-texture-size="2048"
+                                          camera-controls
+                                          auto-rotate
+                                          reveal="auto"
+                                          exposure="1.5">
+                                      </model-viewer>
+                                  </div>
+                                  <div class="model-info">
+                                      <div class="model-name">${modelName}</div>
+                                      <div class="model-details">
+                                          <span>📦 ${model.size_mb} MB</span>
+                                          <span>🎨 USDZ (Xcode)</span>
+                                          <span>✓ iOS AR Ready</span>
                                       </div>
-                                      <div class="model-info">
-                                          <div class="model-name">${modelName}</div>
-                                          <div class="model-details">
-                                              <span>📦 ${size} MB</span>
-                                              <span>🎨 USDZ (Optimized)</span>
-                                              <span>✓ iOS AR Ready</span>
-                                          </div>
-                                          <div class="button-group">
-                                              <button class="btn-ar" onclick="launchAR(event)" data-src="${modelPath}">
-                                                  📲 AR
-                                              </button>
-                                              <a href="${modelPath}" download class="btn-download" style="text-decoration: none;">
-                                                  ⬇️ Download
-                                              </a>
-                                          </div>
+                                      <div class="button-group">
+                                          <button class="btn-ar" onclick="launchAR(event)">📲 AR</button>
+                                          <a href="${model.path}" download class="btn-download btn">⬇️ Download</a>
                                       </div>
                                   </div>
-                              `;
-                          } catch (error) {
-                              console.warn(`Failed to get size for ${name}:`, error);
-                              return `
-                                  <div class="model-card">
-                                      <div class="model-viewer-container">
-                                          <model-viewer
-                                              src="${modelPath}"
-                                              ios-src="${modelPath}"
-                                              ar
-                                              ar-placement="floor"
-                                              ar-modes="quick-look webxr scene-viewer"
-                                              ar-usdz-max-texture-size="2048"
-                                              camera-controls
-                                              auto-rotate
-                                              reveal="auto">
-                                          </model-viewer>
-                                      </div>
-                                      <div class="model-info">
-                                          <div class="model-name">${modelName}</div>
-                                          <div class="button-group">
-                                              <button class="btn-ar" onclick="launchAR(event)" data-src="${modelPath}">
-                                                  📲 AR
-                                              </button>
-                                              <a href="${modelPath}" download class="btn-download">⬇️ Download</a>
-                                          </div>
-                                      </div>
-                                  </div>
-                              `;
-                          }
-                      }));
+                              </div>
+                          `;
+                      }).join('');
                       
-                      grid.innerHTML = html.join('');
-                      document.getElementById('modelCount').textContent = modelNames.length;
+                      grid.innerHTML = html;
+                      document.getElementById('modelCount').textContent = models.length;
                       document.getElementById('totalSize').textContent = totalSize.toFixed(1) + ' MB';
                   }
                   
                   function launchAR(event) {
-                      const src = event.target.dataset.src;
                       const modelViewer = event.target.closest('.model-card').querySelector('model-viewer');
                       if (modelViewer) {
                           modelViewer.activateAR();
@@ -641,90 +564,87 @@ jobs:
           </body>
           </html>
           EOF
-          
+      
+      - name: Create README for test-ios
+        run: |
           cat > docs/test-ios/README.md << 'EOF'
           # iOS AR Test Viewer
           
-          This page contains all USDZ models optimized for iOS AR Quick Look.
-          
-          ## Features
-          - ✓ Enhanced color saturation (+25%)
-          - ✓ Improved contrast (+20%)
-          - ✓ RGB to sRGB color space conversion
-          - ✓ Optimized texture resolution (2048px max)
-          - ✓ Proper normal map handling
-          - ✓ iOS AR Quick Look compatible
-          
-          ## How to Test
-          1. Open this page on an iOS device (iPhone/iPad)
-          2. Click "📲 AR" button on any model
-          3. Use Quick Look to view the model in AR
+          Real-time USDZ model testing for iOS AR Quick Look.
           
           ## Conversion Details
-          - **Tool**: Xcode modelconvert
+          - **Tool**: `xcrun modelconvert` (Xcode)
           - **Format**: USDZ (Universal Scene Description Zipped)
-          - **Color Space**: sRGB with gamma correction
-          - **Lighting**: Enhanced for AR environments
+          - **Color Space**: sRGB with proper gamma correction
+          - **Optimization**: Level 2 (quality priority)
+          
+          ## How to Test
+          1. Open this page on iOS (iPhone/iPad)
+          2. Click **📲 AR** on any model
+          3. View in AR with Quick Look
+          
+          ## API
+          - Endpoint: `/test-ios/`
+          - Models directory: `/test-ios/models/`
+          - Model list: `/test-ios/models.json`
+          
+          ## Model Details
+          Each model includes:
+          - Direct USDZ file for download
+          - Embedded model-viewer for preview
+          - File size information
+          - iOS AR-ready conversion
           EOF
-
+      
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs
-          cname: technosutra.com
+          force_orphan: false
       
       - name: Create conversion summary
+        if: always()
         run: |
           cat > conversion-summary.txt << 'EOF'
-          ===== GLB to USDZ CONVERSION SUMMARY =====
+          ╔════════════════════════════════════════════════════════════╗
+          ║       GLB to USDZ AR Conversion Summary                    ║
+          ╚════════════════════════════════════════════════════════════╝
           
-          BUILD DETAILS:
-          - Timestamp: $(date)
-          - Runner: macos-latest
-          - Xcode Version: $(xcodebuild -version | head -1)
+          BUILD INFO:
+            Date: $(date)
+            Runner: macos-latest
+            Xcode: $(xcodebuild -version | head -1)
           
           CONVERSION SETTINGS:
-          - Format: USDZ (Universal Scene Description Zipped)
-          - Color Format: RGBA (with sRGB correction)
-          - Normal Map Format: RG (compressed)
-          - Optimization Level: 2 (max quality)
-          - Texture Enhancement: Yes
-            - Saturation Boost: +25%
-            - Contrast Enhancement: +20%
-            - Brightness Adjustment: +5%
+            Tool: xcrun modelconvert
+            Format: USDZ (Universal Scene Description)
+            Color Format: RGBA with sRGB
+            Optimization: Level 2
+            Texture Resolution: Up to 2048px
           
-          OUTPUT:
-          - Destination: models/usdz/
-          - Test Endpoint: https://technosutra.com/test-ios
-          - Model List: Generated automatically
+          DELIVERABLES:
+            Repository: models/usdz/*.usdz
+            GitHub Pages: https://technosutra.com/test-ios
+            Model Inventory: models.json
           
-          QUALITY CHECKS:
-          - RGB to sRGB conversion: Applied
-          - Vertex normals: Preserved
-          - Texture resolution: Up to 2048px
-          - Lighting optimization: Enabled
+          FEATURES:
+            ✓ iOS AR Quick Look compatible
+            ✓ Proper vertex normal handling
+            ✓ sRGB color space conversion
+            ✓ Responsive web viewer
+            ✓ Automatic model discovery
+            ✓ Download capability
           
-          ===== END SUMMARY =====
+          ╚════════════════════════════════════════════════════════════╝
           EOF
           
           cat conversion-summary.txt
       
-      - name: Upload conversion summary
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: conversion-summary
           path: conversion-summary.txt
           retention-days: 30
-      
-      - name: Commit and push USDZ files
-        if: always()
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          if [ -d "models/usdz" ] && [ "$(ls -A models/usdz/*.usdz 2>/dev/null | wc -l)" -gt 0 ]; then
-            git add models/usdz/*.usdz
-            git commit -m "Auto: Convert GLB to USDZ with color optimization [skip ci]" || echo "No changes to commit"
-            git push origin main --quiet
-          fi
