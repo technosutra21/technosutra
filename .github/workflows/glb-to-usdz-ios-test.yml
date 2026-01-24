@@ -36,7 +36,7 @@ jobs:
           if xcrun modelconvert --help 2>/dev/null; then
             echo "✓ xcrun modelconvert is available"
           else
-            echo "✗ xcrun modelconvert not available - conversion will fail"
+            echo "✗ xcrun modelconvert not available"
             exit 1
           fi
       
@@ -50,86 +50,43 @@ jobs:
           import zipfile
           
           def convert_glb_to_usdz(glb_file, output_dir):
-              """
-              Convert GLB to USDZ using Xcode's xcrun modelconvert tool
-              with proper color space and texture handling
-              """
               usdz_file = os.path.join(output_dir, Path(glb_file).stem + ".usdz")
-              
-              # Primary method: use xcrun directly (most reliable)
               cmd = [
-                  "xcrun",
-                  "modelconvert",
-                  glb_file,
-                  "-o", usdz_file,
-                  "-format", "usdz",
-                  "-optimizationLevel", "2"
+                  "xcrun", "modelconvert",
+                  glb_file, "-o", usdz_file,
+                  "-format", "usdz", "-optimizationLevel", "2"
               ]
               
-              print(f"\n{'='*60}")
-              print(f"Converting: {glb_file}")
-              print(f"Output: {usdz_file}")
-              print(f"{'='*60}")
-              
+              print(f"\nConverting: {glb_file}")
               try:
                   result = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
-                  
-                  if result.returncode == 0:
-                      # Verify file was created
-                      if not os.path.exists(usdz_file):
-                          print(f"✗ USDZ file not created despite exit code 0")
-                          return None
-                      
-                      file_size = os.path.getsize(usdz_file) / (1024 * 1024)
-                      print(f"✓ Success: {usdz_file} ({file_size:.2f} MB)")
+                  if result.returncode == 0 and os.path.exists(usdz_file):
+                      size = os.path.getsize(usdz_file) / (1024 * 1024)
+                      print(f"✓ Success: {size:.2f} MB")
                       return usdz_file
                   else:
-                      print(f"✗ Error converting {glb_file}:")
-                      print(f"  STDERR: {result.stderr}")
-                      print(f"  STDOUT: {result.stdout}")
+                      print(f"✗ Error: {result.stderr}")
                       return None
-              except subprocess.TimeoutExpired:
-                  print(f"✗ Timeout converting {glb_file} (exceeded 180s)")
-                  return None
               except Exception as e:
-                  print(f"✗ Exception: {type(e).__name__}: {e}")
+                  print(f"✗ Exception: {e}")
                   return None
           
           def validate_usdz(usdz_file):
-              """
-              Validate that USDZ file is valid (is a proper zip archive with USD content)
-              Returns True only if valid, False if corrupted or missing USD
-              """
               try:
                   if not zipfile.is_zipfile(usdz_file):
-                      print(f"✗ Not a valid ZIP file: {usdz_file}")
+                      print(f"✗ Not a valid ZIP file")
                       return False
                   
                   with zipfile.ZipFile(usdz_file, 'r') as zf:
-                      file_list = zf.namelist()
-                      
-                      # Check for required USD files
-                      has_usd = any(f.endswith('.usda') or f.endswith('.usdc') for f in file_list)
-                      
+                      files = zf.namelist()
+                      has_usd = any(f.endswith(('.usda', '.usdc')) for f in files)
                       if not has_usd:
-                          print(f"✗ Invalid USDZ: no USD files found in archive")
-                          print(f"  Contents: {file_list[:5]}")
+                          print(f"✗ No USD files found in archive")
                           return False
-                      
-                      # Test archive integrity
-                      try:
-                          zf.testzip()
-                      except Exception as e:
-                          print(f"✗ USDZ archive is corrupted: {e}")
-                          return False
-                      
+                      zf.testzip()
                       return True
-                      
-              except zipfile.BadZipFile:
-                  print(f"✗ Invalid USDZ file (bad ZIP): {usdz_file}")
-                  return False
               except Exception as e:
-                  print(f"✗ Could not validate {usdz_file}: {type(e).__name__}: {e}")
+                  print(f"✗ Validation error: {e}")
                   return False
           
           if __name__ == "__main__":
@@ -144,26 +101,15 @@ jobs:
                   print(f"✗ GLB file not found: {glb_file}")
                   sys.exit(1)
               
-              if not os.path.isfile(glb_file):
-                  print(f"✗ Not a file: {glb_file}")
-                  sys.exit(1)
-              
               os.makedirs(output_dir, exist_ok=True)
-              
               usdz_file = convert_glb_to_usdz(glb_file, output_dir)
               
-              if not usdz_file:
-                  print(f"✗ Failed to create USDZ file for {glb_file}")
+              if not usdz_file or not os.path.exists(usdz_file):
+                  print(f"✗ Failed to create USDZ")
                   sys.exit(1)
               
-              if not os.path.exists(usdz_file):
-                  print(f"✗ USDZ file does not exist: {usdz_file}")
-                  sys.exit(1)
-              
-              print(f"\n✓ Validating {os.path.basename(usdz_file)}...")
+              print(f"Validating...")
               if not validate_usdz(usdz_file):
-                  print(f"✗ Validation failed - file is corrupted or invalid")
-                  # Remove corrupted file
                   try:
                       os.remove(usdz_file)
                   except:
@@ -171,106 +117,64 @@ jobs:
                   sys.exit(1)
               
               print("✓ Validation passed")
-              sys.exit(0)
           EOF
       
       - name: Convert GLB files to USDZ
         id: convert
         run: |
-          set -e  # Exit on first error
-          
+          set -e
           mkdir -p models/usdz
           
           if [ -n "${{ github.event.inputs.single_model }}" ]; then
-            # Convert only specified model
             GLB_FILE="models/${{ github.event.inputs.single_model }}"
             if [ ! -f "$GLB_FILE" ]; then
               echo "❌ Model not found: $GLB_FILE"
               exit 1
             fi
-            echo "🎬 Converting single model: $GLB_FILE"
             python3 /tmp/enhance_usdz.py "$GLB_FILE" "models/usdz"
           else
-            # Convert all GLB files
-            echo "🎬 Converting all GLB files in models/ directory..."
+            echo "🎬 Converting all GLB files..."
             glb_files=$(find models -maxdepth 1 -name "*.glb" | sort)
-            
-            if [ -z "$glb_files" ]; then
-              echo "❌ No GLB files found in models/ directory"
-              exit 1
-            fi
+            [ -z "$glb_files" ] && { echo "❌ No GLB files found"; exit 1; }
             
             glb_count=$(echo "$glb_files" | wc -l)
-            failed_count=0
-            success_count=0
+            failed=0
+            success=0
             
             while IFS= read -r glb_file; do
               if python3 /tmp/enhance_usdz.py "$glb_file" "models/usdz"; then
-                success_count=$((success_count + 1))
+                success=$((success + 1))
               else
-                failed_count=$((failed_count + 1))
-                echo "⚠️  Failed to convert: $glb_file"
+                failed=$((failed + 1))
               fi
             done <<< "$glb_files"
             
-            echo ""
-            echo "📊 Conversion Summary:"
-            echo "   Total GLB files: $glb_count"
-            echo "   Successful: $success_count"
-            echo "   Failed: $failed_count"
-            
-            if [ $failed_count -gt 0 ]; then
-              echo ""
-              echo "❌ Some conversions failed ($failed_count/$glb_count)"
-              exit 1
-            fi
+            echo "📊 Total: $glb_count | Success: $success | Failed: $failed"
+            [ $failed -gt 0 ] && { echo "❌ Some conversions failed"; exit 1; }
           fi
       
       - name: Verify USDZ conversion output
         id: conversion-check
         run: |
           set -e
-          
-          echo "📦 USDZ Conversion Report:"
-          echo "================================"
-          
           usdz_count=$(find models/usdz -name "*.usdz" 2>/dev/null | wc -l)
+          [ $usdz_count -eq 0 ] && { echo "❌ No USDZ files created"; exit 1; }
           
-          if [ $usdz_count -eq 0 ]; then
-            echo "❌ No USDZ files created!"
-            exit 1
-          fi
-          
-          echo "✓ USDZ files created: $usdz_count"
-          
-          echo ""
-          echo "File sizes:"
+          echo "✓ Created: $usdz_count USDZ files"
           ls -lh models/usdz/*.usdz | awk '{printf "  %-40s %8s\n", $9, $5}'
           
-          echo ""
-          total_size=$(du -sh models/usdz | awk '{print $1}')
-          echo "📊 Total directory size: $total_size"
-          
-          # Set outputs for deploy step
           echo "success=true" >> $GITHUB_OUTPUT
           echo "count=$usdz_count" >> $GITHUB_OUTPUT
       
       - name: Create docs directory structure
         run: |
           set -e
-          
           mkdir -p docs/test-ios/models
           
-          if [ -d "models/usdz" ] && [ "$(find models/usdz -name "*.usdz" | wc -l)" -gt 0 ]; then
-            echo "📂 Copying USDZ files to docs/test-ios/models/"
-            cp models/usdz/*.usdz docs/test-ios/models/
-            echo "✓ Copied $(ls models/usdz/*.usdz | wc -l) USDZ files"
-          else
-            echo "❌ No USDZ files to copy"
-            exit 1
-          fi
+          usdz_count=$(find models/usdz -name "*.usdz" 2>/dev/null | wc -l)
+          [ $usdz_count -eq 0 ] && { echo "❌ No USDZ files"; exit 1; }
           
-          # Create .nojekyll to prevent Jekyll processing
+          cp models/usdz/*.usdz docs/test-ios/models/
           touch docs/.nojekyll
           touch docs/test-ios/.nojekyll
       
@@ -278,76 +182,34 @@ jobs:
         run: |
           set -e
           
-          cat > /tmp/gen_models_json.py << 'PYSCRIPT'
+          python3 << 'PYSCRIPT'
           import json
           import os
           from pathlib import Path
-          import sys
           
-          # Read from deployment location
           models_dir = "docs/test-ios/models"
           models = []
           
-          if not os.path.exists(models_dir):
-              print(f"❌ Models directory not found: {models_dir}")
-              sys.exit(1)
+          for usdz_file in sorted(os.listdir(models_dir)):
+              if usdz_file.endswith('.usdz'):
+                  size_mb = os.path.getsize(os.path.join(models_dir, usdz_file)) / (1024 * 1024)
+                  models.append({
+                      "name": Path(usdz_file).stem,
+                      "file": usdz_file,
+                      "size_mb": round(size_mb, 2),
+                      "path": f"./models/{usdz_file}"
+                  })
           
-          usdz_files = sorted([f for f in os.listdir(models_dir) if f.endswith('.usdz')])
+          output = "docs/test-ios/models.json"
+          with open(output, 'w') as f:
+              json.dump({"models": models, "count": len(models), "generated": True}, f, indent=2)
           
-          if not usdz_files:
-              print(f"❌ No USDZ files found in {models_dir}")
-              sys.exit(1)
-          
-          for usdz_file in usdz_files:
-              file_path = os.path.join(models_dir, usdz_file)
-              
-              try:
-                  size_mb = os.path.getsize(file_path) / (1024 * 1024)
-              except OSError as e:
-                  print(f"⚠️  Could not get size for {usdz_file}: {e}")
-                  continue
-              
-              models.append({
-                  "name": Path(usdz_file).stem,
-                  "file": usdz_file,
-                  "size_mb": round(size_mb, 2),
-                  "path": f"./models/{usdz_file}"
-              })
-          
-          # Validate model list
-          if not models:
-              print(f"❌ No valid models to list")
-              sys.exit(1)
-          
-          # Write to test-ios directory
-          output_path = "docs/test-ios/models.json"
-          try:
-              with open(output_path, 'w') as f:
-                  json.dump({
-                      "models": models,
-                      "count": len(models),
-                      "generated": True
-                  }, f, indent=2)
-              print(f"✓ Generated {output_path} with {len(models)} models")
-          except IOError as e:
-              print(f"❌ Failed to write {output_path}: {e}")
-              sys.exit(1)
-          
-          # Validate JSON integrity
-          try:
-              with open(output_path, 'r') as f:
-                  test_json = json.load(f)
-              print(f"✓ JSON validation passed")
-          except json.JSONDecodeError as e:
-              print(f"❌ Generated JSON is invalid: {e}")
-              sys.exit(1)
+          print(f"✓ Generated {output} with {len(models)} models")
           PYSCRIPT
-          
-          python3 /tmp/gen_models_json.py || exit 1
       
       - name: Create test-ios HTML viewer
         run: |
-          cat > docs/test-ios/index.html << 'EOF'
+          cat > docs/test-ios/index.html << 'HTMLEOF'
           <!DOCTYPE html>
           <html lang="pt-BR">
           <head>
@@ -356,235 +218,61 @@ jobs:
               <title>Techno Sutra - iOS AR Test Viewer</title>
               <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer/dist/model-viewer.min.js"></script>
               <style>
-                  * {
-                      margin: 0;
-                      padding: 0;
-                      box-sizing: border-box;
-                  }
-                  
-                  body {
-                      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                      min-height: 100vh;
-                      padding: 20px;
-                  }
-                  
-                  .container {
-                      max-width: 1200px;
-                      margin: 0 auto;
-                  }
-                  
-                  header {
-                      text-align: center;
-                      color: white;
-                      margin-bottom: 40px;
-                  }
-                  
-                  h1 {
-                      font-size: 2.5em;
-                      margin-bottom: 10px;
-                      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-                  }
-                  
-                  .subtitle {
-                      font-size: 1.1em;
-                      opacity: 0.9;
-                  }
-                  
-                  .grid {
-                      display: grid;
-                      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-                      gap: 30px;
-                  }
-                  
-                  .model-card {
-                      background: white;
-                      border-radius: 12px;
-                      overflow: hidden;
-                      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-                      transition: transform 0.3s ease, box-shadow 0.3s ease;
-                  }
-                  
-                  .model-card:hover {
-                      transform: translateY(-5px);
-                      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-                  }
-                  
-                  .model-viewer-container {
-                      width: 100%;
-                      height: 400px;
-                      background: #f5f5f5;
-                  }
-                  
-                  model-viewer {
-                      width: 100%;
-                      height: 100%;
-                      --progress-bar-height: 4px;
-                      --progress-mask: linear-gradient(to right, #667eea, #764ba2);
-                  }
-                  
-                  .model-info {
-                      padding: 20px;
-                  }
-                  
-                  .model-name {
-                      font-size: 1.2em;
-                      font-weight: 600;
-                      color: #333;
-                      margin-bottom: 10px;
-                  }
-                  
-                  .model-details {
-                      font-size: 0.9em;
-                      color: #666;
-                      margin-bottom: 15px;
-                      line-height: 1.6;
-                  }
-                  
-                  .model-details span {
-                      display: block;
-                  }
-                  
-                  .button-group {
-                      display: flex;
-                      gap: 10px;
-                      flex-wrap: wrap;
-                  }
-                  
-                  button, a.btn {
-                      flex: 1;
-                      min-width: 120px;
-                      padding: 12px;
-                      border: none;
-                      border-radius: 6px;
-                      font-weight: 600;
-                      cursor: pointer;
-                      transition: all 0.2s ease;
-                      text-decoration: none;
-                      text-align: center;
-                      display: inline-flex;
-                      align-items: center;
-                      justify-content: center;
-                      gap: 8px;
-                  }
-                  
-                  .btn-ar {
-                      background: linear-gradient(135deg, #667eea, #764ba2);
-                      color: white;
-                  }
-                  
-                  .btn-ar:hover {
-                      transform: scale(1.05);
-                      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-                  }
-                  
-                  .btn-download {
-                      background: #f0f0f0;
-                      color: #333;
-                      border: 2px solid #ddd;
-                  }
-                  
-                  .btn-download:hover {
-                      background: #e0e0e0;
-                      border-color: #999;
-                  }
-                  
-                  .stats {
-                      background: rgba(255,255,255,0.1);
-                      backdrop-filter: blur(10px);
-                      padding: 20px;
-                      border-radius: 12px;
-                      color: white;
-                      margin-bottom: 40px;
-                      text-align: center;
-                  }
-                  
-                  .stats-item {
-                      display: inline-block;
-                      margin: 0 30px;
-                  }
-                  
-                  .stats-number {
-                      font-size: 2em;
-                      font-weight: bold;
-                      color: #ffd700;
-                  }
-                  
-                  .stats-label {
-                      font-size: 0.9em;
-                      opacity: 0.9;
-                  }
-                  
-                  .conversion-info {
-                      background: #e8f5e9;
-                      border-left: 4px solid #4caf50;
-                      padding: 15px;
-                      border-radius: 4px;
-                      margin-bottom: 20px;
-                      color: #2e7d32;
-                  }
-                  
-                  .error-banner {
-                      background: #ffebee;
-                      border-left: 4px solid #d32f2f;
-                      padding: 15px;
-                      border-radius: 4px;
-                      margin-bottom: 20px;
-                      color: #c62828;
-                  }
-                  
-                  .loading {
-                      text-align: center;
-                      padding: 40px;
-                      color: #666;
-                  }
-                  
-                  @media (max-width: 768px) {
-                      .grid {
-                          grid-template-columns: 1fr;
-                      }
-                      h1 {
-                          font-size: 1.8em;
-                      }
-                      .stats-item {
-                          display: block;
-                          margin: 10px 0;
-                      }
-                  }
+                  * { margin: 0; padding: 0; box-sizing: border-box; }
+                  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+                  .container { max-width: 1200px; margin: 0 auto; }
+                  header { text-align: center; color: white; margin-bottom: 40px; }
+                  h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+                  .subtitle { font-size: 1.1em; opacity: 0.9; }
+                  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; }
+                  .model-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: transform 0.3s ease; }
+                  .model-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.3); }
+                  .model-viewer-container { width: 100%; height: 400px; background: #f5f5f5; }
+                  model-viewer { width: 100%; height: 100%; }
+                  .model-info { padding: 20px; }
+                  .model-name { font-size: 1.2em; font-weight: 600; color: #333; margin-bottom: 10px; }
+                  .model-details { font-size: 0.9em; color: #666; margin-bottom: 15px; }
+                  .model-details span { display: block; }
+                  .button-group { display: flex; gap: 10px; }
+                  button, a.btn { flex: 1; padding: 12px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; text-decoration: none; text-align: center; }
+                  .btn-ar { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+                  .btn-ar:hover { transform: scale(1.05); }
+                  .btn-download { background: #f0f0f0; color: #333; border: 2px solid #ddd; }
+                  .btn-download:hover { background: #e0e0e0; }
+                  .stats { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 20px; border-radius: 12px; color: white; margin-bottom: 40px; text-align: center; }
+                  .stats-item { display: inline-block; margin: 0 30px; }
+                  .stats-number { font-size: 2em; font-weight: bold; color: #ffd700; }
+                  .conversion-info { background: #e8f5e9; border-left: 4px solid #4caf50; padding: 15px; margin-bottom: 20px; color: #2e7d32; }
+                  .loading { text-align: center; padding: 40px; }
+                  @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } h1 { font-size: 1.8em; } }
               </style>
           </head>
           <body>
               <div class="container">
                   <header>
                       <h1>🌟 Techno Sutra AR Viewer</h1>
-                      <p class="subtitle">iOS AR Test - USDZ Models via Xcode</p>
+                      <p class="subtitle">iOS AR Test - USDZ Models</p>
                   </header>
                   
                   <div class="conversion-info">
                       ✓ Models converted via xcrun modelconvert<br>
                       ✓ Optimized for iOS AR Quick Look<br>
-                      ✓ sRGB color space with proper lighting
+                      ✓ sRGB color space
                   </div>
-                  
-                  <div id="errorBanner" style="display:none;" class="error-banner"></div>
                   
                   <div class="stats">
                       <div class="stats-item">
                           <div class="stats-number" id="modelCount">-</div>
-                          <div class="stats-label">Models Available</div>
+                          <div class="stats-label">Models</div>
                       </div>
                       <div class="stats-item">
                           <div class="stats-number" id="totalSize">-</div>
                           <div class="stats-label">Total Size</div>
                       </div>
-                      <div class="stats-item">
-                          <div class="stats-number">✓</div>
-                          <div class="stats-label">Conversion OK</div>
-                      </div>
                   </div>
                   
                   <div id="modelGrid" class="grid">
-                      <div class="loading">Loading model list...</div>
+                      <div class="loading">Loading models...</div>
                   </div>
               </div>
               
@@ -592,55 +280,26 @@ jobs:
                   async function loadModels() {
                       try {
                           const response = await fetch('./models.json');
-                          
-                          if (!response.ok) {
-                              throw new Error(`HTTP ${response.status}: models.json not found`);
-                          }
-                          
                           const data = await response.json();
                           
-                          if (!data || !data.models || data.models.length === 0) {
-                              showError('No models found in models.json');
-                              return;
-                          }
-                          
-                          if (!Array.isArray(data.models)) {
-                              showError('Invalid models.json format');
+                          if (!data.models || data.models.length === 0) {
+                              document.getElementById('modelGrid').innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 40px;">No models found</p>';
                               return;
                           }
                           
                           await renderModels(data.models);
                       } catch (error) {
-                          console.error('Error loading models:', error);
-                          showError(`Failed to load models: ${error.message}`);
+                          console.error('Error:', error);
+                          document.getElementById('modelGrid').innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 40px; color: red;">Error loading models</p>';
                       }
-                  }
-                  
-                  function showError(message) {
-                      const errorBanner = document.getElementById('errorBanner');
-                      errorBanner.textContent = `⚠️ ${message}`;
-                      errorBanner.style.display = 'block';
-                      
-                      document.getElementById('modelGrid').innerHTML = 
-                          `<p style="grid-column: 1/-1; text-align: center; padding: 40px; color: #d32f2f;">${message}</p>`;
                   }
                   
                   async function renderModels(models) {
                       const grid = document.getElementById('modelGrid');
                       let totalSize = 0;
-                      let validModels = 0;
                       
                       const html = models.map(model => {
-                          // Validate model object
-                          if (!model.name || !model.path || model.size_mb === undefined) {
-                              console.warn('Invalid model object:', model);
-                              return '';
-                          }
-                          
-                          const modelName = model.name.replace(/-/g, ' ');
                           totalSize += model.size_mb;
-                          validModels++;
-                          
                           return `
                               <div class="model-card">
                                   <div class="model-viewer-container">
@@ -658,145 +317,78 @@ jobs:
                                       </model-viewer>
                                   </div>
                                   <div class="model-info">
-                                      <div class="model-name">${escapeHtml(modelName)}</div>
+                                      <div class="model-name">${model.name}</div>
                                       <div class="model-details">
                                           <span>📦 ${model.size_mb} MB</span>
-                                          <span>🎨 USDZ (Xcode)</span>
                                           <span>✓ iOS AR Ready</span>
                                       </div>
                                       <div class="button-group">
                                           <button class="btn-ar" onclick="launchAR(event)">📲 AR</button>
-                                          <a href="${model.path}" download="${model.file}" class="btn-download btn">⬇️ Download</a>
+                                          <a href="${model.path}" download class="btn-download">⬇️ Download</a>
                                       </div>
                                   </div>
                               </div>
                           `;
-                      }).filter(html => html.length > 0).join('');
-                      
-                      if (validModels === 0) {
-                          showError('No valid models found');
-                          return;
-                      }
+                      }).join('');
                       
                       grid.innerHTML = html;
-                      document.getElementById('modelCount').textContent = validModels;
+                      document.getElementById('modelCount').textContent = models.length;
                       document.getElementById('totalSize').textContent = totalSize.toFixed(1) + ' MB';
                   }
                   
                   function launchAR(event) {
-                      event.preventDefault();
                       const modelViewer = event.target.closest('.model-card').querySelector('model-viewer');
-                      if (modelViewer && modelViewer.activateAR) {
-                          modelViewer.activateAR();
-                      } else {
-                          alert('AR not available on this device');
-                      }
-                  }
-                  
-                  function escapeHtml(text) {
-                      const div = document.createElement('div');
-                      div.textContent = text;
-                      return div.innerHTML;
+                      if (modelViewer) modelViewer.activateAR();
                   }
                   
                   loadModels();
               </script>
           </body>
           </html>
-          EOF
+          HTMLEOF
       
       - name: Create README for test-ios
         run: |
-          cat > docs/test-ios/README.md << 'EOF'
+          cat > docs/test-ios/README.md << 'MDEOF'
           # iOS AR Test Viewer
           
-          Real-time USDZ model testing for iOS AR Quick Look.
+          USDZ model testing for iOS AR Quick Look.
           
-          ## Conversion Details
-          - **Tool**: `xcrun modelconvert` (Xcode)
-          - **Format**: USDZ (Universal Scene Description Zipped)
-          - **Color Space**: sRGB with proper gamma correction
-          - **Optimization**: Level 2 (quality priority)
-          - **Validation**: Full ZIP integrity + USD content verification
+          ## Conversion
+          - Tool: xcrun modelconvert (Xcode)
+          - Format: USDZ (Universal Scene Description)
+          - Optimization: Level 2
           
           ## How to Test
-          1. Open this page on iOS (iPhone/iPad)
-          2. Click **📲 AR** on any model
-          3. View in AR with Quick Look
+          1. Open on iOS (iPhone/iPad)
+          2. Click "📲 AR" on any model
+          3. View in AR
           
           ## API
           - Endpoint: `/test-ios/`
-          - Models directory: `/test-ios/models/`
-          - Model list: `/test-ios/models.json`
-          
-          ## Endpoint Spec
-          
-          ### GET /test-ios/models.json
-          
-          Returns inventory of available USDZ models:
-          ```json
-          {
-            "models": [
-              {
-                "name": "modelo1",
-                "file": "modelo1.usdz",
-                "size_mb": 3.5,
-                "path": "./models/modelo1.usdz"
-              }
-            ],
-            "count": 1,
-            "generated": true
-          }
-          ```
-          
-          ### GET /test-ios/models/{filename}.usdz
-          
-          Direct USDZ file download for iOS AR integration.
-          EOF
+          - Models: `/test-ios/models/`
+          - Inventory: `/test-ios/models.json`
+          MDEOF
       
-      - name: Commit USDZ files (only if conversion successful)
+      - name: Commit USDZ files (only if successful)
         if: steps.conversion-check.outputs.success == 'true'
         run: |
-          set -e
-          
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          usdz_count=${{ steps.conversion-check.outputs.usdz_count }}
-          
-          # Check if there are actual changes
           if git status --porcelain models/usdz/*.usdz 2>/dev/null | grep -q .; then
-            echo "📝 Staging $usdz_count USDZ files for commit..."
             git add models/usdz/*.usdz
-            
-            # Create commit with detailed message
-            git commit -m "ci: convert $usdz_count GLB models to USDZ via xcrun modelconvert
-
-- Tool: xcrun modelconvert (Xcode)
-- Format: USDZ (Universal Scene Description)
-- Optimization: Level 2
-- Validation: Full ZIP integrity + USD content verification
-- Auto-committed by: GLB to USDZ AR Converter GitHub Action
-
-[skip ci]"
-            
-            echo "✓ Committed USDZ files"
-          else
-            echo "ℹ No changes to commit (files already up-to-date)"
+            git commit -m "ci: convert GLB to USDZ via xcrun modelconvert [skip ci]" || true
           fi
       
-      - name: Push commits (only if conversion successful)
+      - name: Push commits (only if successful)
         if: steps.conversion-check.outputs.success == 'true'
         run: |
           if git status --short | grep -q .; then
-            echo "📤 Pushing commits to master branch..."
             git push origin master --quiet
-            echo "✓ Pushed commits successfully"
-          else
-            echo "ℹ No commits to push"
           fi
       
-      - name: Deploy to GitHub Pages (only if conversion successful)
+      - name: Deploy to GitHub Pages (only if successful)
         if: steps.conversion-check.outputs.success == 'true'
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -807,7 +399,7 @@ jobs:
       - name: Create conversion summary
         if: always()
         run: |
-          cat > conversion-summary.txt << 'EOF'
+          cat > conversion-summary.txt << 'SUMMEOF'
           ╔════════════════════════════════════════════════════════════╗
           ║       GLB to USDZ AR Conversion Summary                    ║
           ╚════════════════════════════════════════════════════════════╝
@@ -815,41 +407,28 @@ jobs:
           BUILD INFO:
             Date: $(date)
             Runner: macos-latest
-            Xcode: $(xcodebuild -version | head -1)
-            Workflow: ${{ github.workflow }}
-            Run ID: ${{ github.run_id }}
-          
-          CONVERSION RESULTS:
             Status: ${{ steps.conversion-check.outputs.success || 'FAILED' }}
             USDZ Count: ${{ steps.conversion-check.outputs.count || 'N/A' }}
           
           CONVERSION SETTINGS:
             Tool: xcrun modelconvert
             Format: USDZ (Universal Scene Description)
-            Color Format: RGBA with sRGB
             Optimization: Level 2
-            Texture Resolution: Up to 2048px
-            Validation: ZIP integrity + USD content
           
           DELIVERABLES:
             Repository: models/usdz/*.usdz
-            GitHub Pages: https://technosutra.com/test-ios
+            GitHub Pages: /test-ios
             Model Inventory: models.json
-            Viewer: index.html
           
           FEATURES:
             ✓ iOS AR Quick Look compatible
-            ✓ Proper vertex normal handling
             ✓ sRGB color space conversion
             ✓ Responsive web viewer
-            ✓ Automatic model discovery
-            ✓ Download capability
             ✓ Full validation pipeline
             ✓ Conditional deployment
           
           ╚════════════════════════════════════════════════════════════╝
-          EOF
-          
+          SUMMEOF
           cat conversion-summary.txt
       
       - name: Upload build artifacts
