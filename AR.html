@@ -286,9 +286,11 @@
         touch-action="pan-y"
         ar-scale="auto"
         auto-rotate
-        reveal="auto">
+        reveal="auto"
+        loading="lazy"
+        intersection-observer>
 
-        <button slot="ar-button" class="btn ar-btn">📲 Abrir em AR</button>
+        <button slot="ar-button" class="btn ar-btn" id="arBtn">📲 Abrir em AR</button>
 
     </model-viewer>
     
@@ -305,6 +307,14 @@
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
     
     <script>
+        // Redirect iOS users to optimized iOS AR page
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) {
+            const params = new URLSearchParams(location.search);
+            const model = params.get('model') || '1';
+            window.location.href = `ios-ar.html?model=${model}`;
+        }
+        
         // Global variables
         let currentModel = 1;
         const totalModels = 56;
@@ -329,10 +339,27 @@
         
         // Load model
         function loadModel(modelId) {
-            const glbPath = `models/modelo${modelId}.glb`;
+            // Use USDZ directly for iOS AR Quick Look compatibility
+            // Falls back to GLB for web viewer
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const modelName = `modelo${modelId}`;
             
-            // Update model viewer (model-viewer auto-converts GLB to USDZ for iOS)
-            modelViewer.setAttribute('src', glbPath);
+            let modelPath;
+            if (isIOS) {
+                // Try USDZ first (from GitHub Pages deployment)
+                modelPath = `https://technosutra21.github.io/test-ios/models/${modelName}.usdz`;
+            } else {
+                // Use GLB for web browsers
+                modelPath = `models/${modelName}.glb`;
+            }
+            
+            // Update model viewer
+            modelViewer.setAttribute('src', modelPath);
+            
+            // Set iOS-specific attributes
+            if (isIOS) {
+                modelViewer.setAttribute('ios-src', modelPath);
+            }
             
             // Update URL
             const newUrl = `${window.location.pathname}?model=${modelId}`;
@@ -401,7 +428,14 @@
         modelViewer.addEventListener('error', (e) => {
             console.error('Model loading error:', e);
             
-            if (currentModel !== 1) {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            
+            if (isIOS && modelViewer.src?.includes('.usdz')) {
+                // If USDZ failed, try GLB fallback
+                console.warn('USDZ loading failed, falling back to GLB');
+                const modelId = currentModel;
+                modelViewer.setAttribute('src', `models/modelo${modelId}.glb`);
+            } else if (currentModel !== 1) {
                 error.classList.add('show');
                 setTimeout(() => {
                     window.location.href = `${window.location.pathname}?model=1`;

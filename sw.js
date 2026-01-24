@@ -10,6 +10,7 @@ const CORE_ASSETS = [
     '/',
     '/index.html',
     '/AR.html',
+    '/ios-ar.html',
     '/galeria.html',
     '/map.html',
     '/home.html',
