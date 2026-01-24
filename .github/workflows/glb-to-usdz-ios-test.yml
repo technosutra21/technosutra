@@ -33,9 +33,7 @@ jobs:
       - name: Install USDZ conversion tools
         run: |
           npm install -g @gltf-transform/core @gltf-transform/extensions @gltf-transform/functions
-          npm install -g usdz-writer
-          
-          echo "📦 Checking available tools..."
+          echo "✓ gltf-transform installed"
           node -e "console.log('Node.js:', process.version)"
       
       - name: Create Python conversion utility
@@ -46,82 +44,6 @@ jobs:
           import subprocess
           from pathlib import Path
           import zipfile
-          import json
-          
-          def convert_glb_to_usdz_nodejs(glb_file, output_dir):
-              """Convert GLB to USDZ using Node.js gltf-transform + usdz-writer"""
-              usdz_file = os.path.join(output_dir, Path(glb_file).stem + ".usdz")
-              
-              # Node.js conversion script
-              node_script = f"""
-              const {{ glob }} = require("@gltf-transform/core");
-              const fs = require("fs");
-              const path = require("path");
-              
-              async function convert() {{
-                  try {{
-                      const document = await glob.load("{glb_file}");
-                      const {{ RGBA, Linear }} = require("@gltf-transform/core");
-                      
-                      // Ensure proper color space
-                      document.createNode()
-                          .setExtension("KHR_materials_variants", true);
-                      
-                      // Export USDZ
-                      const usdzData = await new (require("usdz-writer")).Writer().write(document);
-                      fs.writeFileSync("{usdz_file}", usdzData);
-                      
-                      console.log("✓ Converted successfully");
-                      process.exit(0);
-                  }} catch (e) {{
-                      console.error("✗ Error:", e.message);
-                      process.exit(1);
-                  }}
-              }}
-              convert();
-              """
-              
-              try:
-                  result = subprocess.run(
-                      ["node", "-e", node_script],
-                      capture_output=True,
-                      text=True,
-                      timeout=180
-                  )
-                  
-                  if result.returncode == 0 and os.path.exists(usdz_file):
-                      size = os.path.getsize(usdz_file) / (1024 * 1024)
-                      print(f"✓ Success: {size:.2f} MB")
-                      return usdz_file
-                  else:
-                      print(f"✗ Node.js conversion failed: {result.stderr}")
-                      return None
-              except Exception as e:
-                  print(f"✗ Exception: {e}")
-                  return None
-          
-          def convert_glb_to_usdz_python(glb_file, output_dir):
-              """Fallback: GLB to USDZ using Python Pillow + USD library"""
-              usdz_file = os.path.join(output_dir, Path(glb_file).stem + ".usdz")
-              
-              try:
-                  # Try using pxr (Pixar USD library) if available
-                  from pxr import Usd, Gf
-                  
-                  # Load GLB and convert to USDZ
-                  stage = Usd.Stage.Open(glb_file)
-                  if stage:
-                      stage.Export(usdz_file)
-                      size = os.path.getsize(usdz_file) / (1024 * 1024)
-                      print(f"✓ Success (pxr): {size:.2f} MB")
-                      return usdz_file
-              except ImportError:
-                  pass
-              except Exception as e:
-                  print(f"⚠ pxr fallback failed: {e}")
-              
-              print(f"✗ No conversion method available")
-              return None
           
           def validate_usdz(usdz_file):
               """Validate USDZ file integrity"""
@@ -155,21 +77,27 @@ jobs:
                   sys.exit(1)
               
               os.makedirs(output_dir, exist_ok=True)
+              usdz_file = os.path.join(output_dir, Path(glb_file).stem + ".usdz")
               
-              print(f"\nConverting: {glb_file}")
+              print(f"Converting: {glb_file}")
               
-              # Try Node.js first
-              usdz_file = convert_glb_to_usdz_nodejs(glb_file, output_dir)
+              # Run Node.js converter
+              result = subprocess.run(
+                  ["node", "/tmp/convert.js", glb_file, usdz_file],
+                  capture_output=True,
+                  text=True,
+                  timeout=180
+              )
               
-              # Fallback to Python/pxr
-              if not usdz_file:
-                  usdz_file = convert_glb_to_usdz_python(glb_file, output_dir)
-              
-              if not usdz_file or not os.path.exists(usdz_file):
-                  print(f"✗ Failed to create USDZ")
+              if result.returncode != 0:
+                  print(f"✗ Conversion failed: {result.stderr}")
                   sys.exit(1)
               
-              print(f"Validating...")
+              if not os.path.exists(usdz_file):
+                  print(f"✗ USDZ file not created")
+                  sys.exit(1)
+              
+              print("Validating...")
               if not validate_usdz(usdz_file):
                   try:
                       os.remove(usdz_file)
@@ -177,45 +105,46 @@ jobs:
                       pass
                   sys.exit(1)
               
-              print("✓ Validation passed")
-          EOF
-      
-      - name: Create simpler fallback converter (Node.js direct)
-        run: |
-          cat > /tmp/convert.js << 'EOF'
-          const fs = require('fs');
-          const path = require('path');
-          const { GLTFLoader } = require('three/examples/jsm/loaders/GLTFLoader.js');
-          const { USDZExporter } = require('three/examples/jsm/exporters/USDZExporter.js');
-          const THREE = require('three');
-          
-          async function convert(glbFile, outputFile) {
-              try {
-                  const loader = new GLTFLoader();
-                  const gltf = await new Promise((resolve, reject) => {
-                      loader.load(glbFile, resolve, undefined, reject);
-                  });
-                  
-                  const exporter = new USDZExporter();
-                  const usdz = await exporter.parse(gltf.scene);
-                  fs.writeFileSync(outputFile, usdz);
-                  
-                  const size = (fs.statSync(outputFile).size / (1024 * 1024)).toFixed(2);
-                  console.log(`✓ Converted: ${size} MB`);
-              } catch (e) {
-                  console.error('✗ Error:', e.message);
-                  process.exit(1);
-              }
-          }
-          
-          const glbFile = process.argv[2];
-          const outputFile = process.argv[3];
-          convert(glbFile, outputFile);
+              size = os.path.getsize(usdz_file) / (1024 * 1024)
+              print(f"✓ Success: {size:.2f} MB")
           EOF
       
       - name: Install three.js for conversion
         run: |
           npm install three@latest
+      
+      - name: Create Node.js converter
+        run: |
+          cat > /tmp/convert.js << 'EOF'
+          const fs = require('fs');
+          const path = require('path');
+          const THREE = require('three');
+          const { GLTFLoader } = require('three/examples/jsm/loaders/GLTFLoader.js');
+          const { USDZExporter } = require('three/examples/jsm/exporters/USDZExporter.js');
+          
+          async function convert(glbFile, outputFile) {
+              try {
+                  const glbData = fs.readFileSync(glbFile);
+                  const loader = new GLTFLoader();
+                  
+                  const gltf = await new Promise((resolve, reject) => {
+                      loader.parse(glbData, path.dirname(glbFile), resolve, reject);
+                  });
+                  
+                  const scene = gltf.scene;
+                  const exporter = new USDZExporter();
+                  const usdz = await exporter.parse(scene);
+                  
+                  fs.writeFileSync(outputFile, usdz);
+                  console.log(`✓ Converted: ${(fs.statSync(outputFile).size / (1024 * 1024)).toFixed(2)} MB`);
+              } catch (e) {
+                  console.error(`✗ Error: ${e.message}`);
+                  process.exit(1);
+              }
+          }
+          
+          convert(process.argv[2], process.argv[3]);
+          EOF
       
       - name: Convert GLB files to USDZ
         id: convert
