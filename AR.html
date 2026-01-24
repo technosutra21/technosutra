@@ -15,7 +15,7 @@
         
         body {
             font-family: system-ui, -apple-system, sans-serif;
-            background: #000; /* Fallback while aguardando câmera */
+            background: #000;
             min-height: 100vh;
             overflow-x: hidden;
         }
@@ -67,20 +67,20 @@
             object-fit: cover;
             z-index: 0;
             background: #000;
-            display: none; /* shown when stream is active */
+            display: none;
         }
         
         /* Model viewer */
         model-viewer {
             position: relative;
-            z-index: 1; /* above camera video */
+            z-index: 1;
             width: 100%;
             height: 100vh;
-            background-color: transparent; /* allow camera video underneath */
+            background-color: transparent;
             display: block;
         }
 
-        /* Provide a nice look to the slotted AR button (uses model-viewer slot) */
+        /* AR button styling */
         .btn {
             background: rgba(0, 0, 0, 0.8);
             color: white;
@@ -109,7 +109,7 @@
             cursor: not-allowed;
         }
 
-        /* Place the slotted AR button near bottom center of the viewer */
+        /* AR button slot positioning */
         model-viewer > [slot="ar-button"] {
             position: absolute;
             left: 50%;
@@ -242,38 +242,10 @@
     <!-- Status -->
     <div class="status" id="status"></div>
 
-    <!-- Camera background video (inline preview) -->
+    <!-- Camera background video -->
     <video id="cameraBackground" autoplay playsinline muted></video>
     
-    <script>
-        async function activateModelAR() {
-            const modelViewer = document.getElementById('modelViewer');
-            if (!modelViewer) return;
-
-            try {
-                if (modelViewer.canActivateAR) {
-                    const ok = await modelViewer.activateAR?.();
-                    if (ok === false) {
-                        console.warn('Falha ao iniciar AR');
-                    }
-                } else {
-                    console.log('AR não suportado neste dispositivo/navegador');
-                }
-            } catch (error) {
-                console.error('AR activation failed:', error);
-            }
-        }
-    </script>
-    <!-- Model viewer -->
-    <!-- FIXES APPLIED:
-         1. ar-usdz-max-texture-size="2048" - increases USDZ texture resolution (default 1024)
-            Reduces desaturation from texture encoding issues
-         2. Note: Additional fixes require Blender export changes:
-            - Export with "Normals" enabled to avoid faceted/dark appearance
-            - Ensure sRGB color space for textures
-            - Apply smooth shading to all objects
-         3. For iOS color issues, consider pre-converting to USDZ with Xcode Reality Converter
-    -->
+    <!-- Model viewer with auto GLB-to-USDZ conversion -->
     <model-viewer
         id="modelViewer"
         alt="Modelo 3D Interativo"
@@ -281,16 +253,13 @@
         ar-placement="floor"
         ar-modes="quick-look webxr scene-viewer"
         ar-usdz-max-texture-size="2048"
-        xr-environment
         camera-controls 
         touch-action="pan-y"
         ar-scale="auto"
         auto-rotate
-        reveal="auto"
-        loading="lazy"
-        intersection-observer>
+        reveal="auto">
 
-        <button slot="ar-button" class="btn ar-btn" id="arBtn">📲 Abrir em AR</button>
+        <button slot="ar-button" class="btn">📲 Abrir em AR</button>
 
     </model-viewer>
     
@@ -298,7 +267,7 @@
     <button class="nav-arrow left" id="prevBtn" onclick="changeModel(-1)">‹</button>
     <button class="nav-arrow right" id="nextBtn" onclick="changeModel(1)">›</button>
     
-    <!-- Controls (no explicit AR button here; the slotted one above is used) -->
+    <!-- Controls -->
     <div class="controls">
         <a href="index.html" class="btn">🏠 Home</a>
     </div>
@@ -307,14 +276,6 @@
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
     
     <script>
-        // Redirect iOS users to optimized iOS AR page
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        if (isIOS) {
-            const params = new URLSearchParams(location.search);
-            const model = params.get('model') || '1';
-            window.location.href = `ios-ar.html?model=${model}`;
-        }
-        
         // Global variables
         let currentModel = 1;
         const totalModels = 56;
@@ -331,35 +292,18 @@
             const requestedModel = parseInt(params.get('model')) || 1;
             currentModel = Math.max(1, Math.min(requestedModel, totalModels));
 
-            // Start inline camera background by default (if permissions allow)
+            // Start inline camera background
             startCameraBackground();
             
             loadModel(currentModel);
         }
         
-        // Load model
+        // Load model - use GLB, let model-viewer auto-convert to USDZ for iOS
         function loadModel(modelId) {
-            // Use USDZ directly for iOS AR Quick Look compatibility
-            // Falls back to GLB for web viewer
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            const modelName = `modelo${modelId}`;
+            const glbPath = `models/modelo${modelId}.glb`;
             
-            let modelPath;
-            if (isIOS) {
-                // Try USDZ first (from GitHub Pages deployment)
-                modelPath = `https://technosutra21.github.io/test-ios/models/${modelName}.usdz`;
-            } else {
-                // Use GLB for web browsers
-                modelPath = `models/${modelName}.glb`;
-            }
-            
-            // Update model viewer
-            modelViewer.setAttribute('src', modelPath);
-            
-            // Set iOS-specific attributes
-            if (isIOS) {
-                modelViewer.setAttribute('ios-src', modelPath);
-            }
+            // Simply set src - model-viewer handles GLB-to-USDZ conversion automatically
+            modelViewer.setAttribute('src', glbPath);
             
             // Update URL
             const newUrl = `${window.location.pathname}?model=${modelId}`;
@@ -379,25 +323,22 @@
             }
         }
         
-        // Activate AR (for keyboard shortcut)
+        // Activate AR
         async function activateAR() {
             try {
                 if (!('activateAR' in modelViewer) || (modelViewer.canActivateAR === false)) {
-                    showStatus('AR não suportado neste dispositivo ou contexto (use HTTPS/dispositivo compatível)', 'error', 3000);
+                    showStatus('AR não suportado neste dispositivo ou contexto', 'error', 3000);
                     return;
                 }
-                // Pause inline camera preview when entering AR
                 stopCameraBackground();
                 const result = await (modelViewer.activateAR?.());
                 if (result === false) {
-                    showStatus('Falha ao iniciar AR (verifique HTTPS e compatibilidade)', 'error', 3000);
-                    // Restart inline camera preview if AR didn’t start
+                    showStatus('Falha ao iniciar AR', 'error', 3000);
                     startCameraBackground();
                 }
             } catch (e) {
                 showStatus('Erro ao ativar AR', 'error', 3000);
                 console.error('AR Error:', e);
-                // Restart inline camera preview on error
                 startCameraBackground();
             }
         }
@@ -428,14 +369,7 @@
         modelViewer.addEventListener('error', (e) => {
             console.error('Model loading error:', e);
             
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            
-            if (isIOS && modelViewer.src?.includes('.usdz')) {
-                // If USDZ failed, try GLB fallback
-                console.warn('USDZ loading failed, falling back to GLB');
-                const modelId = currentModel;
-                modelViewer.setAttribute('src', `models/modelo${modelId}.glb`);
-            } else if (currentModel !== 1) {
+            if (currentModel !== 1) {
                 error.classList.add('show');
                 setTimeout(() => {
                     window.location.href = `${window.location.pathname}?model=1`;
@@ -450,11 +384,9 @@
         modelViewer.addEventListener('ar-status', (event) => {
             if (event.detail.status === 'session-started') {
                 showStatus('Sessão AR iniciada');
-                // Hide inline camera background while in AR
                 hideCameraBackground();
             } else if (event.detail.status === 'not-presenting') {
                 showStatus('Sessão AR encerrada');
-                // Restore inline camera background when exiting AR
                 startCameraBackground();
             }
         });
@@ -473,24 +405,19 @@
             }
         });
         
-
-
         // Camera background helpers
         async function startCameraBackground() {
-            // If already running, do nothing
             if (cameraStream && cameraStream.active) {
                 cameraVideo.style.display = 'block';
                 return;
             }
             try {
-                // Prefer rear camera on mobile, fallback to any camera
                 const constraints = {
                     video: { facingMode: { ideal: 'environment' } },
                     audio: false
                 };
                 cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
             } catch (err) {
-                // Fallback: try without facingMode hint
                 try {
                     cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
                 } catch (err2) {
@@ -502,9 +429,11 @@
             cameraVideo.srcObject = cameraStream;
             cameraVideo.style.display = 'block';
         }
+        
         function hideCameraBackground() {
             cameraVideo.style.display = 'none';
         }
+        
         function stopCameraBackground() {
             if (cameraStream) {
                 cameraStream.getTracks().forEach(t => t.stop());
@@ -514,10 +443,10 @@
             cameraVideo.style.display = 'none';
         }
 
-        // Stop camera when leaving the page
+        // Stop camera when leaving
         window.addEventListener('beforeunload', stopCameraBackground);
         
-        // Initialize app
+        // Initialize
         init();
     </script>
 </body>

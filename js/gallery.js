@@ -196,7 +196,6 @@ class GalleryController {
                     category: this.getDeterministicCategory(modelNumber),
                     available: isAvailable,
                     modelPath: `./models/modelo${modelNumber}.glb`,
-                    usdzPath: `https://technosutra21.github.io/test-ios/models/modelo${modelNumber}.usdz`,
                     characterData: characterData || {}
                 };
             });
@@ -314,7 +313,6 @@ class GalleryController {
                 category: this.getDeterministicCategory(modelNumber),
                 available: isAvailable,
                 modelPath: `./models/modelo${modelNumber}.glb`,
-                usdzPath: `https://technosutra21.github.io/test-ios/models/modelo${modelNumber}.usdz`,
                 characterData: {}
             };
         });
@@ -580,12 +578,12 @@ class GalleryController {
                     ${model.available ? `
                         <model-viewer
                             src="${model.modelPath}"
-                            ios-src="${model.usdzPath}"
                             alt="${model.title}"
                             ar
-                            ar-modes="webxr scene-viewer quick-look"
+                            ar-modes="quick-look webxr scene-viewer"
                             ar-scale="auto"
                             ar-placement="floor"
+                            ar-usdz-max-texture-size="2048"
                             camera-controls
                             auto-rotate
                             style="width: 100%; height: 100%;">
