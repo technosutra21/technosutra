@@ -6,7 +6,6 @@
 // Global configuration
 const MODEL_VIEWER_CONFIG = {
     modelBasePath: './models/',
-    usdzBasePath: './models/usdz/',
     modelViewerVersion: '4.0.0'
 };
 
@@ -30,7 +29,6 @@ function initGalleryModelViewer(containerId, modelId, chapterData = {}, options 
     // Set basic attributes
     const attributes = {
         'src': `${MODEL_VIEWER_CONFIG.modelBasePath}modelo${modelId}.glb`,
-        //'ios-src': `${MODEL_VIEWER_CONFIG.usdzBasePath}modelo${modelId}.usdz`,
         'alt': `Modelo 3D - ${chapterData.name || `Capítulo ${modelId}`}: ${chapterData.title || ''}`,
         'camera-controls': '',
         'loading': 'lazy',
@@ -142,7 +140,6 @@ function initARModelViewer(containerId, modelId, options = {}) {
     // Set AR-specific attributes
     const attributes = {
         'src': `${MODEL_VIEWER_CONFIG.modelBasePath}modelo${modelId}.glb`,
-        //'ios-src': `${MODEL_VIEWER_CONFIG.usdzBasePath}modelo${modelId}.usdz`,
         'alt': `Modelo 3D Interativo - Techno Sutra AR - Capítulo ${modelId}`,
         'camera-controls': '',
         'touch-action': 'pan-y',

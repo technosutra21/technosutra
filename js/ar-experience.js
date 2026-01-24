@@ -274,12 +274,10 @@ class ARExperienceController {
     async loadModel() {
         const modelId = this.config.modelId;
         const modelSrc = `models/modelo${modelId}.glb`;
-        const usdzSrc = `models/usdz/modelo${modelId}.usdz`;
         const fallbackModelId = 1; // Default model to use as fallback
         const fallbackModelSrc = `models/modelo${fallbackModelId}.glb`;
-        const fallbackUsdzSrc = `models/usdz/modelo${fallbackModelId}.usdz`;
 
-        this.log(`Loading model: ${modelSrc}, ${usdzSrc}`);
+        this.log(`Loading model: ${modelSrc}`);
 
         try {
             // Check if model exists with timeout protection
@@ -314,9 +312,9 @@ class ARExperienceController {
             }
 
             // Apply model sources with cache-busting for better reliability
+            // model-viewer automatically converts GLB to USDZ for iOS
             const cacheBuster = `?t=${Date.now()}`;
             this.elements.modelViewer.src = `${modelSrc}${cacheBuster}`;
-            this.elements.modelViewer.setAttribute('ios-src', `${usdzSrc}`);
             
             // Set AR scale with device-specific adjustments
             const arScale = this.getOptimalARScale();
@@ -360,7 +358,6 @@ class ARExperienceController {
         const attributes = {
             'id': 'modelViewer',
             'alt': `Modelo 3D Interativo - Techno Sutra AR - Capítulo ${this.config.modelId}`,
-            'ios-src': `/models/usdz/modelo${this.config.modelId}.usdz`,
             'src': `/models/modelo${this.config.modelId}.glb`,
             'touch-action': 'pan-y',
             'ar': '',

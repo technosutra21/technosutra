@@ -320,11 +320,9 @@
         // Load model
         function loadModel(modelId) {
             const glbPath = `models/modelo${modelId}.glb`;
-            const usdzPath = `models/usdz/modelo${modelId}.usdz`;
             
-            // Update model viewer
+            // Update model viewer (model-viewer auto-converts GLB to USDZ for iOS)
             modelViewer.setAttribute('src', glbPath);
-            modelViewer.setAttribute('ios-src', usdzPath);
             
             // Update URL
             const newUrl = `${window.location.pathname}?model=${modelId}`;

@@ -2,3 +2,9 @@ cert.pem
 key.pem
 .vscode
 .zencoder
+node_modules/
+.DS_Store
+*.log
+dist/
+.env
+.env.local

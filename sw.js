@@ -44,7 +44,6 @@ const CORE_ASSETS = [
 const MODEL_ASSETS = [];
 for (let i = 1; i <= 56; i++) {
     MODEL_ASSETS.push(`/models/modelo${i}.glb`);
-    MODEL_ASSETS.push(`/models/usdz/modelo${i}.usdz`);
 }
 
 // External assets that need caching
@@ -401,10 +400,24 @@ self.addEventListener('message', (event) => {
             console.log('SW: Received CACHE_ALL_ASSETS command');
             (async () => {
                 try {
-                    await cacheAssetsWithFallback(CORE_ASSETS, CACHE_NAME, 'core assets');
-                    await cacheAssetsWithFallback(EXTERNAL_ASSETS, RUNTIME_CACHE, 'external assets');
-                    await cacheAssetsWithFallback(MODEL_ASSETS, MODELS_CACHE, 'model assets');
-                    console.log('SW: All assets cached successfully (robust)');
+                    const cache = await caches.open(MODELS_CACHE);
+                    let cached = 0;
+                    const total = MODEL_ASSETS.length;
+                    
+                    for (const asset of MODEL_ASSETS) {
+                        try {
+                            const response = await fetch(asset);
+                            if (response.ok) {
+                                await cache.put(asset, response);
+                                cached++;
+                                console.log(`SW: Cached model [${cached}/${total}]: ${asset}`);
+                            }
+                        } catch (error) {
+                            console.warn(`SW: Failed to cache ${asset}:`, error.message);
+                        }
+                    }
+                    
+                    console.log(`SW: Model caching complete: ${cached}/${total} models cached`);
                 } catch (error) {
                     console.error('SW: Failed during CACHE_ALL_ASSETS:', error);
                 }

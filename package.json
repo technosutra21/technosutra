@@ -1,0 +1,32 @@
+{
+  "name": "techno-sutra-ar",
+  "version": "1.0.0",
+  "description": "Immersive AR experience exploring the 56 chapters of the Avatamsaka Sutra",
+  "type": "module",
+  "scripts": {
+    "dev": "python -m http.server 8000",
+    "test": "node --test tests/**/*.test.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "build": "node build/build.js",
+    "serve": "python https_server.py"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/technosutra21/technosutra.git"
+  },
+  "author": "Techno Sutra Team",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.56.0"
+  },
+  "keywords": [
+    "ar",
+    "augmented-reality",
+    "buddhism",
+    "avatamsaka",
+    "3d-models",
+    "pwa",
+    "webxr"
+  ]
+}
