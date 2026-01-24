@@ -14,6 +14,10 @@ on:
 jobs:
   convert-and-test:
     runs-on: macos-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
     
     outputs:
       conversion_success: ${{ steps.conversion-check.outputs.success }}
