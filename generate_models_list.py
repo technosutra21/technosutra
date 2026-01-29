@@ -37,7 +37,7 @@ def generate_models_json():
                 models.append({
                     "id": model_id,
                     "filename": filename,
-                    "path": f"./models/{filename}",
+                    "path": f"/models/{filename}",
                     "size_mb": round(size_mb, 2),
                     "available": True
                 })

@@ -211,7 +211,7 @@ class GalleryController {
                     description: characterData ? characterData['Desc. Personagem'] : `${this.t('model_description_prefix')} ${modelNumber} ${this.t('of_avatamsaka')}`,
                     category: this.getDeterministicCategory(modelNumber),
                     available: isAvailable,
-                    modelPath: `./models/modelo${modelNumber}.glb`,
+                    modelPath: `/models/modelo${modelNumber}.glb`,
                     characterData: characterData || {}
                 };
             });
@@ -373,7 +373,7 @@ class GalleryController {
                 description: `${this.t('model_description_prefix')} ${modelNumber} ${this.t('of_avatamsaka')}`,
                 category: this.getDeterministicCategory(modelNumber),
                 available: isAvailable,
-                modelPath: `./models/modelo${modelNumber}.glb`,
+                modelPath: `/models/modelo${modelNumber}.glb`,
                 characterData: {}
             };
         });

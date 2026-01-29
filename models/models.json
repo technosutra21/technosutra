@@ -3,378 +3,378 @@
     {
       "id": 1,
       "filename": "modelo1.glb",
-      "path": "./models/modelo1.glb",
+      "path": "/models/modelo1.glb",
       "size_mb": 4.06,
       "available": true
     },
     {
       "id": 2,
       "filename": "modelo2.glb",
-      "path": "./models/modelo2.glb",
+      "path": "/models/modelo2.glb",
       "size_mb": 4.26,
       "available": true
     },
     {
       "id": 3,
       "filename": "modelo3.glb",
-      "path": "./models/modelo3.glb",
+      "path": "/models/modelo3.glb",
       "size_mb": 4.31,
       "available": true
     },
     {
       "id": 4,
       "filename": "modelo4.glb",
-      "path": "./models/modelo4.glb",
+      "path": "/models/modelo4.glb",
       "size_mb": 3.85,
       "available": true
     },
     {
       "id": 5,
       "filename": "modelo5.glb",
-      "path": "./models/modelo5.glb",
+      "path": "/models/modelo5.glb",
       "size_mb": 4.01,
       "available": true
     },
     {
       "id": 6,
       "filename": "modelo6.glb",
-      "path": "./models/modelo6.glb",
+      "path": "/models/modelo6.glb",
       "size_mb": 3.78,
       "available": true
     },
     {
       "id": 7,
       "filename": "modelo7.glb",
-      "path": "./models/modelo7.glb",
+      "path": "/models/modelo7.glb",
       "size_mb": 11.86,
       "available": true
     },
     {
       "id": 8,
       "filename": "modelo8.glb",
-      "path": "./models/modelo8.glb",
+      "path": "/models/modelo8.glb",
       "size_mb": 9.78,
       "available": true
     },
     {
       "id": 9,
       "filename": "modelo9.glb",
-      "path": "./models/modelo9.glb",
+      "path": "/models/modelo9.glb",
       "size_mb": 9.78,
       "available": true
     },
     {
       "id": 10,
       "filename": "modelo10.glb",
-      "path": "./models/modelo10.glb",
+      "path": "/models/modelo10.glb",
       "size_mb": 11.67,
       "available": true
     },
     {
       "id": 11,
       "filename": "modelo11.glb",
-      "path": "./models/modelo11.glb",
+      "path": "/models/modelo11.glb",
       "size_mb": 4.46,
       "available": true
     },
     {
       "id": 12,
       "filename": "modelo12.glb",
-      "path": "./models/modelo12.glb",
+      "path": "/models/modelo12.glb",
       "size_mb": 4.66,
       "available": true
     },
     {
       "id": 13,
       "filename": "modelo13.glb",
-      "path": "./models/modelo13.glb",
+      "path": "/models/modelo13.glb",
       "size_mb": 11.97,
       "available": true
     },
     {
       "id": 14,
       "filename": "modelo14.glb",
-      "path": "./models/modelo14.glb",
+      "path": "/models/modelo14.glb",
       "size_mb": 1.12,
       "available": true
     },
     {
       "id": 15,
       "filename": "modelo15.glb",
-      "path": "./models/modelo15.glb",
+      "path": "/models/modelo15.glb",
       "size_mb": 4.46,
       "available": true
     },
     {
       "id": 16,
       "filename": "modelo16.glb",
-      "path": "./models/modelo16.glb",
+      "path": "/models/modelo16.glb",
       "size_mb": 11.12,
       "available": true
     },
     {
       "id": 17,
       "filename": "modelo17.glb",
-      "path": "./models/modelo17.glb",
+      "path": "/models/modelo17.glb",
       "size_mb": 4.43,
       "available": true
     },
     {
       "id": 18,
       "filename": "modelo18.glb",
-      "path": "./models/modelo18.glb",
+      "path": "/models/modelo18.glb",
       "size_mb": 3.92,
       "available": true
     },
     {
       "id": 19,
       "filename": "modelo19.glb",
-      "path": "./models/modelo19.glb",
+      "path": "/models/modelo19.glb",
       "size_mb": 4.54,
       "available": true
     },
     {
       "id": 20,
       "filename": "modelo20.glb",
-      "path": "./models/modelo20.glb",
+      "path": "/models/modelo20.glb",
       "size_mb": 4.3,
       "available": true
     },
     {
       "id": 21,
       "filename": "modelo21.glb",
-      "path": "./models/modelo21.glb",
+      "path": "/models/modelo21.glb",
       "size_mb": 4.52,
       "available": true
     },
     {
       "id": 22,
       "filename": "modelo22.glb",
-      "path": "./models/modelo22.glb",
+      "path": "/models/modelo22.glb",
       "size_mb": 4.83,
       "available": true
     },
     {
       "id": 23,
       "filename": "modelo23.glb",
-      "path": "./models/modelo23.glb",
+      "path": "/models/modelo23.glb",
       "size_mb": 4.32,
       "available": true
     },
     {
       "id": 24,
       "filename": "modelo24.glb",
-      "path": "./models/modelo24.glb",
+      "path": "/models/modelo24.glb",
       "size_mb": 4.63,
       "available": true
     },
     {
       "id": 25,
       "filename": "modelo25.glb",
-      "path": "./models/modelo25.glb",
+      "path": "/models/modelo25.glb",
       "size_mb": 8.33,
       "available": true
     },
     {
       "id": 26,
       "filename": "modelo26.glb",
-      "path": "./models/modelo26.glb",
+      "path": "/models/modelo26.glb",
       "size_mb": 4.41,
       "available": true
     },
     {
       "id": 27,
       "filename": "modelo27.glb",
-      "path": "./models/modelo27.glb",
+      "path": "/models/modelo27.glb",
       "size_mb": 11.59,
       "available": true
     },
     {
       "id": 28,
       "filename": "modelo28.glb",
-      "path": "./models/modelo28.glb",
+      "path": "/models/modelo28.glb",
       "size_mb": 4.43,
       "available": true
     },
     {
       "id": 29,
       "filename": "modelo29.glb",
-      "path": "./models/modelo29.glb",
+      "path": "/models/modelo29.glb",
       "size_mb": 2.52,
       "available": true
     },
     {
       "id": 30,
       "filename": "modelo30.glb",
-      "path": "./models/modelo30.glb",
+      "path": "/models/modelo30.glb",
       "size_mb": 4.83,
       "available": true
     },
     {
       "id": 31,
       "filename": "modelo31.glb",
-      "path": "./models/modelo31.glb",
+      "path": "/models/modelo31.glb",
       "size_mb": 4.05,
       "available": true
     },
     {
       "id": 32,
       "filename": "modelo32.glb",
-      "path": "./models/modelo32.glb",
+      "path": "/models/modelo32.glb",
       "size_mb": 4.19,
       "available": true
     },
     {
       "id": 33,
       "filename": "modelo33.glb",
-      "path": "./models/modelo33.glb",
+      "path": "/models/modelo33.glb",
       "size_mb": 11.52,
       "available": true
     },
     {
       "id": 34,
       "filename": "modelo34.glb",
-      "path": "./models/modelo34.glb",
+      "path": "/models/modelo34.glb",
       "size_mb": 11.94,
       "available": true
     },
     {
       "id": 35,
       "filename": "modelo35.glb",
-      "path": "./models/modelo35.glb",
+      "path": "/models/modelo35.glb",
       "size_mb": 4.12,
       "available": true
     },
     {
       "id": 36,
       "filename": "modelo36.glb",
-      "path": "./models/modelo36.glb",
+      "path": "/models/modelo36.glb",
       "size_mb": 3.66,
       "available": true
     },
     {
       "id": 37,
       "filename": "modelo37.glb",
-      "path": "./models/modelo37.glb",
+      "path": "/models/modelo37.glb",
       "size_mb": 4.42,
       "available": true
     },
     {
       "id": 38,
       "filename": "modelo38.glb",
-      "path": "./models/modelo38.glb",
+      "path": "/models/modelo38.glb",
       "size_mb": 4.03,
       "available": true
     },
     {
       "id": 39,
       "filename": "modelo39.glb",
-      "path": "./models/modelo39.glb",
+      "path": "/models/modelo39.glb",
       "size_mb": 4.17,
       "available": true
     },
     {
       "id": 40,
       "filename": "modelo40.glb",
-      "path": "./models/modelo40.glb",
+      "path": "/models/modelo40.glb",
       "size_mb": 11.4,
       "available": true
     },
     {
       "id": 41,
       "filename": "modelo41.glb",
-      "path": "./models/modelo41.glb",
+      "path": "/models/modelo41.glb",
       "size_mb": 4.81,
       "available": true
     },
     {
       "id": 42,
       "filename": "modelo42.glb",
-      "path": "./models/modelo42.glb",
+      "path": "/models/modelo42.glb",
       "size_mb": 4.88,
       "available": true
     },
     {
       "id": 44,
       "filename": "modelo44.glb",
-      "path": "./models/modelo44.glb",
+      "path": "/models/modelo44.glb",
       "size_mb": 4.16,
       "available": true
     },
     {
       "id": 45,
       "filename": "modelo45.glb",
-      "path": "./models/modelo45.glb",
+      "path": "/models/modelo45.glb",
       "size_mb": 4.73,
       "available": true
     },
     {
       "id": 46,
       "filename": "modelo46.glb",
-      "path": "./models/modelo46.glb",
+      "path": "/models/modelo46.glb",
       "size_mb": 4.14,
       "available": true
     },
     {
       "id": 47,
       "filename": "modelo47.glb",
-      "path": "./models/modelo47.glb",
+      "path": "/models/modelo47.glb",
       "size_mb": 4.56,
       "available": true
     },
     {
       "id": 48,
       "filename": "modelo48.glb",
-      "path": "./models/modelo48.glb",
+      "path": "/models/modelo48.glb",
       "size_mb": 5.77,
       "available": true
     },
     {
       "id": 49,
       "filename": "modelo49.glb",
-      "path": "./models/modelo49.glb",
+      "path": "/models/modelo49.glb",
       "size_mb": 3.81,
       "available": true
     },
     {
       "id": 50,
       "filename": "modelo50.glb",
-      "path": "./models/modelo50.glb",
+      "path": "/models/modelo50.glb",
       "size_mb": 4.27,
       "available": true
     },
     {
       "id": 51,
       "filename": "modelo51.glb",
-      "path": "./models/modelo51.glb",
+      "path": "/models/modelo51.glb",
       "size_mb": 4.08,
       "available": true
     },
     {
       "id": 53,
       "filename": "modelo53.glb",
-      "path": "./models/modelo53.glb",
+      "path": "/models/modelo53.glb",
       "size_mb": 11.88,
       "available": true
     },
     {
       "id": 54,
       "filename": "modelo54.glb",
-      "path": "./models/modelo54.glb",
+      "path": "/models/modelo54.glb",
       "size_mb": 3.25,
       "available": true
     },
     {
       "id": 55,
       "filename": "modelo55.glb",
-      "path": "./models/modelo55.glb",
+      "path": "/models/modelo55.glb",
       "size_mb": 4.31,
       "available": true
     },
     {
       "id": 56,
       "filename": "modelo56.glb",
-      "path": "./models/modelo56.glb",
+      "path": "/models/modelo56.glb",
       "size_mb": 4.26,
       "available": true
     }
