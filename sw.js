@@ -411,7 +411,10 @@ self.addEventListener('message', (event) => {
                     let failed = 0;
                     console.log(`SW: Prefetch models start (${total})`);
 
-                    for (const asset of MODEL_ASSETS) {
+                    for (let i = 0; i < MODEL_ASSETS.length; i++) {
+                        const asset = MODEL_ASSETS[i];
+                        const modelNum = i + 1;
+                        
                         try {
                             const req = new Request(asset, { cache: 'no-store' });
                             // Check if already cached
@@ -419,27 +422,63 @@ self.addEventListener('message', (event) => {
                             if (inCache) {
                                 already++;
                                 console.log(`SW: Already cached [${already}]: ${asset}`);
+                                
+                                // Notificar cliente que já está em cache
+                                const clientsArr = await self.clients.matchAll();
+                                clientsArr.forEach(c => c.postMessage({ 
+                                    type: 'CACHE_COMPLETE', 
+                                    data: { model: modelNum }
+                                }));
                                 continue;
                             }
+                            
+                            // Notificar início do download
+                            const clientsArr = await self.clients.matchAll();
+                            clientsArr.forEach(c => c.postMessage({ 
+                                type: 'CACHE_PROGRESS', 
+                                data: { model: modelNum, progress: 0 }
+                            }));
+                            
                             const resp = await fetch(req);
                             if (resp && resp.ok) {
                                 await cache.put(asset, resp.clone());
                                 cached++;
                                 console.log(`SW: Cached model [${cached}]: ${asset}`);
+                                
+                                // Notificar conclusão
+                                const clients = await self.clients.matchAll();
+                                clients.forEach(c => c.postMessage({ 
+                                    type: 'CACHE_COMPLETE', 
+                                    data: { model: modelNum }
+                                }));
                             } else {
                                 failed++;
                                 console.warn(`SW: Failed (response not ok): ${asset}`);
+                                
+                                // Notificar erro
+                                const clients = await self.clients.matchAll();
+                                clients.forEach(c => c.postMessage({ 
+                                    type: 'CACHE_ERROR', 
+                                    data: { model: modelNum }
+                                }));
                             }
                         } catch (e) {
                             failed++;
                             console.warn(`SW: Failed to fetch ${asset}: ${e.message}`);
+                            
+                            // Notificar erro
+                            const clients = await self.clients.matchAll();
+                            clients.forEach(c => c.postMessage({ 
+                                type: 'CACHE_ERROR', 
+                                data: { model: modelNum }
+                            }));
                         }
                     }
                     const summary = `SW: Prefetch models complete. cached=${cached}, already=${already}, failed=${failed}, total=${total}`;
                     console.log(summary);
                     // Broadcast summary to all clients
                     const clientsArr = await self.clients.matchAll();
-                    clientsArr.forEach(c => c.postMessage({ type: 'MODELS_PREFETCH_SUMMARY', cached, already, failed, total }));
+                    clientsArr.forEach(c => c.postMessage({ type: 'MODELS_PREFETCH_SUMMARY', data: { cached, already, failed, total } }));
                 } catch (err) {
                     console.error('SW: Prefetch error:', err);
                 } finally {
