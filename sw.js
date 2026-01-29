@@ -396,6 +396,9 @@ self.addEventListener('message', (event) => {
             console.log('SW: Received SKIP_WAITING command');
             self.skipWaiting();
             break;
+        case 'CACHE_ALL_ASSETS':
+            console.log('SW: CACHE_ALL_ASSETS is deprecated, use CACHE_ALL_MODELS instead');
+            // Fall through to CACHE_ALL_MODELS
         case 'CACHE_ALL_MODELS':
             (async () => {
                 if (PREFETCH_IN_PROGRESS) {
