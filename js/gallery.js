@@ -187,20 +187,21 @@ class GalleryController {
             // Update progress: Starting data load
             this.updateProgressBar(10);
             
+            // Try to load available models from models.json
+            let availableModelIds = await this.loadAvailableModels();
+            
+            // Update progress: Models list loaded
+            this.updateProgressBar(20);
+            
             // Try to load characters data from CSV
             let charactersData = await this.loadCharactersData();
             
             // Update progress: CSV loaded
             this.updateProgressBar(30);
             
-            // Available models based on actual GLB files (missing: 8, 27, 52)
-            const unavailableModels = [52];
-            const availableModels = Array.from({ length: 56 }, (_, i) => i + 1)
-                .filter(id => !unavailableModels.includes(id));
-            
             this.models = Array.from({ length: 56 }, (_, i) => {
                 const modelNumber = i + 1;
-                const isAvailable = availableModels.includes(modelNumber);
+                const isAvailable = availableModelIds.includes(modelNumber);
                 const characterData = charactersData.find(c => c.capitulo == modelNumber);
                 
                 return {
@@ -229,6 +230,52 @@ class GalleryController {
             // Create fallback data if CSV loading fails
             await this.loadFallbackData();
         }
+    }
+
+    /**
+     * Load available models by checking which GLB files exist
+     */
+    async loadAvailableModels() {
+        try {
+            // First try to load from models.json if it exists
+            const response = await fetch('./models/models.json');
+            if (response.ok) {
+                const data = await response.json();
+                if (data.models && Array.isArray(data.models)) {
+                    console.log('Loaded models from models.json');
+                    return data.models.map(m => m.id);
+                }
+            }
+        } catch (error) {
+            console.log('models.json not found, checking models dynamically...');
+        }
+        
+        // Dynamically check which models exist by attempting to fetch them
+        const availableIds = [];
+        const checkPromises = [];
+        
+        for (let i = 1; i <= 56; i++) {
+            checkPromises.push(
+                fetch(`./models/modelo${i}.glb`, { method: 'HEAD' })
+                    .then(response => {
+                        if (response.ok) {
+                            availableIds.push(i);
+                        }
+                    })
+                    .catch(() => {
+                        // Model doesn't exist, skip
+                    })
+            );
+        }
+        
+        // Wait for all checks to complete
+        await Promise.all(checkPromises);
+        
+        // Sort the IDs
+        availableIds.sort((a, b) => a - b);
+        
+        console.log(`Found ${availableIds.length} available models:`, availableIds);
+        return availableIds;
     }
 
     /**
@@ -312,13 +359,12 @@ class GalleryController {
      * Load fallback data when CSV is not available
      */
     async loadFallbackData() {
-        const unavailableModels = [8, 27, 52];
-        const availableModels = Array.from({ length: 56 }, (_, i) => i + 1)
-            .filter(id => !unavailableModels.includes(id));
+        // Try to load available models dynamically
+        let availableModelIds = await this.loadAvailableModels();
         
         this.models = Array.from({ length: 56 }, (_, i) => {
             const modelNumber = i + 1;
-            const isAvailable = availableModels.includes(modelNumber);
+            const isAvailable = availableModelIds.includes(modelNumber);
             
             return {
                 id: modelNumber,
