@@ -4,12 +4,12 @@
   "description": "Immersive AR experience exploring the 56 chapters of the Avatamsaka Sutra",
   "type": "module",
   "scripts": {
-    "dev": "python -m http.server 8000",
+    "dev": "python3 -m http.server 8000",
     "test": "node --test tests/**/*.test.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "build": "node build/build.js",
-    "serve": "python https_server.py"
+    "build": "python3 verify_static_imports.py --ignore 'legacy/**' && echo 'Static build complete'",
+    "serve": "python3 https_server.py"
   },
   "repository": {
     "type": "git",
