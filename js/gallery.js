@@ -72,7 +72,16 @@ class GalleryController {
             no_results_hint: { pt: 'Tente ajustar seus filtros ou termos de busca.', en: 'Try adjusting your filters or search terms.' },
             gallery_load_error: { pt: 'Erro ao carregar a galeria', en: 'Error loading gallery' },
             model_description_prefix: { pt: 'Modelo 3D interativo representando o kalyanamitra', en: 'Interactive 3D model representing kalyanamitra' },
-            of_avatamsaka: { pt: 'do Avatamsaka Sutra.', en: 'of the Avatamsaka Sutra.' }
+            of_avatamsaka: { pt: 'do Avatamsaka Sutra.', en: 'of the Avatamsaka Sutra.' },
+            main_teaching: { pt: 'Ensinamento Principal', en: 'Main Teaching' },
+            character_description: { pt: 'Descrição do Personagem', en: 'Character Description' },
+            meaning: { pt: 'Significado', en: 'Meaning' },
+            location: { pt: 'Local', en: 'Location' },
+            chapter_summary: { pt: 'Resumo do Capítulo', en: 'Chapter Summary' },
+            share_title: { pt: 'Techno Sutra AR - Capítulo', en: 'Techno Sutra AR - Chapter' },
+            share_text: { pt: 'Confira este modelo 3D do capítulo', en: 'Check out this 3D model of chapter' },
+            share_text_suffix: { pt: 'do Avatamsaka Sutra em realidade aumentada!', en: 'of the Avatamsaka Sutra in augmented reality!' },
+            link_copied: { pt: 'Link copiado para a área de transferência', en: 'Link copied to clipboard' }
         };
         return (dict[key] && dict[key][lang]) || (dict[key] && dict[key]['pt']) || key;
     }
@@ -594,7 +603,6 @@ class GalleryController {
                             exposure="0.9"
                             shadow-intensity="0"
                             loading="lazy"
-                            reveal="interaction"
                             interaction-prompt="none"
                             style="width: 100%; height: 100%;">
                             
@@ -671,10 +679,18 @@ class GalleryController {
 
         // Now initialize the model viewers
         const modelViewers = document.querySelectorAll('model-viewer');
-        modelViewers.forEach(viewer => {
+        modelViewers.forEach((viewer, index) => {
             // Defer heavy features until interaction
             viewer.cameraControls = false;
             viewer.autoRotate = false;
+
+            // Load first batch immediately for better UX
+            if (index < 6) {
+                const src = viewer.getAttribute('data-src');
+                if (src && !viewer.src) {
+                    viewer.src = src;
+                }
+            }
 
             viewer.addEventListener('load', () => {
                 const modelCard = viewer.closest('.model-card');
@@ -695,12 +711,24 @@ class GalleryController {
                 const modelCard = viewer.closest('.model-card');
                 if (modelCard) {
                     const modelId = modelCard.dataset.modelId;
+                    const loadingSpinner = modelCard.querySelector('.loading-spinner');
+                    if (loadingSpinner) {
+                        loadingSpinner.classList.add('hidden');
+                    }
                     console.error(`Error loading model ${modelId}:`, event.detail);
                 }
             });
 
             // Interaction enables controls and disables others
             viewer.addEventListener('pointerdown', () => this.enableExclusiveControls(viewer));
+        });
+
+        // Attach viewer observer to each container AFTER viewers are initialized
+        const containers = document.querySelectorAll('.model-viewer-container');
+        containers.forEach(c => {
+            if (this.viewerIO) {
+                this.viewerIO.observe(c);
+            }
         });
     }
 
@@ -876,24 +904,22 @@ class GalleryController {
                     if (!viewer.src) {
                         const src = viewer.getAttribute('data-src');
                         if (src) {
-                            // Defer assignment to next idle frame
-                            setTimeout(() => {
-                                viewer.src = src;
-                            }, 0);
+                            // Load immediately for better UX
+                            viewer.src = src;
+                            this.activeViewerIds.add(Number(modelId));
                         }
                     }
                 } else {
-                    // Pause and release when leaving viewport if too many active
+                    // Only unload if far from viewport and too many active
                     if (this.activeViewerIds.size > this.maxActiveViewers) {
                         try {
                             if (viewer.pause) viewer.pause();
                         } catch {}
-                        viewer.removeAttribute('src');
+                        // Don't remove src to avoid reloading when scrolling back
                     }
-                    this.activeViewerIds.delete(Number(modelId));
                 }
             });
-        }, { threshold: 0.01, rootMargin: '200px' });
+        }, { threshold: 0.01, rootMargin: '300px' });
     }
 
     enableExclusiveControls(targetViewer) {
@@ -917,10 +943,6 @@ class GalleryController {
 document.addEventListener('DOMContentLoaded', () => {
     const gallery = new GalleryController();
     gallery.initialize();
-
-    // Attach viewer observer to each container
-    const containers = document.querySelectorAll('.model-viewer-container');
-    containers.forEach(c => gallery.viewerIO && gallery.viewerIO.observe(c));
     
     // Make the controller available globally for debugging
     window.gallery = gallery;
@@ -945,10 +967,13 @@ function activateModelAR(button, modelId, event) {
 
 // Global function for sharing a model (for inline onclick handlers)
 function shareModel(modelId) {
+    const gallery = window.gallery;
+    const t = gallery ? (key) => gallery.t(key) : (key) => key;
+    
     if (navigator.share) {
         navigator.share({
-            title: `Techno Sutra AR - Capítulo ${modelId}`,
-            text: `Confira este modelo 3D do capítulo ${modelId} do Avatamsaka Sutra em realidade aumentada!`,
+            title: `${t('share_title')} ${modelId}`,
+            text: `${t('share_text')} ${modelId} ${t('share_text_suffix')}`,
             url: `${window.location.origin}/AR.html?model=${modelId}`
         })
         .catch(error => console.log('Error sharing:', error));
@@ -976,7 +1001,7 @@ function shareModel(modelId) {
         toast.style.padding = '12px 24px';
         toast.style.borderRadius = '8px';
         toast.style.zIndex = '10000';
-        toast.textContent = 'Link copiado para a área de transferência';
+        toast.textContent = t('link_copied');
         
         document.body.appendChild(toast);
         
@@ -998,6 +1023,527 @@ function showModelInfo(modelId) {
     if (!model) return;
     
     const characterData = model.characterData || {};
+    
+    // Get translations
+    const t = (key) => gallery.t(key);
+    
+    // Create full-screen modal overlay
+    const modalOverlay = document.createElement('div');
+    modalOverlay.className = 'modal-overlay';
+    modalOverlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.98);
+        display: flex;
+        z-index: 10000;
+        backdrop-filter: blur(20px);
+        opacity: 0;
+        animation: modalFadeIn 0.4s ease-out forwards;
+    `;
+    
+    // Create full-screen modal content container
+    const modalContent = document.createElement('div');
+    modalContent.className = 'modal-content-fullscreen';
+    modalContent.style.cssText = `
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, 
+            rgba(5, 5, 5, 0.98) 0%, 
+            rgba(15, 15, 20, 0.98) 30%, 
+            rgba(10, 10, 15, 0.98) 70%, 
+            rgba(5, 5, 5, 0.98) 100%);
+        overflow-y: auto;
+        position: relative;
+        transform: translateY(50px);
+        animation: modalSlideIn 0.5s ease-out forwards;
+        scroll-behavior: smooth;
+    `;
+    
+    // Add CSS animations
+    if (!document.getElementById('modal-animations')) {
+        const style = document.createElement('style');
+        style.id = 'modal-animations';
+        style.textContent = `
+            @keyframes modalFadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes modalSlideIn {
+                from { transform: translateY(50px); }
+                to { transform: translateY(0); }
+            }
+            @keyframes sectionSlideIn {
+                from { 
+                    opacity: 0; 
+                    transform: translateY(30px); 
+                }
+                to { 
+                    opacity: 1; 
+                    transform: translateY(0); 
+                }
+            }
+            .modal-section {
+                animation: sectionSlideIn 0.6s ease-out forwards;
+            }
+            .modal-section:nth-child(1) { animation-delay: 0.1s; }
+            .modal-section:nth-child(2) { animation-delay: 0.2s; }
+            .modal-section:nth-child(3) { animation-delay: 0.3s; }
+            .modal-section:nth-child(4) { animation-delay: 0.4s; }
+            .modal-section:nth-child(5) { animation-delay: 0.5s; }
+            .modal-section:nth-child(6) { animation-delay: 0.6s; }
+            .floating-particles {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                z-index: -1;
+            }
+            .floating-particles::before,
+            .floating-particles::after {
+                content: '';
+                position: absolute;
+                width: 200px;
+                height: 200px;
+                background: radial-gradient(circle, rgba(120, 119, 198, 0.1) 0%, transparent 70%);
+                border-radius: 50%;
+                animation: floatParticles 20s infinite linear;
+            }
+            .floating-particles::before {
+                top: 10%;
+                left: 10%;
+                animation-delay: 0s;
+            }
+            .floating-particles::after {
+                top: 60%;
+                right: 15%;
+                animation-delay: 10s;
+                background: radial-gradient(circle, rgba(157, 0, 255, 0.08) 0%, transparent 70%);
+            }
+            @keyframes floatParticles {
+                0% { transform: translate(0, 0) rotate(0deg); }
+                33% { transform: translate(30px, -30px) rotate(120deg); }
+                66% { transform: translate(-20px, 20px) rotate(240deg); }
+                100% { transform: translate(0, 0) rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    modalContent.innerHTML = `
+        <div class="floating-particles"></div>
+        
+        <!-- Header Section -->
+        <div class="modal-header-fullscreen" style="
+            padding: 40px 40px 60px;
+            background: linear-gradient(135deg, rgba(120, 119, 198, 0.15) 0%, rgba(157, 0, 255, 0.1) 100%);
+            border-bottom: 1px solid rgba(120, 119, 198, 0.2);
+            position: relative;
+            text-align: center;
+        ">
+            <button class="modal-close-fullscreen" style="
+                position: absolute;
+                top: 25px;
+                right: 25px;
+                background: rgba(120, 119, 198, 0.3);
+                border: 2px solid rgba(120, 119, 198, 0.6);
+                color: #ffffff;
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 20px;
+                font-weight: bold;
+                transition: all 0.3s ease;
+                backdrop-filter: blur(10px);
+                z-index: 1001;
+            " onclick="this.closest('.modal-overlay').remove()">
+                ✕
+            </button>
+            
+            <div style="
+                font-size: 1.2rem;
+                color: #7877c6;
+                margin-bottom: 15px;
+                text-transform: uppercase;
+                letter-spacing: 0.15em;
+                font-weight: 600;
+                opacity: 0.9;
+            ">${t('chapter')} ${model.id}</div>
+            
+            <h1 style="
+                color: #ffffff;
+                font-size: clamp(2.5rem, 6vw, 4rem);
+                font-weight: 300;
+                margin-bottom: 15px;
+                line-height: 1.2;
+                background: linear-gradient(135deg, #ffffff 0%, #7877c6 50%, #ffffff 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                text-shadow: 0 0 30px rgba(120, 119, 198, 0.3);
+            ">${model.title}</h1>
+            
+            ${characterData.Ocupação ? `<div style="
+                color: #b8b9d4;
+                font-size: 1.3rem;
+                font-style: italic;
+                font-weight: 300;
+                margin-bottom: 20px;
+                opacity: 0.8;
+            ">${characterData.Ocupação}</div>` : ''}
+            
+            <div style="
+                width: 100px;
+                height: 2px;
+                background: linear-gradient(90deg, transparent, #7877c6, transparent);
+                margin: 30px auto 0;
+                border-radius: 1px;
+            "></div>
+        </div>
+        
+        <!-- Content Body -->
+        <div class="modal-body-fullscreen" style="
+            padding: 60px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        ">
+            ${characterData.Ensinamento ? `
+                <div class="info-section modal-section" style="
+                    margin-bottom: 50px;
+                    padding: 40px;
+                    background: rgba(15, 15, 15, 0.6);
+                    border: 1px solid rgba(120, 119, 198, 0.2);
+                    border-radius: 20px;
+                    backdrop-filter: blur(10px);
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(135deg, rgba(120, 119, 198, 0.05) 0%, transparent 50%);
+                        pointer-events: none;
+                    "></div>
+                    <h2 style="
+                        color: #7877c6;
+                        font-size: 1.8rem;
+                        font-weight: 600;
+                        margin-bottom: 25px;
+                        display: flex;
+                        align-items: center;
+                        gap: 15px;
+                        position: relative;
+                    "><span style="font-size: 2rem;">🧘</span> ${t('main_teaching')}</h2>
+                    <p style="
+                        color: #e5e7eb;
+                        line-height: 1.8;
+                        font-size: 1.1rem;
+                        text-align: justify;
+                        position: relative;
+                        font-weight: 300;
+                    ">${characterData.Ensinamento}</p>
+                </div>
+            ` : ''}
+            
+            ${characterData['Desc. Personagem'] ? `
+                <div class="info-section modal-section" style="
+                    margin-bottom: 50px;
+                    padding: 40px;
+                    background: rgba(15, 15, 15, 0.6);
+                    border: 1px solid rgba(120, 119, 198, 0.2);
+                    border-radius: 20px;
+                    backdrop-filter: blur(10px);
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(135deg, rgba(157, 0, 255, 0.05) 0%, transparent 50%);
+                        pointer-events: none;
+                    "></div>
+                    <h2 style="
+                        color: #7877c6;
+                        font-size: 1.8rem;
+                        font-weight: 600;
+                        margin-bottom: 25px;
+                        display: flex;
+                        align-items: center;
+                        gap: 15px;
+                        position: relative;
+                    "><span style="font-size: 2rem;">👤</span> ${t('character_description')}</h2>
+                    <p style="
+                        color: #e5e7eb;
+                        line-height: 1.8;
+                        font-size: 1.1rem;
+                        text-align: justify;
+                        position: relative;
+                        font-weight: 300;
+                    ">${characterData['Desc. Personagem']}</p>
+                </div>
+            ` : ''}
+            
+            ${characterData.Significado ? `
+                <div class="info-section modal-section" style="
+                    margin-bottom: 50px;
+                    padding: 40px;
+                    background: rgba(15, 15, 15, 0.6);
+                    border: 1px solid rgba(120, 119, 198, 0.2);
+                    border-radius: 20px;
+                    backdrop-filter: blur(10px);
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(135deg, rgba(120, 119, 198, 0.05) 0%, transparent 50%);
+                        pointer-events: none;
+                    "></div>
+                    <h2 style="
+                        color: #7877c6;
+                        font-size: 1.8rem;
+                        font-weight: 600;
+                        margin-bottom: 25px;
+                        display: flex;
+                        align-items: center;
+                        gap: 15px;
+                        position: relative;
+                    "><span style="font-size: 2rem;">💫</span> ${t('meaning')}</h2>
+                    <p style="
+                        color: #e5e7eb;
+                        line-height: 1.8;
+                        font-size: 1.1rem;
+                        text-align: justify;
+                        position: relative;
+                        font-weight: 300;
+                    ">${characterData.Significado}</p>
+                </div>
+            ` : ''}
+            
+            ${characterData.Local ? `
+                <div class="info-section modal-section" style="
+                    margin-bottom: 50px;
+                    padding: 40px;
+                    background: rgba(15, 15, 15, 0.6);
+                    border: 1px solid rgba(120, 119, 198, 0.2);
+                    border-radius: 20px;
+                    backdrop-filter: blur(10px);
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(135deg, rgba(157, 0, 255, 0.05) 0%, transparent 50%);
+                        pointer-events: none;
+                    "></div>
+                    <h2 style="
+                        color: #7877c6;
+                        font-size: 1.8rem;
+                        font-weight: 600;
+                        margin-bottom: 25px;
+                        display: flex;
+                        align-items: center;
+                        gap: 15px;
+                        position: relative;
+                    "><span style="font-size: 2rem;">📍</span> ${t('location')}</h2>
+                    <p style="
+                        color: #e5e7eb;
+                        line-height: 1.8;
+                        font-size: 1.1rem;
+                        text-align: justify;
+                        position: relative;
+                        font-weight: 300;
+                    ">${characterData.Local}</p>
+                </div>
+            ` : ''}
+            
+            ${characterData['Resumo do Cap. (84000.co)'] ? `
+                <div class="info-section modal-section" style="
+                    margin-bottom: 50px;
+                    padding: 40px;
+                    background: rgba(15, 15, 15, 0.6);
+                    border: 1px solid rgba(120, 119, 198, 0.2);
+                    border-radius: 20px;
+                    backdrop-filter: blur(10px);
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(135deg, rgba(120, 119, 198, 0.05) 0%, transparent 50%);
+                        pointer-events: none;
+                    "></div>
+                    <h2 style="
+                        color: #7877c6;
+                        font-size: 1.8rem;
+                        font-weight: 600;
+                        margin-bottom: 25px;
+                        display: flex;
+                        align-items: center;
+                        gap: 15px;
+                        position: relative;
+                    "><span style="font-size: 2rem;">📚</span> ${t('chapter_summary')}</h2>
+                    <p style="
+                        color: #e5e7eb;
+                        line-height: 1.8;
+                        font-size: 1.1rem;
+                        text-align: justify;
+                        position: relative;
+                        font-weight: 300;
+                    ">${characterData['Resumo do Cap. (84000.co)']}</p>
+                </div>
+            ` : ''}
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="modal-actions-fullscreen" style="
+            padding: 40px;
+            background: rgba(5, 5, 5, 0.8);
+            border-top: 1px solid rgba(120, 119, 198, 0.2);
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            backdrop-filter: blur(10px);
+        ">
+            <button type="button" class="modal-action-btn-fullscreen" onclick="activateModelAR(this, ${model.id}, event)" style="
+                background: linear-gradient(135deg, #7877c6, #9d00ff);
+                color: white;
+                text-decoration: none;
+                border: none;
+                border-radius: 15px;
+                padding: 18px 36px;
+                font-size: 1.1rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                box-shadow: 0 8px 25px rgba(120, 119, 198, 0.4);
+                backdrop-filter: blur(10px);
+                min-width: 160px;
+                justify-content: center;
+            " ${!model.available ? 'style="opacity: 0.5; pointer-events: none;"' : ''}>
+                <span style="font-size: 1.3rem;">📱</span>
+                <span>${t('view_in_ar')}</span>
+            </button>
+            
+            <button class="modal-action-btn-fullscreen" onclick="shareModel(${model.id})" style="
+                background: rgba(120, 119, 198, 0.3);
+                color: #ffffff;
+                border: 2px solid rgba(120, 119, 198, 0.6);
+                border-radius: 15px;
+                padding: 18px 36px;
+                font-size: 1.1rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                backdrop-filter: blur(10px);
+                min-width: 160px;
+                justify-content: center;
+            " ${!model.available ? 'disabled' : ''}>
+                <span style="font-size: 1.3rem;">🛞</span>
+                <span>${t('share')}</span>
+            </button>
+        </div>
+    `;
+    
+    modalOverlay.appendChild(modalContent);
+    document.body.appendChild(modalOverlay);
+    
+    // Prevent body scroll while modal is open
+    document.body.style.overflow = 'hidden';
+    
+    // Enhanced button hover effects
+    const actionButtons = modalContent.querySelectorAll('.modal-action-btn-fullscreen');
+    actionButtons.forEach(button => {
+        button.addEventListener('mouseenter', () => {
+            button.style.transform = 'translateY(-3px) scale(1.05)';
+            if (button.style.background.includes('linear-gradient')) {
+                button.style.boxShadow = '0 12px 35px rgba(120, 119, 198, 0.6)';
+            }
+        });
+        
+        button.addEventListener('mouseleave', () => {
+            button.style.transform = 'translateY(0) scale(1)';
+            if (button.style.background.includes('linear-gradient')) {
+                button.style.boxShadow = '0 8px 25px rgba(120, 119, 198, 0.4)';
+            }
+        });
+    });
+    
+    // Enhanced close button hover effect
+    const closeBtn = modalContent.querySelector('.modal-close-fullscreen');
+    closeBtn.addEventListener('mouseenter', () => {
+        closeBtn.style.background = 'rgba(255, 99, 99, 0.8)';
+        closeBtn.style.borderColor = 'rgba(255, 99, 99, 1)';
+        closeBtn.style.transform = 'scale(1.1) rotate(90deg)';
+    });
+    
+    closeBtn.addEventListener('mouseleave', () => {
+        closeBtn.style.background = 'rgba(120, 119, 198, 0.3)';
+        closeBtn.style.borderColor = 'rgba(120, 119, 198, 0.6)';
+        closeBtn.style.transform = 'scale(1) rotate(0deg)';
+    });
+    
+    // Close modal function
+    const closeModal = () => {
+        modalOverlay.style.animation = 'modalFadeIn 0.3s ease-in reverse';
+        modalContent.style.animation = 'modalSlideIn 0.3s ease-in reverse';
+        
+        setTimeout(() => {
+            modalOverlay.remove();
+            document.body.style.overflow = 'auto';
+        }, 300);
+    };
+    
+    // Close modal when clicking outside (on the overlay)
+    modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+            closeModal();
+        }
+    });
+    
+    // Close modal with Escape key
+    const escapeHandler = (e) => {
+        if (e.key === 'Escape') {
+            closeModal();
+            document.removeEventListener('keydown', escapeHandler);
+        }
+    };
+    document.addEventListener('keydown', escapeHandler);
+    
+    // Update close button to use enhanced close
+    closeBtn.onclick = closeModal;
+}
     
     // Create full-screen modal overlay
     const modalOverlay = document.createElement('div');

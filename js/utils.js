@@ -53,11 +53,16 @@ const ThemeManager = {
      * Update theme toggle button icon if it exists
      */
     updateThemeToggleButton() {
-        const themeToggle = document.querySelector('.theme-toggle');
+        const themeToggle = document.querySelector('.theme-toggle:not(.language-toggle)');
         if (themeToggle) {
             const isLightMode = document.body.classList.contains('light-mode');
+            const currentLang = localStorage.getItem('technosutra-lang') || 'pt';
             themeToggle.innerHTML = isLightMode ? '☀️' : '🌙';
-            themeToggle.setAttribute('data-tooltip', isLightMode ? 'Mudar para tema escuro' : 'Mudar para tema claro');
+            
+            const tooltipKey = isLightMode ? 'toggle_theme_light' : 'toggle_theme_dark';
+            if (translations[tooltipKey] && translations[tooltipKey][currentLang]) {
+                themeToggle.setAttribute('data-tooltip', translations[tooltipKey][currentLang]);
+            }
         }
     }
 };
@@ -94,11 +99,28 @@ const LanguageManager = {
         document.querySelectorAll('[data-lang-key]').forEach(element => {
             const key = element.getAttribute('data-lang-key');
             if (translations[key] && translations[key][lang]) {
-                element.textContent = translations[key][lang];
-                // Also handle placeholders
-                if (element.placeholder !== undefined && translations[key][lang]) {
+                // Update text content
+                if (element.tagName !== 'INPUT' && element.tagName !== 'TEXTAREA') {
+                    element.textContent = translations[key][lang];
+                }
+                
+                // Handle placeholders for inputs
+                if (element.placeholder !== undefined) {
                     element.placeholder = translations[key][lang];
                 }
+                
+                // Handle data-tooltip attributes
+                if (element.hasAttribute('data-tooltip')) {
+                    element.setAttribute('data-tooltip', translations[key][lang]);
+                }
+            }
+        });
+        
+        // Update tooltips separately
+        document.querySelectorAll('[data-tooltip-key]').forEach(element => {
+            const key = element.getAttribute('data-tooltip-key');
+            if (translations[key] && translations[key][lang]) {
+                element.setAttribute('data-tooltip', translations[key][lang]);
             }
         });
         
@@ -152,6 +174,58 @@ const translations = {
         'pt': 'Carregando...',
         'en': 'Loading...'
     },
+    'loading_gallery': {
+        'pt': 'Carregando galeria...',
+        'en': 'Loading gallery...'
+    },
+    'gallery_title': {
+        'pt': 'Galeria de Modelos 3D',
+        'en': '3D Models Gallery'
+    },
+    'gallery_subtitle': {
+        'pt': 'Explore os 56 capítulos do Avatamsaka Sutra através de modelos 3D interativos. Cada modelo representa um aspecto único da sabedoria budista.',
+        'en': 'Explore the 56 chapters of the Avatamsaka Sutra through interactive 3D models. Each model represents a unique aspect of Buddhist wisdom.'
+    },
+    'night_goddesses': {
+        'pt': 'Deusas da Noite',
+        'en': 'Night Goddesses'
+    },
+    'monks': {
+        'pt': 'Monges',
+        'en': 'Monks'
+    },
+    'bodhisattvas': {
+        'pt': 'Bodhisattvas',
+        'en': 'Bodhisattvas'
+    },
+    'others': {
+        'pt': 'Outros',
+        'en': 'Others'
+    },
+    'scroll_to_top': {
+        'pt': 'Voltar ao topo',
+        'en': 'Back to top'
+    },
+    'share': {
+        'pt': 'Compartilhar',
+        'en': 'Share'
+    },
+    'toggle_theme': {
+        'pt': 'Alternar tema claro/escuro',
+        'en': 'Toggle light/dark theme'
+    },
+    'toggle_theme_light': {
+        'pt': 'Mudar para tema escuro',
+        'en': 'Switch to dark theme'
+    },
+    'toggle_theme_dark': {
+        'pt': 'Mudar para tema claro',
+        'en': 'Switch to light theme'
+    },
+    'switch_language': {
+        'pt': 'Mudar idioma / Switch language',
+        'en': 'Switch language / Mudar idioma'
+    },
     'offline_mode': {
         'pt': '⚫ MODO OFFLINE',
         'en': '⚫ OFFLINE MODE'
@@ -160,7 +234,6 @@ const translations = {
         'pt': '🟢 SISTEMA TOTALMENTE ARMAZENADO',
         'en': '🟢 SYSTEM FULLY CACHED'
     }
-    // Add more translations as needed
 };
 
 // PWA Installation

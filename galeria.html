@@ -986,22 +986,22 @@
     </a>
 
     <!-- Theme Toggle Button -->
-    <button class="theme-toggle tooltip" data-tooltip="Alternar tema claro/escuro" onclick="toggleTheme()">
+    <button class="theme-toggle tooltip" data-tooltip-key="toggle_theme_dark" data-tooltip="Mudar para tema claro" onclick="toggleTheme()">
         🌙
     </button>
 
     <!-- Language Switcher -->
-    <button class="theme-toggle language-toggle tooltip" data-tooltip="Switch language / Mudar idioma" onclick="toggleLanguage()">
+    <button class="theme-toggle language-toggle tooltip" data-tooltip-key="switch_language" data-tooltip="Switch language / Mudar idioma" onclick="toggleLanguage()">
         🌐 PT
     </button>
 
     <!-- Quick Actions -->
     <div class="quick-actions">
-        <button class="quick-action-btn tooltip" data-tooltip="Voltar ao topo" onclick="scrollToTop()">
+        <button class="quick-action-btn tooltip" data-tooltip-key="scroll_to_top" data-tooltip="Voltar ao topo" onclick="scrollToTop()">
             ↑
         </button>
 
-        <button class="quick-action-btn tooltip" data-tooltip="Compartilhar" onclick="UIUtils.sharePage()">
+        <button class="quick-action-btn tooltip" data-tooltip-key="share" data-tooltip="Compartilhar" onclick="UIUtils.sharePage()">
             🛞
         </button>
     </div>
@@ -1041,20 +1041,20 @@
         <div class="gallery-stats" id="gallery-stats">
             <div class="stat-item">
                 <span class="stat-number" id="filtered-models">9</span>
-                <span class="stat-label">Deusas da Noite</span>
+                <span class="stat-label" data-lang-key="night_goddesses">Deusas da Noite</span>
             </div>
             <div class="stat-item">
                 <span class="stat-number" id="filtered-models">4</span>
-                <span class="stat-label">Monges</span>
+                <span class="stat-label" data-lang-key="monks">Monges</span>
             </div>
             <div class="stat-item">
                 <span class="stat-number" id="filtered-models">4</span>
-                <span class="stat-label">Bodhisattvas</span>
+                <span class="stat-label" data-lang-key="bodhisattvas">Bodhisattvas</span>
             </div>
 
             <div class="stat-item">
                 <span class="stat-number" id="filtered-models">+29</span>
-                <span class="stat-label">Outros</span>
+                <span class="stat-label" data-lang-key="others">Outros</span>
             </div>
 
         </div>
