@@ -288,6 +288,32 @@
             box-shadow: 0 0 20px rgba(0, 244, 255, 0.4), 0 20px 60px rgba(0, 0, 0, 0.8) !important;
         }
 
+        /* Popup action buttons */
+        .popup-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            justify-content: flex-end;
+        }
+
+        .popup-btn {
+            border: 1px solid rgba(255,255,255,0.08);
+            background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+            color: white;
+            padding: 8px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+            backdrop-filter: blur(6px);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .popup-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.5); }
+
+        .popup-btn.ar { background: linear-gradient(90deg, rgba(0,244,255,0.12), rgba(191,64,255,0.06)); border: 1px solid rgba(0,244,255,0.25); }
+        .popup-btn.qr { background: linear-gradient(90deg, rgba(255,0,128,0.06), rgba(0,0,0,0.02)); border: 1px solid rgba(255,0,128,0.18); }
+
         .popup-content {
             padding: 16px;
             color: white;
@@ -597,6 +623,23 @@
 </head>
 <body>
 <div id="map"></div>
+
+<!-- QR Modal (hidden by default) -->
+<div id="qrModal" style="display:none; position:fixed; z-index:3000; inset:0; align-items:center; justify-content:center;">
+    <div style="background:rgba(0,0,0,0.9); border:2px solid rgba(0,244,255,0.2); padding:18px; border-radius:14px; max-width:420px; width:90%; text-align:center;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+            <div style="color:var(--neon-blue); font-weight:700;">QR Code</div>
+            <button id="qrCloseBtn" style="background:none; border:none; color:#fff; font-size:20px; cursor:pointer;">×</button>
+        </div>
+        <div style="margin-top:12px;">
+            <img id="qrImage" src="" alt="QR Code" style="max-width:100%; border-radius:8px; border:1px solid rgba(255,255,255,0.04);" />
+        </div>
+        <div style="margin-top:12px; display:flex; gap:8px; justify-content:center;">
+            <a id="qrDownload" href="#" download style="text-decoration:none;"><button class="popup-btn qr">⬇️ Download</button></a>
+            <button id="qrOpenNew" class="popup-btn" style="background:rgba(255,255,255,0.03);" onclick="openQRInNewTab()">🔎 Open</button>
+        </div>
+    </div>
+</div>
 
 <!-- Desktop Back Button -->
 <a href="index.html" class="desktop-back-btn">
@@ -1181,6 +1224,10 @@ navigator.geolocation.getCurrentPosition(
                         <div style="margin-top: 8px; font-size: 10px; color: #999;">
                             📍 ${point.lat.toFixed(6)}, ${point.lng.toFixed(6)}
                         </div>
+                        <div class="popup-actions">
+                            <button class="popup-btn ar" onclick="goToAR(${point.id})">📲 AR</button>
+                            <button class="popup-btn qr" onclick="openQRModal(${point.id})">🔳 QR Code</button>
+                        </div>
                     </div>`
                 );
                 
@@ -1197,6 +1244,56 @@ navigator.geolocation.getCurrentPosition(
                 navigator.geolocation.clearWatch(watchId);
             }
         });
+
+        // ---------- AR / QR Helpers ----------
+        function sanitizeModelNumber(input) {
+            const n = parseInt(String(input).replace(/[^0-9]/g, ''), 10);
+            if (!Number.isInteger(n) || n < 1 || n > 56) return null;
+            return n;
+        }
+
+        function pad2(v) { return String(v).padStart(2, '0'); }
+
+        function goToAR(modelNum) {
+            const n = sanitizeModelNumber(modelNum);
+            if (!n) { alert('Número de modelo inválido'); return; }
+            // preserve same behaviour as other pages: navigate to AR.html?model=N
+            window.location.href = `AR.html?model=${encodeURIComponent(n)}`;
+        }
+
+        // QR modal logic
+        const qrModal = document.getElementById('qrModal');
+        const qrImage = document.getElementById('qrImage');
+        const qrDownload = document.getElementById('qrDownload');
+        const qrCloseBtn = document.getElementById('qrCloseBtn');
+        let currentQrUrl = null;
+
+        function openQRModal(modelNum) {
+            const n = sanitizeModelNumber(modelNum);
+            if (!n) { alert('Número de modelo inválido'); return; }
+            const codeName = `QR_Model_${pad2(n)}.png`;
+            // path in repository
+            const url = `/qr_codes/qr_codes/${codeName}`;
+            currentQrUrl = url;
+            qrImage.src = url;
+            qrDownload.href = url;
+            qrDownload.setAttribute('download', codeName);
+            qrModal.style.display = 'flex';
+        }
+
+        function closeQRModal() {
+            qrModal.style.display = 'none';
+            qrImage.src = '';
+            currentQrUrl = null;
+        }
+
+        function openQRInNewTab() {
+            if (!currentQrUrl) return;
+            window.open(currentQrUrl, '_blank', 'noopener');
+        }
+
+        qrCloseBtn?.addEventListener('click', closeQRModal);
+        qrModal?.addEventListener('click', (e) => { if (e.target === qrModal) closeQRModal(); });
     </script>
 
     <!-- Mobile Navigation Bar -->

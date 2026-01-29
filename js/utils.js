@@ -400,6 +400,28 @@ document.addEventListener('DOMContentLoaded', () => {
     LanguageManager.init();
     PWAInstaller.init();
     OfflineManager.init();
+
+    // Trigger full models prefetch once per session and log summary
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.ready.then(() => {
+            if (navigator.serviceWorker.controller) {
+                const triggered = sessionStorage.getItem('models-prefetch-triggered');
+                if (!triggered) {
+                    console.log('Requesting models prefetch (CACHE_ALL_MODELS)');
+                    navigator.serviceWorker.controller.postMessage({ type: 'CACHE_ALL_MODELS' });
+                    sessionStorage.setItem('models-prefetch-triggered', '1');
+                }
+
+                // Listen for summary messages
+                navigator.serviceWorker.addEventListener('message', (event) => {
+                    const data = event.data || {};
+                    if (data.type === 'MODELS_PREFETCH_SUMMARY') {
+                        console.log(`Models prefetch summary: cached=${data.cached}, already=${data.already}, failed=${data.failed}, total=${data.total}`);
+                    }
+                });
+            }
+        }).catch(() => {});
+    }
 });
 
 // Export utilities for use in other scripts

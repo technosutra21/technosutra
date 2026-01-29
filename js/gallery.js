@@ -14,8 +14,11 @@ class GalleryController {
         this.currentFilter = 'all';
         this.searchTerm = '';
         this.isLoading = true;
-        this.modelsPerPage = 12;
+        this.modelsPerPage = window.matchMedia('(max-width: 768px)').matches ? 6 : 12;
         this.currentPage = 1;
+        this.maxActiveViewers = window.matchMedia('(max-width: 768px)').matches ? 6 : 12;
+        this.activeViewerIds = new Set();
+        this.viewerIO = null;
         
         // Language state
         this.currentLang = (localStorage.getItem('technosutra-lang') || 'pt');
@@ -112,6 +115,9 @@ class GalleryController {
     initializeEnhancedFeatures() {
         // Setup intersection observer for scroll animations
         this.setupIntersectionObserver();
+
+        // Setup viewer lifecycle observer
+        this.setupViewerIntersectionObserver();
         
         // Initialize progress bar animation
         this.updateProgressBar(0);
@@ -577,15 +583,19 @@ class GalleryController {
                 <div class="model-viewer-container">
                     ${model.available ? `
                         <model-viewer
-                            src="${model.modelPath}"
+                            src=""
+                            data-src="${model.modelPath}"
                             alt="${model.title}"
                             ar
                             ar-modes="quick-look webxr scene-viewer"
                             ar-scale="auto"
                             ar-placement="floor"
-                            ar-usdz-max-texture-size="2048"
-                            camera-controls
-                            auto-rotate
+                            ar-usdz-max-texture-size="1024"
+                            exposure="0.9"
+                            shadow-intensity="0"
+                            loading="lazy"
+                            reveal="interaction"
+                            interaction-prompt="none"
                             style="width: 100%; height: 100%;">
                             
                             <div class="loading-spinner"></div>
@@ -662,6 +672,10 @@ class GalleryController {
         // Now initialize the model viewers
         const modelViewers = document.querySelectorAll('model-viewer');
         modelViewers.forEach(viewer => {
+            // Defer heavy features until interaction
+            viewer.cameraControls = false;
+            viewer.autoRotate = false;
+
             viewer.addEventListener('load', () => {
                 const modelCard = viewer.closest('.model-card');
                 if (modelCard) {
@@ -684,6 +698,9 @@ class GalleryController {
                     console.error(`Error loading model ${modelId}:`, event.detail);
                 }
             });
+
+            // Interaction enables controls and disables others
+            viewer.addEventListener('pointerdown', () => this.enableExclusiveControls(viewer));
         });
     }
 
@@ -843,12 +860,67 @@ class GalleryController {
             }, 300);
         }, 5000);
     }
+
+    setupViewerIntersectionObserver() {
+        if (!('IntersectionObserver' in window)) return;
+        this.viewerIO = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const container = entry.target;
+                const viewer = container.querySelector('model-viewer');
+                if (!viewer) return;
+                const modelId = container.closest('.model-card')?.dataset.modelId;
+                if (!modelId) return;
+
+                if (entry.isIntersecting) {
+                    // Load when entering viewport if not already set
+                    if (!viewer.src) {
+                        const src = viewer.getAttribute('data-src');
+                        if (src) {
+                            // Defer assignment to next idle frame
+                            setTimeout(() => {
+                                viewer.src = src;
+                            }, 0);
+                        }
+                    }
+                } else {
+                    // Pause and release when leaving viewport if too many active
+                    if (this.activeViewerIds.size > this.maxActiveViewers) {
+                        try {
+                            if (viewer.pause) viewer.pause();
+                        } catch {}
+                        viewer.removeAttribute('src');
+                    }
+                    this.activeViewerIds.delete(Number(modelId));
+                }
+            });
+        }, { threshold: 0.01, rootMargin: '200px' });
+    }
+
+    enableExclusiveControls(targetViewer) {
+        // Disable controls for all other viewers
+        const viewers = document.querySelectorAll('model-viewer');
+        viewers.forEach(v => {
+            if (v !== targetViewer) {
+                v.cameraControls = false;
+                v.autoRotate = false;
+            }
+        });
+        // Enable for target
+        targetViewer.cameraControls = true;
+        targetViewer.autoRotate = false; // keep off by default to reduce CPU
+        const id = Number(targetViewer.closest('.model-card')?.dataset.modelId);
+        if (!Number.isNaN(id)) this.activeViewerIds.add(id);
+    }
 }
 
 // Initialize gallery when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     const gallery = new GalleryController();
     gallery.initialize();
+
+    // Attach viewer observer to each container
+    const containers = document.querySelectorAll('.model-viewer-container');
+    containers.forEach(c => gallery.viewerIO && gallery.viewerIO.observe(c));
     
     // Make the controller available globally for debugging
     window.gallery = gallery;

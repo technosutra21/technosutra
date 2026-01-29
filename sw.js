@@ -1,9 +1,10 @@
 // Service Worker for Techno Sutra AR
 // Enhanced PWA with offline support and complete asset caching
 
-const CACHE_NAME = 'techno-sutra-ar-v1.0.1';
-const RUNTIME_CACHE = 'techno-sutra-runtime-v1.0.1';
-const MODELS_CACHE = 'techno-sutra-models-v1.0.1';
+const CACHE_NAME = 'techno-sutra-ar-v1.0.2';
+const RUNTIME_CACHE = 'techno-sutra-runtime-v1.0.2';
+const MODELS_CACHE = 'techno-sutra-models-v1.0.2';
+let PREFETCH_IN_PROGRESS = false;
 
 // Core application shell - critical files for app to work
 const CORE_ASSETS = [
@@ -382,7 +383,7 @@ self.addEventListener('message', (event) => {
         return;
     }
     
-    const { type, data } = event.data;
+    const { type } = event.data;
     
     // Ensure type is defined
     if (!type) {
@@ -395,35 +396,57 @@ self.addEventListener('message', (event) => {
             console.log('SW: Received SKIP_WAITING command');
             self.skipWaiting();
             break;
-            
-        case 'CACHE_ALL_ASSETS':
-            console.log('SW: Received CACHE_ALL_ASSETS command');
+        case 'CACHE_ALL_MODELS':
             (async () => {
+                if (PREFETCH_IN_PROGRESS) {
+                    console.log('SW: Model prefetch already in progress');
+                    return;
+                }
+                PREFETCH_IN_PROGRESS = true;
                 try {
                     const cache = await caches.open(MODELS_CACHE);
-                    let cached = 0;
                     const total = MODEL_ASSETS.length;
-                    
+                    let already = 0;
+                    let cached = 0;
+                    let failed = 0;
+                    console.log(`SW: Prefetch models start (${total})`);
+
                     for (const asset of MODEL_ASSETS) {
                         try {
-                            const response = await fetch(asset);
-                            if (response.ok) {
-                                await cache.put(asset, response);
-                                cached++;
-                                console.log(`SW: Cached model [${cached}/${total}]: ${asset}`);
+                            const req = new Request(asset, { cache: 'no-store' });
+                            // Check if already cached
+                            const inCache = await cache.match(asset);
+                            if (inCache) {
+                                already++;
+                                console.log(`SW: Already cached [${already}]: ${asset}`);
+                                continue;
                             }
-                        } catch (error) {
-                            console.warn(`SW: Failed to cache ${asset}:`, error.message);
+                            const resp = await fetch(req);
+                            if (resp && resp.ok) {
+                                await cache.put(asset, resp.clone());
+                                cached++;
+                                console.log(`SW: Cached model [${cached}]: ${asset}`);
+                            } else {
+                                failed++;
+                                console.warn(`SW: Failed (response not ok): ${asset}`);
+                            }
+                        } catch (e) {
+                            failed++;
+                            console.warn(`SW: Failed to fetch ${asset}: ${e.message}`);
                         }
                     }
-                    
-                    console.log(`SW: Model caching complete: ${cached}/${total} models cached`);
-                } catch (error) {
-                    console.error('SW: Failed during CACHE_ALL_ASSETS:', error);
+                    const summary = `SW: Prefetch models complete. cached=${cached}, already=${already}, failed=${failed}, total=${total}`;
+                    console.log(summary);
+                    // Broadcast summary to all clients
+                    const clientsArr = await self.clients.matchAll();
+                    clientsArr.forEach(c => c.postMessage({ type: 'MODELS_PREFETCH_SUMMARY', cached, already, failed, total }));
+                } catch (err) {
+                    console.error('SW: Prefetch error:', err);
+                } finally {
+                    PREFETCH_IN_PROGRESS = false;
                 }
             })();
             break;
-            
         default:
             console.log('SW: Unknown message type:', type);
     }
