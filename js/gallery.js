@@ -636,21 +636,32 @@ class GalleryController {
                 </div>
                 
                 <div class="model-viewer-container">
-                    ${model.available ? `
+                     ${model.available ? `
                         <model-viewer
                             src=""
                             data-src="${model.modelPath}"
                             alt="${model.title}"
+                            loading="lazy"
+                            reveal="interaction"
                             ar
                             ar-modes="quick-look webxr scene-viewer"
                             ar-scale="auto"
                             ar-placement="floor"
-                            ar-usdz-max-texture-size="1024"
+                            ar-usdz-max-texture-size="512"
+                            camera-controls="false"
+                            touch-action="pan-y"
+                            auto-rotate="false"
                             exposure="0.9"
                             shadow-intensity="0"
-                            loading="lazy"
                             interaction-prompt="none"
-                            style="width: 100%; height: 100%;">
+                            interaction-prompt-style="basic"
+                            max-camera-orbit-distance="auto"
+                            min-camera-orbit-distance="5%"
+                            camera-orbit="0deg 75deg 105%"
+                            field-of-view="30deg"
+                            camera-target="0m 0m 0m"
+                            orientation="0deg 0deg -90deg"
+                            style="width: 100%; height: 100%; background: rgba(0,0,0,0.4);">
                             
                             <div class="loading-spinner"></div>
                         </model-viewer>
@@ -730,6 +741,9 @@ class GalleryController {
             viewer.cameraControls = false;
             viewer.autoRotate = false;
 
+            // No custom poster management - using CSS-generated posters
+            // This avoids 404 errors for missing poster files
+
             // Load first batch immediately for better UX
             if (index < 6) {
                 const src = viewer.getAttribute('data-src');
@@ -746,6 +760,23 @@ class GalleryController {
                     if (loadingSpinner) {
                         loadingSpinner.classList.add('hidden');
                     }
+                    
+                    // Ensure model faces camera properly (orientation rotation)
+                    setTimeout(() => {
+                        try {
+                            const model = viewer.model;
+                            if (model && model.scene) {
+                                // Apply orientation to face forward
+                                model.scene.rotation.x = 0;  // No roll
+                                model.scene.rotation.y = Math.PI; // 180 degrees to face forward
+                                model.scene.rotation.z = 0;  // No yaw
+                                viewer.updateChange();
+                            }
+                        } catch (e) {
+                            console.log('Model orientation applied via attribute for model:', modelId);
+                        }
+                    }, 300);
+                    
                     document.dispatchEvent(new CustomEvent('model-viewer-loaded', {
                         detail: { modelId }
                     }));
@@ -758,9 +789,22 @@ class GalleryController {
                 if (modelCard) {
                     const modelId = modelCard.dataset.modelId;
                     const loadingSpinner = modelCard.querySelector('.loading-spinner');
+                    const modelViewerContainer = modelCard.querySelector('.model-viewer-container');
+                    
                     if (loadingSpinner) {
                         loadingSpinner.classList.add('hidden');
                     }
+                    
+                    // Replace with error message
+                    if (modelViewerContainer) {
+                        modelViewerContainer.innerHTML = `
+                            <div class="unavailable-overlay">
+                                <div class="unavailable-icon">⚠️</div>
+                                <div class="unavailable-text">Erro ao carregar modelo</div>
+                            </div>
+                        `;
+                    }
+                    
                     console.error(`Error loading model ${modelId}:`, event.detail);
                 }
             });
@@ -977,9 +1021,27 @@ class GalleryController {
                 v.autoRotate = false;
             }
         });
-        // Enable for target
+        
+        // Enable for target and ensure proper rotation
         targetViewer.cameraControls = true;
         targetViewer.autoRotate = false; // keep off by default to reduce CPU
+        
+        // Re-apply orientation when enabling controls
+        setTimeout(() => {
+            try {
+                const model = targetViewer.model;
+                if (model && model.scene) {
+                    // Re-apply orientation to face forward
+                    model.scene.rotation.x = 0;  // No roll
+                    model.scene.rotation.y = Math.PI; // 180 degrees to face forward  
+                    model.scene.rotation.z = 0;  // No yaw
+                    targetViewer.updateChange();
+                }
+            } catch (e) {
+                console.log('Orientation maintained on interaction');
+            }
+        }, 100);
+        
         const id = Number(targetViewer.closest('.model-card')?.dataset.modelId);
         if (!Number.isNaN(id)) this.activeViewerIds.add(id);
     }
@@ -1526,7 +1588,6 @@ function showModelInfo(modelId) {
     document.body.appendChild(modalOverlay);
     
     // Prevent body scroll while modal is open
-    document.body.style.overflow = 'hidden';
     
     // Enhanced button hover effects
     const actionButtons = modalContent.querySelectorAll('.modal-action-btn-fullscreen');

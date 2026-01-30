@@ -709,12 +709,64 @@
             }
         }
 
-        /* Enhanced model viewer with tilt effect */
-
+        /* Enhanced model viewer with tilt effect and model orientation */
 
         .model-viewer-container model-viewer {
             transition: all 0.3s ease;
             transform-style: preserve-3d;
+        }
+
+        .model-card:hover .model-viewer-container model-viewer {
+            transform: rotateX(2deg) rotateY(-2deg);
+        }
+
+        /* Default poster generation for models without custom posters */
+        model-viewer:not([src])::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, 
+                rgba(120, 119, 198, 0.1) 0%, 
+                rgba(120, 119, 198, 0.2) 50%, 
+                rgba(120, 119, 198, 0.1) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        model-viewer:not([src])::after {
+            content: '🎯';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            opacity: 0.6;
+            z-index: 2;
+        }
+
+        /* Loading spinner style for model viewers */
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid #7877c6;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: spin 1s linear infinite;
+            z-index: 3;
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
         .model-card:hover .model-viewer-container model-viewer {
@@ -1156,6 +1208,42 @@
     </script>
 
     <!-- Load scripts -->
+    <!-- Configure decoders BEFORE loading model-viewer -->
+    <script>
+        // Global configuration for model-viewer decoders
+        self.ModelViewerElement = self.ModelViewerElement || {};
+        
+        // Configure DRACO decoder location
+        self.ModelViewerElement.dracoDecoderLocation = 'https://www.gstatic.com/draco/versioned/decoders/1.5.6/';
+        
+        // Configure Meshopt decoder location  
+        self.ModelViewerElement.meshoptDecoderLocation = 'https://unpkg.com/meshoptimizer@0.18.1/meshopt_decoder.js';
+        
+        // Configure KTX2 transcoder location
+        self.ModelViewerElement.ktx2TranscoderLocation = 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/basis/';
+    </script>
+    
+    <!-- Load MeshoptDecoder globally -->
+    <script src="https://unpkg.com/meshoptimizer@0.18.1/meshopt_decoder.js"></script>
+    <script>
+        // Ensure MeshoptDecoder is available globally
+        (function () {
+            if (window.MeshoptDecoder) return;
+            if (typeof window.MeshoptDecoderReady === 'function') {
+                try {
+                    window.MeshoptDecoder = window.MeshoptDecoderReady();
+                    return;
+                } catch (e) {
+                    console.warn('MeshoptDecoderReady invocation failed:', e);
+                }
+            }
+            if (window.meshopt) {
+                window.MeshoptDecoder = window.meshopt;
+            }
+        })();
+    </script>
+    
+    <!-- Load model-viewer -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
     <script src="/js/utils.js"></script>
     <script src="/js/gallery.js"></script>

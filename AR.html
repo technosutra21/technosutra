@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Techno Sutra AR - Experiência Imersiva</title>
     <meta name="description" content="Explore os 56 capítulos do Avatamsaka Sutra em realidade aumentada">
+    <link rel="icon" type="image/png" href="/imgs/icon.png">
     
     <style>
         * {
@@ -245,19 +246,33 @@
     <!-- Camera background video -->
     <video id="cameraBackground" autoplay playsinline muted></video>
     
-    <!-- Model viewer with auto GLB-to-USDZ conversion -->
+    <!-- Model viewer with cost-saving configurations and auto GLB-to-USDZ conversion -->
     <model-viewer
         id="modelViewer"
         alt="Modelo 3D Interativo"
+        src=""
+        loading="eager"
+        reveal="auto"
         ar
         ar-placement="floor"
         ar-modes="quick-look webxr scene-viewer"
-        ar-usdz-max-texture-size="2048"
-        camera-controls 
+        ar-usdz-max-texture-size="1024"
+        camera-controls
         touch-action="pan-y"
         ar-scale="auto"
         auto-rotate
-        reveal="auto">
+        auto-rotate-delay="1000"
+        rotation-per-second="15deg"
+        exposure="0.9"
+        shadow-intensity="0.5"
+        interaction-prompt="none"
+        interaction-prompt-style="basic"
+        max-camera-orbit-distance="auto"
+        min-camera-orbit-distance="5%"
+        camera-orbit="0deg 75deg 105%"
+        field-of-view="30deg"
+        camera-target="0m 0m 0m"
+        orientation="0deg 0deg -90deg">
 
         <button slot="ar-button" class="btn">📲 Abrir em AR</button>
 
@@ -273,6 +288,42 @@
     </div>
     
     <!-- Scripts -->
+    <!-- Configure decoders BEFORE loading model-viewer -->
+    <script>
+        // Global configuration for model-viewer decoders
+        self.ModelViewerElement = self.ModelViewerElement || {};
+        
+        // Configure DRACO decoder location
+        self.ModelViewerElement.dracoDecoderLocation = 'https://www.gstatic.com/draco/versioned/decoders/1.5.6/';
+        
+        // Configure Meshopt decoder location  
+        self.ModelViewerElement.meshoptDecoderLocation = 'https://unpkg.com/meshoptimizer@0.18.1/meshopt_decoder.js';
+        
+        // Configure KTX2 transcoder location
+        self.ModelViewerElement.ktx2TranscoderLocation = 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/basis/';
+    </script>
+    
+    <!-- Load MeshoptDecoder globally -->
+    <script src="https://unpkg.com/meshoptimizer@0.18.1/meshopt_decoder.js"></script>
+    <script>
+        // Ensure MeshoptDecoder is available globally
+        (function () {
+            if (window.MeshoptDecoder) return;
+            if (typeof window.MeshoptDecoderReady === 'function') {
+                try {
+                    window.MeshoptDecoder = window.MeshoptDecoderReady();
+                    return;
+                } catch (e) {
+                    console.warn('MeshoptDecoderReady invocation failed:', e);
+                }
+            }
+            if (window.meshopt) {
+                window.MeshoptDecoder = window.meshopt;
+            }
+        })();
+    </script>
+    
+    <!-- Load model-viewer -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
     
     <script>
@@ -285,22 +336,71 @@
         const status = document.getElementById('status');
         const cameraVideo = document.getElementById('cameraBackground');
         let cameraStream = null;
+        let availableModels = [];
         
         // Initialize
-        function init() {
+        async function init() {
             const params = new URLSearchParams(window.location.search);
             const requestedModel = parseInt(params.get('model')) || 1;
-            currentModel = Math.max(1, Math.min(requestedModel, totalModels));
-
+            
+            // Load available models list
+            await loadAvailableModels();
+            
+            // Validate requested model exists
+            currentModel = availableModels.includes(requestedModel) ? requestedModel : 1;
+            
             // Start inline camera background
             startCameraBackground();
             
             loadModel(currentModel);
         }
         
+        // Load available models list
+        async function loadAvailableModels() {
+            try {
+                // Try to load from models.json first
+                const response = await fetch('./models/models.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    availableModels = data.models.map(m => m.id);
+                    console.log('Available models loaded from JSON:', availableModels);
+                    return;
+                }
+            } catch (error) {
+                console.log('models.json not found, checking models dynamically...');
+            }
+            
+            // Fallback: check which models exist
+            const checkPromises = [];
+            for (let i = 1; i <= 56; i++) {
+                checkPromises.push(
+                    fetch(`./models/modelo${i}.glb`, { method: 'HEAD' })
+                        .then(response => {
+                            if (response.ok) {
+                                availableModels.push(i);
+                            }
+                        })
+                        .catch(() => {
+                            // Model doesn't exist, skip
+                        })
+                );
+            }
+            
+            await Promise.all(checkPromises);
+            availableModels.sort((a, b) => a - b);
+            console.log('Available models detected:', availableModels);
+        }
+        
         // Load model - use GLB, let model-viewer auto-convert to USDZ for iOS
         function loadModel(modelId) {
             const glbPath = `models/modelo${modelId}.glb`;
+            
+            // Check if model exists before loading
+            if (!availableModels.includes(modelId)) {
+                console.warn(`Model ${modelId} not available, falling back to model 1`);
+                showStatus(`Modelo ${modelId} não encontrado`, 'error', 3000);
+                modelId = 1;
+            }
             
             // Simply set src - model-viewer handles GLB-to-USDZ conversion automatically
             modelViewer.setAttribute('src', glbPath);
@@ -315,11 +415,21 @@
         
         // Change model
         function changeModel(direction) {
-            const newModel = currentModel + direction;
-            if (newModel >= 1 && newModel <= totalModels) {
-                currentModel = newModel;
+            const currentIndex = availableModels.indexOf(currentModel);
+            let newIndex = currentIndex + direction;
+            
+            // Find next available model in the direction
+            if (newIndex >= 0 && newIndex < availableModels.length) {
+                currentModel = availableModels[newIndex];
                 loadModel(currentModel);
-                showStatus(`Modelo ${currentModel}/${totalModels}`);
+                showStatus(`Modelo ${currentModel}/${totalModels} (${currentIndex + 1}/${availableModels.length} disponíveis)`);
+            } else {
+                // Show boundary message
+                if (direction > 0) {
+                    showStatus('Último modelo disponível', 'info', 2000);
+                } else {
+                    showStatus('Primeiro modelo disponível', 'info', 2000);
+                }
             }
         }
         
@@ -364,20 +474,46 @@
         modelViewer.addEventListener('load', () => {
             loading.classList.add('hidden');
             showStatus(`Modelo ${currentModel} carregado`);
+            
+            // Ensure model faces camera properly
+            setTimeout(() => {
+                // Reset camera to frontal view
+                modelViewer.cameraOrbit = '0deg 75deg 105%';
+                
+                // Apply orientation to model - orientation rotates the model itself
+                try {
+                    const model = modelViewer.model;
+                    if (model && model.scene) {
+                        // Apply -90 degree pitch to face forward (negative pitch = tilt forward)
+                        model.scene.rotation.x = 0; // No roll
+                        model.scene.rotation.y = Math.PI; // 180 degrees to face forward  
+                        model.scene.rotation.z = 0; // No yaw
+                        modelViewer.updateChange();
+                    }
+                } catch (e) {
+                    console.log('Model orientation applied via attribute');
+                }
+            }, 500);
         });
         
         modelViewer.addEventListener('error', (e) => {
             console.error('Model loading error:', e);
+            loading.classList.add('hidden');
             
-            if (currentModel !== 1) {
-                error.classList.add('show');
-                setTimeout(() => {
-                    window.location.href = `${window.location.pathname}?model=1`;
-                }, 2500);
-            } else {
-                loading.classList.add('hidden');
-                showStatus('Erro ao carregar modelo', 'error', 3000);
+            // Try to find next available model
+            const currentIndex = availableModels.indexOf(currentModel);
+            let fallbackModel = 1;
+            
+            if (currentIndex > 0) {
+                fallbackModel = availableModels[0]; // First available model
             }
+            
+            showStatus(`Erro ao carregar modelo ${currentModel}, tentando ${fallbackModel}...`, 'error', 2000);
+            
+            setTimeout(() => {
+                currentModel = fallbackModel;
+                loadModel(fallbackModel);
+            }, 2000);
         });
         
         // AR session lifecycle
@@ -411,23 +547,59 @@
                 cameraVideo.style.display = 'block';
                 return;
             }
-            try {
-                const constraints = {
-                    video: { facingMode: { ideal: 'environment' } },
-                    audio: false
-                };
-                cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
-            } catch (err) {
-                try {
-                    cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-                } catch (err2) {
-                    console.warn('Camera background unavailable:', err2);
+            
+            // Feature-detect mediaDevices to avoid undefined getUserMedia errors in unsupported contexts
+            const mediaDevices = navigator.mediaDevices;
+            if (!mediaDevices || typeof mediaDevices.getUserMedia !== 'function') {
+                console.warn('Camera background unavailable: mediaDevices.getUserMedia not supported or insecure context');
+                cameraVideo.style.display = 'none';
+                return;
+            }
+            
+            // Check for secure context (HTTPS required for camera access)
+            // Note: localhost is considered secure, but some browsers may still restrict access
+            if (window.isSecureContext === false) {
+                const hostname = window.location.hostname;
+                if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.') || hostname.startsWith('10.')) {
+                    console.warn('Camera background may be unavailable in local development environment');
+                } else {
+                    console.warn('Camera background unavailable: insecure context (requires HTTPS)');
                     cameraVideo.style.display = 'none';
                     return;
                 }
             }
-            cameraVideo.srcObject = cameraStream;
-            cameraVideo.style.display = 'block';
+            
+            try {
+                const constraints = {
+                    video: { 
+                        facingMode: { ideal: 'environment' },
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    },
+                    audio: false
+                };
+                cameraStream = await mediaDevices.getUserMedia(constraints);
+                cameraVideo.srcObject = cameraStream;
+                cameraVideo.style.display = 'block';
+                console.log('Camera background started successfully');
+            } catch (err) {
+                console.warn('Environment camera failed, trying default camera:', err.name);
+                try {
+                    const fallbackConstraints = {
+                        video: true,
+                        audio: false
+                    };
+                    cameraStream = await mediaDevices.getUserMedia(fallbackConstraints);
+                    cameraVideo.srcObject = cameraStream;
+                    cameraVideo.style.display = 'block';
+                    console.log('Fallback camera started successfully');
+                } catch (err2) {
+                    console.warn('Camera background completely unavailable:', err2.name, err2.message);
+                    cameraVideo.style.display = 'none';
+                    // Show user-friendly message instead of console warning
+                    showStatus('Câmera indisponível - usando fundo padrão', 'info', 3000);
+                }
+            }
         }
         
         function hideCameraBackground() {
