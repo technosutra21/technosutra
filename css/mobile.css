@@ -73,21 +73,7 @@ model-viewer {
 }
 
 /* Mobile-specific model viewer optimizations */
-@media (max-width: 768px) {
-    model-viewer {
-        /* Reduce quality for mobile performance */
-        --environment-image: none;
-        /* Optimize shadows for mobile */
-        --shadow-intensity: 0.5;
-        /* Faster loading on mobile */
-        loading: lazy;
-    }
-    
-    model-viewer[auto-rotate] {
-        /* Slower rotation for mobile battery */
-        rotation-per-second: 15deg;
-    }
-}
+
 
 /* Mobile hamburger menu animations */
 .mobile-menu-toggle {
@@ -562,9 +548,6 @@ html {
 
 /* Mobile battery-aware animations */
 @media (prefers-reduced-motion: reduce) {
-    model-viewer[auto-rotate] {
-        auto-rotate: false;
-    }
     
     .loading-spinner {
         animation: none;
@@ -616,10 +599,6 @@ html {
 
 /* Mobile data saver mode */
 @media (prefers-reduced-data: reduce) {
-    model-viewer {
-        loading: lazy;
-        reveal: interaction;
-    }
     
     .model-viewer-container::before {
         content: "Toque para carregar";

@@ -64,7 +64,7 @@ class GalleryController {
         const dict = {
             chapter: { pt: 'Capítulo', en: 'Chapter' },
             part: { pt: 'Parte', en: 'Part' },
-            view_in_ar: { pt: 'Ver em AR', en: 'View in AR' },
+            view_in_ar: { pt: 'Ver AR', en: 'View AR' },
             view_more: { pt: 'Ver Mais', en: 'View More' },
             share: { pt: 'Compartilhar', en: 'Share' },
             coming_soon: { pt: 'Em breve', en: 'Coming soon' },
@@ -242,7 +242,7 @@ class GalleryController {
             if (response.ok) {
                 const data = await response.json();
                 if (data.models && Array.isArray(data.models)) {
-                    console.log('Loaded models from models.json');
+                    console.log('Loaded models from models.json:', data.models.map(m => m.id));
                     return data.models.map(m => m.id);
                 }
             }
@@ -334,6 +334,10 @@ class GalleryController {
      * Parse a single CSV line considering quoted values
      */
     parseCSVLine(line) {
+        // Filter out runtime.lastError from console logs
+        if (line.includes('runtime.lastError: The message port closed before a response was received')) {
+            return '';
+        }
         const result = [];
         let current = '';
         let inQuotes = false;
@@ -638,22 +642,20 @@ class GalleryController {
                 <div class="model-viewer-container">
                      ${model.available ? `
                         <model-viewer
-                            src=""
                             data-src="${model.modelPath}"
                             alt="${model.title}"
-                            loading="lazy"
-                            reveal="interaction"
+                            loading="eager"
+                            reveal="auto"
                             ar
                             ar-modes="quick-look webxr scene-viewer"
                             ar-scale="auto"
                             ar-placement="floor"
-                            ar-usdz-max-texture-size="512"
-                            camera-controls="false"
+                            ar-usdz-max-texture-size="1024"
+                            camera-controls
                             touch-action="pan-y"
-                            auto-rotate="false"
                             exposure="0.9"
-                            shadow-intensity="0"
-                            interaction-prompt="none"
+                            shadow-intensity="0.5"
+                            interaction-prompt="auto"
                             interaction-prompt-style="basic"
                             max-camera-orbit-distance="auto"
                             min-camera-orbit-distance="5%"
@@ -661,7 +663,7 @@ class GalleryController {
                             field-of-view="30deg"
                             camera-target="0m 0m 0m"
                             orientation="0deg 0deg -90deg"
-                            style="width: 100%; height: 100%; background: rgba(0,0,0,0.4);">
+                            style="width: 100%; height: 100%; background-color: transparent;">
                             
                             <div class="loading-spinner"></div>
                         </model-viewer>
@@ -738,18 +740,47 @@ class GalleryController {
         const modelViewers = document.querySelectorAll('model-viewer');
         modelViewers.forEach((viewer, index) => {
             // Defer heavy features until interaction
-            viewer.cameraControls = false;
             viewer.autoRotate = false;
 
             // No custom poster management - using CSS-generated posters
             // This avoids 404 errors for missing poster files
 
-            // Load first batch immediately for better UX
-            if (index < 6) {
-                const src = viewer.getAttribute('data-src');
-                if (src && !viewer.src) {
-                    viewer.src = src;
-                }
+            // Load models immediately for better UX, but validate model exists first
+            const src = viewer.getAttribute('data-src');
+            if (src && !viewer.src) {
+                // Check if model exists before loading
+                fetch(src, { method: 'HEAD' })
+                    .then(response => {
+                        if (response.ok) {
+                            viewer.src = src;
+                        } else {
+                            console.warn(`Model ${src} not found, skipping load`);
+                            // Mark as unavailable without trying to load
+                            const modelCard = viewer.closest('.model-card');
+                            if (modelCard) {
+                                modelCard.classList.add('unavailable');
+                                const loadingSpinner = modelCard.querySelector('.loading-spinner');
+                                if (loadingSpinner) {
+                                    loadingSpinner.classList.add('hidden');
+                                }
+                                // Replace viewer with unavailable message
+                                const container = modelCard.querySelector('.model-viewer-container');
+                                if (container) {
+                                    container.innerHTML = `
+                                        <div class="unavailable-overlay">
+                                            <div class="unavailable-icon">⚠️</div>
+                                            <div class="unavailable-text">Modelo não disponível</div>
+                                        </div>
+                                    `;
+                                }
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.warn(`Error checking model ${src}:`, error);
+                        // Try to load anyway - model-viewer will handle the error
+                        viewer.src = src;
+                    });
             }
 
             viewer.addEventListener('load', () => {
@@ -789,28 +820,26 @@ class GalleryController {
                 if (modelCard) {
                     const modelId = modelCard.dataset.modelId;
                     const loadingSpinner = modelCard.querySelector('.loading-spinner');
-                    const modelViewerContainer = modelCard.querySelector('.model-viewer-container');
-                    
                     if (loadingSpinner) {
                         loadingSpinner.classList.add('hidden');
                     }
                     
-                    // Replace with error message
-                    if (modelViewerContainer) {
-                        modelViewerContainer.innerHTML = `
-                            <div class="unavailable-overlay">
-                                <div class="unavailable-icon">⚠️</div>
-                                <div class="unavailable-text">Erro ao carregar modelo</div>
-                            </div>
-                        `;
+                    // Replace with error message if not already marked as unavailable
+                    if (!modelCard.classList.contains('unavailable')) {
+                        const modelViewerContainer = modelCard.querySelector('.model-viewer-container');
+                        if (modelViewerContainer) {
+                            modelViewerContainer.innerHTML = `
+                                <div class="unavailable-overlay">
+                                    <div class="unavailable-icon">⚠️</div>
+                                    <div class="unavailable-text">Erro ao carregar modelo</div>
+                                </div>
+                            `;
+                        }
                     }
                     
                     console.error(`Error loading model ${modelId}:`, event.detail);
                 }
             });
-
-            // Interaction enables controls and disables others
-            viewer.addEventListener('pointerdown', () => this.enableExclusiveControls(viewer));
         });
 
         // Attach viewer observer to each container AFTER viewers are initialized
@@ -1010,40 +1039,6 @@ class GalleryController {
                 }
             });
         }, { threshold: 0.01, rootMargin: '300px' });
-    }
-
-    enableExclusiveControls(targetViewer) {
-        // Disable controls for all other viewers
-        const viewers = document.querySelectorAll('model-viewer');
-        viewers.forEach(v => {
-            if (v !== targetViewer) {
-                v.cameraControls = false;
-                v.autoRotate = false;
-            }
-        });
-        
-        // Enable for target and ensure proper rotation
-        targetViewer.cameraControls = true;
-        targetViewer.autoRotate = false; // keep off by default to reduce CPU
-        
-        // Re-apply orientation when enabling controls
-        setTimeout(() => {
-            try {
-                const model = targetViewer.model;
-                if (model && model.scene) {
-                    // Re-apply orientation to face forward
-                    model.scene.rotation.x = 0;  // No roll
-                    model.scene.rotation.y = Math.PI; // 180 degrees to face forward  
-                    model.scene.rotation.z = 0;  // No yaw
-                    targetViewer.updateChange();
-                }
-            } catch (e) {
-                console.log('Orientation maintained on interaction');
-            }
-        }, 100);
-        
-        const id = Number(targetViewer.closest('.model-card')?.dataset.modelId);
-        if (!Number.isNaN(id)) this.activeViewerIds.add(id);
     }
 }
 

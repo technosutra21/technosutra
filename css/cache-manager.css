@@ -219,8 +219,6 @@
     justify-content: center;
     width: 32px;
     height: 32px;
-    background: rgba(0, 255, 149, 0.2);
-    border: 1px solid var(--neon-blue, #00ff95);
     border-radius: 50%;
     color: white;
     font-weight: 700;

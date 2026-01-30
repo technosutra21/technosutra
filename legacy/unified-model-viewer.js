@@ -125,11 +125,6 @@ class UnifiedModelViewer {
             attributes['camera-controls'] = '';
         }
         
-        if (this.options.autoRotate) {
-            attributes['auto-rotate'] = '';
-            attributes['rotation-per-second'] = '15deg';
-        }
-        
         Object.entries(attributes).forEach(([key, value]) => {
             if (value === '') {
                 this.modelViewer.setAttribute(key, '');
@@ -322,18 +317,6 @@ class UnifiedModelViewer {
         }
     }
     
-    toggleAutoRotate() {
-        if (this.modelViewer) {
-            const isRotating = this.modelViewer.hasAttribute('auto-rotate');
-            if (isRotating) {
-                this.modelViewer.removeAttribute('auto-rotate');
-            } else {
-                this.modelViewer.setAttribute('auto-rotate', '');
-            }
-            return !isRotating;
-        }
-        return false;
-    }
     
     enterAR() {
         if (this.modelViewer && this.supportsAR) {

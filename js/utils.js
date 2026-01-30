@@ -167,8 +167,8 @@ const translations = {
         'en': '← Back'
     },
     'view_in_ar': {
-        'pt': 'Ver em AR',
-        'en': 'View in AR'
+        'pt': 'Ver AR',
+        'en': 'View AR'
     },
     'loading': {
         'pt': 'Carregando...',

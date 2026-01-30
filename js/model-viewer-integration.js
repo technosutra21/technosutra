@@ -147,7 +147,6 @@ function initARModelViewer(containerId, modelId, options = {}) {
         'ar-modes': 'quick-look webxr scene-viewer',
         'ar-scale': 'auto',
         'ar-placement': 'floor',
-        'auto-rotate': '',
         'rotation-per-second': '15deg',
         'loading': 'eager',
         'reveal': 'auto',
@@ -155,6 +154,7 @@ function initARModelViewer(containerId, modelId, options = {}) {
         'min-camera-orbit': 'auto 0deg auto',
         'max-camera-orbit': 'auto 180deg auto',
         'tone-mapping': 'linear',
+        'orientation': '0deg 0deg -90deg',
         'style': 'width: 100%; height: 100vh; background-color: transparent; --poster-color: transparent; position: fixed; top: 0; left: 0; z-index: 2;'
     };
 

@@ -85,6 +85,13 @@ class CacheManager {
 
     async loadCacheStatus() {
         try {
+            // Check if Cache API is available
+            if (!('caches' in window)) {
+                console.warn('Cache API not available, using localStorage fallback');
+                this.loadCacheStatusFromStorage();
+                return;
+            }
+            
             const cache = await caches.open('techno-sutra-models-v1.0.2');
             const keys = await cache.keys();
             
@@ -100,6 +107,28 @@ class CacheManager {
             this.updateSummary();
         } catch (error) {
             console.error('Erro ao carregar status do cache:', error);
+            // Fallback to localStorage if Cache API fails
+            if (error.name === 'ReferenceError' || error.name === 'TypeError') {
+                this.loadCacheStatusFromStorage();
+            }
+        }
+    }
+    
+    loadCacheStatusFromStorage() {
+        try {
+            // Fallback using localStorage for cache status
+            for (let i = 1; i <= 56; i++) {
+                const cacheKey = `model-${i}`;
+                const isCached = localStorage.getItem(cacheKey);
+                if (isCached === 'cached') {
+                    this.cacheStatus.set(i, 'cached');
+                }
+            }
+            this.updateSummary();
+        } catch (error) {
+            console.error('Fallback cache status failed:', error);
+            // Initialize with empty cache status if localStorage fails
+            this.cacheStatus.clear();
         }
     }
 
